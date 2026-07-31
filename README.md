@@ -36,3 +36,14 @@ Para acesso por celular, use o endereço de rede mostrado no terminal e mantenha
 
 O arquivo `acompanhamento.db` é criado automaticamente e não deve ser publicado, pois pode conter dados e fotos da obra.
 
+## Publicação no Render
+
+O projeto inclui um `render.yaml` para criar um serviço web com disco persistente. No Render:
+
+1. conecte o repositório privado do GitHub;
+2. crie um Blueprint usando este repositório;
+3. informe `OBRA_USUARIO` e `OBRA_SENHA` quando solicitado;
+4. confirme o serviço Starter e o disco persistente de 1 GB.
+
+O serviço usará a porta definida pelo ambiente e guardará o SQLite em
+`/var/data/acompanhamento.db`. O Render fornecerá um endereço HTTPS público.

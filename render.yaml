@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: acompanhamento-de-obra
+    runtime: python
+    plan: starter
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: python servidor.py
+    healthCheckPath: /api/sessao
+    envVars:
+      - key: OBRA_BANCO
+        value: /var/data/acompanhamento.db
+      - key: OBRA_USUARIO
+        sync: false
+      - key: OBRA_SENHA
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.13.5
+    disk:
+      name: dados-obra
+      mountPath: /var/data
+      sizeGB: 1

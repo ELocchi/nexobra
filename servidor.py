@@ -24,9 +24,9 @@ from reportlab.lib.units import mm
 from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 PASTA = Path(__file__).resolve().parent
-BANCO = PASTA / "acompanhamento.db"
+BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
-PORTA = 8000
+PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
 STATUS_NOMES = {
     "nao-iniciado": "Não iniciado",
@@ -47,6 +47,7 @@ SESSOES_ENGENHEIRO = set()
 
 
 def conectar():
+    BANCO.parent.mkdir(parents=True, exist_ok=True)
     conexao = sqlite3.connect(BANCO)
     conexao.row_factory = sqlite3.Row
     return conexao
@@ -495,6 +496,17 @@ def preparar_banco():
 
 
 class ServidorObra(SimpleHTTPRequestHandler):
+    def url_publica(self, caminho, consulta=""):
+        base_configurada = os.environ.get("OBRA_URL_PUBLICA", "").rstrip("/")
+        if base_configurada:
+            base = base_configurada
+        else:
+            protocolo = self.headers.get("X-Forwarded-Proto", "http").split(",", 1)[0].strip()
+            host = self.headers.get("X-Forwarded-Host", self.headers.get("Host", f"127.0.0.1:{PORTA}"))
+            base = f"{protocolo}://{host}"
+        sufixo = f"?{consulta}" if consulta else ""
+        return f"{base}{caminho}{sufixo}"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(PASTA), **kwargs)
 
@@ -552,9 +564,9 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 corpo = gerar_pdf_visitante_filtros(torre, andar, unidade, atividade)
                 tipo = "application/pdf"
             else:
-                ip = endereco_rede()
-                host = f"{ip}:{PORTA}" if ip else self.headers.get("Host", f"127.0.0.1:{PORTA}")
-                corpo = gerar_qr_svg(f"http://{host}/visitante-relatorios?{urlencode({'torre': torre})}")
+                corpo = gerar_qr_svg(self.url_publica(
+                    "/visitante-relatorios", urlencode({"torre": torre})
+                ))
                 if isinstance(corpo, str):
                     corpo = corpo.encode("utf-8")
                 tipo = "image/svg+xml; charset=utf-8"
@@ -615,10 +627,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(corpo)
                 return
-            ip = endereco_rede()
-            host = f"{ip}:{PORTA}" if ip else self.headers.get("Host", f"127.0.0.1:{PORTA}")
             consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade})
-            corpo = gerar_qr_svg(f"http://{host}/visitante?{consulta}")
+            corpo = gerar_qr_svg(self.url_publica("/visitante", consulta))
             if isinstance(corpo, str):
                 corpo = corpo.encode("utf-8")
             self.send_response(200)
@@ -875,7 +885,8 @@ if __name__ == "__main__":
     if ip_rede:
         print(f"Painel no celular: http://{ip_rede}:{PORTA}")
     print("Para encerrar, pressione Control + C.")
-    threading.Timer(0.7, lambda: webbrowser.open(endereco)).start()
+    if not os.environ.get("RENDER"):
+        threading.Timer(0.7, lambda: webbrowser.open(endereco)).start()
     try:
         servidor.serve_forever()
     except KeyboardInterrupt:
