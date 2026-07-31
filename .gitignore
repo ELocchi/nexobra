@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Dados e configurações locais — nunca publicar
+acompanhamento.db
+acompanhamento.db-*
+configuracao.local.json
+
+# Materiais usados apenas como referência
+Captura de Tela*.png
+Parede QDL_4x2.pdf
+

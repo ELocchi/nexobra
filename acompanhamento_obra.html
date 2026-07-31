@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acompanhamento de Obra</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root{
+    --azul-escuro:#0f2a4a;
+    --azul:#1d4e89;
+    --laranja:#e8871e;
+    --verde:#2e9e5b;
+    --amarelo:#e0a800;
+    --vermelho:#d9483d;
+    --cinza-bg:#f2f4f7;
+    --cinza-borda:#dfe3e8;
+    --cinza-texto:#5b6572;
+    --branco:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:var(--cinza-bg);
+    color:#1c2530;
+  }
+  body.selecao-aberta{overflow:hidden;}
+  .seletor-3d{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    min-height:100svh;
+    overflow:hidden;
+    color:#fff;
+    background:
+      radial-gradient(circle at 72% 15%, rgba(255,255,255,.32), transparent 25%),
+      linear-gradient(160deg, #176da8 0%, #3d9bd0 52%, #b4d7e7 100%);
+    transition:opacity .55s ease, visibility .55s ease;
+  }
+  .seletor-3d.fechado{opacity:0;visibility:hidden;pointer-events:none;}
+  .seletor-topo{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:26px clamp(24px,5vw,72px);
+    position:relative;
+    z-index:3;
+  }
+  .marca{display:flex;align-items:center;}
+  .marca-logo{
+    display:block;width:clamp(155px,15vw,215px);height:auto;padding:6px 10px;
+    border-radius:8px;background:#fff;box-shadow:0 5px 18px rgba(8,43,68,.16);
+  }
+  .seletor-topo small{color:rgba(255,255,255,.62);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;}
+  .seletor-conteudo{
+    display:grid;
+    grid-template-columns:minmax(260px,.75fr) minmax(420px,1.25fr);
+    align-items:center;
+    width:min(1320px,100%);
+    margin:auto;
+    padding:10px clamp(24px,6vw,84px) 0;
+  }
+  .chamada-3d{position:relative;z-index:4;max-width:520px;}
+  .chamada-3d .sobretitulo{color:#80d5ee;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:700;}
+  .chamada-3d h1{font-size:clamp(2.3rem,4.8vw,5.2rem);line-height:.97;margin:16px 0 20px;letter-spacing:-.045em;}
+  .chamada-3d p{font-size:clamp(.96rem,1.35vw,1.15rem);line-height:1.6;color:rgba(255,255,255,.72);max-width:460px;}
+  .instrucao{display:flex;align-items:center;gap:10px;margin-top:28px;font-size:.83rem;color:#fff;}
+  .instrucao span{width:8px;height:8px;border-radius:50%;background:#e9a03b;box-shadow:0 0 0 7px rgba(233,160,59,.14);}
+  .cenario{
+    position:relative;
+    height:min(670px,70vh);
+    min-height:430px;
+    perspective:1350px;
+    perspective-origin:50% 35%;
+  }
+  .cenario::before{
+    content:"";position:absolute;left:-5%;right:-16%;bottom:3%;height:28%;
+    background:
+      linear-gradient(90deg,transparent 0 7%,rgba(110,155,139,.32) 7% 11%,transparent 11% 23%,rgba(110,155,139,.28) 23% 27%,transparent 27%),
+      radial-gradient(ellipse,rgba(0,0,0,.54),transparent 69%);
+    transform:rotateX(67deg);filter:blur(7px);
+  }
+  .lua{
+    position:absolute;right:8%;top:7%;width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle,#fff 0,rgba(255,255,255,.15) 48%,transparent 70%);
+    filter:blur(2px);opacity:.3;
+  }
+  .skyline{
+    position:absolute;left:-4%;right:-8%;bottom:14%;height:28%;opacity:.16;
+    background:
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 2% 100%/8% 48% no-repeat,
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 12% 100%/6% 70% no-repeat,
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 20% 100%/12% 38% no-repeat,
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 72% 100%/7% 57% no-repeat,
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 81% 100%/10% 35% no-repeat,
+      linear-gradient(to top,rgba(1,13,23,.95),rgba(1,13,23,.95)) 94% 100%/6% 63% no-repeat;
+    filter:blur(1px);
+  }
+  .cidade{
+    position:absolute;inset:5% 0 0;transform-style:preserve-3d;
+    transform:rotateX(-3deg) rotateY(-10deg);transition:transform .18s ease-out;
+  }
+  .embasamento{
+    position:absolute;left:4%;right:0;bottom:6%;height:9%;transform-style:preserve-3d;
+    background:linear-gradient(100deg,#81949a,#c9d1d0 42%,#748b91);
+    border-top:3px solid #e0e6e5;box-shadow:0 18px 24px rgba(0,0,0,.35);
+    clip-path:polygon(4% 0,96% 0,100% 100%,0 100%);
+  }
+  .embasamento::before{
+    content:"";position:absolute;left:9%;right:9%;top:24%;height:46%;
+    background:repeating-linear-gradient(90deg,#244b5b 0 6%,#d4dcda 6% 8%);
+    box-shadow:inset 0 0 10px rgba(0,0,0,.35);
+  }
+  .paisagismo{position:absolute;left:0;right:-2%;bottom:5%;height:12%;z-index:8;pointer-events:none;}
+  .arvore{
+    position:absolute;bottom:0;width:31px;height:61px;
+    background:radial-gradient(ellipse at 50% 25%,#62956e 0 25%,#285d4b 61%,transparent 63%);
+    filter:drop-shadow(3px 7px 4px rgba(0,0,0,.35));
+  }
+  .arvore::after{content:"";position:absolute;left:14px;bottom:0;width:3px;height:29px;background:#6b4d39;z-index:-1;}
+  .arvore:nth-child(1){left:7%;transform:scale(.8)}.arvore:nth-child(2){left:41%;transform:scale(1.05)}
+  .arvore:nth-child(3){right:29%;transform:scale(.72)}.arvore:nth-child(4){right:1%;transform:scale(.95)}
+  .espelho-dagua{
+    position:absolute;left:21%;right:14%;bottom:3%;height:6%;z-index:7;transform:rotateX(65deg);
+    background:linear-gradient(90deg,rgba(65,173,190,.1),rgba(142,226,231,.55),rgba(36,126,153,.14));
+    border:2px solid rgba(214,235,231,.42);border-radius:50%;filter:blur(.2px);
+  }
+  .torre{
+    --largura:190px;--profundidade:50px;
+    position:absolute;bottom:11%;width:var(--largura);transform-style:preserve-3d;
+    border:0;padding:0;color:#fff;background:none;cursor:pointer;text-align:left;
+    filter:drop-shadow(27px 31px 22px rgba(0,0,0,.38));
+    transition:filter .25s ease, transform .25s ease;
+  }
+  .torre-a{height:79%;right:5%;z-index:3;--largura:205px;}
+  .torre-b{height:54%;left:9%;z-index:2;--largura:142px;--profundidade:40px;}
+  .torre:hover,.torre:focus-visible{filter:drop-shadow(20px 28px 26px rgba(0,0,0,.5)) brightness(1.14);outline:none;}
+  .torre:hover{transform:translateY(-10px);}
+  .fachada{
+    position:absolute;inset:0;border:1px solid rgba(255,255,255,.36);overflow:visible;
+    background:linear-gradient(90deg,#858785 0 7%,#b8b7b0 7% 47%,#d1cec4 47% 53%,#a5a59f 53% 93%,#707472 93%);
+    clip-path:polygon(7% 0,93% 0,100% 2.2%,100% 100%,0 100%,0 2.2%);
+    box-shadow:inset 12px 0 16px rgba(255,255,255,.2),inset -14px 0 20px rgba(13,45,56,.3);
+  }
+  .fachada::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(105deg,rgba(255,255,255,.34),transparent 32%,rgba(6,28,40,.3));
+    pointer-events:none;
+  }
+  .lateral{
+    position:absolute;top:2.2%;left:100%;width:var(--profundidade);height:97.8%;transform-origin:left;transform:rotateY(66deg);
+    background:
+      repeating-linear-gradient(to bottom,rgba(10,41,54,.55) 0 1px,transparent 1px calc(100% / 36)),
+      linear-gradient(90deg,#617983,#405b67);
+    border-right:2px solid rgba(17,45,54,.55);box-shadow:inset 8px 0 10px rgba(255,255,255,.1);
+  }
+  .torre-b .lateral{
+    background:
+      repeating-linear-gradient(to bottom,rgba(10,41,54,.55) 0 1px,transparent 1px calc(100% / 23)),
+      linear-gradient(90deg,#617983,#405b67);
+  }
+  .ala{
+    position:absolute;left:-13%;bottom:0;width:25%;height:93%;z-index:-1;
+    background:linear-gradient(90deg,#627b86,#b3c2c4);transform:translateZ(-10px);
+    border-left:1px solid rgba(255,255,255,.3);
+  }
+  .ala::after{
+    content:"";position:absolute;inset:3% 24% 2%;
+    background:repeating-linear-gradient(to bottom,#1b4a5a 0 4px,transparent 4px 12px);opacity:.65;
+  }
+  .cobertura{
+    position:absolute;left:7%;top:-17px;width:86%;height:34px;transform:rotateX(65deg);transform-origin:bottom;
+    background:linear-gradient(120deg,#f1f3ef,#879ba0);border:1px solid rgba(255,255,255,.55);
+    box-shadow:0 -4px 12px rgba(131,223,232,.12);
+  }
+  .cobertura::after{
+    content:"";position:absolute;left:42%;top:12%;width:16%;height:42%;background:#58727b;
+    box-shadow:0 0 0 3px #c9d3d2;
+  }
+  .pavimentos{height:100%;display:flex;flex-direction:column-reverse;padding:3% 0 1%;}
+  .pavimento{
+    flex:1;min-height:3px;border-top:1px solid rgba(13,48,63,.44);position:relative;
+    background:repeating-linear-gradient(90deg,#343c3d 0 13%,#777b78 13% 18%,#252e30 18% 34%,#a3a39d 34% 38%);
+  }
+  .pavimento::after{
+    content:"";position:absolute;left:0;right:0;top:-1px;height:3px;background:#d1cec4;
+    box-shadow:0 2px 3px rgba(0,0,0,.42);
+  }
+  .pavimento:nth-child(4n)::before{
+    content:"";position:absolute;left:-3%;right:-3%;top:-2px;height:4px;
+    background:#e8ece8;box-shadow:0 2px 2px rgba(17,50,60,.38);z-index:2;
+  }
+  .pavimento:nth-child(7n){background-color:rgba(206,197,177,.18);}
+  .pavimento:nth-child(n+9):nth-child(-n+13),
+  .pavimento:nth-child(n+27):nth-child(-n+31){
+    background-image:
+      repeating-linear-gradient(0deg,rgba(20,25,26,.25) 0 1px,rgba(214,214,202,.35) 1px 3px),
+      repeating-linear-gradient(90deg,#343c3d 0 13%,#777b78 13% 18%,#252e30 18% 34%,#a3a39d 34% 38%);
+  }
+  .grua{
+    position:absolute;z-index:6;top:-18%;left:46%;width:5px;height:19%;
+    background:repeating-linear-gradient(to bottom,#8b492d 0 4px,#d1783f 4px 8px);
+    transform:translateZ(8px);filter:drop-shadow(2px 3px 2px rgba(0,0,0,.3));pointer-events:none;
+  }
+  .grua::before{
+    content:"";position:absolute;left:-72px;top:0;width:245px;height:8px;
+    background:repeating-linear-gradient(135deg,#a24f2c 0 5px,#e08347 5px 10px);
+    clip-path:polygon(0 35%,100% 0,100% 100%,0 65%);
+  }
+  .grua::after{
+    content:"";position:absolute;left:158px;top:5px;width:1px;height:60px;background:rgba(52,42,34,.65);
+    box-shadow:0 58px 0 1px #4b4038;
+  }
+  .torre::after{
+    content:"";position:absolute;left:-6%;right:-18%;bottom:-2.2%;height:2.4%;
+    background:linear-gradient(90deg,#dfe4e1,#778c91);border-top:1px solid rgba(255,255,255,.45);
+  }
+  .torre-info{
+    position:absolute;left:50%;bottom:-70px;transform:translateX(-50%);width:190px;text-align:center;
+    text-shadow:0 2px 10px rgba(0,0,0,.5);
+  }
+  .torre-info strong{display:block;font-size:1rem;letter-spacing:.04em;}
+  .torre-info span{font-size:.74rem;color:rgba(255,255,255,.68);}
+  .torre-info em{display:inline-block;margin-top:7px;padding:4px 9px;border-radius:20px;background:rgba(3,18,29,.5);font-size:.68rem;font-style:normal;}
+  .seletor-rodape{
+    display:flex;justify-content:space-between;gap:16px;padding:20px clamp(24px,5vw,72px);
+    color:rgba(255,255,255,.48);font-size:.7rem;letter-spacing:.05em;position:relative;z-index:3;
+  }
+  header{
+    background:linear-gradient(135deg, var(--azul-escuro), var(--azul));
+    color:var(--branco);
+    padding:24px 32px;
+  }
+  header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .cabecalho-identidade{display:flex;align-items:flex-start;gap:18px;}
+  .logo-header{width:128px;height:auto;padding:5px 7px;border-radius:7px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.16);}
+  .torre-atual{
+    display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;padding:5px 10px;border-radius:30px;
+    color:#dceff8;background:rgba(255,255,255,.12);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
+  }
+  .trocar-torre{
+    border:1px solid rgba(255,255,255,.34);border-radius:8px;background:rgba(255,255,255,.08);
+    color:#fff;padding:8px 12px;margin-top:10px;cursor:pointer;font:inherit;font-size:.76rem;
+  }
+  .trocar-torre:hover{background:rgba(255,255,255,.16);}
+  header h1{
+    margin:0 0 4px 0;
+    font-size:1.6rem;
+  }
+  header .subtitulo{
+    opacity:.85;
+    font-size:.95rem;
+  }
+  .menu-principal{
+    position:sticky;top:0;z-index:100;background:rgba(255,255,255,.96);
+    border-bottom:1px solid var(--cinza-borda);box-shadow:0 4px 14px rgba(15,42,74,.07);
+    backdrop-filter:blur(10px);
+  }
+  .menu-principal nav{
+    display:flex;align-items:center;gap:4px;max-width:1180px;margin:auto;padding:8px 20px;
+    overflow-x:auto;scrollbar-width:none;
+  }
+  .menu-principal nav::-webkit-scrollbar{display:none;}
+  .menu-principal a{
+    display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border-radius:7px;
+    color:#536171;text-decoration:none;font-size:.76rem;font-weight:700;white-space:nowrap;
+    transition:background .2s ease,color .2s ease;
+  }
+  .menu-principal a:hover{color:var(--azul);background:#edf4f8;}
+  .menu-principal a.ativo{color:#fff;background:var(--azul);}
+  .menu-principal a span{font-size:.9rem;}
+  #dashboardGeral,#apartamentos,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
+  .painel-aba{display:none;animation:entradaAba .25s ease;}
+  .painel-aba.ativo{display:block;}
+  @keyframes entradaAba{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .apartamentos-cabecalho{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:16px;
+  }
+  .apartamentos-cabecalho h2{margin-bottom:5px;}
+  .apartamentos-cabecalho p{margin:0;color:var(--cinza-texto);font-size:.82rem;}
+  .apartamento-acoes-relatorio{display:flex;flex-direction:column;gap:7px;min-width:180px;}
+  .acao-relatorio{display:flex;align-items:center;justify-content:center;height:35px;border:1px solid var(--azul);border-radius:7px;background:#fff;color:var(--azul);font:700 .72rem Arial;text-decoration:none;cursor:pointer;}
+  .acao-relatorio:hover{background:var(--azul);color:#fff;}
+  .acao-relatorio:disabled,.acao-relatorio.desabilitado{opacity:.45;pointer-events:none;}
+  .apartamentos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+  .apartamento-card{
+    position:relative;text-align:left;border:1px solid var(--cinza-borda);border-radius:11px;background:#fff;
+    padding:15px 16px;cursor:pointer;font:inherit;color:#243445;box-shadow:0 2px 8px rgba(15,42,74,.04);
+    transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+  }
+  .apartamento-card:hover,.apartamento-card:focus-visible{transform:translateY(-2px);border-color:var(--azul);box-shadow:0 7px 18px rgba(15,42,74,.1);outline:none;}
+  .apartamento-card .icone-unidade{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;background:#edf4f8;color:var(--azul);font-weight:800;margin-bottom:11px;}
+  .apartamento-card strong{display:block;font-size:.9rem;margin-bottom:4px;}
+  .apartamento-card small{display:block;color:var(--cinza-texto);font-size:.7rem;margin-bottom:10px;}
+  .apartamento-progresso{height:6px;border-radius:6px;background:#e6eaee;overflow:hidden;}
+  .apartamento-progresso i{display:block;height:100%;border-radius:inherit;background:var(--verde);}
+  .apartamento-percentual{display:block;margin-top:6px;color:var(--azul-escuro);font-size:.68rem;font-weight:700;}
+  .apartamentos-seletor{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:14px;}
+  .apartamento-seletor{
+    min-width:118px;border:1px solid var(--cinza-borda);border-radius:9px;background:#fff;padding:10px;
+    color:var(--azul-escuro);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;text-align:left;
+  }
+  .apartamento-seletor span{display:block;margin-top:4px;color:var(--cinza-texto);font-size:.64rem;font-weight:500;}
+  .apartamento-seletor:hover,.apartamento-seletor.ativo{border-color:var(--azul);background:#edf4f8;}
+  .dashboard-apartamento{display:none;}
+  .dashboard-apartamento.visivel{display:block;}
+  .apartamento-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px;}
+  .apartamento-kpi{background:#fff;border:1px solid var(--cinza-borda);border-radius:10px;padding:14px 16px;}
+  .apartamento-kpi span{display:block;color:var(--cinza-texto);font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+  .apartamento-kpi strong{color:var(--azul-escuro);font-size:1.5rem;}
+  .apartamento-analises{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px;margin-bottom:15px;}
+  .apartamento-painel{background:#fff;border:1px solid var(--cinza-borda);border-radius:10px;padding:15px;}
+  .apartamento-painel h3{margin:0 0 10px;color:var(--azul-escuro);font-size:.84rem;}
+  .apartamento-chart{height:220px;}
+  .pendencias-apartamento{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;max-height:220px;overflow:auto;}
+  .pendencias-apartamento li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-left:3px solid #637582;background:#f5f7f8;border-radius:0 6px 6px 0;font-size:.75rem;}
+  .pendencias-apartamento li.servico-em-andamento{border-left-color:#e0a800;background:#fff9e8;}
+  .pendencias-apartamento li.servico-pendente{border-left-color:#d9483d;background:#fff2f0;}
+  .pendencias-apartamento li.servico-concluido{border-left-color:#2e9e5b;background:#edf8f1;}
+  .pendencias-apartamento li span{min-width:0;}
+  .pendencias-apartamento .status-atividade{flex:0 0 125px;}
+  .foto-tabela{width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--cinza-borda);}
+  .ocorrencia-form{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;margin-bottom:16px;}
+  .ocorrencia-form h3{margin:0 0 14px;color:var(--azul-escuro);font-size:.9rem;}
+  .ocorrencia-campos{display:grid;grid-template-columns:1fr .7fr 1fr .8fr;gap:12px;}
+  .ocorrencia-campos .campo-filtro.largo{grid-column:1/-1;}
+  .ocorrencia-campos textarea{width:100%;min-height:82px;resize:vertical;border:1px solid #ccd4dc;border-radius:7px;padding:9px 10px;font:inherit;font-size:.82rem;}
+  .ocorrencia-campos input[type="date"]{width:100%;height:38px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
+  .ocorrencia-acoes{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;}
+  .botao-primario{border:0;border-radius:8px;background:var(--azul);color:#fff;padding:10px 16px;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;}
+  .botao-primario:hover{background:var(--azul-escuro);}
+  .ocorrencias-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+  .ocorrencia-card{position:relative;background:#fff;border:1px solid var(--cinza-borda);border-left:4px solid var(--laranja);border-radius:8px;padding:13px;}
+  .ocorrencia-card.ocorrencia-status-nao-iniciado{border-left-color:#637582;}
+  .ocorrencia-card.ocorrencia-status-em-andamento{border-left-color:#e0a800;background:#fffdf5;}
+  .ocorrencia-card.ocorrencia-status-pendente{border-left-color:#d9483d;background:#fff9f8;}
+  .ocorrencia-card.ocorrencia-status-concluido{border-left-color:#2e9e5b;background:#f8fdf9;}
+  .ocorrencia-card .meta{color:var(--azul);font-size:.68rem;font-weight:700;margin-bottom:6px;}
+  .ocorrencia-card p{margin:0 0 8px;font-size:.8rem;line-height:1.45;}
+  .ocorrencia-card time{color:var(--cinza-texto);font-size:.65rem;}
+  .excluir-ocorrencia{position:absolute;top:7px;right:7px;width:27px;height:27px;border:1px solid #efc5c1;border-radius:50%;background:#fff;color:#d9483d;font:700 1rem/1 Arial;cursor:pointer;}
+  .excluir-ocorrencia:hover{background:#d9483d;color:#fff;}
+  .status-ocorrencia{height:29px;margin-top:9px;border:1px solid #ccd4dc;border-radius:6px;background:#fff;padding:0 7px;color:#344657;font-size:.68rem;font-weight:700;}
+  .status-ocorrencia.ocorrencia-status-nao-iniciado{color:#637582;background:#f1f3f5;border-color:#cbd2d8;}
+  .status-ocorrencia.ocorrencia-status-em-andamento{color:#8a6a00;background:#fff7db;border-color:#e0a800;}
+  .status-ocorrencia.ocorrencia-status-pendente{color:#d9483d;background:#fbe9e7;border-color:#d9483d;}
+  .status-ocorrencia.ocorrencia-status-concluido{color:#2e9e5b;background:#eaf7ee;border-color:#2e9e5b;}
+  .ocorrencia-foto{display:block;width:100%;height:130px;object-fit:cover;border-radius:6px;margin-top:9px;}
+  .preview-ocorrencia{display:none;align-items:center;gap:10px;margin-top:12px;padding:9px;border:1px dashed #b7c3cc;border-radius:8px;background:#f8fafb;}
+  .preview-ocorrencia.visivel{display:flex;}
+  .preview-ocorrencia img{width:76px;height:60px;object-fit:cover;border-radius:6px;}
+  .preview-ocorrencia span{font-size:.72rem;color:var(--cinza-texto);}
+  .ocorrencias-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin:18px 0 12px;}
+  .download-foto{display:inline-flex;align-items:center;gap:5px;margin-top:7px;color:var(--azul);font-size:.68rem;font-weight:700;text-decoration:none;}
+  .download-foto:hover{color:var(--laranja);text-decoration:underline;}
+  .relatorios-grid{display:grid;grid-template-columns:minmax(280px,.7fr) 1.3fr;gap:16px;}
+  .relatorio-qr{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:18px;text-align:center;}
+  .relatorio-qr img{display:block;width:min(100%,280px);margin:0 auto 10px;}
+  .relatorio-info{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:20px;}
+  .relatorio-info p,.relatorio-info li{font-size:.8rem;line-height:1.55;color:var(--cinza-texto);}
+  .documentos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .documentos-bloco{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:19px;}
+  .documentos-bloco h3{margin:0 0 6px;color:var(--azul-escuro);font-size:.92rem;}
+  .documentos-bloco>p{margin:0 0 14px;color:var(--cinza-texto);font-size:.76rem;line-height:1.5;}
+  .documentos-vazio{display:grid;place-items:center;min-height:130px;border:1px dashed #b9c6d0;border-radius:9px;background:#f8fafb;color:#73828e;text-align:center;font-size:.75rem;padding:18px;}
+  .login-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#0f2d48,#17608f);}
+  .login-overlay.oculto{display:none;}
+  .login-caixa{width:min(100%,430px);background:#fff;border-radius:16px;padding:28px;box-shadow:0 22px 65px rgba(0,0,0,.38);}
+  .login-caixa img{display:block;width:190px;margin:0 auto 20px;}
+  .login-caixa h1{text-align:center;color:var(--azul-escuro);font-size:1.35rem;margin-bottom:5px;}
+  .login-caixa>p{text-align:center;color:var(--cinza-texto);font-size:.78rem;margin:0 0 20px;}
+  .login-autoria{text-align:center;color:var(--azul-escuro);font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:-13px 0 19px;}
+  .login-caixa label{display:block;margin:11px 0 5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;}
+  .login-caixa input{width:100%;height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;font:inherit;}
+  .login-caixa button,.login-visitante{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:13px;border:0;border-radius:8px;background:var(--azul);color:#fff;font:700 .8rem Arial;text-decoration:none;cursor:pointer;}
+  .login-visitante{background:#eef3f6;color:var(--azul-escuro);border:1px solid #c7d2da;}
+  .login-divisor{display:flex;align-items:center;gap:9px;margin:16px 0;color:#8997a2;font-size:.68rem;}
+  .login-divisor:before,.login-divisor:after{content:"";height:1px;flex:1;background:#dce2e7;}
+  .login-erro{min-height:18px;margin-top:8px;color:var(--vermelho);font-size:.72rem;text-align:center;}
+  .seletor-obras{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:25px;background:linear-gradient(145deg,#176da8,#4aa6d5);color:#fff;transition:opacity .45s,visibility .45s;}
+  .seletor-obras.fechado{opacity:0;visibility:hidden;pointer-events:none;}
+  .obras-conteudo{width:min(100%,850px);}
+  .obras-topo{text-align:center;margin-bottom:25px;}
+  .obras-topo img{width:190px;background:#fff;border-radius:8px;padding:7px;}
+  .obras-topo h1{font-size:2rem;margin:18px 0 7px;}
+  .obras-topo p{margin:0;color:rgba(255,255,255,.8);}
+  .obras-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;}
+  .obra-seletor{border:1px solid rgba(255,255,255,.45);border-radius:13px;background:rgba(10,54,83,.38);color:#fff;padding:23px;text-align:left;font:inherit;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.15);}
+  .obra-seletor:hover{background:rgba(10,54,83,.58);transform:translateY(-2px);}
+  .obra-seletor strong{display:block;font-size:1.05rem;margin-bottom:8px;}
+  .obra-seletor span{display:block;font-size:.75rem;color:rgba(255,255,255,.75);line-height:1.45;}
+  .obras-rodape{text-align:center;margin-top:22px;font-size:.7rem;color:rgba(255,255,255,.65);}
+  .servicos-topo{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:16px;}
+  .servicos-topo h2{margin-bottom:5px;}
+  .servicos-topo p{margin:0;color:var(--cinza-texto);font-size:.8rem;}
+  .servicos-filtro{min-width:280px;}
+  .servicos-filtro select{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 10px;font:inherit;font-size:.8rem;}
+  .servicos-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px;}
+  .servicos-corpo{display:grid;grid-template-columns:.85fr 1.15fr;gap:14px;margin-bottom:15px;}
+  .link-unidade{border:0;background:none;padding:0;color:var(--azul);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+  .link-unidade:hover{color:var(--laranja);}
+  .info-obra{
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    font-size:.85rem;
+  }
+  .info-obra div{
+    background:rgba(255,255,255,.1);
+    padding:8px 14px;
+    border-radius:8px;
+  }
+  .info-obra span{
+    display:block;
+    opacity:.75;
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin-bottom:2px;
+  }
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:24px 20px 60px;
+  }
+  .dashboard-geral{
+    background:linear-gradient(135deg,#0d2945,#163e62);border-radius:16px;padding:22px;
+    color:#fff;box-shadow:0 12px 32px rgba(15,42,74,.15);
+  }
+  .dashboard-topo{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:18px;}
+  .dashboard-topo h2{color:#fff;border-color:#55bed8;margin-bottom:5px;}
+  .dashboard-topo p{margin:0;color:rgba(255,255,255,.65);font-size:.8rem;}
+  .dashboard-filtro{min-width:min(100%,280px);}
+  .dashboard-filtro label{display:block;margin-bottom:5px;color:rgba(255,255,255,.6);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+  .dashboard-filtro select{width:100%;height:39px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:#fff;color:#17334d;padding:0 10px;font:inherit;font-size:.8rem;}
+  .resumo-geral-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px;}
+  .resumo-geral-card{padding:14px 15px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.07);}
+  .resumo-geral-card span{display:block;color:rgba(255,255,255,.6);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
+  .resumo-geral-card strong{font-size:1.55rem;}
+  .dashboard-graficos{display:grid;grid-template-columns:1fr;gap:12px;}
+  .dashboard-grafico{height:260px;padding:14px;border-radius:10px;background:#fff;}
+  .dashboard-grafico h3{margin:0 0 6px;color:#17334d;font-size:.78rem;}
+  .dashboard-canvas{height:215px;}
+  .mapa-progresso{
+    margin-top:12px;padding:18px;border-radius:10px;background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .mapa-topo{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:14px;}
+  .mapa-topo h3{margin:0;font-size:.82rem;}
+  .legenda-torres{display:flex;gap:12px;flex-wrap:wrap;font-size:.65rem;color:rgba(255,255,255,.68);}
+  .legenda-torres span{display:flex;align-items:center;gap:5px;}
+  .legenda-torres i{width:8px;height:8px;border-radius:2px;display:block;}
+  .torres-progresso{
+    min-height:445px;display:flex;align-items:flex-end;justify-content:center;gap:clamp(48px,10vw,130px);
+    padding:12px 20px 0;background:linear-gradient(to top,rgba(3,17,28,.32),transparent 45%);
+    border-radius:8px;overflow:hidden;
+  }
+  .torre-progresso-wrap{text-align:center;}
+  .predio-progresso{
+    width:clamp(110px,14vw,170px);display:flex;flex-direction:column-reverse;
+    padding:5px 7px 8px;background:linear-gradient(90deg,#738591,#d7dfe0 12%,#a7b6ba 88%,#596e79);
+    border:1px solid rgba(255,255,255,.45);border-radius:3px 3px 0 0;
+    filter:drop-shadow(18px 20px 14px rgba(0,0,0,.35));
+    overflow:visible;
+  }
+  .predio-progresso.aurora{height:390px;}
+  .predio-progresso.horizonte{height:258px;}
+  .andar-progresso{
+    flex:1;min-height:5px;position:relative;border-top:1px solid rgba(15,43,55,.62);
+    background:linear-gradient(90deg,
+      #2e9e5b 0 var(--fim-concluido),
+      #e0a800 var(--fim-concluido) var(--fim-andamento),
+      #d9483d var(--fim-andamento) var(--fim-pendente),
+      #637582 var(--fim-pendente) 100%);
+    transition:background .35s ease,filter .2s ease;cursor:pointer;
+  }
+  .andar-progresso::after{
+    content:"";position:absolute;left:14%;right:14%;top:24%;height:48%;
+    background:repeating-linear-gradient(90deg,rgba(8,37,49,.75) 0 12%,rgba(211,226,225,.3) 12% 20%);
+    opacity:.65;
+  }
+  .andar-progresso:hover,.andar-progresso:focus-visible{filter:brightness(1.45);z-index:2;outline:2px solid #fff;outline-offset:1px;}
+  .andar-progresso[data-marco]::before{
+    content:attr(data-marco);position:absolute;right:calc(100% + 9px);top:50%;transform:translateY(-50%);
+    color:#fff;font-size:.52rem;line-height:1;white-space:nowrap;font-weight:700;
+    text-shadow:0 1px 3px rgba(0,0,0,.9);z-index:5;
+  }
+  .torre-progresso-wrap strong{display:block;margin-top:12px;font-size:.82rem;}
+  .torre-progresso-wrap small{color:rgba(255,255,255,.58);font-size:.66rem;}
+  .controle-obra{
+    background:#fff;border:1px solid var(--cinza-borda);border-radius:14px;
+    box-shadow:0 8px 28px rgba(15,42,74,.07);overflow:hidden;
+  }
+  .controle-cabecalho{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    padding:20px 22px;border-bottom:1px solid var(--cinza-borda);
+  }
+  .controle-cabecalho h2{margin-bottom:5px;}
+  .controle-cabecalho p{margin:0;color:var(--cinza-texto);font-size:.82rem;}
+  .salvamento{display:flex;align-items:center;gap:7px;color:var(--verde);font-size:.76rem;white-space:nowrap;}
+  .salvamento::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .filtros-planilha{
+    display:grid;grid-template-columns:1.05fr 1fr 1.35fr .9fr auto;gap:12px;align-items:end;
+    padding:16px 22px;background:#f8fafb;border-bottom:1px solid var(--cinza-borda);
+  }
+  .campo-filtro label{display:block;margin-bottom:5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+  .campo-filtro select{
+    width:100%;height:38px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;
+    padding:0 10px;color:#243445;font:inherit;font-size:.82rem;
+  }
+  .resumo-andar{height:38px;display:flex;align-items:center;gap:9px;padding:0 12px;border-radius:8px;background:#eaf2f7;color:var(--azul-escuro);font-size:.78rem;font-weight:700;}
+  .resumo-andar span{font-size:1.1rem;}
+  .acoes-lote{display:flex;align-items:center;gap:10px;padding:11px 22px;background:#eef4f7;border-bottom:1px solid var(--cinza-borda);}
+  .acoes-lote strong{margin-right:auto;color:var(--azul-escuro);font-size:.76rem;}
+  .acoes-lote select{height:34px;min-width:155px;border:1px solid #bbc7d0;border-radius:7px;background:#fff;padding:0 9px;color:#243445;font:inherit;font-size:.76rem;font-weight:700;}
+  .acoes-lote button{height:34px;border:0;border-radius:7px;background:var(--azul);color:#fff;padding:0 13px;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer;}
+  .acoes-lote button:disabled{opacity:.45;cursor:not-allowed;}
+  .selecao-lote{width:18px;height:18px;accent-color:var(--azul);cursor:pointer;}
+  .tabela-scroll{overflow:auto;max-height:520px;}
+  .planilha{min-width:960px;font-size:.79rem;}
+  .planilha thead{position:sticky;top:0;z-index:5;background:#f5f7f9;box-shadow:0 1px 0 var(--cinza-borda);}
+  .planilha th{padding:9px 8px;}
+  .planilha td{padding:7px 8px;vertical-align:middle;}
+  .planilha tr.linha-concluida{background:#f4fbf6;}
+  .planilha .local{font-weight:700;color:var(--azul-escuro);white-space:nowrap;}
+  .check-servico{
+    appearance:none;width:19px;height:19px;border:2px solid #b8c2cc;border-radius:5px;
+    display:grid;place-content:center;cursor:pointer;margin:auto;background:#fff;
+  }
+  .check-servico::before{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) scale(0);}
+  .check-servico:checked{background:var(--verde);border-color:var(--verde);}
+  .check-servico:checked::before{transform:rotate(-45deg) scale(1);}
+  .status-atividade{width:125px;height:32px;border:1px solid #ccd4dc;border-radius:6px;padding:0 7px;font:inherit;font-size:.72rem;font-weight:700;background:#fff;}
+  .status-select-nao-iniciado{color:#637582;background:#f1f3f5;}
+  .status-select-em-andamento{color:#8a6a00;background:#fff7db;}
+  .status-select-pendente{color:var(--vermelho);background:#fbe9e7;}
+  .status-select-concluido{color:var(--verde);background:#eaf7ee;}
+  .planilha input[type="date"],.planilha input[type="text"]{
+    width:100%;height:32px;border:1px solid #d5dce2;border-radius:6px;padding:0 8px;font:inherit;background:#fff;color:#263746;
+  }
+  .planilha input[type="date"]{min-width:125px;}
+  .planilha input[type="date"][readonly]{background:#f3f6f8;color:#526270;cursor:not-allowed;}
+  .planilha input[type="text"]{min-width:180px;}
+  .foto-campo{display:flex;align-items:center;gap:6px;min-width:125px;}
+  .foto-botao{
+    display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px dashed #aab7c2;
+    border-radius:6px;background:#fff;color:var(--azul);font-size:.72rem;font-weight:700;cursor:pointer;white-space:nowrap;
+  }
+  .foto-botao:hover{border-color:var(--azul);background:#f2f7fb;}
+  .foto-botao input{position:absolute;opacity:0;width:1px;height:1px;}
+  .foto-preview{width:30px;height:30px;object-fit:cover;border-radius:5px;border:1px solid #d7dee4;display:none;}
+  .foto-preview.visivel{display:block;}
+  .foto-remover{
+    display:none;place-items:center;width:22px;height:22px;padding:0;border:0;border-radius:50%;
+    background:#fbe6e4;color:var(--vermelho);font-size:.9rem;font-weight:800;line-height:1;cursor:pointer;
+  }
+  .foto-remover.visivel{display:grid;}
+  .foto-remover:hover{background:var(--vermelho);color:#fff;}
+  .graficos-operacionais{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;}
+  .grafico-operacional{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:16px 18px;}
+  .grafico-operacional.grafico-largo{grid-column:1/-1;}
+  .grafico-topo{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px;}
+  .grafico-topo h3{margin:0;font-size:.9rem;color:var(--azul-escuro);}
+  .grafico-topo select{height:32px;border:1px solid #d2dae1;border-radius:6px;background:#fff;padding:0 8px;font-size:.74rem;}
+  .grafico-area{height:245px;}
+  section{
+    margin-bottom:28px;
+  }
+  h2{
+    font-size:1.05rem;
+    color:var(--azul-escuro);
+    border-left:4px solid var(--laranja);
+    padding-left:10px;
+    margin:0 0 14px 0;
+  }
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(190px,1fr));
+    gap:14px;
+  }
+  .kpi-card{
+    background:var(--branco);
+    border:1px solid var(--cinza-borda);
+    border-radius:10px;
+    padding:16px 18px;
+    box-shadow:0 1px 2px rgba(0,0,0,.03);
+  }
+  .kpi-card .valor{
+    font-size:1.8rem;
+    font-weight:700;
+    color:var(--azul-escuro);
+  }
+  .kpi-card .rotulo{
+    font-size:.78rem;
+    color:var(--cinza-texto);
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    margin-bottom:6px;
+  }
+  .kpi-card .nota{
+    font-size:.78rem;
+    margin-top:4px;
+    font-weight:600;
+  }
+  .ok{color:var(--verde);}
+  .alerta{color:var(--amarelo);}
+  .critico{color:var(--vermelho);}
+
+  .card{
+    background:var(--branco);
+    border:1px solid var(--cinza-borda);
+    border-radius:10px;
+    padding:18px 20px;
+  }
+
+  .chart-wrap{
+    height:340px;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.88rem;
+  }
+  th, td{
+    text-align:left;
+    padding:10px 8px;
+    border-bottom:1px solid var(--cinza-borda);
+  }
+  th{
+    color:var(--cinza-texto);
+    text-transform:uppercase;
+    font-size:.72rem;
+    letter-spacing:.03em;
+  }
+  .barra-bg{
+    background:#e9ecf1;
+    border-radius:6px;
+    height:8px;
+    width:100%;
+    overflow:hidden;
+  }
+  .barra-fill{
+    height:100%;
+    border-radius:6px;
+    background:var(--azul);
+  }
+  .status-tag{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:.72rem;
+    font-weight:600;
+  }
+  .status-no-prazo{background:#e5f6ec; color:var(--verde);}
+  .status-atencao{background:#fdf3d9; color:#8a6a00;}
+  .status-atrasado{background:#fbe6e4; color:var(--vermelho);}
+  .status-concluido{background:#e3ecfb; color:var(--azul);}
+  .status-nao-iniciado{background:#e7ebef;color:#637582;}
+  .status-em-andamento{background:#fff3cd;color:#8a6a00;}
+  .status-pendente{background:#fbe6e4;color:var(--vermelho);}
+  .status-finalizado{background:#e5f6ec;color:var(--verde);}
+
+  .duas-colunas{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:820px){
+    .duas-colunas{grid-template-columns:1fr;}
+    .filtros-planilha{grid-template-columns:1fr 1fr;}
+    .graficos-operacionais{grid-template-columns:1fr;}
+    .apartamento-analises{grid-template-columns:1fr;}
+    .relatorios-grid{grid-template-columns:1fr;}
+    .documentos-grid{grid-template-columns:1fr;}
+    .servicos-corpo{grid-template-columns:1fr;}
+    .resumo-geral-grid{grid-template-columns:1fr 1fr;}
+    .apartamento-resumo{grid-template-columns:1fr;}
+    .ocorrencia-campos{grid-template-columns:1fr;}
+    .servicos-topo{align-items:stretch;flex-direction:column;}
+    .servicos-filtro{min-width:0;}
+    .servicos-resumo{grid-template-columns:1fr;}
+    .dashboard-graficos{grid-template-columns:1fr;}
+    .seletor-conteudo{grid-template-columns:1fr;align-content:start;padding-top:3vh;}
+    .chamada-3d{text-align:center;margin:auto;}
+    .chamada-3d p{margin-inline:auto;}
+    .instrucao{justify-content:center;margin-top:14px;}
+    .cenario{height:50vh;min-height:350px;width:min(520px,100%);margin:auto;}
+    .torre{--largura:130px;}
+    .torre-b{--largura:100px;left:10%;}
+    .torre-a{--largura:142px;right:5%;}
+    .seletor-topo{padding-block:18px;}
+    .seletor-rodape{display:none;}
+  }
+  @media (max-width:520px){
+    .dashboard-topo{align-items:stretch;flex-direction:column;}
+    .apartamentos-cabecalho{align-items:stretch;flex-direction:column;}
+    .resumo-geral-grid{grid-template-columns:1fr 1fr;}
+    .torres-progresso{gap:38px;padding-inline:5px;min-height:390px;}
+    .predio-progresso{width:92px;}
+    .predio-progresso.aurora{height:340px;}
+    .predio-progresso.horizonte{height:225px;}
+    .controle-cabecalho{flex-direction:column;}
+    .filtros-planilha{grid-template-columns:1fr;}
+    .chamada-3d h1{font-size:2.25rem;margin:10px 0 12px;}
+    .chamada-3d p{font-size:.88rem;line-height:1.45;}
+    .cenario{min-height:330px;height:48vh;}
+    .torre{--largura:105px;}
+    .torre-b{--largura:80px;left:8%;}
+    .torre-a{--largura:112px;right:3%;}
+    .torre-info{width:140px;bottom:-62px;}
+    .seletor-topo small{display:none;}
+    .cabecalho-identidade{flex-direction:column;gap:10px;}
+    .logo-header{width:112px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;}}
+
+  .ocorrencias-lista{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .ocorrencias-lista li{
+    border-left:3px solid var(--laranja);
+    background:#fafbfc;
+    padding:8px 12px;
+    border-radius:0 6px 6px 0;
+    font-size:.85rem;
+  }
+  .ocorrencias-lista .data{
+    display:block;
+    font-size:.72rem;
+    color:var(--cinza-texto);
+    margin-bottom:2px;
+  }
+
+  footer{
+    text-align:center;
+    font-size:.78rem;
+    color:var(--cinza-texto);
+    padding:20px;
+  }
+
+  .como-editar{
+    background:#fff9ef;
+    border:1px dashed #e8c66a;
+    border-radius:10px;
+    padding:14px 18px;
+    font-size:.85rem;
+    color:#6b5b1f;
+  }
+  .como-editar code{
+    background:#f1e6c4;
+    padding:1px 5px;
+    border-radius:4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-caixa">
+    <img src="LOGO-DIALOGO.png" alt="Diálogo Engenharia">
+    <h1>BoulevarDiálogo Butantã</h1>
+    <p>Acompanhamento de obra</p>
+    <div class="login-autoria">Desenvolvido por Locchi Engenharia</div>
+    <form id="formLoginEngenheiro">
+      <label for="loginUsuario">Usuário do engenheiro</label>
+      <input id="loginUsuario" name="usuario" autocomplete="username" required>
+      <label for="loginSenha">Senha</label>
+      <input id="loginSenha" name="senha" type="password" autocomplete="current-password" required>
+      <button type="submit">Entrar como engenheiro</button>
+      <div class="login-erro" id="loginErro"></div>
+    </form>
+    <div class="login-divisor">ou</div>
+    <a class="login-visitante" href="/visitante-inicio">Entrar como visitante</a>
+  </div>
+</div>
+
+<div class="seletor-obras" id="seletorObras" aria-label="Seleção de obra">
+  <div class="obras-conteudo">
+    <div class="obras-topo"><img src="LOGO-DIALOGO.png" alt="Diálogo Engenharia"><h1>Selecione uma obra</h1><p>Escolha o empreendimento que deseja acompanhar.</p></div>
+    <div class="obras-grid">
+      <button class="obra-seletor" type="button" data-obra="boulevard-dialogo-butanta"><strong>BoulevarDiálogo Butantã</strong><span>Rua Dráusio, 150 — Butantã — São Paulo/SP</span><span>Torres Home e Smart</span></button>
+    </div>
+    <div class="obras-rodape">Novas obras poderão ser adicionadas neste espaço · Desenvolvido por Locchi Engenharia</div>
+  </div>
+</div>
+
+<div class="seletor-3d fechado" id="seletorTorres" aria-label="Seleção de torre">
+  <div class="seletor-topo">
+    <div class="marca"><img class="marca-logo" src="LOGO-DIALOGO.png" alt="Diálogo Engenharia"></div>
+    <small>Acompanhamento de obra em tempo real</small>
+  </div>
+  <div class="seletor-conteudo">
+    <div class="chamada-3d">
+      <div class="sobretitulo">BoulevarDiálogo Butantã</div>
+      <h1>A obra,<br>por outro ângulo.</h1>
+      <p>Explore o empreendimento e selecione uma torre para acompanhar a evolução de cada etapa.</p>
+      <div class="instrucao"><span></span> Clique em uma das torres para continuar</div>
+    </div>
+    <div class="cenario" id="cenario3d">
+      <span class="lua"></span>
+      <span class="skyline"></span>
+      <div class="cidade" id="cidade3d">
+        <span class="embasamento"></span>
+        <button class="torre torre-a" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares">
+          <span class="grua"></span>
+          <span class="cobertura"></span><span class="ala"></span><span class="lateral"></span>
+          <span class="fachada"><span class="pavimentos" data-andares="36"></span></span>
+          <span class="torre-info"><strong>Torre Home</strong><span>36 andares</span><em>0% concluída</em></span>
+        </button>
+        <button class="torre torre-b" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares">
+          <span class="cobertura"></span><span class="ala"></span><span class="lateral"></span>
+          <span class="fachada"><span class="pavimentos" data-andares="23"></span></span>
+          <span class="torre-info"><strong>Torre Smart</strong><span>23 andares</span><em>0% concluída</em></span>
+        </button>
+        <span class="espelho-dagua"></span>
+        <span class="paisagismo"><i class="arvore"></i><i class="arvore"></i><i class="arvore"></i><i class="arvore"></i></span>
+      </div>
+    </div>
+  </div>
+  <div class="seletor-rodape"><span>Desenvolvido por Locchi Engenharia</span><span>Arraste o cursor para mudar a perspectiva</span></div>
+</div>
+
+<header>
+  <div class="topo">
+    <div class="cabecalho-identidade">
+      <img class="logo-header" src="LOGO-DIALOGO.png" alt="Diálogo Engenharia">
+      <div>
+        <div class="torre-atual" id="torreAtual">Torre Home · 36 andares</div>
+        <h1 id="nomeObra">BoulevarDiálogo Butantã</h1>
+        <div class="subtitulo" id="enderecoObra">Rua Dráusio, 150 — Butantã — São Paulo/SP</div>
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <div class="subtitulo">Atualizado em</div>
+      <strong id="dataAtualizacao">30/07/2026</strong>
+      <div><button class="trocar-torre" id="trocarObra" type="button">Ver outra obra</button> <button class="trocar-torre" id="trocarTorre" type="button">Ver outra torre</button> <button class="trocar-torre" id="sairSistema" type="button">Sair</button></div>
+    </div>
+  </div>
+
+  <div class="info-obra">
+    <div><span>Responsável técnico</span><strong id="responsavel">Eng. Emanuel Locchi</strong></div>
+    <div><span>Início da obra</span><strong id="dataInicio">01/02/2025</strong></div>
+    <div><span>Previsão de término</span><strong id="dataFim">30/11/2027</strong></div>
+    <div><span>Dias corridos</span><strong id="diasCorridos">544 de 1.032 dias</strong></div>
+  </div>
+</header>
+
+<div class="menu-principal">
+  <nav aria-label="Navegação do acompanhamento">
+    <a href="#dashboardGeral" class="ativo"><span>▦</span>Visão geral</a>
+    <a href="#controleDetalhado"><span>≣</span>Planilha de acompanhamento</a>
+    <a href="#apartamentos"><span>⌂</span>Apartamentos</a>
+    <a href="#graficos"><span>▥</span>Gráficos</a>
+    <a href="#ocorrencias"><span>!</span>Ocorrências</a>
+    <a href="#relatorios"><span>▤</span>Relatórios</a>
+    <a href="#documentosLinks"><span>⌘</span>Documentos/Links</a>
+  </nav>
+</div>
+
+<main>
+
+  <section id="dashboardGeral" class="dashboard-geral painel-aba ativo">
+    <div class="dashboard-topo">
+      <div>
+        <h2>Visão geral da obra</h2>
+        <p>Consolidado das torres Home e Smart com base nos serviços registrados.</p>
+      </div>
+      <div class="dashboard-filtro">
+        <label for="filtroServicoDashboard">Visualizar por serviço</label>
+        <select id="filtroServicoDashboard"></select>
+      </div>
+    </div>
+    <div class="resumo-geral-grid">
+      <div class="resumo-geral-card"><span>Avanço geral</span><strong id="dashAvanco">0%</strong></div>
+      <div class="resumo-geral-card"><span>Serviços realizados</span><strong id="dashRealizados">0</strong></div>
+      <div class="resumo-geral-card"><span>Serviços pendentes</span><strong id="dashPendentes">0</strong></div>
+      <div class="resumo-geral-card"><span>Pavimentos concluídos</span><strong id="dashPavimentos">0</strong></div>
+    </div>
+    <div class="dashboard-graficos">
+      <div class="dashboard-grafico"><h3>Status geral</h3><div class="dashboard-canvas"><canvas id="graficoStatusGeral"></canvas></div></div>
+    </div>
+    <div class="mapa-progresso">
+      <div class="mapa-topo">
+        <h3>Evolução visual dos pavimentos</h3>
+        <div class="legenda-torres"><span><i style="background:#637582"></i>Não iniciado</span><span><i style="background:#e0a800"></i>Em andamento</span><span><i style="background:#d9483d"></i>Pendente</span><span><i style="background:#2e9e5b"></i>Concluído</span></div>
+      </div>
+      <div class="torres-progresso" id="torresProgresso"></div>
+    </div>
+  </section>
+
+  <section id="apartamentos" class="painel-aba">
+    <div class="apartamentos-cabecalho">
+      <div>
+        <h2 id="tituloApartamentos">Análise do apartamento</h2>
+        <p id="subtituloApartamentos">Clique em um apartamento na planilha de acompanhamento.</p>
+      </div>
+      <div class="apartamento-acoes-relatorio">
+        <div class="campo-filtro"><label for="andarAbaApartamentos">Mudar pavimento</label><select id="andarAbaApartamentos"></select></div>
+        <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>↓ Baixar PDF do apartamento</a>
+      </div>
+    </div>
+    <div class="apartamentos-seletor" id="apartamentosGrid"></div>
+    <div class="dashboard-apartamento" id="dashboardApartamento">
+      <div class="apartamento-resumo">
+        <div class="apartamento-kpi"><span>Andamento</span><strong id="aptoAvanco">0%</strong></div>
+        <div class="apartamento-kpi"><span>Realizadas</span><strong id="aptoRealizadas">0</strong></div>
+        <div class="apartamento-kpi"><span>Pendências</span><strong id="aptoPendentes">0</strong></div>
+      </div>
+      <div class="apartamento-analises">
+        <div class="apartamento-painel"><h3>Andamento da unidade</h3><div class="apartamento-chart"><canvas id="graficoApartamento"></canvas></div></div>
+        <div class="apartamento-painel"><h3>Serviços da unidade</h3><ul class="pendencias-apartamento" id="listaPendenciasApartamento"></ul></div>
+      </div>
+      <div class="apartamento-painel">
+        <h3>Atividades do apartamento</h3>
+        <div class="tabela-scroll">
+          <table>
+            <thead><tr><th>Atividade</th><th>Status</th><th>Data da atualização</th></tr></thead>
+            <tbody id="tabelaApartamento"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="apartamento-painel" style="margin-top:15px">
+        <h3>Ocorrências pendentes vinculadas ao apartamento</h3>
+        <div class="ocorrencias-cards" id="ocorrenciasApartamento"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="controleDetalhado" class="painel-aba">
+    <div class="controle-obra">
+      <div class="controle-cabecalho">
+        <div>
+          <h2 id="tituloPlanilhaDetalhada">Planilha de acompanhamento do pavimento</h2>
+          <p id="subtituloPlanilha">Controle por andar, apartamento e atividade</p>
+        </div>
+        <div class="salvamento" id="statusSalvamento">Conectando ao banco SQLite…</div>
+      </div>
+      <div class="filtros-planilha">
+        <div class="campo-filtro">
+          <label for="filtroAndar">Andar</label>
+          <select id="filtroAndar"></select>
+        </div>
+        <div class="campo-filtro">
+          <label for="filtroApartamento">Apartamento / setor</label>
+          <select id="filtroApartamento"></select>
+        </div>
+        <div class="campo-filtro">
+          <label for="filtroAtividade">Atividade</label>
+          <select id="filtroAtividade"></select>
+        </div>
+        <div class="campo-filtro">
+          <label for="filtroSituacao">Situação</label>
+          <select id="filtroSituacao">
+            <option value="todas">Todas</option>
+            <option value="nao-iniciado">Não iniciado</option>
+            <option value="em-andamento">Em andamento</option>
+            <option value="pendente">Pendente</option>
+            <option value="concluido">Concluído</option>
+          </select>
+        </div>
+        <div class="resumo-andar"><span id="percentualFiltro">0%</span> concluído</div>
+      </div>
+      <div class="acoes-lote">
+        <strong id="quantidadeSelecionada">Nenhum serviço selecionado</strong>
+        <select id="statusEmLote" aria-label="Novo status dos serviços selecionados">
+          <option value="nao-iniciado">Não iniciado</option>
+          <option value="em-andamento">Em andamento</option>
+          <option value="pendente">Pendente</option>
+          <option value="concluido">Concluído</option>
+        </select>
+        <button id="aplicarStatusEmLote" type="button" disabled>Aplicar aos selecionados</button>
+      </div>
+      <div class="tabela-scroll">
+        <table class="planilha">
+          <thead><tr><th style="width:42px"><input class="selecao-lote" id="selecionarTodosRegistros" type="checkbox" aria-label="Selecionar todos os serviços filtrados"></th><th style="width:76px">Andar</th><th>Unidade / setor</th><th>Atividade</th><th style="width:140px">Status</th><th>Data</th></tr></thead>
+          <tbody id="corpoPlanilha"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="graficos" class="painel-aba">
+    <h2>Gráficos de acompanhamento</h2>
+    <div class="graficos-operacionais">
+      <div class="grafico-operacional">
+        <div class="grafico-topo"><h3>Progresso por atividade</h3><select id="escopoGraficoAtividade"><option value="torre">Torre selecionada</option><option value="andar">Andar selecionado</option></select></div>
+        <div class="grafico-area"><canvas id="graficoAtividades"></canvas></div>
+      </div>
+      <div class="grafico-operacional">
+        <div class="grafico-topo"><h3>Progresso por andar</h3><select id="escopoGraficoAndar"><option value="todos">Todos os andares</option><option value="com-pendencia">Somente com pendências</option></select></div>
+        <div class="grafico-area"><canvas id="graficoAndares"></canvas></div>
+      </div>
+      <div class="grafico-operacional grafico-largo">
+        <div class="grafico-topo"><h3>Acompanhamento de prazos — planejado × realizado</h3><span style="font-size:.7rem;color:var(--cinza-texto)">Posição na data atual</span></div>
+        <div class="grafico-area"><canvas id="graficoPrazos"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ocorrencias" class="painel-aba">
+    <h2>Ocorrências recentes</h2>
+    <form class="ocorrencia-form" id="formOcorrencia">
+      <h3>Adicionar nova ocorrência</h3>
+      <div class="ocorrencia-campos">
+        <div class="campo-filtro"><label for="ocTorre">Torre</label><select id="ocTorre" required></select></div>
+        <div class="campo-filtro"><label for="ocAndar">Pavimento</label><select id="ocAndar" required></select></div>
+        <div class="campo-filtro"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
+        <div class="campo-filtro"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
+        <div class="campo-filtro"><label for="ocData">Data da ocorrência</label><input id="ocData" type="date" required></div>
+        <div class="campo-filtro largo"><label for="ocDescricao">Descrição da ocorrência</label><textarea id="ocDescricao" required placeholder="Descreva a ocorrência, pendência ou problema encontrado"></textarea></div>
+      </div>
+      <div class="ocorrencia-acoes">
+        <label class="foto-botao">＋ Adicionar foto (obrigatória)<input id="ocFoto" type="file" accept="image/*" required></label>
+        <button class="botao-primario" type="submit">Salvar ocorrência</button>
+      </div>
+      <div class="preview-ocorrencia" id="previewOcorrencia"><img id="previewOcorrenciaImg" alt="Pré-visualização da foto"><span id="previewOcorrenciaNome"></span></div>
+      <div id="statusOcorrencia" style="margin-top:9px;font-size:.72rem"></div>
+    </form>
+    <div class="ocorrencias-toolbar">
+      <h3 style="margin:0;color:var(--azul-escuro);font-size:.9rem">Histórico de ocorrências</h3>
+      <div class="campo-filtro"><label for="filtroAndarOcorrencias">Andar</label><select id="filtroAndarOcorrencias"></select></div>
+      <div class="campo-filtro"><label for="filtroPeriodoOcorrencias">Período</label><select id="filtroPeriodoOcorrencias"><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="todas">Todas as ocorrências</option></select></div>
+      <div class="campo-filtro"><label for="filtroStatusOcorrencias">Status</label><select id="filtroStatusOcorrencias"><option value="todos">Todos os status</option><option value="pendente">Pendente</option><option value="concluido">Concluída</option></select></div>
+      <a class="acao-relatorio" id="baixarHistoricoOcorrencias" href="#" download>↓ Gerar PDF do histórico</a>
+    </div>
+    <div class="ocorrencias-cards" id="listaOcorrencias"></div>
+  </section>
+
+  <section id="relatorios" class="painel-aba">
+    <h2>Relatórios para visitantes</h2>
+    <div class="relatorios-grid">
+      <div class="relatorio-qr">
+        <h3>QR Code visitante</h3>
+        <img id="qrRelatoriosVisitante" alt="QR Code do portal de relatórios para visitantes">
+        <a class="download-foto" id="baixarQrRelatorios" href="#" download="qr-code-relatorios-visitante.svg">↓ Baixar QR Code</a>
+      </div>
+      <div class="relatorio-info">
+        <h3 id="tituloRelatoriosVisitante">Portal de relatórios</h3>
+        <p>Quem acessar este QR Code abrirá uma visão somente para leitura da torre selecionada.</p>
+        <ul><li>Filtro por pavimento.</li><li>Filtro por apartamento ou setor.</li><li>Filtro por serviço.</li><li>Geração de PDF conforme os filtros escolhidos.</li></ul>
+        <a class="acao-relatorio" id="abrirPortalRelatorios" href="#" target="_blank" rel="noopener">Abrir visão visitante</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="documentosLinks" class="painel-aba">
+    <h2>Documentos e links importantes</h2>
+    <div class="documentos-grid">
+      <div class="documentos-bloco">
+        <h3>Documentos</h3>
+        <p>Área reservada para projetos, memoriais, atas, relatórios e outros arquivos da obra.</p>
+        <div class="documentos-vazio">Nenhum documento adicionado.</div>
+      </div>
+      <div class="documentos-bloco">
+        <h3>Links importantes</h3>
+        <p>Área reservada para acessos externos, portais, sistemas e páginas relacionadas à obra.</p>
+        <div class="documentos-vazio">Nenhum link adicionado.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Painel de acompanhamento de obra — uso interno da equipe técnica.<br>
+  <strong>Desenvolvido por Locchi Engenharia</strong>
+</footer>
+
+<script>
+/* =========================================================
+   DADOS DA OBRA
+   Edite os valores abaixo para atualizar o painel.
+   ========================================================= */
+const DADOS = {
+  obra: {
+    nome: "BoulevarDiálogo Butantã",
+    endereco: "Rua Dráusio, 150 — Butantã — São Paulo/SP",
+    responsavel: "Eng. Emanuel Locchi",
+    dataInicio: "01/02/2025",
+    dataFim: "30/11/2027",
+    diasCorridos: "544 de 1.032 dias",
+    dataAtualizacao: "30/07/2026"
+  },
+
+  kpis: {
+    avancoFisico: { valor: "58%", nota: "3 p.p. abaixo do planejado", classe: "alerta" },
+    avancoFinanceiro: { valor: "61%", nota: "Dentro do orçamento", classe: "ok" },
+    idp: { valor: "0,96", nota: "Leve atraso (< 1,0)", classe: "alerta" },
+    idc: { valor: "1,04", nota: "Custo sob controle (> 1,0)", classe: "ok" },
+    efetivo: { valor: "34", nota: "colaboradores", classe: "" },
+    seguranca: { valor: "87", nota: "Meta: 100 dias", classe: "ok" }
+  },
+
+  // Curva S: percentual acumulado por mês (planejado x realizado)
+  curvaS: {
+    meses: ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
+    planejadoFisico:   [4, 10, 18, 28, 39, 50, 61, 71, 81, 90, 96, 100],
+    realizadoFisico:   [3, 9, 16, 25, 35, 46, 58, null, null, null, null, null],
+    planejadoFinanceiro:[5, 12, 20, 30, 41, 52, 63, 73, 83, 91, 97, 100],
+    realizadoFinanceiro:[4, 11, 19, 29, 40, 51, 61, null, null, null, null, null]
+  },
+
+  // status possível: "no-prazo", "atencao", "atrasado", "concluido"
+  etapas: [
+    { nome: "Fundação",            planejado: 100, realizado: 100, status: "concluido" },
+    { nome: "Estrutura",           planejado: 100, realizado: 96,  status: "atencao"   },
+    { nome: "Alvenaria/Vedação",   planejado: 80,  realizado: 70,  status: "atrasado"  },
+    { nome: "Instalações elétricas", planejado: 55, realizado: 50, status: "atencao"   },
+    { nome: "Instalações hidráulicas", planejado: 55, realizado: 48, status: "atrasado" },
+    { nome: "Revestimentos",       planejado: 30,  realizado: 30,  status: "no-prazo"  },
+    { nome: "Esquadrias",          planejado: 15,  realizado: 10,  status: "atrasado"  },
+    { nome: "Pintura",             planejado: 5,   realizado: 0,   status: "no-prazo"  },
+    { nome: "Acabamento final",    planejado: 0,   realizado: 0,   status: "no-prazo"  }
+  ],
+
+  ocorrencias: [
+    { data: "29/07/2026", texto: "Chuva forte interrompeu concretagem da laje do 4º pavimento por 3h." },
+    { data: "27/07/2026", texto: "Atraso na entrega de esquadrias de alumínio — fornecedor reagendou para 05/08." },
+    { data: "24/07/2026", texto: "Vistoria da CEF aprovada sem ressalvas para a etapa de estrutura." },
+    { data: "20/07/2026", texto: "Reforço de equipe de elétrica (+4 eletricistas) para recuperar cronograma." }
+  ]
+};
+
+const TORRES = {
+  aurora: {
+    nome: "Torre Home", andares: 36, conclusao: "72%",
+    kpis: {
+      avancoFisico: { valor: "72%", nota: "1 p.p. acima do planejado", classe: "ok" },
+      avancoFinanceiro: { valor: "69%", nota: "Dentro do orçamento", classe: "ok" },
+      idp: { valor: "1,01", nota: "Cronograma em dia", classe: "ok" },
+      idc: { valor: "1,04", nota: "Custo sob controle (> 1,0)", classe: "ok" },
+      efetivo: { valor: "22", nota: "colaboradores", classe: "" },
+      seguranca: { valor: "87", nota: "Meta: 100 dias", classe: "ok" }
+    },
+    realizados: [4, 10, 18, 28, 40, 57, 72, null, null, null, null, null],
+    financeiro: [4, 11, 19, 29, 41, 56, 69, null, null, null, null, null],
+    etapas: [
+      { nome: "Fundação", planejado: 100, realizado: 100, status: "concluido" },
+      { nome: "Estrutura", planejado: 100, realizado: 100, status: "concluido" },
+      { nome: "Alvenaria/Vedação", planejado: 92, realizado: 94, status: "no-prazo" },
+      { nome: "Instalações elétricas", planejado: 72, realizado: 74, status: "no-prazo" },
+      { nome: "Instalações hidráulicas", planejado: 72, realizado: 70, status: "atencao" },
+      { nome: "Revestimentos", planejado: 55, realizado: 58, status: "no-prazo" },
+      { nome: "Esquadrias", planejado: 40, realizado: 36, status: "atencao" },
+      { nome: "Pintura", planejado: 22, realizado: 20, status: "no-prazo" },
+      { nome: "Acabamento final", planejado: 8, realizado: 5, status: "no-prazo" }
+    ],
+    ocorrencias: [
+      { data: "29/07/2026", texto: "Concretagem da cobertura concluída conforme programação." },
+      { data: "27/07/2026", texto: "Instalação dos elevadores iniciada no núcleo central." },
+      { data: "24/07/2026", texto: "Fachada norte liberada para aplicação do revestimento." }
+    ]
+  },
+  horizonte: {
+    nome: "Torre Smart", andares: 23, conclusao: "44%",
+    kpis: {
+      avancoFisico: { valor: "44%", nota: "4 p.p. abaixo do planejado", classe: "alerta" },
+      avancoFinanceiro: { valor: "47%", nota: "2 p.p. acima do previsto", classe: "alerta" },
+      idp: { valor: "0,92", nota: "Atenção ao cronograma", classe: "alerta" },
+      idc: { valor: "0,98", nota: "Custo em acompanhamento", classe: "alerta" },
+      efetivo: { valor: "12", nota: "colaboradores", classe: "" },
+      seguranca: { valor: "87", nota: "Meta: 100 dias", classe: "ok" }
+    },
+    realizados: [2, 7, 13, 21, 29, 37, 44, null, null, null, null, null],
+    financeiro: [3, 9, 16, 24, 32, 40, 47, null, null, null, null, null],
+    etapas: [
+      { nome: "Fundação", planejado: 100, realizado: 100, status: "concluido" },
+      { nome: "Estrutura", planejado: 82, realizado: 75, status: "atrasado" },
+      { nome: "Alvenaria/Vedação", planejado: 58, realizado: 50, status: "atrasado" },
+      { nome: "Instalações elétricas", planejado: 36, realizado: 32, status: "atencao" },
+      { nome: "Instalações hidráulicas", planejado: 36, realizado: 30, status: "atrasado" },
+      { nome: "Revestimentos", planejado: 15, realizado: 14, status: "no-prazo" },
+      { nome: "Esquadrias", planejado: 5, realizado: 0, status: "atencao" },
+      { nome: "Pintura", planejado: 0, realizado: 0, status: "no-prazo" },
+      { nome: "Acabamento final", planejado: 0, realizado: 0, status: "no-prazo" }
+    ],
+    ocorrencias: [
+      { data: "29/07/2026", texto: "Chuva forte interrompeu a concretagem por 3 horas." },
+      { data: "26/07/2026", texto: "Reforço da equipe de estrutura programado para a próxima semana." },
+      { data: "22/07/2026", texto: "Recebido novo lote de blocos para avanço da vedação." }
+    ]
+  }
+};
+
+const ATIVIDADES_UNIDADE = [
+  "Alvenaria e vedação", "Instalação elétrica", "Instalação hidráulica",
+  "Revestimento", "Pintura", "Esquadrias", "Louças e metais", "Limpeza final"
+];
+const SERVICOS_GERAIS = [
+  "Instalações do hall", "Iluminação da circulação", "Pintura das áreas comuns",
+  "Sinalização e segurança", "Limpeza do pavimento"
+];
+const STATUS_ATIVIDADE={
+  "nao-iniciado":"Não iniciado",
+  "em-andamento":"Em andamento",
+  "pendente":"Pendente",
+  "concluido":"Concluído"
+};
+function opcoesStatusAtividade(atual){
+  return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"nao-iniciado")?"selected":""}>${nome}</option>`).join("");
+}
+const PRAZOS_PLANEJADOS = {
+  "Alvenaria e vedação":80,
+  "Instalação elétrica":55,
+  "Instalação hidráulica":55,
+  "Revestimento":30,
+  "Pintura":5,
+  "Esquadrias":15,
+  "Louças e metais":5,
+  "Limpeza final":0
+};
+Object.values(TORRES).forEach(torre => {
+  torre.conclusao = "0%";
+  torre.kpis.avancoFisico = {valor:"0%", nota:"Obra ainda não iniciada", classe:""};
+  torre.kpis.avancoFinanceiro = {valor:"0%", nota:"Sem medições registradas", classe:""};
+  torre.kpis.idp = {valor:"—", nota:"Aguardando início", classe:""};
+  torre.kpis.idc = {valor:"—", nota:"Aguardando início", classe:""};
+  torre.kpis.efetivo = {valor:"0", nota:"colaboradores", classe:""};
+  torre.realizados = Array(12).fill(null); torre.realizados[0] = 0;
+  torre.financeiro = Array(12).fill(null); torre.financeiro[0] = 0;
+  torre.etapas = torre.etapas.map(etapa => ({...etapa, realizado:0, status:"no-prazo"}));
+});
+let torreSelecionada = "aurora";
+let pavimentoSelecionado = 1;
+let unidadeSelecionada = null;
+let registrosObra = {};
+let ocorrenciasBanco = [];
+const registrosSelecionados = new Set();
+let servicoAguardandoOcorrencia = null;
+let graficoAtividades;
+let graficoAndares;
+let graficoPrazos;
+let graficoStatusGeral;
+let graficoApartamento;
+let graficoServico;
+
+async function carregarRegistrosDoBanco(){
+  const status = document.getElementById("statusSalvamento");
+  try{
+    const resposta = await fetch("/api/registros",{cache:"no-store"});
+    if(!resposta.ok) throw new Error("Banco indisponível");
+    registrosObra = await resposta.json();
+    Object.values(registrosObra).forEach(registro => {
+      registro.status = registro.status || (registro.concluido?"concluido":"nao-iniciado");
+      registro.concluido = registro.status === "concluido";
+      if(registro.status === "nao-iniciado") registro.data = "";
+    });
+    status.textContent = "Dados carregados do banco SQLite";
+    status.style.color = "";
+    renderizarPlanilha();
+    renderizarApartamentosDoPavimento();
+    atualizarDashboardGeral();
+    atualizarGraficosOperacionais();
+    renderizarAbaServicos();
+  }
+  catch(e){
+    status.textContent = "Inicie o painel pelo arquivo INICIAR-PAINEL.command";
+    status.style.color = "var(--vermelho)";
+  }
+}
+
+async function salvarRegistros(){
+  const status = document.getElementById("statusSalvamento");
+  status.textContent = "Salvando no banco SQLite…";
+  try{
+    const resposta = await fetch("/api/registros",{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(registrosObra)
+    });
+    if(!resposta.ok) throw new Error("Falha ao salvar");
+    status.textContent = "Alterações salvas no banco SQLite";
+    status.style.color = "";
+  }catch(e){
+    status.textContent = "Não foi possível salvar no banco";
+    status.style.color = "var(--vermelho)";
+  }
+}
+
+async function carregarOcorrenciasDoBanco(){
+  try{
+    const resposta = await fetch("/api/ocorrencias",{cache:"no-store"});
+    if(!resposta.ok) throw new Error("Falha ao carregar ocorrências");
+    ocorrenciasBanco = await resposta.json();
+    preencherOcorrencias();
+    renderizarApartamentosDoPavimento();
+    atualizarDashboardGeral();
+    atualizarGraficosOperacionais();
+  }catch(e){
+    document.getElementById("statusOcorrencia").textContent = "Não foi possível acessar as ocorrências no banco.";
+  }
+}
+
+function compactarImagem(arquivo){
+  return new Promise((resolver,rejeitar)=>{
+    if(!arquivo){resolver("");return;}
+    const leitor=new FileReader();
+    leitor.onerror=rejeitar;
+    leitor.onload=()=>{
+      const imagem=new Image();
+      imagem.onerror=rejeitar;
+      imagem.onload=()=>{
+        const escala=Math.min(1,1000/Math.max(imagem.width,imagem.height));
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.round(imagem.width*escala);
+        canvas.height=Math.round(imagem.height*escala);
+        canvas.getContext("2d").drawImage(imagem,0,0,canvas.width,canvas.height);
+        resolver(canvas.toDataURL("image/jpeg",.75));
+      };
+      imagem.src=leitor.result;
+    };
+    leitor.readAsDataURL(arquivo);
+  });
+}
+
+function chaveRegistro(torre, andar, unidade, atividade){
+  return [torre, andar, unidade, atividade].join("|");
+}
+
+function registroPadrao(torre, andar, unidade, atividade){
+  return {status:"nao-iniciado", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
+}
+
+function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
+  const chave = chaveRegistro(torre, andar, unidade, atividade);
+  return {...registroPadrao(torre, andar, unidade, atividade), ...(registrosObra[chave] || {})};
+}
+
+function apartamentosDoAndar(torre, andar){
+  if(torre === "horizonte"){
+    return andar >= 4
+      ? Array.from({length:14},(_,i)=>`${andar}${String(i+1).padStart(2,"0")}`)
+      : [];
+  }
+  if(andar === 1) return ["103","104","105"];
+  if(andar === 2) return ["203","204","205"];
+  if(andar === 3) return [];
+  if(andar >= 4 && andar <= 35) return Array.from({length:10},(_,i)=>`${andar}${String(i+1).padStart(2,"0")}`);
+  if(andar === 36) return ["3001","3003","3004","3005","3006","3008","3009","3010"];
+  return [];
+}
+
+function listaRegistros(torre = torreSelecionada){
+  const itens = [];
+  for(let andar=1;andar<=TORRES[torre].andares;andar++){
+    apartamentosDoAndar(torre,andar).forEach((numero,indice) => {
+      ATIVIDADES_UNIDADE.forEach(atividade => itens.push({
+        andar,
+        unidade:`Apto ${numero}`,
+        numeroApto:indice+1,
+        atividade
+      }));
+    });
+    SERVICOS_GERAIS.forEach(atividade => itens.push({andar, unidade:"Área comum", numeroApto:null, atividade}));
+  }
+  return itens;
+}
+
+function renderizarApartamentosDoPavimento(){
+  const seletorAndar=document.getElementById("andarAbaApartamentos");
+  if(seletorAndar.dataset.torre!==torreSelecionada){
+    seletorAndar.innerHTML=Array.from({length:TORRES[torreSelecionada].andares},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
+    seletorAndar.dataset.torre=torreSelecionada;
+  }
+  seletorAndar.value=String(pavimentoSelecionado);
+  const numeros = apartamentosDoAndar(torreSelecionada,pavimentoSelecionado);
+  const unidades = numeros.length ? numeros.map(numero=>`Apto ${numero}`) : ["Área comum"];
+  document.getElementById("apartamentosGrid").innerHTML = unidades.map(unidade => {
+    const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidade);
+    const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
+    const percentual = itens.length?Math.round(feitos/itens.length*100):0;
+    const nome = unidade === "Área comum" ? unidade : unidade.replace("Apto ","Apartamento ");
+    return `<button class="apartamento-seletor ${unidade===unidadeSelecionada?"ativo":""}" type="button" data-unidade="${escaparHtml(unidade)}">${escaparHtml(nome)}<span>${percentual}% concluído</span></button>`;
+  }).join("");
+  if(!unidadeSelecionada || !unidades.includes(unidadeSelecionada)){
+    unidadeSelecionada = null;
+    document.getElementById("baixarPdfApartamento").classList.add("desabilitado");
+    document.getElementById("baixarPdfApartamento").href="#";
+    document.getElementById("tituloApartamentos").textContent = `Apartamentos · ${pavimentoSelecionado}º andar`;
+    document.getElementById("subtituloApartamentos").textContent = `${TORRES[torreSelecionada].nome} · clique em uma unidade para abrir o dashboard.`;
+    document.getElementById("dashboardApartamento").classList.remove("visivel");
+    return;
+  }
+  const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidadeSelecionada);
+  const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
+  const pendentes = itens.length-feitos;
+  const percentual = itens.length?Math.round(feitos/itens.length*100):0;
+  const nome = unidadeSelecionada === "Área comum" ? unidadeSelecionada : unidadeSelecionada.replace("Apto ","Apartamento ");
+  const consultaRelatorio=new URLSearchParams({torre:torreSelecionada,andar:String(pavimentoSelecionado),unidade:unidadeSelecionada}).toString();
+  const urlPdf=`/relatorio.pdf?${consultaRelatorio}`;
+  const baixarPdf=document.getElementById("baixarPdfApartamento");
+  baixarPdf.href=urlPdf;
+  baixarPdf.classList.remove("desabilitado");
+  document.getElementById("tituloApartamentos").textContent = `${nome} · ${pavimentoSelecionado}º andar`;
+  document.getElementById("subtituloApartamentos").textContent = `${TORRES[torreSelecionada].nome} · dashboard individual da unidade`;
+  document.getElementById("aptoAvanco").textContent = `${percentual}%`;
+  document.getElementById("aptoRealizadas").textContent = feitos;
+  document.getElementById("aptoPendentes").textContent = pendentes;
+  document.getElementById("dashboardApartamento").classList.add("visivel");
+  document.getElementById("listaPendenciasApartamento").innerHTML = itens.map(item=>{
+    const registro=obterRegistro(item.andar,item.unidade,item.atividade);
+    const status=registro.status||"nao-iniciado";
+    const chave=escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
+    return `<li class="servico-${status}"><span>${escaparHtml(item.atividade)}</span><select class="status-atividade status-select-${status}" data-chave="${chave}" aria-label="Status de ${escaparHtml(item.atividade)}">${opcoesStatusAtividade(status)}</select></li>`;
+  }).join("");
+  document.getElementById("tabelaApartamento").innerHTML = itens.map(item=>{
+    const registro=obterRegistro(item.andar,item.unidade,item.atividade);
+    const data=registro.data?registro.data.split("-").reverse().join("/"):"—";
+    const status=registro.status||"nao-iniciado";
+    const classe={"nao-iniciado":"status-nao-iniciado","em-andamento":"status-em-andamento","pendente":"status-pendente","concluido":"status-finalizado"}[status];
+    const rotulo=STATUS_ATIVIDADE[status];
+    return `<tr><td>${escaparHtml(item.atividade)}</td><td><span class="status-tag ${classe}">${rotulo}</span></td><td>${data}</td></tr>`;
+  }).join("");
+  const ocorrenciasUnidade = ocorrenciasBanco.filter(oc=>
+    oc.torre===torreSelecionada &&
+    Number(oc.andar)===pavimentoSelecionado &&
+    oc.unidade===unidadeSelecionada &&
+    oc.status==="pendente"
+  );
+  document.getElementById("ocorrenciasApartamento").innerHTML = ocorrenciasUnidade.length
+    ? ocorrenciasUnidade.map(oc=>`<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}"><button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button><div class="meta">${escaparHtml(oc.atividade||"Não informada")}</div><p>${escaparHtml(oc.descricao)}</p><select class="status-ocorrencia ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-id="${oc.id}" aria-label="Alterar status da ocorrência">${opcoesStatusOcorrencia(oc.status)}</select><br><time>Ocorrência em ${(oc.dataOcorrencia||oc.criadoEm.slice(0,10)).split("-").reverse().join("/")}</time>${oc.foto?`<img class="ocorrencia-foto" src="${oc.foto}" alt="Foto da ocorrência"><a class="download-foto" href="${oc.foto}" download="${escaparHtml(oc.fotoNome||`ocorrencia-${oc.id}.jpg`)}">↓ Baixar foto</a>`:""}</article>`).join("")
+    : `<div style="color:var(--cinza-texto);font-size:.76rem">Nenhuma ocorrência pendente vinculada a esta unidade.</div>`;
+  const contagemStatusApartamento={"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
+  itens.forEach(item=>{
+    const status=obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado";
+    contagemStatusApartamento[status]=(contagemStatusApartamento[status]||0)+1;
+  });
+  if(graficoApartamento) graficoApartamento.destroy();
+  graficoApartamento = new Chart(document.getElementById("graficoApartamento"),{
+    type:"doughnut",data:{
+      labels:["Não iniciado","Em andamento","Pendente","Concluído"],
+      datasets:[{
+        data:[
+          contagemStatusApartamento["nao-iniciado"],
+          contagemStatusApartamento["em-andamento"],
+          contagemStatusApartamento.pendente,
+          contagemStatusApartamento.concluido
+        ],
+        backgroundColor:["#637582","#e0a800","#d9483d","#2e9e5b"],
+        borderWidth:0
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:"66%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}`}}}}
+  });
+}
+
+function atualizarFiltroApartamentos(){
+  const filtroAndar = document.getElementById("filtroAndar").value;
+  const filtro = document.getElementById("filtroApartamento");
+  const valorAtual = filtro.value;
+  let opcoes = `<option value="todos">Todos os apartamentos e setores</option><option value="Área comum">Área comum</option>`;
+  if(filtroAndar !== "todos"){
+    opcoes += apartamentosDoAndar(torreSelecionada,Number(filtroAndar))
+      .map(numero=>`<option value="Apto ${numero}">Apartamento ${numero}</option>`).join("");
+  }
+  filtro.innerHTML = opcoes;
+  filtro.value = [...filtro.options].some(opcao=>opcao.value===valorAtual) ? valorAtual : "todos";
+}
+
+function atualizarAndaresOcorrencia(){
+  const torre=document.getElementById("ocTorre").value;
+  document.getElementById("ocAndar").innerHTML=Array.from({length:TORRES[torre].andares},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
+  atualizarUnidadesOcorrencia();
+}
+
+function atualizarUnidadesOcorrencia(){
+  const torre=document.getElementById("ocTorre").value;
+  const andar=Number(document.getElementById("ocAndar").value)||1;
+  const unidades=apartamentosDoAndar(torre,andar);
+  document.getElementById("ocUnidade").innerHTML =
+    unidades.map(numero=>`<option value="Apto ${numero}">Apartamento ${numero}</option>`).join("")+
+    `<option value="Área comum">Área comum</option>`;
+  atualizarAtividadesOcorrencia();
+}
+
+function atualizarAtividadesOcorrencia(){
+  const unidade=document.getElementById("ocUnidade").value;
+  const atividades=unidade==="Área comum"?SERVICOS_GERAIS:ATIVIDADES_UNIDADE;
+  document.getElementById("ocAtividade").innerHTML=atividades.map(atividade=>`<option value="${atividade}">${atividade}</option>`).join("");
+}
+
+function prepararFormularioOcorrencia(){
+  document.getElementById("ocTorre").innerHTML=Object.keys(TORRES).map(chave=>`<option value="${chave}">${TORRES[chave].nome}</option>`).join("");
+  document.getElementById("ocTorre").value=torreSelecionada;
+  atualizarAndaresOcorrencia();
+  if(!document.getElementById("ocData").value){
+    const hoje=new Date();
+    document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
+  }
+  const filtroAndar=document.getElementById("filtroAndarOcorrencias");
+  if(!filtroAndar.options.length){
+    filtroAndar.innerHTML=`<option value="todos">Todos os andares</option>`+
+      Array.from({length:36},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
+  }
+}
+
+function atualizarPortalRelatorios(){
+  const consulta=new URLSearchParams({torre:torreSelecionada}).toString();
+  const urlQr=`/api/qrcode-relatorios?${consulta}`;
+  document.getElementById("qrRelatoriosVisitante").src=`${urlQr}&v=${Date.now()}`;
+  document.getElementById("baixarQrRelatorios").href=urlQr;
+  document.getElementById("abrirPortalRelatorios").href=`/visitante-relatorios?${consulta}`;
+  document.getElementById("tituloRelatoriosVisitante").textContent=`Portal de relatórios — ${TORRES[torreSelecionada].nome}`;
+}
+
+function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
+  document.getElementById("ocTorre").value=torre;
+  atualizarAndaresOcorrencia();
+  document.getElementById("ocAndar").value=String(andar);
+  atualizarUnidadesOcorrencia();
+  document.getElementById("ocUnidade").value=unidade;
+  atualizarAtividadesOcorrencia();
+  document.getElementById("ocAtividade").value=atividade;
+  const hoje=new Date();
+  document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
+  ativarAba("ocorrencias");
+  requestAnimationFrame(()=>{
+    document.getElementById("formOcorrencia").scrollIntoView({behavior:"smooth",block:"start"});
+    document.getElementById("ocDescricao").focus();
+  });
+}
+
+function existeOcorrenciaAtiva(torre, andar, unidade, atividade){
+  return ocorrenciasBanco.some(oc=>
+    oc.torre===torre &&
+    Number(oc.andar)===Number(andar) &&
+    oc.unidade===unidade &&
+    oc.atividade===atividade &&
+    oc.status!=="concluido"
+  );
+}
+
+function prepararDashboardGeral(){
+  const filtro = document.getElementById("filtroServicoDashboard");
+  if(!filtro.options.length){
+    filtro.innerHTML = `<option value="todos">Todos os serviços</option>` +
+      `<optgroup label="Apartamentos">${ATIVIDADES_UNIDADE.map(a=>`<option>${a}</option>`).join("")}</optgroup>` +
+      `<optgroup label="Serviços gerais">${SERVICOS_GERAIS.map(a=>`<option>${a}</option>`).join("")}</optgroup>`;
+  }
+  atualizarDashboardGeral();
+}
+
+function prepararAbaServicos(){
+  const filtro=document.getElementById("filtroAbaServicos");
+  if(!filtro) return;
+  if(!filtro.options.length){
+    filtro.innerHTML=`<optgroup label="Apartamentos">${ATIVIDADES_UNIDADE.map(a=>`<option>${a}</option>`).join("")}</optgroup>`+
+      `<optgroup label="Serviços gerais">${SERVICOS_GERAIS.map(a=>`<option>${a}</option>`).join("")}</optgroup>`;
+  }
+  renderizarAbaServicos();
+}
+
+function renderizarAbaServicos(){
+  const filtro=document.getElementById("filtroAbaServicos");
+  if(!filtro) return;
+  const atividade=filtro.value||ATIVIDADES_UNIDADE[0];
+  const itens=listaRegistros().filter(item=>item.atividade===atividade);
+  const realizados=itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
+  const pendentes=itens.length-realizados;
+  const percentual=itens.length?Math.round(realizados/itens.length*100):0;
+  document.getElementById("subtituloServicos").textContent=`${atividade} · ${TORRES[torreSelecionada].nome}`;
+  document.getElementById("servicoAvanco").textContent=`${percentual}%`;
+  document.getElementById("servicoRealizados").textContent=realizados.toLocaleString("pt-BR");
+  document.getElementById("servicoPendentes").textContent=pendentes.toLocaleString("pt-BR");
+  const andares=[...new Set(itens.map(item=>item.andar))];
+  const progressoAndares=andares.map(andar=>{
+    const grupo=itens.filter(item=>item.andar===andar);
+    return Math.round(grupo.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length/grupo.length*100);
+  });
+  const andaresConcluidos=progressoAndares.filter(valor=>valor===100).length;
+  const andaresIniciados=progressoAndares.filter(valor=>valor>0&&valor<100).length;
+  document.getElementById("resumoServico").innerHTML=`<strong style="color:var(--azul-escuro)">${percentual}% do serviço executado</strong><br>${andaresConcluidos} pavimento(s) totalmente concluído(s)<br>${andaresIniciados} pavimento(s) em andamento<br>${pendentes} unidade(s) ou setor(es) ainda pendentes`;
+  document.getElementById("tabelaServicos").innerHTML=itens.map(item=>{
+    const registro=obterRegistro(item.andar,item.unidade,item.atividade);
+    return `<tr><td>${item.andar}º</td><td>${escaparHtml(item.unidade)}</td><td><span class="status-tag ${registro.concluido?"status-no-prazo":"status-atencao"}">${registro.concluido?"Realizado":"Pendente"}</span></td><td>${registro.data?registro.data.split("-").reverse().join("/"):"—"}</td><td>${escaparHtml(registro.observacao)||"—"}</td></tr>`;
+  }).join("");
+  if(graficoServico) graficoServico.destroy();
+  graficoServico=new Chart(document.getElementById("graficoServico"),{
+    type:"bar",data:{labels:andares.map(a=>`${a}º`),datasets:[{data:progressoAndares,backgroundColor:progressoAndares.map(v=>v===100?"#2e9e5b":v>0?"#e8871e":"#dfe4e8"),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw}% concluído`}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f4"}},x:{grid:{display:false},ticks:{autoSkip:true,maxTicksLimit:18}}}}
+  });
+}
+
+function renderizarTorresProgresso(servico){
+  document.getElementById("torresProgresso").innerHTML = [torreSelecionada].map(torre => {
+    const dados = TORRES[torre];
+    const andares = Array.from({length:dados.andares},(_,i)=>{
+      const andar = i+1;
+      const itens = listaRegistros(torre).filter(item => item.andar === andar && (servico === "todos" || item.atividade === servico));
+      const total=itens.length||1;
+      const quantidade=status=>itens.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
+      const concluidos=quantidade("concluido");
+      const andamento=quantidade("em-andamento");
+      const pendentes=quantidade("pendente");
+      const percentual=Math.round(concluidos/total*100);
+      const fimConcluido=concluidos/total*100;
+      const fimAndamento=fimConcluido+andamento/total*100;
+      const fimPendente=fimAndamento+pendentes/total*100;
+      const marco = `${andar}º`;
+      return `<span class="andar-progresso" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${dados.nome} · ${andar}º andar · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído" aria-label="Ver apartamentos da ${dados.nome}, ${andar}º andar"></span>`;
+    }).join("");
+    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} pavimentos</small></div>`;
+  }).join("");
+}
+
+function atualizarDashboardGeral(){
+  const servico = document.getElementById("filtroServicoDashboard").value || "todos";
+  const torresDashboard = [torreSelecionada];
+  const dadosTorres = torresDashboard.map(torre => {
+    const itens = listaRegistros(torre).filter(i => servico === "todos" || i.atividade === servico);
+    const realizados = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido).length;
+    return {torre,itens,realizados,pendentes:itens.length-realizados,percentual:itens.length?Math.round(realizados/itens.length*100):0};
+  });
+  const total = dadosTorres.reduce((s,t)=>s+t.itens.length,0);
+  const realizados = dadosTorres.reduce((s,t)=>s+t.realizados,0);
+  const pendentes = total-realizados;
+  const contagemStatus = {"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
+  dadosTorres.forEach(grupo => {
+    grupo.itens.forEach(item => {
+      const status = obterRegistro(item.andar,item.unidade,item.atividade,grupo.torre).status || "nao-iniciado";
+      contagemStatus[status] = (contagemStatus[status] || 0) + 1;
+    });
+  });
+  let pavimentosConcluidos = 0;
+  torresDashboard.forEach(torre => {
+    for(let andar=1;andar<=TORRES[torre].andares;andar++){
+      const itens = listaRegistros(torre).filter(i=>i.andar===andar && (servico==="todos" || i.atividade===servico));
+      if(itens.length && itens.every(i=>obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido)) pavimentosConcluidos++;
+    }
+  });
+  document.getElementById("dashAvanco").textContent = `${total?Math.round(realizados/total*100):0}%`;
+  document.getElementById("dashRealizados").textContent = realizados.toLocaleString("pt-BR");
+  document.getElementById("dashPendentes").textContent = pendentes.toLocaleString("pt-BR");
+  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${TORRES[torreSelecionada].andares}`;
+  document.querySelector("#dashboardGeral .dashboard-topo h2").textContent =
+    `Visão geral — ${TORRES[torreSelecionada].nome}`;
+  document.querySelector("#dashboardGeral .dashboard-topo p").textContent =
+    `Acompanhamento da ${TORRES[torreSelecionada].nome} com base nos serviços registrados.`;
+  renderizarTorresProgresso(servico);
+  if(graficoStatusGeral) graficoStatusGeral.destroy();
+  graficoStatusGeral = new Chart(document.getElementById("graficoStatusGeral"),{
+    type:"doughnut",data:{
+      labels:["Não iniciado","Em andamento","Pendente","Concluído"],
+      datasets:[{
+        data:[
+          contagemStatus["nao-iniciado"],
+          contagemStatus["em-andamento"],
+          contagemStatus.pendente,
+          contagemStatus.concluido
+        ],
+        backgroundColor:["#637582","#e0a800","#d9483d","#2e9e5b"],
+        borderWidth:0
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw.toLocaleString("pt-BR")}`}}}}
+  });
+}
+
+function escaparHtml(valor){
+  return String(valor || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+
+function prepararPlanilha(){
+  const torre = TORRES[torreSelecionada];
+  const filtroAndar = document.getElementById("filtroAndar");
+  const andarAtual = filtroAndar.value || "todos";
+  filtroAndar.innerHTML = `<option value="todos">Todos os andares</option>` +
+    Array.from({length:torre.andares},(_,i) => `<option value="${i+1}">${i+1}º andar</option>`).join("");
+  filtroAndar.value = andarAtual === "todos" ? "todos" : Math.min(Number(andarAtual) || 1, torre.andares);
+  atualizarFiltroApartamentos();
+  document.getElementById("filtroAtividade").innerHTML =
+    `<option value="todas">Todas as atividades</option><optgroup label="Apartamentos">${ATIVIDADES_UNIDADE.map(a=>`<option>${a}</option>`).join("")}</optgroup>` +
+    `<optgroup label="Serviços gerais">${SERVICOS_GERAIS.map(a=>`<option>${a}</option>`).join("")}</optgroup>`;
+  document.getElementById("subtituloPlanilha").textContent = torreSelecionada === "horizonte"
+    ? `${torre.nome} · 23 andares · 14 apartamentos do 4º ao 23º · 1º, 2º e 3º de áreas comuns`
+    : `${torre.nome} · 36 andares · unidades específicas por pavimento · 3º andar de área comum`;
+  renderizarPlanilha();
+  atualizarGraficosOperacionais();
+  atualizarDashboardGeral();
+}
+
+function renderizarPlanilha(){
+  const valorAndar = document.getElementById("filtroAndar").value;
+  const andar = valorAndar === "todos" ? null : Number(valorAndar);
+  const unidadeFiltro = document.getElementById("filtroApartamento").value;
+  const atividadeFiltro = document.getElementById("filtroAtividade").value;
+  const situacaoFiltro = document.getElementById("filtroSituacao").value;
+  const itens = listaRegistros().filter(item => {
+    const unidadeOk = unidadeFiltro === "todos" || item.unidade === unidadeFiltro;
+    const atividadeOk = atividadeFiltro === "todas" || item.atividade === atividadeFiltro;
+    const status = obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado";
+    const situacaoOk = situacaoFiltro === "todas" || status === situacaoFiltro;
+    return (andar === null || item.andar === andar) && unidadeOk && atividadeOk && situacaoOk;
+  });
+  const corpo = document.getElementById("corpoPlanilha");
+  corpo.innerHTML = itens.map(item => {
+    const registro = obterRegistro(item.andar,item.unidade,item.atividade);
+    const chave = escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
+    return `<tr data-chave="${chave}" class="${registro.concluido ? "linha-concluida" : ""}">
+      <td><input class="selecao-lote selecao-registro" type="checkbox" aria-label="Selecionar ${escaparHtml(item.unidade)} — ${escaparHtml(item.atividade)}" ${registrosSelecionados.has(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade))?"checked":""}></td>
+      <td class="local">${item.andar}º</td><td><button class="link-unidade" type="button" data-andar="${item.andar}" data-unidade="${escaparHtml(item.unidade)}">${escaparHtml(item.unidade)}</button></td><td>${item.atividade}</td>
+      <td><select class="status-atividade status-select-${registro.status||"nao-iniciado"}" data-campo="status" aria-label="Status de ${item.atividade}">${opcoesStatusAtividade(registro.status)}</select></td>
+      <td><input type="date" value="${escaparHtml(registro.data)}" readonly title="Preenchida automaticamente ao atualizar o status"></td>
+    </tr>`;
+  }).join("");
+  const concluidos = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade).concluido).length;
+  document.getElementById("percentualFiltro").textContent = `${itens.length ? Math.round(concluidos/itens.length*100) : 0}%`;
+  atualizarControlesSelecao();
+}
+
+function atualizarControlesSelecao(){
+  const caixas = [...document.querySelectorAll("#corpoPlanilha .selecao-registro")];
+  const marcadasVisiveis = caixas.filter(caixa=>caixa.checked).length;
+  const selecionarTodos = document.getElementById("selecionarTodosRegistros");
+  selecionarTodos.checked = caixas.length > 0 && marcadasVisiveis === caixas.length;
+  selecionarTodos.indeterminate = marcadasVisiveis > 0 && marcadasVisiveis < caixas.length;
+  const quantidade = registrosSelecionados.size;
+  document.getElementById("quantidadeSelecionada").textContent = quantidade
+    ? `${quantidade} serviço${quantidade===1?"":"s"} selecionado${quantidade===1?"":"s"}`
+    : "Nenhum serviço selecionado";
+  document.getElementById("aplicarStatusEmLote").disabled = quantidade === 0;
+}
+
+function atualizarRegistro(elemento){
+  const linha = elemento.closest("tr");
+  const chave = linha.dataset.chave;
+  const partes = chave.split("|");
+  const atual = obterRegistro(Number(partes[1]),partes[2],partes[3]);
+  const abrirFormularioDeOcorrencia = elemento.dataset.campo === "status" && elemento.value === "pendente";
+  if(abrirFormularioDeOcorrencia && !existeOcorrenciaAtiva(partes[0],Number(partes[1]),partes[2],partes[3])){
+    servicoAguardandoOcorrencia = chave;
+    renderizarPlanilha();
+    abrirOcorrenciaDoServico(partes[0],Number(partes[1]),partes[2],partes[3]);
+    return;
+  }
+  if(elemento.dataset.campo === "status"){
+    atual.status = elemento.value;
+    atual.concluido = elemento.value === "concluido";
+    const agora = new Date();
+    atual.data = elemento.value !== "nao-iniciado"
+      ? `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
+      : "";
+  }else{
+    atual[elemento.dataset.campo] = elemento.value;
+  }
+  registrosObra[chave] = atual;
+  salvarRegistros();
+  renderizarPlanilha();
+  renderizarApartamentosDoPavimento();
+  atualizarGraficosOperacionais();
+  atualizarDashboardGeral();
+  renderizarAbaServicos();
+}
+
+function atualizarGraficosOperacionais(){
+  const todos = listaRegistros();
+  const valorAndar = document.getElementById("filtroAndar").value;
+  const andarEscolhido = valorAndar === "todos" ? null : Number(valorAndar);
+  const escopoAtividade = document.getElementById("escopoGraficoAtividade").value;
+  const porAndar = escopoAtividade === "andar";
+  const baseAtividades = porAndar && andarEscolhido !== null ? todos.filter(i=>i.andar===andarEscolhido) : todos;
+  const percentualDoStatus = (grupo,status) => grupo.length
+    ? Math.round(grupo.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado")===status).length/grupo.length*100)
+    : 0;
+  let atividades = [...ATIVIDADES_UNIDADE,...SERVICOS_GERAIS];
+  const gruposAtividade = atividades.map(atividade=>baseAtividades.filter(i=>i.atividade===atividade));
+  if(graficoAtividades) graficoAtividades.destroy();
+  graficoAtividades = new Chart(document.getElementById("graficoAtividades"),{
+    type:"bar",data:{labels:atividades,datasets:[
+      {label:"Não iniciado",data:gruposAtividade.map(g=>percentualDoStatus(g,"nao-iniciado")),backgroundColor:"#637582",borderRadius:3},
+      {label:"Em andamento",data:gruposAtividade.map(g=>percentualDoStatus(g,"em-andamento")),backgroundColor:"#e0a800",borderRadius:3},
+      {label:"Pendente",data:gruposAtividade.map(g=>percentualDoStatus(g,"pendente")),backgroundColor:"#d9483d",borderRadius:3},
+      {label:"Concluído",data:gruposAtividade.map(g=>percentualDoStatus(g,"concluido")),backgroundColor:"#2e9e5b",borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:"y",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},scales:{x:{min:0,max:100,stacked:true,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f4"}},y:{stacked:true,grid:{display:false},ticks:{font:{size:9}}}}}
+  });
+  let andares = Array.from({length:TORRES[torreSelecionada].andares},(_,i)=>i+1);
+  let percentuaisConcluidosAndar = andares.map(andar => {
+    const grupo=todos.filter(i=>i.andar===andar);
+    return percentualDoStatus(grupo,"concluido");
+  });
+  if(document.getElementById("escopoGraficoAndar").value === "com-pendencia"){
+    andares = andares.filter((andar,i)=>percentuaisConcluidosAndar[i]<100);
+  }
+  const gruposAndar=andares.map(andar=>todos.filter(i=>i.andar===andar));
+  if(graficoAndares) graficoAndares.destroy();
+  graficoAndares = new Chart(document.getElementById("graficoAndares"),{
+    type:"bar",data:{labels:andares.map(a=>`${a}º`),datasets:[
+      {label:"Não iniciado",data:gruposAndar.map(g=>percentualDoStatus(g,"nao-iniciado")),backgroundColor:"#637582",borderRadius:3},
+      {label:"Em andamento",data:gruposAndar.map(g=>percentualDoStatus(g,"em-andamento")),backgroundColor:"#e0a800",borderRadius:3},
+      {label:"Pendente",data:gruposAndar.map(g=>percentualDoStatus(g,"pendente")),backgroundColor:"#d9483d",borderRadius:3},
+      {label:"Concluído",data:gruposAndar.map(g=>percentualDoStatus(g,"concluido")),backgroundColor:"#2e9e5b",borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},scales:{y:{min:0,max:100,stacked:true,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f4"}},x:{stacked:true,grid:{display:false},ticks:{autoSkip:true,maxTicksLimit:18}}}}
+  });
+  const atividadesPrazo = Object.keys(PRAZOS_PLANEJADOS);
+  const realizadosPrazo = atividadesPrazo.map(atividade => {
+    const grupo = todos.filter(item=>item.atividade===atividade);
+    return grupo.length
+      ? Math.round(grupo.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length/grupo.length*100)
+      : 0;
+  });
+  if(graficoPrazos) graficoPrazos.destroy();
+  graficoPrazos = new Chart(document.getElementById("graficoPrazos"),{
+    type:"bar",
+    data:{labels:atividadesPrazo,datasets:[
+      {label:"Planejado",data:atividadesPrazo.map(a=>PRAZOS_PLANEJADOS[a]),backgroundColor:"#9aa8b4",borderRadius:4},
+      {label:"Realizado",data:realizadosPrazo,backgroundColor:realizadosPrazo.map((v,i)=>v>=PRAZOS_PLANEJADOS[atividadesPrazo[i]]?"#2e9e5b":v>0?"#e0a800":"#637582"),borderRadius:4}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{boxWidth:12,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+"%"},grid:{color:"#eef1f4"}},x:{grid:{display:false},ticks:{font:{size:9}}}}}
+  });
+}
+
+/* =========================================================
+   RENDERIZAÇÃO — não é necessário editar a partir daqui
+   ========================================================= */
+const rotuloStatus = {
+  "no-prazo": "No prazo",
+  "atencao": "Atenção",
+  "atrasado": "Atrasado",
+  "concluido": "Concluído"
+};
+
+function preencherCabecalho(){
+  document.getElementById('nomeObra').textContent = DADOS.obra.nome;
+  document.getElementById('enderecoObra').textContent = DADOS.obra.endereco;
+  document.getElementById('responsavel').textContent = DADOS.obra.responsavel;
+  document.getElementById('dataInicio').textContent = DADOS.obra.dataInicio;
+  document.getElementById('dataFim').textContent = DADOS.obra.dataFim;
+  document.getElementById('diasCorridos').textContent = DADOS.obra.diasCorridos;
+  document.getElementById('dataAtualizacao').textContent = DADOS.obra.dataAtualizacao;
+  document.title = "Acompanhamento de Obra — " + DADOS.obra.nome;
+}
+
+function selecionarTorre(chave){
+  const torre = TORRES[chave] || TORRES.aurora;
+  torreSelecionada = chave;
+  pavimentoSelecionado = 1;
+  unidadeSelecionada = null;
+  DADOS.kpis = torre.kpis;
+  DADOS.etapas = torre.etapas;
+  DADOS.ocorrencias = torre.ocorrencias;
+  DADOS.curvaS.realizadoFisico = torre.realizados;
+  DADOS.curvaS.realizadoFinanceiro = torre.financeiro;
+  document.getElementById('torreAtual').textContent = `${torre.nome} · ${torre.andares} andares`;
+  preencherKpis();
+  preencherEtapas();
+  preencherOcorrencias();
+  desenharCurvaS();
+  prepararPlanilha();
+  renderizarApartamentosDoPavimento();
+  prepararFormularioOcorrencia();
+  atualizarPortalRelatorios();
+  prepararAbaServicos();
+  ativarAba("dashboardGeral", false);
+  document.getElementById('seletorTorres').classList.add('fechado');
+  document.body.classList.remove('selecao-aberta');
+  setTimeout(() => document.querySelector('main').scrollIntoView({block:'start'}), 250);
+}
+
+function abrirPlanilhaDoPavimento(chaveTorre, andar){
+  selecionarTorre(chaveTorre);
+  pavimentoSelecionado = andar;
+  document.getElementById("filtroAndar").value = String(andar);
+  atualizarFiltroApartamentos();
+  document.getElementById("filtroApartamento").value = "todos";
+  document.getElementById("filtroAtividade").value = "todas";
+  document.getElementById("filtroSituacao").value = "todas";
+  document.getElementById("tituloPlanilhaDetalhada").textContent =
+    `Planilha de acompanhamento · ${andar}º andar · ${TORRES[torreSelecionada].nome}`;
+  renderizarApartamentosDoPavimento();
+  renderizarPlanilha();
+  atualizarGraficosOperacionais();
+  ativarAba("controleDetalhado", false);
+  setTimeout(() => {
+    document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
+  }, 350);
+}
+
+function abrirPlanilhaDaUnidade(unidade){
+  unidadeSelecionada = unidade;
+  renderizarApartamentosDoPavimento();
+  ativarAba("apartamentos", false);
+  setTimeout(() => {
+    document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
+  }, 80);
+}
+
+function preencherKpis(){
+  if(!document.getElementById('kpiFisico')) return;
+  const mapa = {
+    avancoFisico: ['kpiFisico','kpiFisicoNota'],
+    avancoFinanceiro: ['kpiFinanceiro','kpiFinanceiroNota'],
+    idp: ['kpiIdp','kpiIdpNota'],
+    idc: ['kpiIdc','kpiIdcNota'],
+    efetivo: ['kpiEfetivo','kpiEfetivoNota'],
+    seguranca: ['kpiSeguranca','kpiSegurancaNota']
+  };
+  Object.entries(mapa).forEach(([chave, ids]) => {
+    const item = DADOS.kpis[chave];
+    document.getElementById(ids[0]).textContent = item.valor;
+    const notaEl = document.getElementById(ids[1]);
+    notaEl.textContent = item.nota;
+    notaEl.className = "nota " + (item.classe || "");
+  });
+}
+
+function preencherEtapas(){
+  const corpo = document.getElementById('corpoEtapas');
+  if(!corpo) return;
+  corpo.innerHTML = "";
+  DADOS.etapas.forEach(etapa => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${etapa.nome}</td>
+      <td>${etapa.planejado}%</td>
+      <td>${etapa.realizado}%</td>
+      <td>
+        <div class="barra-bg">
+          <div class="barra-fill" style="width:${etapa.realizado}%; background:${corBarra(etapa.status)}"></div>
+        </div>
+      </td>
+      <td><span class="status-tag status-${etapa.status}">${rotuloStatus[etapa.status]}</span></td>
+    `;
+    corpo.appendChild(tr);
+  });
+}
+
+function corBarra(status){
+  switch(status){
+    case "concluido": return "#1d4e89";
+    case "atrasado": return "#d9483d";
+    case "atencao": return "#e0a800";
+    default: return "#2e9e5b";
+  }
+}
+
+const STATUS_OCORRENCIA={
+  "pendente":"Pendente",
+  "concluido":"Concluída"
+};
+function classeStatusOcorrencia(status){
+  return {"nao-iniciado":"status-nao-iniciado","em-andamento":"status-em-andamento","pendente":"status-pendente","concluido":"status-finalizado"}[status||"nao-iniciado"];
+}
+function opcoesStatusOcorrencia(atual){
+  return Object.entries(STATUS_OCORRENCIA).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"pendente")?"selected":""}>${nome}</option>`).join("");
+}
+
+function preencherOcorrencias(){
+  const lista = document.getElementById('listaOcorrencias');
+  const periodo=document.getElementById("filtroPeriodoOcorrencias")?.value||"7";
+  const statusFiltro=document.getElementById("filtroStatusOcorrencias")?.value||"todos";
+  const andarFiltro=document.getElementById("filtroAndarOcorrencias")?.value||"todos";
+  document.getElementById("baixarHistoricoOcorrencias").href="/relatorio-ocorrencias.pdf?"+
+    new URLSearchParams({torre:torreSelecionada,andar:andarFiltro,status:statusFiltro,periodo}).toString();
+  const hoje=new Date(); hoje.setHours(23,59,59,999);
+  const ocorrenciasFiltradas=ocorrenciasBanco.filter(oc=>{
+    if(statusFiltro!=="todos"&&(oc.status||"pendente")!==statusFiltro) return false;
+    if(andarFiltro!=="todos"&&Number(oc.andar)!==Number(andarFiltro)) return false;
+    if(periodo==="todas") return true;
+    const data=new Date(`${oc.dataOcorrencia||oc.criadoEm.slice(0,10)}T00:00:00`);
+    const limite=new Date(hoje); limite.setDate(limite.getDate()-Number(periodo)+1); limite.setHours(0,0,0,0);
+    return data>=limite&&data<=hoje;
+  });
+  if(!ocorrenciasFiltradas.length){
+    lista.innerHTML = `<div class="card" style="color:var(--cinza-texto);font-size:.8rem">Nenhuma ocorrência registrada.</div>`;
+    return;
+  }
+  lista.innerHTML = ocorrenciasFiltradas.map(oc => {
+    const data = (oc.dataOcorrencia||oc.criadoEm.slice(0,10)).split("-").reverse().join("/");
+    const foto = oc.foto ? `<img class="ocorrencia-foto" src="${oc.foto}" alt="Foto da ocorrência"><a class="download-foto" href="${oc.foto}" download="${escaparHtml(oc.fotoNome||`ocorrencia-${oc.id}.jpg`)}">↓ Baixar foto</a>` : "";
+    return `<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}">
+      <button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button>
+      <div class="meta">${escaparHtml(TORRES[oc.torre]?.nome || oc.torre)} · ${oc.andar}º andar · ${escaparHtml(oc.unidade)}</div>
+      <div class="meta" style="color:var(--cinza-texto)">${escaparHtml(oc.atividade||"Não informada")}</div>
+      <p>${escaparHtml(oc.descricao)}</p><span class="status-tag ${classeStatusOcorrencia(oc.status)}">${STATUS_OCORRENCIA[oc.status||"pendente"]}</span><br><time>Ocorrência em ${data}</time><div><select class="status-ocorrencia ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-id="${oc.id}" aria-label="Status da ocorrência">${opcoesStatusOcorrencia(oc.status)}</select></div>${foto}
+    </article>`;
+  }).join("");
+}
+
+let graficoCurva;
+function desenharCurvaS(){
+  const canvas = document.getElementById('curvaS');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if(graficoCurva) graficoCurva.destroy();
+  graficoCurva = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: DADOS.curvaS.meses,
+      datasets: [
+        {
+          label: 'Físico planejado',
+          data: DADOS.curvaS.planejadoFisico,
+          borderColor: '#1d4e89',
+          borderDash: [6,4],
+          fill:false,
+          tension:.3,
+          pointRadius:2
+        },
+        {
+          label: 'Físico realizado',
+          data: DADOS.curvaS.realizadoFisico,
+          borderColor: '#1d4e89',
+          fill:false,
+          tension:.3,
+          pointRadius:2
+        },
+        {
+          label: 'Financeiro planejado',
+          data: DADOS.curvaS.planejadoFinanceiro,
+          borderColor: '#e8871e',
+          borderDash: [6,4],
+          fill:false,
+          tension:.3,
+          pointRadius:2
+        },
+        {
+          label: 'Financeiro realizado',
+          data: DADOS.curvaS.realizadoFinanceiro,
+          borderColor: '#e8871e',
+          fill:false,
+          tension:.3,
+          pointRadius:2
+        }
+      ]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{
+        legend:{ position:'bottom', labels:{ boxWidth:14, font:{ size:11 } } }
+      },
+      scales:{
+        y:{
+          min:0, max:100,
+          ticks:{ callback:v => v + '%' },
+          grid:{ color:'#eef1f4' }
+        },
+        x:{ grid:{ display:false } }
+      }
+    }
+  });
+}
+
+preencherCabecalho();
+document.querySelectorAll('.pavimentos').forEach(container => {
+  const total = Number(container.dataset.andares);
+  container.innerHTML = Array.from({length:total}, (_, i) => `<span class="pavimento" title="${i + 1}º andar"></span>`).join('');
+});
+document.querySelectorAll('.torre').forEach(torre => {
+  torre.addEventListener('click', () => selecionarTorre(torre.dataset.torre));
+});
+function abrirSelecaoDeTorres(){
+  document.getElementById('seletorObras').classList.add('fechado');
+  document.getElementById('seletorTorres').classList.remove('fechado');
+  document.body.classList.add('selecao-aberta');
+}
+function abrirSelecaoDeObras(){
+  document.getElementById('seletorTorres').classList.add('fechado');
+  document.getElementById('seletorObras').classList.remove('fechado');
+  document.body.classList.add('selecao-aberta');
+}
+document.querySelectorAll(".obra-seletor").forEach(obra=>{
+  obra.addEventListener("click",abrirSelecaoDeTorres);
+});
+document.getElementById('trocarObra').addEventListener('click', abrirSelecaoDeObras);
+document.getElementById('trocarTorre').addEventListener('click', abrirSelecaoDeTorres);
+document.getElementById("ocTorre").addEventListener("change",atualizarAndaresOcorrencia);
+document.getElementById("ocAndar").addEventListener("change",atualizarUnidadesOcorrencia);
+document.getElementById("ocUnidade").addEventListener("change",atualizarAtividadesOcorrencia);
+document.getElementById("filtroPeriodoOcorrencias").addEventListener("change",preencherOcorrencias);
+document.getElementById("filtroAndarOcorrencias").addEventListener("change",preencherOcorrencias);
+document.getElementById("andarAbaApartamentos").addEventListener("change",event=>{
+  pavimentoSelecionado=Number(event.target.value);
+  unidadeSelecionada=null;
+  renderizarApartamentosDoPavimento();
+});
+document.getElementById("filtroStatusOcorrencias").addEventListener("change",preencherOcorrencias);
+async function alterarStatusOcorrencia(event){
+  const seletor=event.target.closest(".status-ocorrencia");
+  if(!seletor) return;
+  const resposta=await fetch(`/api/ocorrencias/${seletor.dataset.ocorrenciaId}`,{
+    method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status:seletor.value})
+  });
+  if(resposta.ok) await carregarOcorrenciasDoBanco();
+}
+async function excluirOcorrencia(event){
+  const botao=event.target.closest(".excluir-ocorrencia");
+  if(!botao) return;
+  const identificador=Number(botao.dataset.ocorrenciaId);
+  const ocorrencia=ocorrenciasBanco.find(oc=>Number(oc.id)===identificador);
+  if(!ocorrencia || !confirm("Deseja realmente excluir esta ocorrência? Esta ação não poderá ser desfeita.")) return;
+  botao.disabled=true;
+  const resposta=await fetch(`/api/ocorrencias/${identificador}`,{method:"DELETE"});
+  if(!resposta.ok){
+    botao.disabled=false;
+    alert("Não foi possível excluir a ocorrência.");
+    return;
+  }
+  await carregarOcorrenciasDoBanco();
+  if(ocorrencia.status==="pendente" && !existeOcorrenciaAtiva(ocorrencia.torre,ocorrencia.andar,ocorrencia.unidade,ocorrencia.atividade)){
+    const chave=chaveRegistro(ocorrencia.torre,ocorrencia.andar,ocorrencia.unidade,ocorrencia.atividade);
+    const registro=obterRegistro(ocorrencia.andar,ocorrencia.unidade,ocorrencia.atividade,ocorrencia.torre);
+    if(registro.status==="pendente"){
+      registro.status="nao-iniciado";
+      registro.concluido=false;
+      registro.data="";
+      registrosObra[chave]=registro;
+      await salvarRegistros();
+    }
+  }
+  renderizarPlanilha();
+  renderizarApartamentosDoPavimento();
+  atualizarDashboardGeral();
+  atualizarGraficosOperacionais();
+}
+document.getElementById("listaOcorrencias").addEventListener("change",alterarStatusOcorrencia);
+document.getElementById("ocorrenciasApartamento").addEventListener("change",alterarStatusOcorrencia);
+document.getElementById("listaOcorrencias").addEventListener("click",excluirOcorrencia);
+document.getElementById("ocorrenciasApartamento").addEventListener("click",excluirOcorrencia);
+document.getElementById("ocFoto").addEventListener("change",event=>{
+  const arquivo=event.target.files[0];
+  const preview=document.getElementById("previewOcorrencia");
+  if(!arquivo){
+    preview.classList.remove("visivel");
+    return;
+  }
+  document.getElementById("previewOcorrenciaImg").src=URL.createObjectURL(arquivo);
+  document.getElementById("previewOcorrenciaNome").textContent=`Foto selecionada: ${arquivo.name}`;
+  preview.classList.add("visivel");
+});
+document.getElementById("formOcorrencia").addEventListener("invalid",event=>{
+  const status=document.getElementById("statusOcorrencia");
+  status.textContent="Preencha todos os campos obrigatórios, incluindo a foto.";
+  status.style.color="var(--vermelho)";
+},true);
+document.getElementById("ocDescricao").addEventListener("input",event=>{
+  event.target.setCustomValidity("");
+});
+document.getElementById("formOcorrencia").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const status=document.getElementById("statusOcorrencia");
+  const descricao=document.getElementById("ocDescricao");
+  if(!descricao.value.trim()){
+    descricao.setCustomValidity("Informe a descrição da ocorrência.");
+    status.textContent="Preencha todos os campos obrigatórios, incluindo a foto.";
+    status.style.color="var(--vermelho)";
+    descricao.reportValidity();
+    return;
+  }
+  status.textContent="Salvando ocorrência no SQLite…";
+  status.style.color="var(--azul)";
+  try{
+    const arquivo=document.getElementById("ocFoto").files[0];
+    const foto=await compactarImagem(arquivo);
+    const dados={
+      torre:document.getElementById("ocTorre").value,
+      andar:Number(document.getElementById("ocAndar").value),
+      unidade:document.getElementById("ocUnidade").value,
+      atividade:document.getElementById("ocAtividade").value,
+      descricao:document.getElementById("ocDescricao").value.trim(),
+      dataOcorrencia:document.getElementById("ocData").value,
+      status:"pendente",
+      foto,
+      fotoNome:arquivo?arquivo.name:""
+    };
+    const resposta=await fetch("/api/ocorrencias",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});
+    if(!resposta.ok) throw new Error("Falha ao salvar");
+    if(servicoAguardandoOcorrencia){
+      const partes=servicoAguardandoOcorrencia.split("|");
+      const correspondeAoServico=
+        partes[0]===dados.torre &&
+        Number(partes[1])===dados.andar &&
+        partes[2]===dados.unidade &&
+        partes[3]===dados.atividade;
+      if(correspondeAoServico){
+        const registro=obterRegistro(Number(partes[1]),partes[2],partes[3],partes[0]);
+        registro.status="pendente";
+        registro.concluido=false;
+        registro.data=dados.dataOcorrencia;
+        registrosObra[servicoAguardandoOcorrencia]=registro;
+        await salvarRegistros();
+      }
+      servicoAguardandoOcorrencia=null;
+    }
+    document.getElementById("ocDescricao").value="";
+    document.getElementById("ocFoto").value="";
+    document.getElementById("previewOcorrencia").classList.remove("visivel");
+    status.textContent="Ocorrência salva e vinculada à unidade.";
+    status.style.color="var(--verde)";
+    await carregarOcorrenciasDoBanco();
+    renderizarPlanilha();
+  }catch(e){
+    status.textContent="Não foi possível salvar a ocorrência.";
+    status.style.color="var(--vermelho)";
+  }
+});
+document.getElementById("filtroAndar").addEventListener("change", () => {
+  const valor = document.getElementById("filtroAndar").value;
+  if(valor !== "todos") pavimentoSelecionado = Number(valor);
+  atualizarFiltroApartamentos();
+  renderizarPlanilha();
+  atualizarGraficosOperacionais();
+});
+["filtroApartamento","filtroAtividade","filtroSituacao"].forEach(id => {
+  document.getElementById(id).addEventListener("change", () => {
+    renderizarPlanilha();
+    atualizarGraficosOperacionais();
+  });
+});
+["escopoGraficoAtividade","escopoGraficoAndar"].forEach(id => {
+  document.getElementById(id).addEventListener("change", atualizarGraficosOperacionais);
+});
+document.getElementById("filtroServicoDashboard").addEventListener("change", atualizarDashboardGeral);
+function ativarAba(id, rolar = true){
+  document.querySelectorAll(".painel-aba").forEach(painel => {
+    painel.classList.toggle("ativo", painel.id === id);
+  });
+  document.querySelectorAll(".menu-principal a").forEach(link => {
+    link.classList.toggle("ativo", link.getAttribute("href") === `#${id}`);
+  });
+  if(id === "graficos"){
+    requestAnimationFrame(() => {
+      if(graficoAtividades) graficoAtividades.resize();
+      if(graficoAndares) graficoAndares.resize();
+      if(graficoPrazos) graficoPrazos.resize();
+    });
+  }
+  if(id === "apartamentos" && graficoApartamento){
+    requestAnimationFrame(()=>graficoApartamento.resize());
+  }
+  if(id === "servicos" && graficoServico){
+    requestAnimationFrame(()=>graficoServico.resize());
+  }
+  if(rolar) document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.querySelectorAll(".menu-principal a").forEach(link => {
+  link.addEventListener("click", event => {
+    event.preventDefault();
+    ativarAba(link.getAttribute("href").slice(1));
+  });
+});
+document.getElementById("torresProgresso").addEventListener("click", event => {
+  const pavimento = event.target.closest(".andar-progresso");
+  if(pavimento) abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
+});
+document.getElementById("torresProgresso").addEventListener("keydown", event => {
+  if(event.key !== "Enter" && event.key !== " ") return;
+  const pavimento = event.target.closest(".andar-progresso");
+  if(!pavimento) return;
+  event.preventDefault();
+  abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
+});
+document.getElementById("apartamentosGrid").addEventListener("click", event => {
+  const unidade = event.target.closest(".apartamento-seletor");
+  if(unidade) abrirPlanilhaDaUnidade(unidade.dataset.unidade);
+});
+document.getElementById("listaPendenciasApartamento").addEventListener("change", event => {
+  const seletor = event.target.closest(".status-atividade[data-chave]");
+  if(!seletor) return;
+  const chave = seletor.dataset.chave;
+  const partes = chave.split("|");
+  const atual = obterRegistro(Number(partes[1]),partes[2],partes[3]);
+  atual.status = seletor.value;
+  atual.concluido = seletor.value === "concluido";
+  const agora = new Date();
+  atual.data = seletor.value !== "nao-iniciado"
+    ? `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
+    : "";
+  registrosObra[chave] = atual;
+  salvarRegistros();
+  renderizarApartamentosDoPavimento();
+  renderizarPlanilha();
+  atualizarGraficosOperacionais();
+  atualizarDashboardGeral();
+});
+document.getElementById("corpoPlanilha").addEventListener("click", event => {
+  const unidade = event.target.closest(".link-unidade");
+  if(unidade){
+    pavimentoSelecionado = Number(unidade.dataset.andar);
+    abrirPlanilhaDaUnidade(unidade.dataset.unidade);
+    return;
+  }
+  const botao = event.target.closest('[data-acao="remover-foto"]');
+  if(!botao) return;
+  const chave = botao.closest("tr").dataset.chave;
+  const partes = chave.split("|");
+  const atual = obterRegistro(Number(partes[1]),partes[2],partes[3]);
+  atual.foto = "";
+  atual.fotoNome = "";
+  registrosObra[chave] = atual;
+  salvarRegistros();
+  renderizarPlanilha();
+});
+document.getElementById("corpoPlanilha").addEventListener("change", event => {
+  if(event.target.classList.contains("selecao-registro")){
+    const chave = event.target.closest("tr").dataset.chave;
+    if(event.target.checked) registrosSelecionados.add(chave);
+    else registrosSelecionados.delete(chave);
+    atualizarControlesSelecao();
+    return;
+  }
+  const campo = event.target.dataset.campo;
+  if(!campo) return;
+  if(campo !== "foto"){
+    atualizarRegistro(event.target);
+    return;
+  }
+  const arquivo = event.target.files[0];
+  if(!arquivo) return;
+  const linha = event.target.closest("tr");
+  const chave = linha.dataset.chave;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    const imagem = new Image();
+    imagem.onload = () => {
+      const escala = Math.min(1, 900 / Math.max(imagem.width, imagem.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(imagem.width * escala);
+      canvas.height = Math.round(imagem.height * escala);
+      canvas.getContext("2d").drawImage(imagem,0,0,canvas.width,canvas.height);
+      const partes = chave.split("|");
+      const atual = obterRegistro(Number(partes[1]),partes[2],partes[3]);
+      atual.foto = canvas.toDataURL("image/jpeg",.72);
+      atual.fotoNome = arquivo.name;
+      registrosObra[chave] = atual;
+      salvarRegistros();
+      renderizarPlanilha();
+    };
+    imagem.src = leitor.result;
+  };
+  leitor.readAsDataURL(arquivo);
+});
+document.getElementById("selecionarTodosRegistros").addEventListener("change", event => {
+  document.querySelectorAll("#corpoPlanilha tr[data-chave]").forEach(linha => {
+    const caixa = linha.querySelector(".selecao-registro");
+    caixa.checked = event.target.checked;
+    if(event.target.checked) registrosSelecionados.add(linha.dataset.chave);
+    else registrosSelecionados.delete(linha.dataset.chave);
+  });
+  atualizarControlesSelecao();
+});
+document.getElementById("aplicarStatusEmLote").addEventListener("click", async () => {
+  if(!registrosSelecionados.size) return;
+  const novoStatus = document.getElementById("statusEmLote").value;
+  if(novoStatus==="pendente"){
+    const semOcorrencia=[...registrosSelecionados].find(chave=>{
+      const partes=chave.split("|");
+      return !existeOcorrenciaAtiva(partes[0],Number(partes[1]),partes[2],partes[3]);
+    });
+    if(semOcorrencia){
+      const partes=semOcorrencia.split("|");
+      servicoAguardandoOcorrencia=semOcorrencia;
+      abrirOcorrenciaDoServico(partes[0],Number(partes[1]),partes[2],partes[3]);
+      document.getElementById("statusOcorrencia").textContent="Salve a ocorrência obrigatória para confirmar o status Pendente.";
+      document.getElementById("statusOcorrencia").style.color="var(--vermelho)";
+      return;
+    }
+  }
+  const agora = new Date();
+  const dataAtual = `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`;
+  registrosSelecionados.forEach(chave => {
+    const partes = chave.split("|");
+    const atual = obterRegistro(Number(partes[1]),partes[2],partes[3],partes[0]);
+    atual.status = novoStatus;
+    atual.concluido = novoStatus === "concluido";
+    atual.data = novoStatus !== "nao-iniciado" ? dataAtual : "";
+    registrosObra[chave] = atual;
+  });
+  await salvarRegistros();
+  registrosSelecionados.clear();
+  renderizarPlanilha();
+  renderizarApartamentosDoPavimento();
+  atualizarGraficosOperacionais();
+  atualizarDashboardGeral();
+});
+const cenario3d = document.getElementById('cenario3d');
+cenario3d.addEventListener('pointermove', event => {
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const area = cenario3d.getBoundingClientRect();
+  const x = (event.clientX - area.left) / area.width - .5;
+  const y = (event.clientY - area.top) / area.height - .5;
+  document.getElementById('cidade3d').style.transform = `rotateX(${-3-y*5}deg) rotateY(${-10+x*14}deg) translateZ(${Math.abs(x)*5}px)`;
+});
+cenario3d.addEventListener('pointerleave', () => {
+  document.getElementById('cidade3d').style.transform = '';
+});
+async function verificarSessaoEngenheiro(){
+  try{
+    const resposta=await fetch("/api/sessao",{cache:"no-store"});
+    const dados=await resposta.json();
+    if(dados.autenticado) document.getElementById("loginOverlay").classList.add("oculto");
+  }catch(e){}
+}
+document.getElementById("formLoginEngenheiro").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const erro=document.getElementById("loginErro");
+  erro.textContent="Verificando acesso…";
+  const resposta=await fetch("/api/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      usuario:document.getElementById("loginUsuario").value.trim(),
+      senha:document.getElementById("loginSenha").value
+    })
+  });
+  if(!resposta.ok){
+    erro.textContent="Usuário ou senha inválidos.";
+    return;
+  }
+  erro.textContent="";
+  document.getElementById("loginSenha").value="";
+  abrirSelecaoDeObras();
+  document.getElementById("loginOverlay").classList.add("oculto");
+});
+document.getElementById("sairSistema").addEventListener("click",async()=>{
+  await fetch("/api/logout",{method:"POST"});
+  document.getElementById("loginOverlay").classList.remove("oculto");
+  document.getElementById("loginUsuario").focus();
+});
+document.body.classList.add('selecao-aberta');
+verificarSessaoEngenheiro();
+preencherKpis();
+preencherEtapas();
+preencherOcorrencias();
+desenharCurvaS();
+prepararDashboardGeral();
+prepararPlanilha();
+renderizarApartamentosDoPavimento();
+prepararFormularioOcorrencia();
+atualizarPortalRelatorios();
+prepararAbaServicos();
+carregarRegistrosDoBanco();
+carregarOcorrenciasDoBanco();
+</script>
+
+</body>
+</html>
