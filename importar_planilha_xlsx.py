@@ -22,7 +22,7 @@ STATUS = {
     "PROJEÇÃO MÊS": "nao-iniciado",
     "PENDÊNCIA": "pendente",
 }
-VERSAO_CONVERSOR = "2"
+VERSAO_CONVERSOR = "5"
 
 
 def coluna_numero(referencia):
@@ -94,14 +94,16 @@ def converter(arquivo):
             linha = int(re.search(r"\d+", ref).group())
             servicos = []
             for coluna, atividade in atividades.items():
+                # Toda célula vazia da matriz representa serviço não iniciado.
                 letras = ""
                 numero = coluna
                 while numero:
                     numero, resto = divmod(numero - 1, 26)
                     letras = chr(65 + resto) + letras
                 valor = celulas.get(f"{letras}{linha}", "")
-                if valor in STATUS:
-                    servicos.append({"atividade": atividade, "status": STATUS[valor]})
+                servicos.append(
+                    {"atividade": atividade, "status": STATUS.get(valor, "nao-iniciado")}
+                )
             andares[str(andar)] = servicos
         resultado["torres"][torre] = andares
     return resultado
