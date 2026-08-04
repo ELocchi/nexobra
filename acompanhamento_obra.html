@@ -951,7 +951,7 @@
           <h2 id="tituloPlanilhaDetalhada">Planilha de acompanhamento do pavimento</h2>
           <p id="subtituloPlanilha">Controle por andar, apartamento e atividade</p>
         </div>
-        <div class="salvamento" id="statusSalvamento">Conectando ao banco SQLite…</div>
+        <div class="salvamento" id="statusSalvamento">Conectando aos dados da obra…</div>
       </div>
       <div class="filtros-planilha">
         <div class="campo-filtro">
@@ -1250,13 +1250,24 @@ let graficoServico;
 async function carregarRegistrosDoBanco(){
   const status = document.getElementById("statusSalvamento");
   try{
-    const [resposta, respostaPlanejamento] = await Promise.all([
-      fetch("/api/registros",{cache:"no-store"}),
-      fetch("/api/planejamento",{cache:"no-store"})
+    async function buscarJsonComTentativas(url){
+      let ultimoErro;
+      for(let tentativa=1;tentativa<=3;tentativa++){
+        try{
+          const resposta=await fetch(url,{cache:"no-store"});
+          if(!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+          return await resposta.json();
+        }catch(erro){
+          ultimoErro=erro;
+          if(tentativa<3) await new Promise(resolve=>setTimeout(resolve,1000*tentativa));
+        }
+      }
+      throw ultimoErro||new Error("Resposta indisponível");
+    }
+    [registrosObra,planejamentoObra] = await Promise.all([
+      buscarJsonComTentativas("/api/registros"),
+      buscarJsonComTentativas("/api/planejamento")
     ]);
-    if(!resposta.ok || !respostaPlanejamento.ok) throw new Error("Banco indisponível");
-    registrosObra = await resposta.json();
-    planejamentoObra = await respostaPlanejamento.json();
     ATIVIDADES_UNIDADE = [...new Set(Object.values(planejamentoObra.torres).flatMap(torre=>
       Object.values(torre).flatMap(servicos=>servicos.map(servico=>servico.atividade))
     ))];
@@ -1265,21 +1276,34 @@ async function carregarRegistrosDoBanco(){
       registro.concluido = registro.status === "concluido";
       if(registro.status === "nao-iniciado") registro.data = "";
     });
-    status.textContent = "Dados carregados do banco SQLite";
+    status.textContent = "Dados da obra atualizados";
     status.style.color = "";
-    renderizarPlanilha();
-    renderizarApartamentosDoPavimento();
-    atualizarDashboardGeral();
-    atualizarGraficosOperacionais();
     document.getElementById("filtroServicoDashboard").innerHTML="";
     document.getElementById("filtroAbaServicos").innerHTML="";
-    prepararDashboardGeral();
-    prepararAbaServicos();
-    atualizarAtividadesOcorrencia();
-    renderizarAbaServicos();
+    const renderizacoes=[
+      ["planilha",renderizarPlanilha],
+      ["apartamentos",renderizarApartamentosDoPavimento],
+      ["dashboard",prepararDashboardGeral],
+      ["gráficos",atualizarGraficosOperacionais],
+      ["serviços",prepararAbaServicos],
+      ["ocorrências",atualizarAtividadesOcorrencia]
+    ];
+    const avisos=[];
+    renderizacoes.forEach(([nome,tarefa])=>{
+      try{tarefa();}
+      catch(erro){
+        console.error(`Falha ao atualizar ${nome}:`,erro);
+        avisos.push(nome);
+      }
+    });
+    if(avisos.length){
+      status.textContent=`Dados carregados; atualize a página para recarregar: ${avisos.join(", ")}.`;
+      status.style.color="var(--laranja)";
+    }
   }
   catch(e){
-    status.textContent = "Inicie o painel pelo arquivo INICIAR-PAINEL.command";
+    console.error("Falha ao carregar os dados da obra:",e);
+    status.textContent = "Não foi possível carregar os dados. Verifique a conexão e atualize a página.";
     status.style.color = "var(--vermelho)";
   }
 }
