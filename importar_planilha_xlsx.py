@@ -16,7 +16,13 @@ NS = {
 }
 TORRES = {"TORRE 1": "horizonte", "TORRE 2": "aurora"}
 MAX_ANDARES = {"horizonte": 23, "aurora": 36}
-STATUS = {"EXECUTADO": "concluido", "EM EXECUÇÃO": "em-andamento"}
+STATUS = {
+    "EXECUTADO": "concluido",
+    "EM EXECUÇÃO": "em-andamento",
+    "PROJEÇÃO MÊS": "nao-iniciado",
+    "PENDÊNCIA": "pendente",
+}
+VERSAO_CONVERSOR = "2"
 
 
 def coluna_numero(referencia):
@@ -63,7 +69,7 @@ def ler_celulas(arquivo):
 
 def converter(arquivo):
     digest = hashlib.sha256(arquivo.read_bytes()).hexdigest()[:16]
-    resultado = {"versao": f"{arquivo.name}:{digest}", "torres": {}}
+    resultado = {"versao": f"{arquivo.name}:{digest}:v{VERSAO_CONVERSOR}", "torres": {}}
     for nome_aba, celulas in ler_celulas(arquivo):
         torre = TORRES[nome_aba]
         linha_servicos = next(

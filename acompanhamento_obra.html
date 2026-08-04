@@ -970,7 +970,9 @@
           <label for="filtroSituacao">Situação</label>
           <select id="filtroSituacao">
             <option value="todas">Todas</option>
+            <option value="nao-iniciado">Não iniciado</option>
             <option value="em-andamento">Em andamento</option>
+            <option value="pendente">Pendente</option>
             <option value="concluido">Concluído</option>
           </select>
         </div>
@@ -979,7 +981,9 @@
       <div class="acoes-lote">
         <strong id="quantidadeSelecionada">Nenhum serviço selecionado</strong>
         <select id="statusEmLote" aria-label="Novo status dos serviços selecionados">
+          <option value="nao-iniciado">Não iniciado</option>
           <option value="em-andamento">Em andamento</option>
+          <option value="pendente">Pendente</option>
           <option value="concluido">Concluído</option>
         </select>
         <button id="aplicarStatusEmLote" type="button" disabled>Aplicar aos selecionados</button>
@@ -1199,11 +1203,13 @@ const TORRES = {
 let ATIVIDADES_UNIDADE = [];
 const SERVICOS_GERAIS = [];
 const STATUS_ATIVIDADE={
+  "nao-iniciado":"Não iniciado",
   "em-andamento":"Em andamento",
+  "pendente":"Pendente",
   "concluido":"Concluído"
 };
 function opcoesStatusAtividade(atual){
-  return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"em-andamento")?"selected":""}>${nome}</option>`).join("");
+  return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"nao-iniciado")?"selected":""}>${nome}</option>`).join("");
 }
 const PRAZOS_PLANEJADOS = {
   "Alvenaria e vedação":80,
@@ -1337,7 +1343,7 @@ function chaveRegistro(torre, andar, unidade, atividade){
 }
 
 function registroPadrao(torre, andar, unidade, atividade){
-  return {status:"em-andamento", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
+  return {status:"nao-iniciado", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
 }
 
 function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
