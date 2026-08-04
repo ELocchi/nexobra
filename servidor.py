@@ -24,6 +24,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 PASTA = Path(__file__).resolve().parent
+ARQUIVO_PLANEJAMENTO = PASTA / "dados_planilha_atual.json"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
@@ -46,6 +47,27 @@ SENHA_ENGENHEIRO = os.environ.get("OBRA_SENHA", configuracao_local.get("senha_en
 SESSOES_ENGENHEIRO = set()
 
 
+def atividades_planejadas(torre, andar=None):
+    if not ARQUIVO_PLANEJAMENTO.exists():
+        return set()
+    dados = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
+    andares = dados.get("torres", {}).get(torre, {})
+    grupos = [andares.get(str(andar), [])] if andar is not None else andares.values()
+    return {servico["atividade"] for grupo in grupos for servico in grupo}
+
+
+def somente_registros_planejados(registros, torre):
+    cache = {}
+    resultado = []
+    for registro in registros:
+        andar = registro["andar"]
+        if andar not in cache:
+            cache[andar] = atividades_planejadas(torre, andar)
+        if registro["atividade"] in cache[andar]:
+            resultado.append(registro)
+    return resultado
+
+
 def conectar():
     BANCO.parent.mkdir(parents=True, exist_ok=True)
     conexao = sqlite3.connect(BANCO)
@@ -59,6 +81,7 @@ def gerar_relatorio_pdf(torre, andar, unidade):
             "SELECT atividade, status, data_conclusao, observacao FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
             (torre, andar, unidade),
         ).fetchall()
+        registros = somente_registros_planejados(registros, torre)
         ocorrencias = conexao.execute(
             "SELECT atividade, status, data_ocorrencia, descricao FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
@@ -233,6 +256,7 @@ def gerar_pagina_visitante(torre, andar, unidade):
             "SELECT atividade, status, data_conclusao, observacao, foto, foto_nome FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
             (torre, andar, unidade),
         ).fetchall()
+        registros = somente_registros_planejados(registros, torre)
         ocorrencias = conexao.execute(
             "SELECT atividade, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
@@ -277,6 +301,7 @@ def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos"
             "SELECT andar, unidade, atividade, status, data_conclusao FROM registros WHERE torre = ? ORDER BY andar, unidade, atividade",
             (torre,),
         ).fetchall()
+    itens = somente_registros_planejados(itens, torre)
     if andar != "todos":
         itens = [item for item in itens if item["andar"] == int(andar)]
     if unidade != "todos":
@@ -493,6 +518,65 @@ def preparar_banco():
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_ocorrencias_local ON ocorrencias(torre, andar, unidade)"
         )
+        importar_planejamento_inicial(conexao)
+
+
+def apartamentos_do_andar(torre, andar):
+    if torre == "horizonte":
+        return [f"Apto {andar}{numero:02d}" for numero in range(1, 15)] if andar >= 4 else []
+    if andar == 1:
+        return ["Apto 103", "Apto 104", "Apto 105"]
+    if andar == 2:
+        return ["Apto 203", "Apto 204", "Apto 205"]
+    if 4 <= andar <= 35:
+        return [f"Apto {andar}{numero:02d}" for numero in range(1, 11)]
+    if andar == 36:
+        return [f"Apto {numero}" for numero in (3001, 3003, 3004, 3005, 3006, 3008, 3009, 3010)]
+    return []
+
+
+def importar_planejamento_inicial(conexao):
+    """Importa uma versão da planilha uma única vez, sem apagar edições posteriores."""
+    if not ARQUIVO_PLANEJAMENTO.exists():
+        return
+    planejamento = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
+    conexao.execute(
+        "CREATE TABLE IF NOT EXISTS configuracoes (chave TEXT PRIMARY KEY, valor TEXT NOT NULL)"
+    )
+    versao = planejamento.get("versao", "planilha-atual")
+    chave_versao = "planejamento_importado"
+    atual = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = ?", (chave_versao,)
+    ).fetchone()
+    if atual and atual["valor"] == versao:
+        return
+    for torre, andares in planejamento.get("torres", {}).items():
+        for andar_texto, servicos in andares.items():
+            andar = int(andar_texto)
+            unidades = apartamentos_do_andar(torre, andar) or ["Área comum"]
+            for unidade in unidades:
+                for servico in servicos:
+                    atividade = servico["atividade"]
+                    status = servico["status"]
+                    chave = f"{torre}|{andar}|{unidade}|{atividade}"
+                    conexao.execute(
+                        """
+                        INSERT INTO registros
+                        (chave, torre, andar, unidade, atividade, concluido,
+                         data_conclusao, observacao, foto, foto_nome, status, atualizado_em)
+                        VALUES (?, ?, ?, ?, ?, ?, '', '', '', '', ?, CURRENT_TIMESTAMP)
+                        ON CONFLICT(chave) DO UPDATE SET
+                            concluido=excluded.concluido,
+                            status=excluded.status,
+                            atualizado_em=CURRENT_TIMESTAMP
+                        """,
+                        (chave, torre, andar, unidade, atividade, status == "concluido", status),
+                    )
+    conexao.execute(
+        "INSERT INTO configuracoes (chave, valor) VALUES (?, ?) "
+        "ON CONFLICT(chave) DO UPDATE SET valor=excluded.valor",
+        (chave_versao, versao),
+    )
 
 
 class ServidorObra(SimpleHTTPRequestHandler):
@@ -652,6 +736,12 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     "fotoNome": linha["foto_nome"],
                 }
             self.enviar_json(registros)
+            return
+        if caminho == "/api/planejamento":
+            if not ARQUIVO_PLANEJAMENTO.exists():
+                self.enviar_json({"erro": "Planejamento não encontrado"}, 404)
+                return
+            self.enviar_json(json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8")))
             return
         if caminho == "/api/ocorrencias":
             with conectar() as conexao:

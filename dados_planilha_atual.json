@@ -1,0 +1,3923 @@
+{
+  "versao": "Controle_de_Execução_dos_Serviços_Boulevard_Butantã_- ATUAL.xlsx:0cfcece23d9a2d95",
+  "torres": {
+    "horizonte": {
+      "23": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "22": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "21": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "20": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "19": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "18": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "concluido"
+        }
+      ],
+      "17": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "16": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "15": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "14": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "13": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "12": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Fachada",
+          "status": "em-andamento"
+        }
+      ],
+      "11": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        }
+      ],
+      "10": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        }
+      ],
+      "9": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        }
+      ],
+      "8": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "em-andamento"
+        }
+      ],
+      "7": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "6": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "5": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "4": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Chapisco Fachada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "3": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        }
+      ],
+      "2": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        }
+      ],
+      "1": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        }
+      ]
+    },
+    "aurora": {
+      "36": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        }
+      ],
+      "35": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        }
+      ],
+      "34": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        }
+      ],
+      "33": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        }
+      ],
+      "32": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "em-andamento"
+        }
+      ],
+      "31": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        }
+      ],
+      "30": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "em-andamento"
+        }
+      ],
+      "29": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "em-andamento"
+        }
+      ],
+      "28": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        }
+      ],
+      "27": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        }
+      ],
+      "26": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        }
+      ],
+      "25": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "em-andamento"
+        }
+      ],
+      "24": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        }
+      ],
+      "23": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "em-andamento"
+        }
+      ],
+      "22": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        }
+      ],
+      "21": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        }
+      ],
+      "20": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        }
+      ],
+      "19": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        }
+      ],
+      "18": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "em-andamento"
+        }
+      ],
+      "17": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "em-andamento"
+        }
+      ],
+      "16": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        }
+      ],
+      "15": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        }
+      ],
+      "14": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        }
+      ],
+      "13": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        }
+      ],
+      "12": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "em-andamento"
+        }
+      ],
+      "11": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "em-andamento"
+        }
+      ],
+      "10": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "9": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "8": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "7": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "6": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "5": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Fechamento Shaft - A. Molhada + Terraço",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Shaft",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Dry Wall - Áreas Secas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Azulejo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Interno",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Rejunte",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Forro Sacada",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Piso Sacada",
+          "status": "concluido"
+        }
+      ],
+      "4": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas de Incêndio, AQ e Gás",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Pex Aéreo",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Talisca",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Caixinha Elétrica",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Imperm. Interna - Piso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Montante Drywall",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contramarco",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Kit Hidráulico",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Teste PEX",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Infra Ar Condicionado",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Massa Interna",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gesso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Ramais e Aranhas",
+          "status": "concluido"
+        }
+      ],
+      "3": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "em-andamento"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        }
+      ],
+      "2": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        }
+      ],
+      "1": [
+        {
+          "atividade": "Estrutura",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Prumadas AP, AF, ES e Ventilação",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Marcação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Gradil de Ferro",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Elevação da Alvenaria",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Contrapiso",
+          "status": "concluido"
+        },
+        {
+          "atividade": "Encunhamento",
+          "status": "concluido"
+        }
+      ]
+    }
+  }
+}

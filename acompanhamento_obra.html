@@ -970,9 +970,7 @@
           <label for="filtroSituacao">Situação</label>
           <select id="filtroSituacao">
             <option value="todas">Todas</option>
-            <option value="nao-iniciado">Não iniciado</option>
             <option value="em-andamento">Em andamento</option>
-            <option value="pendente">Pendente</option>
             <option value="concluido">Concluído</option>
           </select>
         </div>
@@ -981,9 +979,7 @@
       <div class="acoes-lote">
         <strong id="quantidadeSelecionada">Nenhum serviço selecionado</strong>
         <select id="statusEmLote" aria-label="Novo status dos serviços selecionados">
-          <option value="nao-iniciado">Não iniciado</option>
           <option value="em-andamento">Em andamento</option>
-          <option value="pendente">Pendente</option>
           <option value="concluido">Concluído</option>
         </select>
         <button id="aplicarStatusEmLote" type="button" disabled>Aplicar aos selecionados</button>
@@ -1200,22 +1196,14 @@ const TORRES = {
   }
 };
 
-const ATIVIDADES_UNIDADE = [
-  "Alvenaria e vedação", "Instalação elétrica", "Instalação hidráulica",
-  "Revestimento", "Pintura", "Esquadrias", "Louças e metais", "Limpeza final"
-];
-const SERVICOS_GERAIS = [
-  "Instalações do hall", "Iluminação da circulação", "Pintura das áreas comuns",
-  "Sinalização e segurança", "Limpeza do pavimento"
-];
+let ATIVIDADES_UNIDADE = [];
+const SERVICOS_GERAIS = [];
 const STATUS_ATIVIDADE={
-  "nao-iniciado":"Não iniciado",
   "em-andamento":"Em andamento",
-  "pendente":"Pendente",
   "concluido":"Concluído"
 };
 function opcoesStatusAtividade(atual){
-  return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"nao-iniciado")?"selected":""}>${nome}</option>`).join("");
+  return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"em-andamento")?"selected":""}>${nome}</option>`).join("");
 }
 const PRAZOS_PLANEJADOS = {
   "Alvenaria e vedação":80,
@@ -1242,6 +1230,7 @@ let torreSelecionada = "aurora";
 let pavimentoSelecionado = 1;
 let unidadeSelecionada = null;
 let registrosObra = {};
+let planejamentoObra = {torres:{aurora:{},horizonte:{}}};
 let ocorrenciasBanco = [];
 const registrosSelecionados = new Set();
 let servicoAguardandoOcorrencia = null;
@@ -1255,9 +1244,16 @@ let graficoServico;
 async function carregarRegistrosDoBanco(){
   const status = document.getElementById("statusSalvamento");
   try{
-    const resposta = await fetch("/api/registros",{cache:"no-store"});
-    if(!resposta.ok) throw new Error("Banco indisponível");
+    const [resposta, respostaPlanejamento] = await Promise.all([
+      fetch("/api/registros",{cache:"no-store"}),
+      fetch("/api/planejamento",{cache:"no-store"})
+    ]);
+    if(!resposta.ok || !respostaPlanejamento.ok) throw new Error("Banco indisponível");
     registrosObra = await resposta.json();
+    planejamentoObra = await respostaPlanejamento.json();
+    ATIVIDADES_UNIDADE = [...new Set(Object.values(planejamentoObra.torres).flatMap(torre=>
+      Object.values(torre).flatMap(servicos=>servicos.map(servico=>servico.atividade))
+    ))];
     Object.values(registrosObra).forEach(registro => {
       registro.status = registro.status || (registro.concluido?"concluido":"nao-iniciado");
       registro.concluido = registro.status === "concluido";
@@ -1269,6 +1265,11 @@ async function carregarRegistrosDoBanco(){
     renderizarApartamentosDoPavimento();
     atualizarDashboardGeral();
     atualizarGraficosOperacionais();
+    document.getElementById("filtroServicoDashboard").innerHTML="";
+    document.getElementById("filtroAbaServicos").innerHTML="";
+    prepararDashboardGeral();
+    prepararAbaServicos();
+    atualizarAtividadesOcorrencia();
     renderizarAbaServicos();
   }
   catch(e){
@@ -1336,7 +1337,7 @@ function chaveRegistro(torre, andar, unidade, atividade){
 }
 
 function registroPadrao(torre, andar, unidade, atividade){
-  return {status:"nao-iniciado", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
+  return {status:"em-andamento", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
 }
 
 function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
@@ -1361,15 +1362,17 @@ function apartamentosDoAndar(torre, andar){
 function listaRegistros(torre = torreSelecionada){
   const itens = [];
   for(let andar=1;andar<=TORRES[torre].andares;andar++){
-    apartamentosDoAndar(torre,andar).forEach((numero,indice) => {
-      ATIVIDADES_UNIDADE.forEach(atividade => itens.push({
+    const servicos = planejamentoObra.torres?.[torre]?.[String(andar)] || [];
+    const apartamentos = apartamentosDoAndar(torre,andar);
+    const unidades = apartamentos.length ? apartamentos.map(numero=>`Apto ${numero}`) : ["Área comum"];
+    unidades.forEach((unidade,indice) => {
+      servicos.forEach(servico => itens.push({
         andar,
-        unidade:`Apto ${numero}`,
-        numeroApto:indice+1,
-        atividade
+        unidade,
+        numeroApto:unidade==="Área comum"?null:indice+1,
+        atividade:servico.atividade
       }));
     });
-    SERVICOS_GERAIS.forEach(atividade => itens.push({andar, unidade:"Área comum", numeroApto:null, atividade}));
   }
   return itens;
 }
@@ -1492,8 +1495,10 @@ function atualizarUnidadesOcorrencia(){
 }
 
 function atualizarAtividadesOcorrencia(){
+  const torre=document.getElementById("ocTorre").value||torreSelecionada;
+  const andar=Number(document.getElementById("ocAndar").value)||1;
   const unidade=document.getElementById("ocUnidade").value;
-  const atividades=unidade==="Área comum"?SERVICOS_GERAIS:ATIVIDADES_UNIDADE;
+  const atividades=(planejamentoObra.torres?.[torre]?.[String(andar)]||[]).map(servico=>servico.atividade);
   document.getElementById("ocAtividade").innerHTML=atividades.map(atividade=>`<option value="${atividade}">${atividade}</option>`).join("");
 }
 
