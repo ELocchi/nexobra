@@ -553,6 +553,28 @@
   .planilha input[type="date"]{min-width:125px;}
   .planilha input[type="date"][readonly]{background:#f3f6f8;color:#526270;cursor:not-allowed;}
   .planilha input[type="text"]{min-width:180px;}
+  .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;}
+  .atividade-editor,.atividade-listagem{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;}
+  .atividade-editor h3,.atividade-listagem h3{margin:0 0 14px;color:var(--azul-escuro);}
+  .atividade-campos{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .atividade-campos .largo{grid-column:1/-1;}
+  .atividade-campos input,.atividade-campos select{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
+  .atividade-escopo-acoes{display:flex;gap:8px;margin-top:11px;}
+  .atividade-escopo-acoes button,.atividade-form-acoes button{border:0;border-radius:7px;padding:10px 13px;font-weight:700;cursor:pointer;}
+  .atividade-escopo-acoes button{background:#e8f1f6;color:var(--azul-escuro);}
+  .atividade-form-acoes{display:flex;gap:8px;margin-top:15px;}
+  .atividade-form-acoes .salvar{background:var(--azul);color:#fff;}
+  .atividade-form-acoes .cancelar{background:#e8ecef;color:#526270;}
+  .escopos-selecionados{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;min-height:32px;}
+  .escopo-chip{display:flex;align-items:center;gap:7px;background:#edf5f9;color:var(--azul-escuro);border-radius:18px;padding:6px 9px;font-size:.69rem;font-weight:700;}
+  .escopo-chip button{border:0;background:none;color:var(--vermelho);font-weight:900;cursor:pointer;padding:0;}
+  .atividades-tabela{width:100%;font-size:.76rem;}
+  .atividades-tabela td,.atividades-tabela th{padding:9px 7px;vertical-align:top;}
+  .atividade-escopos-resumo{color:var(--cinza-texto);line-height:1.45;}
+  .atividade-acoes{white-space:nowrap;}
+  .atividade-acoes button{border:0;background:#e8f1f6;color:var(--azul-escuro);border-radius:6px;padding:6px 8px;cursor:pointer;margin-right:4px;}
+  .atividade-acoes button.excluir{background:#fdebea;color:var(--vermelho);}
+  .atividade-status{margin-top:10px;font-size:.74rem;min-height:18px;}
   .foto-campo{display:flex;align-items:center;gap:6px;min-width:125px;}
   .foto-botao{
     display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px dashed #aab7c2;
@@ -681,6 +703,7 @@
   @media (max-width:820px){
     .duas-colunas{grid-template-columns:1fr;}
     .filtros-planilha{grid-template-columns:1fr 1fr;}
+    .atividades-admin{grid-template-columns:1fr;}
     .graficos-operacionais{grid-template-columns:1fr;}
     .apartamento-analises{grid-template-columns:1fr;}
     .relatorios-grid{grid-template-columns:1fr;}
@@ -867,6 +890,7 @@
   <nav aria-label="Navegação do acompanhamento">
     <a href="#dashboardGeral" class="ativo"><span>▦</span>Visão geral</a>
     <a href="#controleDetalhado"><span>≣</span>Planilha de acompanhamento</a>
+    <a href="#atividadesAdmin"><span>＋</span>Atividades</a>
     <a href="#apartamentos"><span>⌂</span>Apartamentos</a>
     <a href="#graficos"><span>▥</span>Gráficos</a>
     <a href="#ocorrencias"><span>!</span>Ocorrências</a>
@@ -993,6 +1017,34 @@
           <thead><tr><th style="width:42px"><input class="selecao-lote" id="selecionarTodosRegistros" type="checkbox" aria-label="Selecionar todos os serviços filtrados"></th><th style="width:76px">Andar</th><th>Unidade / setor</th><th>Atividade</th><th style="width:140px">Status</th><th>Data</th></tr></thead>
           <tbody id="corpoPlanilha"></tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="atividadesAdmin" class="painel-aba">
+    <div class="apartamentos-cabecalho">
+      <div><h2>Atividades</h2><p>Cadastre, edite ou exclua atividades e defina onde cada uma será acompanhada.</p></div>
+    </div>
+    <div class="atividades-admin">
+      <form class="atividade-editor" id="formAtividade">
+        <h3 id="tituloFormAtividade">Nova atividade</h3>
+        <input id="atividadeNomeOriginal" type="hidden">
+        <div class="atividade-campos">
+          <div class="campo-filtro largo"><label for="atividadeNome">Nome da atividade</label><input id="atividadeNome" required placeholder="Ex.: Instalação de bancada"></div>
+          <div class="campo-filtro"><label for="atividadeTorre">Torre</label><select id="atividadeTorre"><option value="aurora">Torre Home</option><option value="horizonte">Torre Smart</option></select></div>
+          <div class="campo-filtro"><label for="atividadeAndar">Pavimento</label><select id="atividadeAndar"></select></div>
+          <div class="campo-filtro largo"><label for="atividadeUnidade">Apartamento / setor</label><select id="atividadeUnidade"></select></div>
+          <div class="campo-filtro largo"><label for="atividadeSetorNovo">Novo setor (opcional)</label><input id="atividadeSetorNovo" placeholder="Ex.: Barrilete, Cobertura ou Área técnica"></div>
+        </div>
+        <div class="atividade-escopo-acoes"><button id="adicionarEscopoAtividade" type="button">＋ Adicionar este destino</button></div>
+        <div class="escopos-selecionados" id="escoposAtividade"><span class="atividade-escopos-resumo">Nenhum destino selecionado.</span></div>
+        <div class="atividade-form-acoes"><button class="salvar" type="submit">Salvar atividade</button><button class="cancelar" id="cancelarEdicaoAtividade" type="button">Limpar</button></div>
+        <div class="atividade-status" id="statusAtividadeAdmin"></div>
+      </form>
+      <div class="atividade-listagem">
+        <h3>Atividades cadastradas</h3>
+        <div class="campo-filtro" style="margin-bottom:12px"><label for="buscarAtividadeAdmin">Buscar atividade</label><input id="buscarAtividadeAdmin" type="search" placeholder="Digite parte do nome" style="width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;padding:0 9px"></div>
+        <div class="tabela-scroll"><table class="atividades-tabela"><thead><tr><th>Atividade</th><th>Destinos</th><th>Ações</th></tr></thead><tbody id="listaAtividadesAdmin"></tbody></table></div>
       </div>
     </div>
   </section>
@@ -1237,6 +1289,8 @@ let pavimentoSelecionado = 1;
 let unidadeSelecionada = null;
 let registrosObra = {};
 let planejamentoObra = {torres:{aurora:{},horizonte:{}}};
+let atividadesCadastro = [];
+let escoposAtividadeTemporarios = [];
 let ocorrenciasBanco = [];
 const registrosSelecionados = new Set();
 let servicoAguardandoOcorrencia = null;
@@ -1264,13 +1318,12 @@ async function carregarRegistrosDoBanco(){
       }
       throw ultimoErro||new Error("Resposta indisponível");
     }
-    [registrosObra,planejamentoObra] = await Promise.all([
+    [registrosObra,planejamentoObra,atividadesCadastro] = await Promise.all([
       buscarJsonComTentativas("/api/registros"),
-      buscarJsonComTentativas("/api/planejamento")
+      buscarJsonComTentativas("/api/planejamento"),
+      buscarJsonComTentativas("/api/atividades")
     ]);
-    ATIVIDADES_UNIDADE = [...new Set(Object.values(planejamentoObra.torres).flatMap(torre=>
-      Object.values(torre).flatMap(servicos=>servicos.map(servico=>servico.atividade))
-    ))];
+    ATIVIDADES_UNIDADE = atividadesCadastro.map(item=>item.nome);
     Object.values(registrosObra).forEach(registro => {
       registro.status = registro.status || (registro.concluido?"concluido":"nao-iniciado");
       registro.concluido = registro.status === "concluido";
@@ -1281,12 +1334,13 @@ async function carregarRegistrosDoBanco(){
     document.getElementById("filtroServicoDashboard").innerHTML="";
     document.getElementById("filtroAbaServicos").innerHTML="";
     const renderizacoes=[
-      ["planilha",renderizarPlanilha],
+      ["planilha",prepararPlanilha],
       ["apartamentos",renderizarApartamentosDoPavimento],
       ["dashboard",prepararDashboardGeral],
       ["gráficos",atualizarGraficosOperacionais],
       ["serviços",prepararAbaServicos],
-      ["ocorrências",atualizarAtividadesOcorrencia]
+      ["ocorrências",atualizarAtividadesOcorrencia],
+      ["cadastro de atividades",renderizarAtividadesAdmin]
     ];
     const avisos=[];
     renderizacoes.forEach(([nome,tarefa])=>{
@@ -1389,22 +1443,31 @@ function apartamentosDoAndar(torre, andar){
   return [];
 }
 
+function unidadesDoAndar(torre,andar){
+  const apartamentos=apartamentosDoAndar(torre,andar).map(numero=>`Apto ${numero}`);
+  const escopos=atividadesCadastro.flatMap(item=>item.escopos).filter(escopo=>
+    escopo.torre===torre&&Number(escopo.andar)===Number(andar)
+  );
+  const unidadesEspecificas=escopos.filter(escopo=>escopo.unidade!=="*").map(escopo=>escopo.unidade);
+  const base=[...apartamentos,"Área comum"];
+  return [...new Set([...base,...unidadesEspecificas])];
+}
+
 function listaRegistros(torre = torreSelecionada){
   const itens = [];
-  for(let andar=1;andar<=TORRES[torre].andares;andar++){
-    const servicos = planejamentoObra.torres?.[torre]?.[String(andar)] || [];
-    const apartamentos = apartamentosDoAndar(torre,andar);
-    const unidades = apartamentos.length ? apartamentos.map(numero=>`Apto ${numero}`) : ["Área comum"];
-    unidades.forEach((unidade,indice) => {
-      servicos.forEach(servico => itens.push({
-        andar,
-        unidade,
-        numeroApto:unidade==="Área comum"?null:indice+1,
-        atividade:servico.atividade
+  atividadesCadastro.forEach(atividade=>{
+    atividade.escopos.filter(escopo=>escopo.torre===torre).forEach(escopo=>{
+      const unidades=escopo.unidade==="*"
+        ? unidadesDoAndar(torre,Number(escopo.andar))
+        : [escopo.unidade];
+      unidades.forEach((unidade,indice)=>itens.push({
+        andar:Number(escopo.andar),unidade,
+        numeroApto:unidade.startsWith("Apto ")?indice+1:null,
+        atividade:atividade.nome
       }));
     });
-  }
-  return itens;
+  });
+  return [...new Map(itens.map(item=>[chaveRegistro(torre,item.andar,item.unidade,item.atividade),item])).values()];
 }
 
 function renderizarApartamentosDoPavimento(){
@@ -1414,8 +1477,7 @@ function renderizarApartamentosDoPavimento(){
     seletorAndar.dataset.torre=torreSelecionada;
   }
   seletorAndar.value=String(pavimentoSelecionado);
-  const numeros = apartamentosDoAndar(torreSelecionada,pavimentoSelecionado);
-  const unidades = numeros.length ? numeros.map(numero=>`Apto ${numero}`) : ["Área comum"];
+  const unidades = unidadesDoAndar(torreSelecionada,pavimentoSelecionado);
   document.getElementById("apartamentosGrid").innerHTML = unidades.map(unidade => {
     const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidade);
     const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
@@ -1499,10 +1561,10 @@ function atualizarFiltroApartamentos(){
   const filtroAndar = document.getElementById("filtroAndar").value;
   const filtro = document.getElementById("filtroApartamento");
   const valorAtual = filtro.value;
-  let opcoes = `<option value="todos">Todos os apartamentos e setores</option><option value="Área comum">Área comum</option>`;
+  let opcoes = `<option value="todos">Todos os apartamentos e setores</option>`;
   if(filtroAndar !== "todos"){
-    opcoes += apartamentosDoAndar(torreSelecionada,Number(filtroAndar))
-      .map(numero=>`<option value="Apto ${numero}">Apartamento ${numero}</option>`).join("");
+    opcoes += unidadesDoAndar(torreSelecionada,Number(filtroAndar))
+      .map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
   }
   filtro.innerHTML = opcoes;
   filtro.value = [...filtro.options].some(opcao=>opcao.value===valorAtual) ? valorAtual : "todos";
@@ -1517,10 +1579,9 @@ function atualizarAndaresOcorrencia(){
 function atualizarUnidadesOcorrencia(){
   const torre=document.getElementById("ocTorre").value;
   const andar=Number(document.getElementById("ocAndar").value)||1;
-  const unidades=apartamentosDoAndar(torre,andar);
-  document.getElementById("ocUnidade").innerHTML =
-    unidades.map(numero=>`<option value="Apto ${numero}">Apartamento ${numero}</option>`).join("")+
-    `<option value="Área comum">Área comum</option>`;
+  const unidades=unidadesDoAndar(torre,andar);
+  document.getElementById("ocUnidade").innerHTML = unidades
+    .map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
   atualizarAtividadesOcorrencia();
 }
 
@@ -1582,6 +1643,120 @@ function existeOcorrenciaAtiva(torre, andar, unidade, atividade){
     oc.status!=="concluido"
   );
 }
+
+function nomeTorreAtividade(torre){return torre==="aurora"?"Torre Home":"Torre Smart";}
+function rotuloEscopoAtividade(escopo){
+  const destino=escopo.unidade==="*"?"Todos os apartamentos/setores":escopo.unidade.replace("Apto ","Apartamento ");
+  return `${nomeTorreAtividade(escopo.torre)} · ${escopo.andar}º · ${destino}`;
+}
+function atualizarAndaresAtividade(){
+  const torre=document.getElementById("atividadeTorre").value;
+  document.getElementById("atividadeAndar").innerHTML=`<option value="todos">Todos os pavimentos</option>`+
+    Array.from({length:TORRES[torre].andares},(_,i)=>`<option value="${i+1}">${i+1}º pavimento</option>`).join("");
+  atualizarUnidadesAtividade();
+}
+function atualizarUnidadesAtividade(){
+  const torre=document.getElementById("atividadeTorre").value;
+  const valor=document.getElementById("atividadeAndar").value;
+  const andar=valor==="todos"?1:Number(valor)||1;
+  const unidades=valor==="todos"?[]:unidadesDoAndar(torre,andar);
+  document.getElementById("atividadeUnidade").innerHTML=`<option value="*">Todos os apartamentos/setores</option>`+
+    unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+}
+function renderizarEscoposAtividade(){
+  const area=document.getElementById("escoposAtividade");
+  area.innerHTML=escoposAtividadeTemporarios.length?escoposAtividadeTemporarios.map((escopo,indice)=>
+    `<span class="escopo-chip">${escaparHtml(rotuloEscopoAtividade(escopo))}<button type="button" data-remover-escopo="${indice}" aria-label="Remover destino">×</button></span>`
+  ).join(""):`<span class="atividade-escopos-resumo">Nenhum destino selecionado.</span>`;
+}
+function limparFormularioAtividade(){
+  document.getElementById("formAtividade").reset();
+  document.getElementById("atividadeNomeOriginal").value="";
+  document.getElementById("tituloFormAtividade").textContent="Nova atividade";
+  escoposAtividadeTemporarios=[];
+  atualizarAndaresAtividade();
+  renderizarEscoposAtividade();
+  document.getElementById("statusAtividadeAdmin").textContent="";
+}
+function renderizarAtividadesAdmin(){
+  const busca=(document.getElementById("buscarAtividadeAdmin").value||"").toLocaleLowerCase("pt-BR");
+  const itens=atividadesCadastro.filter(item=>item.nome.toLocaleLowerCase("pt-BR").includes(busca));
+  document.getElementById("listaAtividadesAdmin").innerHTML=itens.map(item=>{
+    const torres=[...new Set(item.escopos.map(escopo=>nomeTorreAtividade(escopo.torre)))].join(" e ");
+    const pavimentos=new Set(item.escopos.map(escopo=>`${escopo.torre}|${escopo.andar}`)).size;
+    const especificos=item.escopos.filter(escopo=>escopo.unidade!=="*").length;
+    const resumo=`${torres}<br>${pavimentos} pavimento(s)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}`;
+    return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes"><button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button><button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
+  }).join("")||`<tr><td colspan="3">Nenhuma atividade encontrada.</td></tr>`;
+}
+async function recarregarCadastroAtividades(){
+  const resposta=await fetch("/api/atividades",{cache:"no-store"});
+  if(!resposta.ok) throw new Error("Não foi possível atualizar a lista");
+  atividadesCadastro=await resposta.json();
+  ATIVIDADES_UNIDADE=atividadesCadastro.map(item=>item.nome);
+  renderizarAtividadesAdmin();
+  await carregarRegistrosDoBanco();
+}
+
+document.getElementById("atividadeTorre").addEventListener("change",atualizarAndaresAtividade);
+document.getElementById("atividadeAndar").addEventListener("change",atualizarUnidadesAtividade);
+document.getElementById("adicionarEscopoAtividade").addEventListener("click",()=>{
+  const torre=document.getElementById("atividadeTorre").value;
+  const andarSelecionado=document.getElementById("atividadeAndar").value;
+  const setorNovo=document.getElementById("atividadeSetorNovo").value.trim();
+  const unidade=setorNovo||document.getElementById("atividadeUnidade").value;
+  const andares=andarSelecionado==="todos"?Array.from({length:TORRES[torre].andares},(_,i)=>i+1):[Number(andarSelecionado)];
+  andares.forEach(andar=>{
+    const escopo={torre,andar,unidade};
+    if(!escoposAtividadeTemporarios.some(item=>item.torre===torre&&item.andar===andar&&item.unidade===unidade)) escoposAtividadeTemporarios.push(escopo);
+  });
+  document.getElementById("atividadeSetorNovo").value="";
+  renderizarEscoposAtividade();
+});
+document.getElementById("escoposAtividade").addEventListener("click",evento=>{
+  const botao=evento.target.closest("[data-remover-escopo]");
+  if(!botao)return;
+  escoposAtividadeTemporarios.splice(Number(botao.dataset.removerEscopo),1);
+  renderizarEscoposAtividade();
+});
+document.getElementById("cancelarEdicaoAtividade").addEventListener("click",limparFormularioAtividade);
+document.getElementById("buscarAtividadeAdmin").addEventListener("input",renderizarAtividadesAdmin);
+document.getElementById("listaAtividadesAdmin").addEventListener("click",async evento=>{
+  const editar=evento.target.closest("[data-editar-atividade]");
+  const excluir=evento.target.closest("[data-excluir-atividade]");
+  if(editar){
+    const item=atividadesCadastro.find(atividade=>atividade.nome===editar.dataset.editarAtividade);
+    if(!item)return;
+    document.getElementById("atividadeNome").value=item.nome;
+    document.getElementById("atividadeNomeOriginal").value=item.nome;
+    document.getElementById("tituloFormAtividade").textContent="Editar atividade";
+    escoposAtividadeTemporarios=item.escopos.map(({torre,andar,unidade})=>({torre,andar,unidade}));
+    renderizarEscoposAtividade();
+    document.getElementById("formAtividade").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  if(excluir){
+    const nome=excluir.dataset.excluirAtividade;
+    if(!confirm(`Excluir “${nome}” da planilha de acompanhamento? O histórico salvo será preservado.`))return;
+    const resposta=await fetch(`/api/atividades?${new URLSearchParams({nome})}`,{method:"DELETE"});
+    const dados=await resposta.json();
+    if(!resposta.ok){document.getElementById("statusAtividadeAdmin").textContent=dados.erro||"Falha ao excluir";return;}
+    await recarregarCadastroAtividades();
+  }
+});
+document.getElementById("formAtividade").addEventListener("submit",async evento=>{
+  evento.preventDefault();
+  const status=document.getElementById("statusAtividadeAdmin");
+  const nome=document.getElementById("atividadeNome").value.trim();
+  const nomeOriginal=document.getElementById("atividadeNomeOriginal").value;
+  if(!escoposAtividadeTemporarios.length){status.textContent="Adicione ao menos um destino.";status.style.color="var(--vermelho)";return;}
+  status.textContent="Salvando atividade…";status.style.color="";
+  const resposta=await fetch("/api/atividades",{method:nomeOriginal?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome,nomeOriginal,escopos:escoposAtividadeTemporarios})});
+  const dados=await resposta.json();
+  if(!resposta.ok){status.textContent=dados.erro||"Não foi possível salvar";status.style.color="var(--vermelho)";return;}
+  limparFormularioAtividade();
+  await recarregarCadastroAtividades();
+  document.getElementById("statusAtividadeAdmin").textContent="Atividade salva com sucesso.";
+});
 
 function prepararDashboardGeral(){
   const filtro = document.getElementById("filtroServicoDashboard");
@@ -2485,6 +2660,8 @@ renderizarApartamentosDoPavimento();
 prepararFormularioOcorrencia();
 atualizarPortalRelatorios();
 prepararAbaServicos();
+atualizarAndaresAtividade();
+renderizarEscoposAtividade();
 carregarRegistrosDoBanco();
 carregarOcorrenciasDoBanco();
 </script>

@@ -53,7 +53,24 @@ def atividades_planejadas(torre, andar=None):
     dados = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
     andares = dados.get("torres", {}).get(torre, {})
     grupos = [andares.get(str(andar), [])] if andar is not None else andares.values()
-    return {servico["atividade"] for grupo in grupos for servico in grupo}
+    atividades = {servico["atividade"] for grupo in grupos for servico in grupo}
+    try:
+        with conectar() as conexao:
+            existe = conexao.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='atividades_config'"
+            ).fetchone()
+            if existe:
+                consulta = "SELECT DISTINCT nome FROM atividades_config WHERE torre = ?"
+                parametros = [torre]
+                if andar is not None:
+                    consulta += " AND andar = ?"
+                    parametros.append(int(andar))
+                return {
+                    linha["nome"] for linha in conexao.execute(consulta, parametros).fetchall()
+                }
+    except sqlite3.Error:
+        pass
+    return atividades
 
 
 def somente_registros_planejados(registros, torre):
@@ -519,6 +536,7 @@ def preparar_banco():
             "CREATE INDEX IF NOT EXISTS idx_ocorrencias_local ON ocorrencias(torre, andar, unidade)"
         )
         importar_planejamento_inicial(conexao)
+        preparar_atividades_config(conexao)
 
 
 def apartamentos_do_andar(torre, andar):
@@ -577,6 +595,114 @@ def importar_planejamento_inicial(conexao):
         "ON CONFLICT(chave) DO UPDATE SET valor=excluded.valor",
         (chave_versao, versao),
     )
+
+
+def preparar_atividades_config(conexao):
+    conexao.execute(
+        """
+        CREATE TABLE IF NOT EXISTS atividades_config (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            torre TEXT NOT NULL,
+            andar INTEGER NOT NULL,
+            unidade TEXT NOT NULL DEFAULT '*',
+            criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(nome, torre, andar, unidade)
+        )
+        """
+    )
+    conexao.execute(
+        "CREATE INDEX IF NOT EXISTS idx_atividades_config_escopo ON atividades_config(torre, andar, unidade)"
+    )
+    marcador = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'atividades_config_inicial'"
+    ).fetchone()
+    if not marcador and ARQUIVO_PLANEJAMENTO.exists():
+        dados = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
+        for torre, andares in dados.get("torres", {}).items():
+            for andar, servicos in andares.items():
+                for servico in servicos:
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                        (servico["atividade"], torre, int(andar)),
+                    )
+    if not marcador:
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_config_inicial', '1')"
+        )
+    marcador_registros = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'atividades_registros_config_v1'"
+    ).fetchone()
+    if not marcador_registros:
+        linhas = conexao.execute(
+            "SELECT nome, torre, andar, unidade FROM atividades_config ORDER BY nome"
+        ).fetchall()
+        por_atividade = {}
+        for linha in linhas:
+            por_atividade.setdefault(linha["nome"], []).append(
+                (linha["torre"], linha["andar"], linha["unidade"])
+            )
+        for nome, escopos in por_atividade.items():
+            garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_registros_config_v1', '1')"
+        )
+
+
+def listar_atividades_config():
+    with conectar() as conexao:
+        linhas = conexao.execute(
+            "SELECT id, nome, torre, andar, unidade FROM atividades_config ORDER BY nome, torre, andar, unidade"
+        ).fetchall()
+    agrupadas = {}
+    for linha in linhas:
+        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": []})
+        item["escopos"].append(
+            {"id": linha["id"], "torre": linha["torre"], "andar": linha["andar"], "unidade": linha["unidade"]}
+        )
+    return list(agrupadas.values())
+
+
+def validar_escopos(escopos):
+    resultado = []
+    for escopo in escopos:
+        torre = str(escopo.get("torre", ""))
+        andar = int(escopo.get("andar", 0))
+        unidade = str(escopo.get("unidade", "*")).strip() or "*"
+        maximo = 36 if torre == "aurora" else 23 if torre == "horizonte" else 0
+        if not maximo or andar < 1 or andar > maximo:
+            raise ValueError("Escopo de torre ou pavimento inválido")
+        resultado.append((torre, andar, unidade))
+    if not resultado:
+        raise ValueError("Adicione ao menos um pavimento, apartamento ou setor")
+    return list(dict.fromkeys(resultado))
+
+
+def garantir_registros_atividade(conexao, nome, escopos):
+    for torre, andar, unidade in escopos:
+        if unidade == "*":
+            unidades = apartamentos_do_andar(torre, andar) + ["Área comum"]
+            unidades += [
+                linha["unidade"]
+                for linha in conexao.execute(
+                    "SELECT DISTINCT unidade FROM atividades_config WHERE torre = ? AND andar = ? AND unidade != '*'",
+                    (torre, andar),
+                ).fetchall()
+            ]
+            unidades = list(dict.fromkeys(unidades))
+        else:
+            unidades = [unidade]
+        for destino in unidades:
+            chave = f"{torre}|{andar}|{destino}|{nome}"
+            conexao.execute(
+                """
+                INSERT OR IGNORE INTO registros
+                (chave, torre, andar, unidade, atividade, concluido, data_conclusao,
+                 observacao, foto, foto_nome, status, atualizado_em)
+                VALUES (?, ?, ?, ?, ?, 0, '', '', '', '', 'nao-iniciado', CURRENT_TIMESTAMP)
+                """,
+                (chave, torre, andar, destino, nome),
+            )
 
 
 class ServidorObra(SimpleHTTPRequestHandler):
@@ -743,6 +869,9 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 return
             self.enviar_json(json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8")))
             return
+        if caminho == "/api/atividades":
+            self.enviar_json(listar_atividades_config())
+            return
         if caminho == "/api/ocorrencias":
             with conectar() as conexao:
                 linhas = conexao.execute(
@@ -772,7 +901,33 @@ class ServidorObra(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_PUT(self):
-        if urlparse(self.path).path != "/api/registros":
+        caminho = urlparse(self.path).path
+        if caminho == "/api/atividades":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                nome_original = str(dados.get("nomeOriginal", "")).strip()
+                nome = str(dados.get("nome", "")).strip()
+                if not nome_original or not nome:
+                    raise ValueError("Informe o nome da atividade")
+                escopos = validar_escopos(dados.get("escopos", []))
+                with conectar() as conexao:
+                    conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome_original,))
+                    for torre, andar, unidade in escopos:
+                        conexao.execute(
+                            "INSERT INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                            (nome, torre, andar, unidade),
+                        )
+                    garantir_registros_atividade(conexao, nome, escopos)
+                self.enviar_json({"ok": True, "nome": nome})
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao atualizar atividade: {erro}"}, 500)
+            return
+        if caminho != "/api/registros":
             self.enviar_json({"erro": "Rota não encontrada"}, 404)
             return
         if not self.exigir_engenheiro():
@@ -862,6 +1017,29 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(corpo)
             return
+        if caminho == "/api/atividades":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                nome = str(dados.get("nome", "")).strip()
+                if not nome:
+                    raise ValueError("Informe o nome da atividade")
+                escopos = validar_escopos(dados.get("escopos", []))
+                with conectar() as conexao:
+                    for torre, andar, unidade in escopos:
+                        conexao.execute(
+                            "INSERT INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                            (nome, torre, andar, unidade),
+                        )
+                    garantir_registros_atividade(conexao, nome, escopos)
+                self.enviar_json({"ok": True, "nome": nome}, 201)
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao cadastrar atividade: {erro}"}, 500)
+            return
         if caminho != "/api/ocorrencias":
             self.enviar_json({"erro": "Rota não encontrada"}, 404)
             return
@@ -936,6 +1114,25 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_DELETE(self):
         caminho = urlparse(self.path).path
+        if caminho == "/api/atividades":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                parametros = parse_qs(urlparse(self.path).query)
+                nome = parametros.get("nome", [""])[0].strip()
+                if not nome:
+                    raise ValueError("Informe a atividade")
+                with conectar() as conexao:
+                    cursor = conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome,))
+                if not cursor.rowcount:
+                    self.enviar_json({"erro": "Atividade não encontrada"}, 404)
+                    return
+                self.enviar_json({"ok": True, "nome": nome})
+            except ValueError as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao excluir atividade: {erro}"}, 500)
+            return
         partes = caminho.strip("/").split("/")
         if len(partes) != 3 or partes[:2] != ["api", "ocorrencias"]:
             self.enviar_json({"erro": "Rota não encontrada"}, 404)
