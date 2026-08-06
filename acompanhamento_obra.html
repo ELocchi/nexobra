@@ -280,6 +280,18 @@
   .menu-principal a:hover{color:var(--azul);background:#edf4f8;}
   .menu-principal a.ativo{color:#fff;background:var(--azul);}
   .menu-principal a span{font-size:.9rem;}
+  .menu-planilha{
+    display:inline-flex;align-items:stretch;border-radius:7px;overflow:hidden;flex:none;
+  }
+  .menu-planilha a{border-radius:0;}
+  .menu-planilha .abrir-atividades{
+    width:34px;border:0;border-left:1px solid transparent;background:transparent;color:#536171;
+    font:700 1rem/1 sans-serif;cursor:pointer;transition:background .2s ease,color .2s ease;
+  }
+  .menu-planilha .abrir-atividades:hover{color:var(--azul);background:#edf4f8;}
+  .menu-planilha.ativo a,.menu-planilha.ativo .abrir-atividades{color:#fff;background:var(--azul);}
+  .menu-planilha.ativo .abrir-atividades{border-left-color:rgba(255,255,255,.3);}
+  .menu-planilha.ativo .abrir-atividades:hover{background:#174b85;}
   #dashboardGeral,#apartamentos,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
   .painel-aba{display:none;animation:entradaAba .25s ease;}
   .painel-aba.ativo{display:block;}
@@ -553,6 +565,22 @@
   .planilha input[type="date"]{min-width:125px;}
   .planilha input[type="date"][readonly]{background:#f3f6f8;color:#526270;cursor:not-allowed;}
   .planilha input[type="text"]{min-width:180px;}
+  .matrizes-servicos{padding:16px;display:grid;gap:18px;}
+  .matriz-servico{border:1px solid var(--cinza-borda);border-radius:10px;overflow:hidden;background:#fff;}
+  .matriz-servico-titulo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;background:var(--azul-escuro);color:#fff;}
+  .matriz-servico-titulo h3{margin:0;font-size:.92rem;}
+  .matriz-servico-titulo span{font-size:.7rem;opacity:.82;white-space:nowrap;}
+  .matriz-servico table{min-width:max-content;width:100%;font-size:.76rem;}
+  .matriz-servico th,.matriz-servico td{padding:9px 11px;text-align:center;border-right:1px solid #e3e8ec;}
+  .matriz-servico th:first-child,.matriz-servico td:first-child{position:sticky;left:0;z-index:2;min-width:240px;text-align:left;background:#fff;}
+  .matriz-servico thead th{background:#f3f6f8;color:var(--azul-escuro);white-space:nowrap;}
+  .matriz-servico thead th:first-child{z-index:3;background:#f3f6f8;}
+  .matriz-servico tbody tr+tr td{border-top:1px solid #e3e8ec;}
+  .matriz-servico .check-especificacao{appearance:none;width:22px;height:22px;border:2px solid #aebbc5;border-radius:5px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;}
+  .matriz-servico .check-especificacao::before{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) scale(0);}
+  .matriz-servico .check-especificacao:checked{background:var(--verde);border-color:var(--verde);}
+  .matriz-servico .check-especificacao:checked::before{transform:rotate(-45deg) scale(1);}
+  .matriz-aviso{padding:28px;text-align:center;color:#637582;}
   .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;}
   .atividade-editor,.atividade-listagem{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;}
   .atividade-editor h3,.atividade-listagem h3{margin:0 0 14px;color:var(--azul-escuro);}
@@ -889,8 +917,10 @@
 <div class="menu-principal">
   <nav aria-label="Navegação do acompanhamento">
     <a href="#dashboardGeral" class="ativo"><span>▦</span>Visão geral</a>
-    <a href="#controleDetalhado"><span>≣</span>Planilha de acompanhamento</a>
-    <a href="#atividadesAdmin"><span>＋</span>Atividades</a>
+    <div class="menu-planilha">
+      <a href="#controleDetalhado"><span>≣</span>Planilha de acompanhamento</a>
+      <button class="abrir-atividades" id="abrirAtividadesAdmin" type="button" title="Gerenciar atividades" aria-label="Gerenciar atividades">＋</button>
+    </div>
     <a href="#apartamentos"><span>⌂</span>Apartamentos</a>
     <a href="#graficos"><span>▥</span>Gráficos</a>
     <a href="#ocorrencias"><span>!</span>Ocorrências</a>
@@ -1002,7 +1032,7 @@
         </div>
         <div class="resumo-andar"><span id="percentualFiltro">0%</span> concluído</div>
       </div>
-      <div class="acoes-lote">
+      <div class="acoes-lote" hidden>
         <strong id="quantidadeSelecionada">Nenhum serviço selecionado</strong>
         <select id="statusEmLote" aria-label="Novo status dos serviços selecionados">
           <option value="nao-iniciado">Não iniciado</option>
@@ -1012,12 +1042,8 @@
         </select>
         <button id="aplicarStatusEmLote" type="button" disabled>Aplicar aos selecionados</button>
       </div>
-      <div class="tabela-scroll">
-        <table class="planilha">
-          <thead><tr><th style="width:42px"><input class="selecao-lote" id="selecionarTodosRegistros" type="checkbox" aria-label="Selecionar todos os serviços filtrados"></th><th style="width:76px">Andar</th><th>Unidade / setor</th><th>Atividade</th><th style="width:140px">Status</th><th>Data</th></tr></thead>
-          <tbody id="corpoPlanilha"></tbody>
-        </table>
-      </div>
+      <input id="selecionarTodosRegistros" type="checkbox" hidden aria-hidden="true">
+      <div class="tabela-scroll matrizes-servicos" id="corpoPlanilha"></div>
     </div>
   </section>
 
@@ -1260,6 +1286,17 @@ const STATUS_ATIVIDADE={
   "pendente":"Pendente",
   "concluido":"Concluído"
 };
+const ESPECIFICACOES_SERVICOS={
+  "Acabamentos Elétricos":[
+    "Instalação das tomadas",
+    "Instalação dos interruptores",
+    "Instalação das luminárias",
+    "Teste dos circuitos"
+  ]
+};
+function especificacoesDoServico(atividade){
+  return ESPECIFICACOES_SERVICOS[atividade]||["Execução do serviço"];
+}
 function opcoesStatusAtividade(atual){
   return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"nao-iniciado")?"selected":""}>${nome}</option>`).join("");
 }
@@ -1421,7 +1458,7 @@ function chaveRegistro(torre, andar, unidade, atividade){
 }
 
 function registroPadrao(torre, andar, unidade, atividade){
-  return {status:"nao-iniciado", concluido:false, data:"", observacao:"", foto:"", fotoNome:""};
+  return {status:"nao-iniciado", concluido:false, data:"", observacao:"", foto:"", fotoNome:"", especificacoes:{}};
 }
 
 function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
@@ -1927,18 +1964,36 @@ function renderizarPlanilha(){
     comparadorPlanilha.compare(a.atividade,b.atividade)
   ) : [];
   const corpo = document.getElementById("corpoPlanilha");
-  corpo.innerHTML = !temFiltroSelecionado
-    ? `<tr><td colspan="6" style="padding:24px;text-align:center;color:#637582">Selecione ao menos um filtro para visualizar os serviços.</td></tr>`
-    : itens.length ? itens.map(item => {
-    const registro = obterRegistro(item.andar,item.unidade,item.atividade);
-    const chave = escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
-    return `<tr data-chave="${chave}" class="${registro.concluido ? "linha-concluida" : ""}">
-      <td><input class="selecao-lote selecao-registro" type="checkbox" aria-label="Selecionar ${escaparHtml(item.unidade)} — ${escaparHtml(item.atividade)}" ${registrosSelecionados.has(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade))?"checked":""}></td>
-      <td class="local">${item.andar}º</td><td><button class="link-unidade" type="button" data-andar="${item.andar}" data-unidade="${escaparHtml(item.unidade)}">${escaparHtml(item.unidade)}</button></td><td>${escaparHtml(item.atividade)}</td>
-      <td><select class="status-atividade status-select-${registro.status||"nao-iniciado"}" data-campo="status" aria-label="Status de ${item.atividade}">${opcoesStatusAtividade(registro.status)}</select></td>
-      <td><input type="date" value="${escaparHtml(registro.data)}" readonly title="Preenchida automaticamente ao atualizar o status"></td>
-    </tr>`;
-  }).join("") : `<tr><td colspan="6" style="padding:24px;text-align:center;color:#637582">Nenhum serviço encontrado para os filtros selecionados.</td></tr>`;
+  if(!temFiltroSelecionado){
+    corpo.innerHTML=`<div class="matriz-aviso">Selecione ao menos um filtro para visualizar os serviços.</div>`;
+  }else if(!itens.length){
+    corpo.innerHTML=`<div class="matriz-aviso">Nenhum serviço encontrado para os filtros selecionados.</div>`;
+  }else{
+    const grupos=new Map();
+    itens.forEach(item=>{
+      const chaveGrupo=`${item.andar}|${item.atividade}`;
+      if(!grupos.has(chaveGrupo)) grupos.set(chaveGrupo,{andar:item.andar,atividade:item.atividade,itens:[]});
+      grupos.get(chaveGrupo).itens.push(item);
+    });
+    corpo.innerHTML=[...grupos.values()].map(grupo=>{
+      const unidades=[...new Set(grupo.itens.map(item=>item.unidade))].sort((a,b)=>comparadorPlanilha.compare(a,b));
+      const especificacoes=especificacoesDoServico(grupo.atividade);
+      const cabecalho=unidades.map(unidade=>`<th>${escaparHtml(unidade)}</th>`).join("");
+      const linhas=especificacoes.map(especificacao=>{
+        const celulas=unidades.map(unidade=>{
+          const item=grupo.itens.find(registro=>registro.unidade===unidade);
+          if(!item) return `<td>—</td>`;
+          const chave=chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade);
+          const registro=obterRegistro(item.andar,item.unidade,item.atividade);
+          const possuiValor=Object.prototype.hasOwnProperty.call(registro.especificacoes||{},especificacao);
+          const marcado=possuiValor?Boolean(registro.especificacoes[especificacao]):registro.concluido;
+          return `<td><input class="check-especificacao" type="checkbox" data-chave="${escaparHtml(chave)}" data-especificacao="${escaparHtml(especificacao)}" aria-label="${escaparHtml(especificacao)} — ${escaparHtml(unidade)}" ${marcado?"checked":""}></td>`;
+        }).join("");
+        return `<tr><td>${escaparHtml(especificacao)}</td>${celulas}</tr>`;
+      }).join("");
+      return `<section class="matriz-servico"><div class="matriz-servico-titulo"><h3>${escaparHtml(grupo.atividade)}</h3><span>${grupo.andar}º andar</span></div><div class="tabela-scroll"><table><thead><tr><th>Especificação do serviço</th>${cabecalho}</tr></thead><tbody>${linhas}</tbody></table></div></section>`;
+    }).join("");
+  }
   const concluidos = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade).concluido).length;
   document.getElementById("percentualFiltro").textContent = `${itens.length ? Math.round(concluidos/itens.length*100) : 0}%`;
   atualizarControlesSelecao();
@@ -2455,8 +2510,10 @@ function ativarAba(id, rolar = true){
     painel.classList.toggle("ativo", painel.id === id);
   });
   document.querySelectorAll(".menu-principal a").forEach(link => {
-    link.classList.toggle("ativo", link.getAttribute("href") === `#${id}`);
+    const destino=link.getAttribute("href");
+    link.classList.toggle("ativo", destino === `#${id}` || (destino === "#controleDetalhado" && id === "atividadesAdmin"));
   });
+  document.querySelector(".menu-planilha").classList.toggle("ativo", id === "controleDetalhado" || id === "atividadesAdmin");
   if(id === "graficos"){
     requestAnimationFrame(() => {
       if(graficoAtividades) graficoAtividades.resize();
@@ -2478,6 +2535,7 @@ document.querySelectorAll(".menu-principal a").forEach(link => {
     ativarAba(link.getAttribute("href").slice(1));
   });
 });
+document.getElementById("abrirAtividadesAdmin").addEventListener("click",()=>ativarAba("atividadesAdmin"));
 document.getElementById("torresProgresso").addEventListener("click", event => {
   const pavimento = event.target.closest(".andar-progresso");
   if(pavimento) abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
@@ -2531,6 +2589,35 @@ document.getElementById("corpoPlanilha").addEventListener("click", event => {
   renderizarPlanilha();
 });
 document.getElementById("corpoPlanilha").addEventListener("change", event => {
+  if(event.target.classList.contains("check-especificacao")){
+    const chave=event.target.dataset.chave;
+    const partes=chave.split("|");
+    const atividade=partes.slice(3).join("|");
+    const atual=obterRegistro(Number(partes[1]),partes[2],atividade,partes[0]);
+    const especificacoes=especificacoesDoServico(atividade);
+    const valores={};
+    especificacoes.forEach(especificacao=>{
+      valores[especificacao]=Object.prototype.hasOwnProperty.call(atual.especificacoes||{},especificacao)
+        ? Boolean(atual.especificacoes[especificacao])
+        : atual.concluido;
+    });
+    valores[event.target.dataset.especificacao]=event.target.checked;
+    const concluidas=Object.values(valores).filter(Boolean).length;
+    atual.especificacoes=valores;
+    atual.status=concluidas===especificacoes.length?"concluido":concluidas?"em-andamento":"nao-iniciado";
+    atual.concluido=atual.status==="concluido";
+    const agora=new Date();
+    atual.data=concluidas
+      ? `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
+      : "";
+    registrosObra[chave]=atual;
+    salvarRegistros();
+    renderizarPlanilha();
+    renderizarApartamentosDoPavimento();
+    atualizarGraficosOperacionais();
+    atualizarDashboardGeral();
+    return;
+  }
   if(event.target.classList.contains("selecao-registro")){
     const chave = event.target.closest("tr").dataset.chave;
     if(event.target.checked) registrosSelecionados.add(chave);

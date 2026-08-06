@@ -490,6 +490,10 @@ def preparar_banco():
                 SET status = CASE WHEN concluido = 1 THEN 'concluido' ELSE 'nao-iniciado' END
                 """
             )
+        if "especificacoes" not in colunas_registros:
+            conexao.execute(
+                "ALTER TABLE registros ADD COLUMN especificacoes TEXT NOT NULL DEFAULT '{}'"
+            )
         conexao.execute(
             "UPDATE registros SET data_conclusao = date('now', 'localtime') WHERE status != 'nao-iniciado' AND data_conclusao = ''"
         )
@@ -853,6 +857,10 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 linhas = conexao.execute("SELECT * FROM registros").fetchall()
             registros = {}
             for linha in linhas:
+                try:
+                    especificacoes = json.loads(linha["especificacoes"] or "{}")
+                except (json.JSONDecodeError, TypeError):
+                    especificacoes = {}
                 registros[linha["chave"]] = {
                     "concluido": bool(linha["concluido"]),
                     "status": linha["status"],
@@ -860,6 +868,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     "observacao": linha["observacao"],
                     "foto": linha["foto"],
                     "fotoNome": linha["foto_nome"],
+                    "especificacoes": especificacoes if isinstance(especificacoes, dict) else {},
                 }
             self.enviar_json(registros)
             return
@@ -950,8 +959,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
                         """
                         INSERT INTO registros
                         (chave, torre, andar, unidade, atividade, concluido,
-                         data_conclusao, observacao, foto, foto_nome, status, atualizado_em)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                         data_conclusao, observacao, foto, foto_nome, status, especificacoes, atualizado_em)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                         ON CONFLICT(chave) DO UPDATE SET
                             concluido=excluded.concluido,
                             data_conclusao=excluded.data_conclusao,
@@ -959,6 +968,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                             foto=excluded.foto,
                             foto_nome=excluded.foto_nome,
                             status=excluded.status,
+                            especificacoes=excluded.especificacoes,
                             atualizado_em=CURRENT_TIMESTAMP
                         """,
                         (
@@ -975,6 +985,10 @@ class ServidorObra(SimpleHTTPRequestHandler):
                             registro.get(
                                 "status",
                                 "concluido" if registro.get("concluido") else "nao-iniciado",
+                            ),
+                            json.dumps(
+                                registro.get("especificacoes", {}),
+                                ensure_ascii=False,
                             ),
                         ),
                     )
