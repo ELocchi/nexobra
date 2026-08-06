@@ -1913,20 +1913,25 @@ function renderizarPlanilha(){
   const unidadeFiltro = document.getElementById("filtroApartamento").value;
   const atividadeFiltro = document.getElementById("filtroAtividade").value;
   const situacaoFiltro = document.getElementById("filtroSituacao").value;
+  const comparadorPlanilha = new Intl.Collator("pt-BR", {numeric:true, sensitivity:"base"});
   const itens = listaRegistros().filter(item => {
     const unidadeOk = unidadeFiltro === "todos" || item.unidade === unidadeFiltro;
     const atividadeOk = atividadeFiltro === "todas" || item.atividade === atividadeFiltro;
     const status = obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado";
     const situacaoOk = situacaoFiltro === "todas" || status === situacaoFiltro;
     return (andar === null || item.andar === andar) && unidadeOk && atividadeOk && situacaoOk;
-  });
+  }).sort((a,b)=>
+    a.andar-b.andar ||
+    comparadorPlanilha.compare(a.unidade,b.unidade) ||
+    comparadorPlanilha.compare(a.atividade,b.atividade)
+  );
   const corpo = document.getElementById("corpoPlanilha");
   corpo.innerHTML = itens.map(item => {
     const registro = obterRegistro(item.andar,item.unidade,item.atividade);
     const chave = escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
     return `<tr data-chave="${chave}" class="${registro.concluido ? "linha-concluida" : ""}">
       <td><input class="selecao-lote selecao-registro" type="checkbox" aria-label="Selecionar ${escaparHtml(item.unidade)} — ${escaparHtml(item.atividade)}" ${registrosSelecionados.has(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade))?"checked":""}></td>
-      <td class="local">${item.andar}º</td><td><button class="link-unidade" type="button" data-andar="${item.andar}" data-unidade="${escaparHtml(item.unidade)}">${escaparHtml(item.unidade)}</button></td><td>${item.atividade}</td>
+      <td class="local">${item.andar}º</td><td><button class="link-unidade" type="button" data-andar="${item.andar}" data-unidade="${escaparHtml(item.unidade)}">${escaparHtml(item.unidade)}</button></td><td>${escaparHtml(item.atividade)}</td>
       <td><select class="status-atividade status-select-${registro.status||"nao-iniciado"}" data-campo="status" aria-label="Status de ${item.atividade}">${opcoesStatusAtividade(registro.status)}</select></td>
       <td><input type="date" value="${escaparHtml(registro.data)}" readonly title="Preenchida automaticamente ao atualizar o status"></td>
     </tr>`;
