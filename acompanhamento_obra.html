@@ -1913,8 +1913,9 @@ function renderizarPlanilha(){
   const unidadeFiltro = document.getElementById("filtroApartamento").value;
   const atividadeFiltro = document.getElementById("filtroAtividade").value;
   const situacaoFiltro = document.getElementById("filtroSituacao").value;
+  const temFiltroSelecionado = valorAndar !== "todos" || unidadeFiltro !== "todos" || atividadeFiltro !== "todas" || situacaoFiltro !== "todas";
   const comparadorPlanilha = new Intl.Collator("pt-BR", {numeric:true, sensitivity:"base"});
-  const itens = listaRegistros().filter(item => {
+  const itens = temFiltroSelecionado ? listaRegistros().filter(item => {
     const unidadeOk = unidadeFiltro === "todos" || item.unidade === unidadeFiltro;
     const atividadeOk = atividadeFiltro === "todas" || item.atividade === atividadeFiltro;
     const status = obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado";
@@ -1924,9 +1925,11 @@ function renderizarPlanilha(){
     a.andar-b.andar ||
     comparadorPlanilha.compare(a.unidade,b.unidade) ||
     comparadorPlanilha.compare(a.atividade,b.atividade)
-  );
+  ) : [];
   const corpo = document.getElementById("corpoPlanilha");
-  corpo.innerHTML = itens.map(item => {
+  corpo.innerHTML = !temFiltroSelecionado
+    ? `<tr><td colspan="6" style="padding:24px;text-align:center;color:#637582">Selecione ao menos um filtro para visualizar os serviços.</td></tr>`
+    : itens.length ? itens.map(item => {
     const registro = obterRegistro(item.andar,item.unidade,item.atividade);
     const chave = escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
     return `<tr data-chave="${chave}" class="${registro.concluido ? "linha-concluida" : ""}">
@@ -1935,7 +1938,7 @@ function renderizarPlanilha(){
       <td><select class="status-atividade status-select-${registro.status||"nao-iniciado"}" data-campo="status" aria-label="Status de ${item.atividade}">${opcoesStatusAtividade(registro.status)}</select></td>
       <td><input type="date" value="${escaparHtml(registro.data)}" readonly title="Preenchida automaticamente ao atualizar o status"></td>
     </tr>`;
-  }).join("");
+  }).join("") : `<tr><td colspan="6" style="padding:24px;text-align:center;color:#637582">Nenhum serviço encontrado para os filtros selecionados.</td></tr>`;
   const concluidos = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade).concluido).length;
   document.getElementById("percentualFiltro").textContent = `${itens.length ? Math.round(concluidos/itens.length*100) : 0}%`;
   atualizarControlesSelecao();
