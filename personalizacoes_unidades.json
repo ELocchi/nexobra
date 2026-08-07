@@ -1,0 +1,751 @@
+{
+  "aurora|Apto 1007": {
+    "torre": "aurora",
+    "andar": 10,
+    "unidade": "Apto 1007",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 1007-2-R00",
+        "descricao": "Banho 03: • Será eliminado, não executar parede e porta de acesso entre o Banho 03 e o Closet. O ambiente será integrado ao Closet da Suíte 1. • Eliminar os pontos hidráulicos de alimentação e escoamento, compreendendo registros, ralos, alimentação de água fria, água quente, esgoto e demais dispositivos associados. • As paredes serão entregues com pintura látex cor Branco. • Não será instalado pisos, rodapé, azulejos, rejunte, argamassa, acabamentos de ralos, baguetes, tampos, metais e louças (vasos e cubas). Cozinha e Terraço de Serviço: • Não será instalado pisos, rodapé, rejunte, argamassa, acabamentos de ralos, tanque e metal do tanque. Obs.: A instalação dos azulejos das paredes da bancada e tanque, bancada, cuba e metal da cozinha serão mantidos. Terraço Social: • Não será instalado pisos, rodapé, rejunte, argamassa e acabamentos de ralos. Obs.: A instalação da bancada, cuba, metal e churrasqueira do terraço serão mantidos."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1007.png",
+    "plantaOrigem": "ALTERAÇÃO 1007-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 1007-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1007-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 1007-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1007-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 1007-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1007-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 1007-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1007-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 1109": {
+    "torre": "aurora",
+    "andar": 11,
+    "unidade": "Apto 1109",
+    "documentos": [
+      {
+        "titulo": "ADITAMENTO 1109-2-R00",
+        "descricao": "27. Os revestimentos da linha OASI STREAM da marca Portobello possuem efeito acetinado e serão aplicados retos na horizontal."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 1202": {
+    "torre": "aurora",
+    "andar": 12,
+    "unidade": "Apto 1202",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 1202-2-R00",
+        "descricao": "Lavabo:  Executar vão livre de aproximadamente 0,70x2,10m sem porta. Banho 02:  Deslocar porta de acesso ao ambiente para o Dormitório 1, transformando em Suíte. Dormitório 1:  Será reduzido. Alterar posição da parede entre o dormitório e a sala de estar/jantar. Executar vão do piso ao teto no local indicado em projeto."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1202.png",
+    "plantaOrigem": "ALTERAÇÃO 1202-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 1202-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1202-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 1202-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1202-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 1202-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1202-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 1202-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1202-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 1307": {
+    "torre": "aurora",
+    "andar": 13,
+    "unidade": "Apto 1307",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 1307-2-R00",
+        "descricao": "Banho 03: • Será eliminado, não executar parede e porta de acesso entre o Banho 03 e o Closet. O ambiente será integrado ao Closet da Suíte 1. • Eliminar os pontos hidráulicos de alimentação e escoamento, compreendendo registros, ralos, alimentação de água fria, água quente, esgoto e demais dispositivos associados. • As paredes serão entregues com pintura látex cor Branco. • Não será instalado azulejos, rejunte, argamassa, acabamentos de ralos, baguetes, tampos, metais e louças (vasos e cubas). • O piso será entregue com a instalação do porcelanato TECA NATURAL 20x120cm RET, da marca Biancogres."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1307.png",
+    "plantaOrigem": "ALTERAÇÃO 1307-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 1307-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1307-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 1307-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1307-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 1307-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1307-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 1307-2-R01",
+        "imagem": "/miniaturas_plantas/aurora-1307-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 1406": {
+    "torre": "aurora",
+    "andar": 14,
+    "unidade": "Apto 1406",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 1406-2-R00",
+        "descricao": "Lavabo: • As paredes serão entregues com a instalação do porcelanato AETERNA BIANCO NAT 90x90cm RET, da marca Portobello."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 1410": {
+    "torre": "aurora",
+    "andar": 14,
+    "unidade": "Apto 1410",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 1410-2-R00",
+        "descricao": "Sala de Estar / Jantar / Circulação / Dormitórios: • Não ser ão instalados rodapés, ficando a instalação e a aquisição por conta e responsabilidade do proprietário após a entrega das chaves."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "horizonte|Apto 1412": {
+    "torre": "horizonte",
+    "andar": 14,
+    "unidade": "Apto 1412",
+    "documentos": [
+      {
+        "titulo": "ADITIVO APTO.1412-1-R01",
+        "descricao": "APA/Estar/Dormitório: • O piso será entregue com a instalação do porcelanato PP PRIME BRANCO 61x61cm BOLD, da marca Incepa, rodapé h= 10cm. Cozinha: • A parede será entregue com a instalação do revestimento COLOR MIND INOX BR 7x25cm, da marca Decortiles. Será aplicado faixa de aproximadamente 60cm somente no trecho da pia e cooktop, início a partir do final do frontão."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "horizonte|Apto 1414": {
+    "torre": "horizonte",
+    "andar": 14,
+    "unidade": "Apto 1414",
+    "documentos": [
+      {
+        "titulo": "ADITIVO APTO.1414-1-R01",
+        "descricao": "APA/Estar/Dormitório: • O piso será entregue com a instalação do porcelanato PP PRIME BRANCO 61x61cm BOLD, da marca Incepa, rodapé h= 10cm. Cozinha: • A parede será entregue com a instalação do revestimento COLOR MIND INOX BR 7x25cm, da marca Decortiles. Será aplicado faixa de aproximadamente 60cm somente no trecho da pia e cooktop, início a partir do final do frontão."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 1506": {
+    "torre": "aurora",
+    "andar": 15,
+    "unidade": "Apto 1506",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 1506-2-R00",
+        "descricao": "Suíte 02: • Deslocar parede que faz divi sa entre a suíte 02 com a circulação , conforme indicada na planta anexa."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1506.png",
+    "plantaOrigem": "ALTERAÇÃO 1506-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 1506-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1506-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 1506-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1506-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 1506-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1506-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 1506-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1506-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 1606": {
+    "torre": "aurora",
+    "andar": 16,
+    "unidade": "Apto 1606",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 1606-2-R00",
+        "descricao": "Não instalação total de acabamentos: • Para a não instalação dos acabamentos em todas as áreas frias (banheiros, lavabo, cozinha, terraço de serviço e terraço social), os materiais não aplicados serão: pisos, rodapés, azulejos, argamassa, rejunte, louças (bacias e cubas), metais (misturadores, torneiras, registros, sifões, etc.), cubas de aço inox, acabamentos de ralos, baguetes, soleiras, bancadas de granito, tanque, churrasqueira de embutir e coifa."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 1906": {
+    "torre": "aurora",
+    "andar": 19,
+    "unidade": "Apto 1906",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 1906-2-R00",
+        "descricao": "Hall Privativo: • Eliminar a parede e porta de acesso entre o Hall Privativo e a Sala de Estar. • Será mantido o trecho de parede para viabilizar a instalação do ponto da evaporadora previsto na Sala de Estar."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1906.png",
+    "plantaOrigem": "ALTERAÇÃO 1906-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 1906-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1906-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 1906-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1906-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 1906-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1906-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 1906-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-1906-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 2006": {
+    "torre": "aurora",
+    "andar": 20,
+    "unidade": "Apto 2006",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2006-2-R00",
+        "descricao": "Banho 02 / Banho 03: • As paredes fora do box serão entregues com a instalação do revestimento cerâmico IDEA BIANCO LINE MATE 30x60cm Bold, da marca Portobello. Lavabo: • As paredes, com exceção da parede da bancada, serão entregues com a instalação do porcelanato AETERNA BIANCO NAT 90x90cm RET, da marca Portobello."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 2108": {
+    "torre": "aurora",
+    "andar": 21,
+    "unidade": "Apto 2108",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2108-2-R00",
+        "descricao": "Cozinha / Terraço de Serviço: • Não serão instalados pisos, rodapés, azulejos, argamassa, rejunte, acabamentos de ralos, bancada de granito, cuba de aço inox, tanque e metais. Terraço Social: • Não serão instalados pisos , rodapés, argamassa, rejunte e acabamentos de ralos . Obs.: A instalação da bancada de granito, cuba de aço inox, metal e churrasqueira de embutir do terraço serão mantidos, conforme Memorial Descritivo."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 2201": {
+    "torre": "aurora",
+    "andar": 22,
+    "unidade": "Apto 2201",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 2201-2-R00",
+        "descricao": "Banho 02: • Deslocar porta de acesso para o Dormitório 01, transformando o ambiente em Suíte 02."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2201.png",
+    "plantaOrigem": "ALTERAÇÃO 2201-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 2201-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2201-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 2201-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2201-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 2201-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2201-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 2201-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2201-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 2305": {
+    "torre": "aurora",
+    "andar": 23,
+    "unidade": "Apto 2305",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2305-2-R00",
+        "descricao": "Banho 01 / Banho 02: • Não serão instalados pisos, rodapés, azulejos, argamassa, rejunte, louças (vasos e cubas), metais, acabamentos de ralos, baguetes e bancadas de granito. Cozinha / Terraço de Serviço: • Não serão instalados pisos, rodapés, azulejos, argamassa, rejunte, acabamentos de ralos, bancada de granito, cuba de aço inox, tanque e metais. Terraço Social: • Não ser ão instalados pisos, rodapés, argamassa, rejunte e acabamentos de ralos . Obs.: A instalação da bancada de granito, cuba de aço inox, metal e churrasqueira de embutir do terraço serão mantidos, conforme Memorial Descritivo."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 2502": {
+    "torre": "aurora",
+    "andar": 25,
+    "unidade": "Apto 2502",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2502-2",
+        "descricao": "Banho 01: • Deslocar acesso e executar vão livre de 0,80x2,10m sem porta. • Alterar localização dos pontos hidráulicos de alimenta ção e/ou escoamento da bancada e bacia sanitária. • Alterar dimensões da bancada para aproximadamente 1,55x0,53m. Banho 02: • Deslocar acesso e executar vão livre de 0,80x2,10m sem porta. • Alterar localização dos pontos hidráulicos de alimenta ção e/ou escoamento da bancada. • Alterar dimensões da bancada para aproximadamente 1,35x0,53m. Circulação: • Executar trecho de alvenaria e porta (0,80x2,10m). Dormitório 02: • O ambiente será eliminado. Não executar paredes e portas de acesso ao ambiente. • Deslocar parede de divisa entre a suíte 1 e dormitório 2. Sala de estar / jantar: • Alterar caixilho único ( sala ampliada)."
+      }
+    ],
+    "quantidadeProjetos": 5,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2502.png",
+    "plantaOrigem": "ADITIVO 2502-2",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "ARQ 02",
+        "imagem": "/miniaturas_plantas/aurora-2502-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "ELE AUX 02",
+        "imagem": "/miniaturas_plantas/aurora-2502-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "ELE DIST 02",
+        "imagem": "/miniaturas_plantas/aurora-2502-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "HID 02",
+        "imagem": "/miniaturas_plantas/aurora-2502-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 2701": {
+    "torre": "aurora",
+    "andar": 27,
+    "unidade": "Apto 2701",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 2701-2-R00",
+        "descricao": "Banho 02: • Deslocar porta de acesso para o Dormitório 01, transformando o ambiente em Suíte 02."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2701.png",
+    "plantaOrigem": "ALTERAÇÃO 2701-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 2701-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2701-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 2701-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2701-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 2701-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2701-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 2701-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2701-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 2802": {
+    "torre": "aurora",
+    "andar": 28,
+    "unidade": "Apto 2802",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2802-2-ass",
+        "descricao": "Banho 02: • Executar vão livre de 0,69x2,10m sem porta."
+      }
+    ],
+    "quantidadeProjetos": 4,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2802.png",
+    "plantaOrigem": "ADITIVO 2802-2-ass",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "ARQ 02",
+        "imagem": "/miniaturas_plantas/aurora-2802-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "ELE AUX 02",
+        "imagem": "/miniaturas_plantas/aurora-2802-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "ELE DIST 02",
+        "imagem": "/miniaturas_plantas/aurora-2802-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "HID 02",
+        "imagem": "/miniaturas_plantas/aurora-2802-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 2806": {
+    "torre": "aurora",
+    "andar": 28,
+    "unidade": "Apto 2806",
+    "documentos": [
+      {
+        "titulo": "ADITIVO 2806-2-R00",
+        "descricao": "Cozinha: • Não serão instalados azulejos, argamassa, rejunte, bancada de granito, cuba de aço inox e metais. Terraço de Serviço: • Não serão instalados azulejos, argamassa, rejunte, tanque e metais."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 2907": {
+    "torre": "aurora",
+    "andar": 29,
+    "unidade": "Apto 2907",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 2907-2-R00",
+        "descricao": "Hall Privativo: • Eliminar a parede e porta de acesso entre o Hall Privativo e a Sala de Estar. • Será mantido o trecho de parede para viabilizar a instalação do ponto da evaporadora previsto na Sala de Estar."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2907.png",
+    "plantaOrigem": "ALTERAÇÃO 2907-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 2907-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2907-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 2907-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2907-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 2907-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2907-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 2907-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-2907-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 3008": {
+    "torre": "aurora",
+    "andar": 30,
+    "unidade": "Apto 3008",
+    "documentos": [
+      {
+        "titulo": "ADITAMENTO DE PERSONALIZAÇÃO 3008-2",
+        "descricao": "Banho 01 Classificação Item Descrição Valor R$ Opção Personalizada Tampo, Bits e Cuba Granito Branco Itaunas e Cuba de embutir Retangular 48x35,5 cm branca - Deca; com frontão de 10 cm e saia de 5 cm Banho 02 Classificação Item Descrição Valor R$ Opção Personalizada Tampo, Bits e Cuba Granito Branco Itaunas e Cuba de embutir Retangular 48x35,5 cm branca - Deca; com frontão de 10 cm e saia de 5 cm"
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 3104": {
+    "torre": "aurora",
+    "andar": 31,
+    "unidade": "Apto 3104",
+    "documentos": [
+      {
+        "titulo": "ADITAMENTO 3104-2-R00",
+        "descricao": "27. Os revestimentos da linha OASI STREAM da marca Portobello possuem efeito acetinado e serão aplicados retos na horizontal."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 3109": {
+    "torre": "aurora",
+    "andar": 31,
+    "unidade": "Apto 3109",
+    "documentos": [
+      {
+        "titulo": "ADITAMENTO 3109-2-R00",
+        "descricao": "27. Os revestimentos da linha OASI STREAM da marca Portobello possuem efeito acetinado e serão aplicados retos na horizontal."
+      },
+      {
+        "titulo": "ADITIVO 3109-2-R00",
+        "descricao": "Banho 01 / Banho 02: • As paredes da bancada e latera l do shaft ser ão entregues com a instalação do porcelanato OASI DUNA STREAM NAT 60x120cm RET , da marca Portobello, aplicados retos na horizontal. • As demais paredes serão entregues com pintura látex, cor branco."
+      }
+    ],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 3206": {
+    "torre": "aurora",
+    "andar": 32,
+    "unidade": "Apto 3206",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 3206-2-R00",
+        "descricao": "Hall Privativo: • Eliminar a parede e porta de acesso entre o Hall Privativo e a Sala de Estar. • Será mantido o trecho de parede para viabilizar a instalação do ponto da evaporadora previsto na Sala de Estar."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-3206.png",
+    "plantaOrigem": "ALTERAÇÃO 3206-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 3206-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3206-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 3206-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3206-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 3206-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3206-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 3206-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3206-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 3306": {
+    "torre": "aurora",
+    "andar": 33,
+    "unidade": "Apto 3306",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 3306-2-R00",
+        "descricao": "Cozinha: • Eliminar trecho de alvenaria entre a Cozinha e a Sala de Estar/Jantar. • Alterar localização do ponto de gás e pontos elétricos referentes ao fogão/cooktop e depurador. Banho 3: • Alterar localização da porta de acesso ao ambiente para a Suíte 1 , transformando a Suíte 3 em Dormitório 1. • Alterar localização dos pontos hidráulicos de alimentação e escoamento da bancada e bacia sanitária. Suíte 3 (Dormitório 1): • Deslocar porta de acesso ao ambiente. Suíte 1: • Alterar sentido de abertura da porta de acesso ao ambiente. Lavabo: • Executar vão livre (sem porta) de aproximadamente 0,66x2,10m. • Alterar localização dos pontos hidráulicos de alimentação e escoamento da bancada e bacia sanitária."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-3306.png",
+    "plantaOrigem": "ALTERAÇÃO 3306-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 3306-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3306-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 3306-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3306-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 3306-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3306-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 3306-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-3306-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 3503": {
+    "torre": "aurora",
+    "andar": 35,
+    "unidade": "Apto 3503",
+    "documentos": [],
+    "quantidadeProjetos": 0,
+    "plantaMiniatura": "",
+    "plantaOrigem": "",
+    "projetos": []
+  },
+  "aurora|Apto 501": {
+    "torre": "aurora",
+    "andar": 5,
+    "unidade": "Apto 501",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 501-2-R00",
+        "descricao": "Banho 01 / Suíte 01 / Dormitório 01 / Dormitório 02: • Executar vão livre de aproximadamente 0,80x2,10m sem porta."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-501.png",
+    "plantaOrigem": "ALTERAÇÃO 501-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 501-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-501-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 501-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-501-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 501-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-501-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 501-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-501-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 510": {
+    "torre": "aurora",
+    "andar": 5,
+    "unidade": "Apto 510",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 510-2-R00",
+        "descricao": "Banho 01 / Banho 02 / Suíte / Dormitório: • Executar vão livre de aproximadamente 0,80x2,10m sem porta."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-510.png",
+    "plantaOrigem": "ALTERAÇÃO 510-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 510-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-510-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 510-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-510-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 510-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-510-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 510-2-R00",
+        "imagem": "/miniaturas_plantas/aurora-510-projeto-04.png"
+      }
+    ]
+  },
+  "aurora|Apto 806": {
+    "torre": "aurora",
+    "andar": 8,
+    "unidade": "Apto 806",
+    "documentos": [
+      {
+        "titulo": "ALTERAÇÃO 806-2-R00",
+        "descricao": "Banho 01 / Banho 02: • Não serão instalados pisos, rodapés, azulejos, argamassa, rejunte, louças (vasos e cubas), metais, acabamentos de ralos, baguetes e bancadas de granito. Cozinha: • Não serão instalados azulejos, argamassa e rejunte. Obs: A instalação da bancada, cuba de aço inox e metais será mantida. As paredes serão entregues em pintura látex, cor branca. Banho 03: • Será eliminado, não executar parede e porta de acesso entre o Banho 03 e o Closet (antiga Suíte 03). • Eliminar os pontos hidráulicos de alimentação e escoamento, compreendendo registros, ralos, alimentação de água fria, água quente, esgoto e demais dispositivos associados. • As paredes serão entregues com pintura látex cor Branco. • Não será instalado azulejos, rejunte, argamassa, acabamentos de ralos, baguetes, tampos, metais e louças (vasos e cubas). • O piso será entregue com a instalação do porcelanato AETERNA BIANCO NAT 90x90cm RET, da marca Portobello, rodapé h= 10cm. Suíte 01: • Deslocar trecho de alvenaria e porta de acesso ao ambiente."
+      }
+    ],
+    "quantidadeProjetos": 2,
+    "plantaMiniatura": "/miniaturas_plantas/aurora-806.png",
+    "plantaOrigem": "ALTERAÇÃO 806-2-R00",
+    "projetos": [
+      {
+        "titulo": "Projeto arquitetônico",
+        "arquivo": "PROJETOS 806-2-R02",
+        "imagem": "/miniaturas_plantas/aurora-806-projeto-01.png"
+      },
+      {
+        "titulo": "Projeto elétrico de distribuição",
+        "arquivo": "PROJETOS 806-2-R02",
+        "imagem": "/miniaturas_plantas/aurora-806-projeto-02.png"
+      },
+      {
+        "titulo": "Projeto elétrico auxiliar",
+        "arquivo": "PROJETOS 806-2-R02",
+        "imagem": "/miniaturas_plantas/aurora-806-projeto-03.png"
+      },
+      {
+        "titulo": "Projeto hidráulico",
+        "arquivo": "PROJETOS 806-2-R02",
+        "imagem": "/miniaturas_plantas/aurora-806-projeto-04.png"
+      }
+    ]
+  }
+}

@@ -283,14 +283,13 @@
   .menu-planilha{
     display:inline-flex;align-items:stretch;border-radius:7px;overflow:hidden;flex:none;
   }
-  .menu-planilha a{border-radius:0;}
+  .menu-planilha a{border-radius:0;padding-right:4px;}
   .menu-planilha .abrir-atividades{
-    width:34px;border:0;border-left:1px solid transparent;background:transparent;color:#536171;
+    width:23px;padding:0 4px 0 0;border:0;background:transparent;color:#536171;
     font:700 1rem/1 sans-serif;cursor:pointer;transition:background .2s ease,color .2s ease;
   }
   .menu-planilha .abrir-atividades:hover{color:var(--azul);background:#edf4f8;}
   .menu-planilha.ativo a,.menu-planilha.ativo .abrir-atividades{color:#fff;background:var(--azul);}
-  .menu-planilha.ativo .abrir-atividades{border-left-color:rgba(255,255,255,.3);}
   .menu-planilha.ativo .abrir-atividades:hover{background:#174b85;}
   #dashboardGeral,#apartamentos,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
   .painel-aba{display:none;animation:entradaAba .25s ease;}
@@ -327,14 +326,11 @@
   .apartamento-seletor:hover,.apartamento-seletor.ativo{border-color:var(--azul);background:#edf4f8;}
   .dashboard-apartamento{display:none;}
   .dashboard-apartamento.visivel{display:block;}
-  .apartamento-resumo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:15px;}
-  .apartamento-kpi{background:#fff;border:1px solid var(--cinza-borda);border-radius:10px;padding:14px 16px;}
-  .apartamento-kpi span{display:block;color:var(--cinza-texto);font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
-  .apartamento-kpi strong{color:var(--azul-escuro);font-size:1.5rem;}
-  .apartamento-analises{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px;margin-bottom:15px;}
+  .apartamento-analises{display:grid;grid-template-columns:.72fr 1.28fr;gap:14px;margin-bottom:15px;align-items:stretch;}
+  .apartamento-coluna-esquerda{display:grid;gap:14px;align-content:start;}
   .apartamento-painel{background:#fff;border:1px solid var(--cinza-borda);border-radius:10px;padding:15px;}
   .apartamento-painel h3{margin:0 0 10px;color:var(--azul-escuro);font-size:.84rem;}
-  .apartamento-chart{height:220px;}
+  .apartamento-chart{height:280px;}
   .pendencias-apartamento{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;max-height:220px;overflow:auto;}
   .pendencias-apartamento li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-left:3px solid #637582;background:#f5f7f8;border-radius:0 6px 6px 0;font-size:.75rem;}
   .pendencias-apartamento li.servico-em-andamento{border-left-color:#e0a800;background:#fff9e8;}
@@ -342,6 +338,70 @@
   .pendencias-apartamento li.servico-concluido{border-left-color:#2e9e5b;background:#edf8f1;}
   .pendencias-apartamento li span{min-width:0;}
   .pendencias-apartamento .status-atividade{flex:0 0 125px;}
+  .personalizacao-unidade{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .personalizacao-item{padding:12px;border:1px solid #e0e6eb;border-radius:8px;background:#f7f9fa;}
+  .personalizacao-item.observacoes{grid-column:1/-1;}
+  .personalizacao-item span{display:block;margin-bottom:5px;color:var(--cinza-texto);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+  .personalizacao-item strong{color:var(--azul-escuro);font-size:.8rem;}
+  .personalizacao-vazio{display:flex;align-items:center;gap:9px;margin-top:11px;padding:10px 12px;border-radius:8px;background:#fff8e8;color:#7a641d;font-size:.72rem;}
+  .personalizacao-vazio i{display:grid;place-content:center;width:23px;height:23px;border-radius:50%;background:#f2d66b;color:#5d4b0f;font-style:normal;font-weight:800;}
+  .personalizacao-resumo{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+  .personalizacao-resumo span{padding:5px 8px;border-radius:999px;background:#eaf2f7;color:var(--azul-escuro);font-size:.66rem;font-weight:700;}
+  .personalizacao-documentos{display:grid;gap:8px;max-height:210px;overflow:auto;}
+  .personalizacao-documento{padding:10px 12px;border-left:3px solid var(--azul);border-radius:0 7px 7px 0;background:#f6f8fa;}
+  .personalizacao-documento h4{margin:0 0 6px;color:var(--azul-escuro);font-size:.75rem;}
+  .personalizacao-documento p{margin:0;color:#43515e;font-size:.7rem;line-height:1.48;}
+  .personalizacao-secao{margin-bottom:11px;padding:11px;border:1px solid #e0e6eb;border-radius:9px;background:#f8fafb;}
+  .personalizacao-secao h4{margin:0 0 9px;color:var(--azul-escuro);font-size:.76rem;}
+  .planta-miniatura{display:block;width:100%;height:auto;object-fit:contain;border-radius:7px;background:#fff;border:1px solid #ccd5dc;}
+  .planta-link{display:block;text-decoration:none;}
+  .planta-link span{display:block;margin-top:6px;color:var(--azul);font-size:.67rem;font-weight:700;text-align:center;}
+  .planta-indisponivel,.acabamentos-aguardando{display:grid;place-items:center;min-height:72px;border:1px dashed #c5cfd7;border-radius:7px;color:#687887;font-size:.7rem;text-align:center;background:#fff;}
+  .acabamentos-aguardando{min-height:54px;background:#fffdf3;border-color:#ddcf8a;color:#75641e;}
+  .acabamentos-padrao{display:flex;align-items:center;gap:10px;min-height:58px;padding:11px 12px;border:1px solid #b9dec8;border-radius:8px;background:#f0faf4;color:#23683f;font-size:.7rem;line-height:1.4;}
+  .acabamentos-padrao i{display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:#2e9e5b;color:#fff;font-style:normal;font-weight:900;}
+  .acabamentos-padrao strong{display:block;color:#195432;font-size:.75rem;}
+  .acabamentos-lista{display:grid;gap:7px;max-height:310px;overflow:auto;padding-right:3px;}
+  .acabamento-ambiente{border:1px solid #dce4ea;border-radius:7px;background:#f8fafb;overflow:hidden;}
+  .acabamento-ambiente summary{cursor:pointer;padding:9px 10px;color:var(--azul-escuro);font-size:.72rem;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:8px;}
+  .acabamento-ambiente summary::-webkit-details-marker{display:none;}
+  .acabamento-ambiente summary::after{content:"+";color:var(--azul);font-size:.9rem;}
+  .acabamento-ambiente[open] summary::after{content:"−";}
+  .acabamento-itens{display:grid;gap:0;border-top:1px solid #e1e7eb;background:#fff;}
+  .acabamento-item{padding:8px 10px;border-bottom:1px solid #edf1f3;}
+  .acabamento-item:last-child{border-bottom:0;}
+  .acabamento-item-cabecalho{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:.68rem;}
+  .acabamento-item-cabecalho strong{color:#344554;}
+  .acabamento-opcao{flex:none;padding:3px 6px;border-radius:999px;background:#e8f1f8;color:var(--azul-escuro);font-size:.61rem;font-weight:800;}
+  .acabamento-descricao{margin:5px 0 0;color:#5a6874;font-size:.64rem;line-height:1.42;}
+  .painel-planta{min-height:100%;}
+  .painel-andamento{min-height:330px;}
+  .painel-planta .personalizacao-secao{margin:0;display:block;}
+  .painel-planta .planta-link{display:block;}
+  .painel-planta .planta-miniatura{height:auto;min-height:0;max-height:none;}
+  .projetos-carrossel{display:block;}
+  .projeto-topo{display:none;}
+  .projeto-titulo{padding:5px 9px;border-radius:999px;background:#eaf2f7;color:var(--azul-escuro);font-size:.67rem;font-weight:800;}
+  .projeto-contador{color:#657482;font-size:.66rem;font-weight:700;white-space:nowrap;}
+  .projeto-viewport{position:relative;min-height:0;display:block;}
+  .projeto-slide{display:none;width:100%;}
+  .projeto-slide.ativo{display:block;}
+  .projeto-slide .planta-link{height:auto;}
+  .projeto-navegacao{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:9px;}
+  .projeto-seta{display:grid;place-items:center;width:34px;height:30px;border:1px solid #b9c8d5;border-radius:7px;background:#fff;color:var(--azul);font-size:1rem;font-weight:900;cursor:pointer;}
+  .projeto-seta:hover{background:#edf4fa;border-color:var(--azul);}
+  .projeto-seta:disabled{opacity:.35;cursor:default;}
+  .projeto-pontos{display:flex;gap:5px;}
+  .projeto-ponto{width:7px;height:7px;border:0;border-radius:50%;background:#c4cfd8;padding:0;cursor:pointer;}
+  .projeto-ponto.ativo{background:var(--azul);}
+  .painel-planta>h3{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .adicionar-projeto{display:grid;place-items:center;width:28px;height:28px;border:1px solid #9bb4c8;border-radius:7px;background:#fff;color:var(--azul);font-size:1.05rem;font-weight:900;line-height:1;cursor:pointer;}
+  .adicionar-projeto:hover{background:var(--azul);color:#fff;}
+  .projetos-acoes{display:flex;align-items:center;gap:6px;}
+  .remover-projeto{border-color:#dfaaa5;color:#c33d34;}
+  .remover-projeto:hover{background:#c33d34;color:#fff;border-color:#c33d34;}
+  .painel-acabamentos{min-height:120px;}
+  .painel-acabamentos .personalizacao-secao{margin-bottom:0;}
   .foto-tabela{width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--cinza-borda);}
   .ocorrencia-form{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;margin-bottom:16px;}
   .ocorrencia-form h3{margin:0 0 14px;color:var(--azul-escuro);font-size:.9rem;}
@@ -376,11 +436,9 @@
   .ocorrencias-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin:18px 0 12px;}
   .download-foto{display:inline-flex;align-items:center;gap:5px;margin-top:7px;color:var(--azul);font-size:.68rem;font-weight:700;text-decoration:none;}
   .download-foto:hover{color:var(--laranja);text-decoration:underline;}
-  .relatorios-grid{display:grid;grid-template-columns:minmax(280px,.7fr) 1.3fr;gap:16px;}
-  .relatorio-qr{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:18px;text-align:center;}
-  .relatorio-qr img{display:block;width:min(100%,280px);margin:0 auto 10px;}
-  .relatorio-info{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:20px;}
-  .relatorio-info p,.relatorio-info li{font-size:.8rem;line-height:1.55;color:var(--cinza-texto);}
+  .relatorio-filtros{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:20px;}
+  .relatorio-filtros-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;align-items:end;}
+  .relatorio-filtros .acao-relatorio{margin-top:18px;min-height:40px;border:0;cursor:pointer;font:inherit;font-size:.78rem;}
   .documentos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .documentos-bloco{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:19px;}
   .documentos-bloco h3{margin:0 0 6px;color:var(--azul-escuro);font-size:.92rem;}
@@ -576,10 +634,13 @@
   .matriz-servico thead th{background:#f3f6f8;color:var(--azul-escuro);white-space:nowrap;}
   .matriz-servico thead th:first-child{z-index:3;background:#f3f6f8;}
   .matriz-servico tbody tr+tr td{border-top:1px solid #e3e8ec;}
-  .matriz-servico .check-especificacao{appearance:none;width:22px;height:22px;border:2px solid #aebbc5;border-radius:5px;background:#fff;cursor:pointer;display:inline-grid;place-content:center;}
-  .matriz-servico .check-especificacao::before{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) scale(0);}
-  .matriz-servico .check-especificacao:checked{background:var(--verde);border-color:var(--verde);}
-  .matriz-servico .check-especificacao:checked::before{transform:rotate(-45deg) scale(1);}
+  .matriz-servico .controle-especificacao{width:28px;height:28px;border:1.5px solid #c2ccd4;border-radius:8px;background:#fff;color:transparent;cursor:pointer;display:inline-grid;place-content:center;padding:0;box-shadow:0 1px 2px rgba(15,42,74,.08);font:800 1.15rem/1 Arial,sans-serif;transition:transform .12s ease,box-shadow .12s ease,background .12s ease,border-color .12s ease;}
+  .matriz-servico .controle-especificacao:hover{transform:translateY(-1px);box-shadow:0 3px 7px rgba(15,42,74,.18);}
+  .matriz-servico .controle-especificacao[data-estado="concluido"]{color:#fff;background:#2e9e5b;border-color:#278c50;}
+  .matriz-servico .controle-especificacao[data-estado="pendente"]{color:#fff;background:#d9483d;border-color:#c43e35;}
+  .matriz-servico .controle-especificacao[data-estado="em-andamento"]{color:#fff;background:#e0a800;border-color:#c89700;}
+  .matriz-servico .controle-especificacao[data-estado="nao-iniciado"]{color:transparent;background:#fff;border-color:#b9c4cc;}
+  .matriz-servico .controle-especificacao.selecionado{outline:3px solid #4b8ed8;outline-offset:3px;box-shadow:0 0 0 6px rgba(75,142,216,.15);}
   .matriz-aviso{padding:28px;text-align:center;color:#637582;}
   .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;}
   .atividade-editor,.atividade-listagem{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;}
@@ -587,6 +648,9 @@
   .atividade-campos{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
   .atividade-campos .largo{grid-column:1/-1;}
   .atividade-campos input,.atividade-campos select{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
+  .especificacao-nova{display:flex;gap:8px;}
+  .especificacao-nova input{flex:1;}
+  .especificacao-nova button{border:0;border-radius:7px;background:var(--azul);color:#fff;padding:0 13px;font-weight:700;cursor:pointer;}
   .atividade-escopo-acoes{display:flex;gap:8px;margin-top:11px;}
   .atividade-escopo-acoes button,.atividade-form-acoes button{border:0;border-radius:7px;padding:10px 13px;font-weight:700;cursor:pointer;}
   .atividade-escopo-acoes button{background:#e8f1f6;color:var(--azul-escuro);}
@@ -738,7 +802,6 @@
     .documentos-grid{grid-template-columns:1fr;}
     .servicos-corpo{grid-template-columns:1fr;}
     .resumo-geral-grid{grid-template-columns:1fr 1fr;}
-    .apartamento-resumo{grid-template-columns:1fr;}
     .ocorrencia-campos{grid-template-columns:1fr;}
     .servicos-topo{align-items:stretch;flex-direction:column;}
     .servicos-filtro{min-width:0;}
@@ -973,14 +1036,12 @@
     </div>
     <div class="apartamentos-seletor" id="apartamentosGrid"></div>
     <div class="dashboard-apartamento" id="dashboardApartamento">
-      <div class="apartamento-resumo">
-        <div class="apartamento-kpi"><span>Andamento</span><strong id="aptoAvanco">0%</strong></div>
-        <div class="apartamento-kpi"><span>Realizadas</span><strong id="aptoRealizadas">0</strong></div>
-        <div class="apartamento-kpi"><span>Pendências</span><strong id="aptoPendentes">0</strong></div>
-      </div>
       <div class="apartamento-analises">
-        <div class="apartamento-painel"><h3>Andamento da unidade</h3><div class="apartamento-chart"><canvas id="graficoApartamento"></canvas></div></div>
-        <div class="apartamento-painel"><h3>Serviços da unidade</h3><ul class="pendencias-apartamento" id="listaPendenciasApartamento"></ul></div>
+        <div class="apartamento-coluna-esquerda">
+          <div class="apartamento-painel painel-andamento"><h3>Andamento da unidade</h3><div class="apartamento-chart"><canvas id="graficoApartamento"></canvas></div></div>
+          <div class="apartamento-painel painel-acabamentos"><h3>Acabamentos</h3><div id="acabamentosApartamento"></div></div>
+        </div>
+        <div class="apartamento-painel painel-planta"><h3><span>Projetos</span><span class="projetos-acoes"><button class="adicionar-projeto remover-projeto" type="button" onclick="removerProjetoAtual()" title="Remover projeto atual" aria-label="Remover projeto atual">×</button><button class="adicionar-projeto" type="button" onclick="adicionarProjetoUnidade()" title="Adicionar novo projeto" aria-label="Adicionar novo projeto">+</button></span></h3><div id="plantaApartamento"></div></div>
       </div>
       <div class="apartamento-painel">
         <h3>Atividades do apartamento</h3>
@@ -1032,8 +1093,8 @@
         </div>
         <div class="resumo-andar"><span id="percentualFiltro">0%</span> concluído</div>
       </div>
-      <div class="acoes-lote" hidden>
-        <strong id="quantidadeSelecionada">Nenhum serviço selecionado</strong>
+      <div class="acoes-lote">
+        <strong id="quantidadeSelecionada">Nenhuma célula selecionada</strong>
         <select id="statusEmLote" aria-label="Novo status dos serviços selecionados">
           <option value="nao-iniciado">Não iniciado</option>
           <option value="em-andamento">Em andamento</option>
@@ -1057,6 +1118,8 @@
         <input id="atividadeNomeOriginal" type="hidden">
         <div class="atividade-campos">
           <div class="campo-filtro largo"><label for="atividadeNome">Nome da atividade</label><input id="atividadeNome" required placeholder="Ex.: Instalação de bancada"></div>
+          <div class="campo-filtro largo"><label for="atividadeEspecificacaoNova">Especificações do serviço</label><div class="especificacao-nova"><input id="atividadeEspecificacaoNova" placeholder="Ex.: Conferência e teste final"><button id="adicionarEspecificacaoAtividade" type="button">＋ Adicionar</button></div></div>
+          <div class="escopos-selecionados largo" id="especificacoesAtividade"><span class="atividade-escopos-resumo">Nenhuma especificação adicionada.</span></div>
           <div class="campo-filtro"><label for="atividadeTorre">Torre</label><select id="atividadeTorre"><option value="aurora">Torre Home</option><option value="horizonte">Torre Smart</option></select></div>
           <div class="campo-filtro"><label for="atividadeAndar">Pavimento</label><select id="atividadeAndar"></select></div>
           <div class="campo-filtro largo"><label for="atividadeUnidade">Apartamento / setor</label><select id="atividadeUnidade"></select></div>
@@ -1123,19 +1186,18 @@
   </section>
 
   <section id="relatorios" class="painel-aba">
-    <h2>Relatórios para visitantes</h2>
-    <div class="relatorios-grid">
-      <div class="relatorio-qr">
-        <h3>QR Code visitante</h3>
-        <img id="qrRelatoriosVisitante" alt="QR Code do portal de relatórios para visitantes">
-        <a class="download-foto" id="baixarQrRelatorios" href="#" download="qr-code-relatorios-visitante.svg">↓ Baixar QR Code</a>
+    <h2>Relatórios</h2>
+    <div class="relatorio-filtros">
+      <div class="relatorio-filtros-grid">
+        <div class="campo-filtro"><label for="relatorioTorre">Torre</label><select id="relatorioTorre"><option value="aurora">Torre Home</option><option value="horizonte">Torre Smart</option></select></div>
+        <div class="campo-filtro"><label for="relatorioAndar">Andar</label><select id="relatorioAndar"></select></div>
+        <div class="campo-filtro"><label for="relatorioUnidade">Apartamento / setor</label><select id="relatorioUnidade"></select></div>
+        <div class="campo-filtro"><label for="relatorioAtividade">Atividade</label><select id="relatorioAtividade"></select></div>
+        <div class="campo-filtro"><label for="relatorioStatus">Situação</label><select id="relatorioStatus"><option value="todos">Todas</option><option value="nao-iniciado">Não iniciado</option><option value="em-andamento">Em andamento</option><option value="pendente">Pendente</option><option value="concluido">Concluído</option></select></div>
+        <div class="campo-filtro"><label for="relatorioAcabamento">Opção de acabamento</label><select id="relatorioAcabamento"><option value="todos">Todas as opções</option><option value="padrao">Opção padrão</option><option value="alterado">Com alterações</option><option value="opcao-2">Opção 2</option><option value="opcao-3">Opção 3</option><option value="opcao-4">Opção 4</option><option value="opcao-5">Opção 5</option><option value="opcao-6">Opção 6</option><option value="opcao-7">Opção 7</option><option value="personalizada">Opção personalizada</option><option value="nao-instalar">Não instalar</option></select></div>
+        <div class="campo-filtro"><label for="relatorioOcorrencias">Ocorrências</label><select id="relatorioOcorrencias"><option value="todas">Todas</option><option value="com">Com ocorrências</option><option value="sem">Sem ocorrências</option><option value="pendente">Pendentes</option><option value="concluido">Concluídas</option></select></div>
       </div>
-      <div class="relatorio-info">
-        <h3 id="tituloRelatoriosVisitante">Portal de relatórios</h3>
-        <p>Quem acessar este QR Code abrirá uma visão somente para leitura da torre selecionada.</p>
-        <ul><li>Filtro por pavimento.</li><li>Filtro por apartamento ou setor.</li><li>Filtro por serviço.</li><li>Geração de PDF conforme os filtros escolhidos.</li></ul>
-        <a class="acao-relatorio" id="abrirPortalRelatorios" href="#" target="_blank" rel="noopener">Abrir visão visitante</a>
-      </div>
+      <button class="acao-relatorio" type="button" onclick="gerarPdfRelatorio()">↓ Gerar PDF com os filtros selecionados</button>
     </div>
   </section>
 
@@ -1295,7 +1357,35 @@ const ESPECIFICACOES_SERVICOS={
   ]
 };
 function especificacoesDoServico(atividade){
+  const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
+  if(cadastrada?.especificacoes?.length) return cadastrada.especificacoes;
   return ESPECIFICACOES_SERVICOS[atividade]||["Execução do serviço"];
+}
+function normalizarEstadoEspecificacao(valor,registro){
+  if(["concluido","pendente","em-andamento","nao-iniciado"].includes(valor)) return valor;
+  if(valor===true) return "concluido";
+  if(valor===false) return "nao-iniciado";
+  return registro.concluido?"concluido":"nao-iniciado";
+}
+function simboloEstadoEspecificacao(estado){
+  return {"concluido":"✓","pendente":"×","em-andamento":"−","nao-iniciado":""}[estado]||"";
+}
+function chaveSelecaoEspecificacao(chave,especificacao){
+  return JSON.stringify([chave,especificacao]);
+}
+function recalcularStatusPelasEspecificacoes(registro,atividade){
+  const estados=especificacoesDoServico(atividade).map(especificacao=>
+    normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro)
+  );
+  registro.status=estados.includes("pendente")?"pendente"
+    :estados.every(estado=>estado==="concluido")?"concluido"
+    :estados.some(estado=>estado!=="nao-iniciado")?"em-andamento"
+    :"nao-iniciado";
+  registro.concluido=registro.status==="concluido";
+  const agora=new Date();
+  registro.data=registro.status!=="nao-iniciado"
+    ?`${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
+    :"";
 }
 function opcoesStatusAtividade(atual){
   return Object.entries(STATUS_ATIVIDADE).map(([valor,nome])=>`<option value="${valor}" ${valor===(atual||"nao-iniciado")?"selected":""}>${nome}</option>`).join("");
@@ -1326,10 +1416,17 @@ let pavimentoSelecionado = 1;
 let unidadeSelecionada = null;
 let registrosObra = {};
 let planejamentoObra = {torres:{aurora:{},horizonte:{}}};
+let personalizacoesUnidades = {};
+let plantasUnidades = {};
+let acabamentosUnidades = {};
+let projetosAdicionados = [];
+let projetosOcultos = [];
 let atividadesCadastro = [];
 let escoposAtividadeTemporarios = [];
+let especificacoesAtividadeTemporarias = [];
 let ocorrenciasBanco = [];
 const registrosSelecionados = new Set();
+const especificacoesSelecionadas = new Set();
 let servicoAguardandoOcorrencia = null;
 let graficoAtividades;
 let graficoAndares;
@@ -1346,8 +1443,9 @@ async function carregarRegistrosDoBanco(){
       for(let tentativa=1;tentativa<=3;tentativa++){
         try{
           const resposta=await fetch(url,{cache:"no-store"});
-          if(!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
-          return await resposta.json();
+          if(!resposta.ok) throw new Error(`${url}: HTTP ${resposta.status}`);
+          try{return await resposta.json();}
+          catch(erro){throw new Error(`${url}: resposta JSON incompleta ou inválida`);}
         }catch(erro){
           ultimoErro=erro;
           if(tentativa<3) await new Promise(resolve=>setTimeout(resolve,1000*tentativa));
@@ -1355,10 +1453,15 @@ async function carregarRegistrosDoBanco(){
       }
       throw ultimoErro||new Error("Resposta indisponível");
     }
-    [registrosObra,planejamentoObra,atividadesCadastro] = await Promise.all([
+    [registrosObra,planejamentoObra,atividadesCadastro,personalizacoesUnidades,plantasUnidades,acabamentosUnidades,projetosAdicionados,projetosOcultos] = await Promise.all([
       buscarJsonComTentativas("/api/registros"),
       buscarJsonComTentativas("/api/planejamento"),
-      buscarJsonComTentativas("/api/atividades")
+      buscarJsonComTentativas("/api/atividades"),
+      buscarJsonComTentativas("/personalizacoes_unidades.json"),
+      buscarJsonComTentativas("/plantas_unidades.json"),
+      buscarJsonComTentativas("/acabamentos_unidades.json"),
+      buscarJsonComTentativas("/api/projetos"),
+      buscarJsonComTentativas("/api/projetos-ocultos")
     ]);
     ATIVIDADES_UNIDADE = atividadesCadastro.map(item=>item.nome);
     Object.values(registrosObra).forEach(registro => {
@@ -1369,7 +1472,6 @@ async function carregarRegistrosDoBanco(){
     status.textContent = "Dados da obra atualizados";
     status.style.color = "";
     document.getElementById("filtroServicoDashboard").innerHTML="";
-    document.getElementById("filtroAbaServicos").innerHTML="";
     const renderizacoes=[
       ["planilha",prepararPlanilha],
       ["apartamentos",renderizarApartamentosDoPavimento],
@@ -1394,7 +1496,7 @@ async function carregarRegistrosDoBanco(){
   }
   catch(e){
     console.error("Falha ao carregar os dados da obra:",e);
-    status.textContent = "Não foi possível carregar os dados. Verifique a conexão e atualize a página.";
+    status.textContent = `Não foi possível carregar os dados (${e.message||"erro desconhecido"}). Atualize a página.`;
     status.style.color = "var(--vermelho)";
   }
 }
@@ -1533,7 +1635,6 @@ function renderizarApartamentosDoPavimento(){
   }
   const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidadeSelecionada);
   const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
-  const pendentes = itens.length-feitos;
   const percentual = itens.length?Math.round(feitos/itens.length*100):0;
   const nome = unidadeSelecionada === "Área comum" ? unidadeSelecionada : unidadeSelecionada.replace("Apto ","Apartamento ");
   const consultaRelatorio=new URLSearchParams({torre:torreSelecionada,andar:String(pavimentoSelecionado),unidade:unidadeSelecionada}).toString();
@@ -1543,16 +1644,38 @@ function renderizarApartamentosDoPavimento(){
   baixarPdf.classList.remove("desabilitado");
   document.getElementById("tituloApartamentos").textContent = `${nome} · ${pavimentoSelecionado}º andar`;
   document.getElementById("subtituloApartamentos").textContent = `${TORRES[torreSelecionada].nome} · dashboard individual da unidade`;
-  document.getElementById("aptoAvanco").textContent = `${percentual}%`;
-  document.getElementById("aptoRealizadas").textContent = feitos;
-  document.getElementById("aptoPendentes").textContent = pendentes;
   document.getElementById("dashboardApartamento").classList.add("visivel");
-  document.getElementById("listaPendenciasApartamento").innerHTML = itens.map(item=>{
-    const registro=obterRegistro(item.andar,item.unidade,item.atividade);
-    const status=registro.status||"nao-iniciado";
-    const chave=escaparHtml(chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade));
-    return `<li class="servico-${status}"><span>${escaparHtml(item.atividade)}</span><select class="status-atividade status-select-${status}" data-chave="${chave}" aria-label="Status de ${escaparHtml(item.atividade)}">${opcoesStatusAtividade(status)}</select></li>`;
-  }).join("");
+  const chaveUnidade=`${torreSelecionada}|${unidadeSelecionada}`;
+  const personalizacao=personalizacoesUnidades[chaveUnidade];
+  const planta=plantasUnidades[chaveUnidade];
+  const acabamentos=acabamentosUnidades[chaveUnidade];
+  const slidesProjetos=[];
+  const projetoEstaOculto=imagem=>projetosOcultos.some(projeto=>projeto.torre===torreSelecionada&&Number(projeto.andar)===pavimentoSelecionado&&projeto.unidade===unidadeSelecionada&&projeto.imagem===imagem);
+  if(planta?.plantaMiniatura&&!projetoEstaOculto(planta.plantaMiniatura)) slidesProjetos.push({titulo:`Planta da opção · ${planta.tipo}`,imagem:planta.plantaMiniatura});
+  (personalizacao?.projetos||[]).forEach(projeto=>{
+    if(projeto.imagem&&!projetoEstaOculto(projeto.imagem)&&!slidesProjetos.some(slide=>slide.imagem===projeto.imagem)) slidesProjetos.push({titulo:projeto.titulo||projeto.arquivo||"Projeto",imagem:projeto.imagem});
+  });
+  projetosAdicionados.filter(projeto=>projeto.torre===torreSelecionada&&Number(projeto.andar)===pavimentoSelecionado&&projeto.unidade===unidadeSelecionada).forEach(projeto=>{
+    slidesProjetos.push({id:projeto.id,titulo:projeto.titulo||"Projeto adicionado",imagem:projeto.imagem});
+  });
+  const blocoPlanta=slidesProjetos.length
+    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}"><a class="planta-link" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
+    :`<div class="personalizacao-secao"><div class="planta-indisponivel">Nenhum projeto identificado para esta unidade.</div></div>`;
+  const itensAcabamentos=(acabamentos?.itens||[]).filter(item=>!/^Opção\s*1(?:\s*\(padrão\))?$/i.test(item.opcao.trim()));
+  const gruposAcabamentos=itensAcabamentos.reduce((grupos,item)=>{
+    (grupos[item.ambiente]??=[]).push(item);
+    return grupos;
+  },{});
+  const blocoAcabamentos=Object.keys(gruposAcabamentos).length
+    ?`<div class="personalizacao-resumo"><span>${itensAcabamentos.length} alteração(ões) de acabamento</span></div><div class="acabamentos-lista">${Object.entries(gruposAcabamentos).map(([ambiente,itens],indice)=>`<details class="acabamento-ambiente" ${indice===0?"open":""}><summary><span>${escaparHtml(ambiente)}</span><small>${itens.length} item(ns)</small></summary><div class="acabamento-itens">${itens.map(item=>`<div class="acabamento-item"><div class="acabamento-item-cabecalho"><strong>${escaparHtml(item.item)}</strong><span class="acabamento-opcao">${escaparHtml(item.opcao)}</span></div>${item.descricao?`<p class="acabamento-descricao">${escaparHtml(item.descricao)}</p>`:""}</div>`).join("")}</div></details>`).join("")}</div>`
+    :acabamentos?.itens?.length
+      ?`<div class="acabamentos-padrao"><i>✓</i><div><strong>Opção padrão</strong>Sem alteração de acabamento.</div></div>`
+      :`<div class="acabamentos-aguardando">Não há opções de acabamento cadastradas para esta unidade.</div>`;
+  const blocoContratos=personalizacao?.documentos?.length
+    ?`<div class="personalizacao-resumo" style="margin-top:11px"><span>${personalizacao.documentos.length} documento(s) técnico(s)</span><span>${personalizacao.quantidadeProjetos||0} projeto(s) vinculado(s)</span></div><div class="personalizacao-documentos">${personalizacao.documentos.map(documento=>`<article class="personalizacao-documento"><h4>${escaparHtml(documento.titulo)}</h4><p>${escaparHtml(documento.descricao).replaceAll(" • ","<br>• ")}</p></article>`).join("")}</div>`
+    :"";
+  document.getElementById("plantaApartamento").innerHTML=blocoPlanta;
+  document.getElementById("acabamentosApartamento").innerHTML=blocoAcabamentos+blocoContratos;
   document.getElementById("tabelaApartamento").innerHTML = itens.map(item=>{
     const registro=obterRegistro(item.andar,item.unidade,item.atividade);
     const data=registro.data?registro.data.split("-").reverse().join("/"):"—";
@@ -1590,7 +1713,26 @@ function renderizarApartamentosDoPavimento(){
         borderWidth:0
       }]
     },
-    options:{responsive:true,maintainAspectRatio:false,cutout:"66%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}`}}}}
+    options:{responsive:true,maintainAspectRatio:false,cutout:"66%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}`}}}},
+    plugins:[{
+      id:"percentualCentroApartamento",
+      afterDraw(chart){
+        const {ctx,chartArea}=chart;
+        if(!chartArea)return;
+        const x=(chartArea.left+chartArea.right)/2;
+        const y=(chartArea.top+chartArea.bottom)/2;
+        ctx.save();
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillStyle="#0f2a4a";
+        ctx.font="700 28px Segoe UI, Arial, sans-serif";
+        ctx.fillText(`${percentual}%`,x,y-7);
+        ctx.fillStyle="#637582";
+        ctx.font="700 9px Segoe UI, Arial, sans-serif";
+        ctx.fillText("EXECUTADO",x,y+15);
+        ctx.restore();
+      }
+    }]
   });
 }
 
@@ -1646,12 +1788,46 @@ function prepararFormularioOcorrencia(){
 }
 
 function atualizarPortalRelatorios(){
-  const consulta=new URLSearchParams({torre:torreSelecionada}).toString();
-  const urlQr=`/api/qrcode-relatorios?${consulta}`;
-  document.getElementById("qrRelatoriosVisitante").src=`${urlQr}&v=${Date.now()}`;
-  document.getElementById("baixarQrRelatorios").href=urlQr;
-  document.getElementById("abrirPortalRelatorios").href=`/visitante-relatorios?${consulta}`;
-  document.getElementById("tituloRelatoriosVisitante").textContent=`Portal de relatórios — ${TORRES[torreSelecionada].nome}`;
+  const torre=document.getElementById("relatorioTorre");
+  if(!torre) return;
+  if(!torre.dataset.inicializado){
+    torre.value=torreSelecionada;
+    torre.addEventListener("change",atualizarFiltrosRelatorio);
+    document.getElementById("relatorioAndar").addEventListener("change",atualizarUnidadesRelatorio);
+    torre.dataset.inicializado="1";
+  }
+  atualizarFiltrosRelatorio();
+}
+
+function atualizarFiltrosRelatorio(){
+  const torre=document.getElementById("relatorioTorre").value;
+  const andar=document.getElementById("relatorioAndar");
+  const atual=andar.value||"todos";
+  andar.innerHTML=`<option value="todos">Todos os andares</option>`+Array.from({length:TORRES[torre].andares},(_,indice)=>`<option value="${indice+1}">${indice+1}º andar</option>`).join("");
+  andar.value=[...andar.options].some(opcao=>opcao.value===atual)?atual:"todos";
+  const atividade=document.getElementById("relatorioAtividade");
+  atividade.innerHTML=`<option value="todos">Todas as atividades</option>`+atividadesCadastro.map(item=>`<option value="${escaparHtml(item.nome)}">${escaparHtml(item.nome)}</option>`).join("");
+  atualizarUnidadesRelatorio();
+}
+
+function atualizarUnidadesRelatorio(){
+  const torre=document.getElementById("relatorioTorre").value;
+  const andar=document.getElementById("relatorioAndar").value;
+  const unidades=[...new Set(listaRegistros(torre).filter(item=>andar==="todos"||item.andar===Number(andar)).map(item=>item.unidade))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+  document.getElementById("relatorioUnidade").innerHTML=`<option value="todos">Todos os apartamentos e setores</option>`+unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+}
+
+function gerarPdfRelatorio(){
+  const consulta=new URLSearchParams({
+    torre:document.getElementById("relatorioTorre").value,
+    andar:document.getElementById("relatorioAndar").value,
+    unidade:document.getElementById("relatorioUnidade").value,
+    atividade:document.getElementById("relatorioAtividade").value,
+    status:document.getElementById("relatorioStatus").value,
+    acabamento:document.getElementById("relatorioAcabamento").value,
+    ocorrencias:document.getElementById("relatorioOcorrencias").value
+  });
+  window.open(`/relatorio-visitante.pdf?${consulta}`,"_blank","noopener");
 }
 
 function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
@@ -1706,13 +1882,21 @@ function renderizarEscoposAtividade(){
     `<span class="escopo-chip">${escaparHtml(rotuloEscopoAtividade(escopo))}<button type="button" data-remover-escopo="${indice}" aria-label="Remover destino">×</button></span>`
   ).join(""):`<span class="atividade-escopos-resumo">Nenhum destino selecionado.</span>`;
 }
+function renderizarEspecificacoesAtividade(){
+  const area=document.getElementById("especificacoesAtividade");
+  area.innerHTML=especificacoesAtividadeTemporarias.length?especificacoesAtividadeTemporarias.map((especificacao,indice)=>
+    `<span class="escopo-chip">${escaparHtml(especificacao)}<button type="button" data-remover-especificacao="${indice}" aria-label="Remover especificação">×</button></span>`
+  ).join(""):`<span class="atividade-escopos-resumo">Nenhuma especificação adicionada.</span>`;
+}
 function limparFormularioAtividade(){
   document.getElementById("formAtividade").reset();
   document.getElementById("atividadeNomeOriginal").value="";
   document.getElementById("tituloFormAtividade").textContent="Nova atividade";
   escoposAtividadeTemporarios=[];
+  especificacoesAtividadeTemporarias=[];
   atualizarAndaresAtividade();
   renderizarEscoposAtividade();
+  renderizarEspecificacoesAtividade();
   document.getElementById("statusAtividadeAdmin").textContent="";
 }
 function renderizarAtividadesAdmin(){
@@ -1722,7 +1906,8 @@ function renderizarAtividadesAdmin(){
     const torres=[...new Set(item.escopos.map(escopo=>nomeTorreAtividade(escopo.torre)))].join(" e ");
     const pavimentos=new Set(item.escopos.map(escopo=>`${escopo.torre}|${escopo.andar}`)).size;
     const especificos=item.escopos.filter(escopo=>escopo.unidade!=="*").length;
-    const resumo=`${torres}<br>${pavimentos} pavimento(s)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}`;
+    const quantidadeEspecificacoes=especificacoesDoServico(item.nome).length;
+    const resumo=`${torres}<br>${pavimentos} pavimento(s)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}<br>${quantidadeEspecificacoes} especificação(ões)`;
     return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes"><button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button><button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
   }).join("")||`<tr><td colspan="3">Nenhuma atividade encontrada.</td></tr>`;
 }
@@ -1737,6 +1922,29 @@ async function recarregarCadastroAtividades(){
 
 document.getElementById("atividadeTorre").addEventListener("change",atualizarAndaresAtividade);
 document.getElementById("atividadeAndar").addEventListener("change",atualizarUnidadesAtividade);
+function adicionarEspecificacaoAtividade(){
+  const campo=document.getElementById("atividadeEspecificacaoNova");
+  const especificacao=campo.value.trim();
+  if(!especificacao)return;
+  if(!especificacoesAtividadeTemporarias.some(item=>item.toLocaleLowerCase("pt-BR")===especificacao.toLocaleLowerCase("pt-BR"))){
+    especificacoesAtividadeTemporarias.push(especificacao);
+  }
+  campo.value="";
+  renderizarEspecificacoesAtividade();
+  campo.focus();
+}
+document.getElementById("adicionarEspecificacaoAtividade").addEventListener("click",adicionarEspecificacaoAtividade);
+document.getElementById("atividadeEspecificacaoNova").addEventListener("keydown",evento=>{
+  if(evento.key!=="Enter")return;
+  evento.preventDefault();
+  adicionarEspecificacaoAtividade();
+});
+document.getElementById("especificacoesAtividade").addEventListener("click",evento=>{
+  const botao=evento.target.closest("[data-remover-especificacao]");
+  if(!botao)return;
+  especificacoesAtividadeTemporarias.splice(Number(botao.dataset.removerEspecificacao),1);
+  renderizarEspecificacoesAtividade();
+});
 document.getElementById("adicionarEscopoAtividade").addEventListener("click",()=>{
   const torre=document.getElementById("atividadeTorre").value;
   const andarSelecionado=document.getElementById("atividadeAndar").value;
@@ -1768,7 +1976,9 @@ document.getElementById("listaAtividadesAdmin").addEventListener("click",async e
     document.getElementById("atividadeNomeOriginal").value=item.nome;
     document.getElementById("tituloFormAtividade").textContent="Editar atividade";
     escoposAtividadeTemporarios=item.escopos.map(({torre,andar,unidade})=>({torre,andar,unidade}));
+    especificacoesAtividadeTemporarias=[...especificacoesDoServico(item.nome)];
     renderizarEscoposAtividade();
+    renderizarEspecificacoesAtividade();
     document.getElementById("formAtividade").scrollIntoView({behavior:"smooth",block:"start"});
   }
   if(excluir){
@@ -1786,8 +1996,9 @@ document.getElementById("formAtividade").addEventListener("submit",async evento=
   const nome=document.getElementById("atividadeNome").value.trim();
   const nomeOriginal=document.getElementById("atividadeNomeOriginal").value;
   if(!escoposAtividadeTemporarios.length){status.textContent="Adicione ao menos um destino.";status.style.color="var(--vermelho)";return;}
+  if(!especificacoesAtividadeTemporarias.length){status.textContent="Adicione ao menos uma especificação do serviço.";status.style.color="var(--vermelho)";return;}
   status.textContent="Salvando atividade…";status.style.color="";
-  const resposta=await fetch("/api/atividades",{method:nomeOriginal?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome,nomeOriginal,escopos:escoposAtividadeTemporarios})});
+  const resposta=await fetch("/api/atividades",{method:nomeOriginal?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome,nomeOriginal,escopos:escoposAtividadeTemporarios,especificacoes:especificacoesAtividadeTemporarias})});
   const dados=await resposta.json();
   if(!resposta.ok){status.textContent=dados.erro||"Não foi possível salvar";status.style.color="var(--vermelho)";return;}
   limparFormularioAtividade();
@@ -1921,6 +2132,72 @@ function atualizarDashboardGeral(){
   });
 }
 
+function exibirSlideProjeto(carrossel,indice){
+  const slides=[...carrossel.querySelectorAll(".projeto-slide")];
+  if(!slides.length) return;
+  indice=(indice+slides.length)%slides.length;
+  carrossel.dataset.indice=indice;
+  slides.forEach((slide,posicao)=>slide.classList.toggle("ativo",posicao===indice));
+  carrossel.querySelectorAll(".projeto-ponto").forEach((ponto,posicao)=>ponto.classList.toggle("ativo",posicao===indice));
+}
+
+function alterarSlideProjeto(botao,direcao){
+  const carrossel=botao.closest(".projetos-carrossel");
+  exibirSlideProjeto(carrossel,Number(carrossel.dataset.indice||0)+direcao);
+}
+
+function irParaSlideProjeto(botao,indice){
+  exibirSlideProjeto(botao.closest(".projetos-carrossel"),indice);
+}
+
+async function removerProjetoAtual(){
+  const carrossel=document.querySelector("#plantaApartamento .projetos-carrossel");
+  const slide=carrossel?.querySelector(".projeto-slide.ativo");
+  if(!slide) return;
+  if(!confirm("Remover esta imagem dos projetos da unidade?")) return;
+  try{
+    const identificador=slide.dataset.id;
+    let resposta;
+    if(identificador){
+      resposta=await fetch(`/api/projetos/${identificador}`,{method:"DELETE"});
+    }else{
+      const projeto={torre:torreSelecionada,andar:pavimentoSelecionado,unidade:unidadeSelecionada,imagem:slide.dataset.imagem};
+      resposta=await fetch("/api/projetos-ocultos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(projeto)});
+      if(resposta.ok) projetosOcultos.push(projeto);
+    }
+    const dados=await resposta.json();
+    if(!resposta.ok) throw new Error(dados.erro||"Não foi possível remover o projeto");
+    if(identificador) projetosAdicionados=projetosAdicionados.filter(projeto=>String(projeto.id)!==identificador);
+    renderizarApartamentosDoPavimento();
+  }catch(erro){ alert(erro.message); }
+}
+
+function adicionarProjetoUnidade(){
+  if(!unidadeSelecionada) return;
+  const seletor=document.createElement("input");
+  seletor.type="file";
+  seletor.accept="image/png,image/jpeg,image/webp";
+  seletor.onchange=()=>{
+    const arquivo=seletor.files?.[0];
+    if(!arquivo) return;
+    if(arquivo.size>8*1024*1024){ alert("A imagem deve ter no máximo 8 MB."); return; }
+    const titulo=prompt("Título do projeto:",arquivo.name.replace(/\.[^.]+$/,"")||"Novo projeto");
+    if(!titulo?.trim()) return;
+    const leitor=new FileReader();
+    leitor.onload=async()=>{
+      try{
+        const resposta=await fetch("/api/projetos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:pavimentoSelecionado,unidade:unidadeSelecionada,titulo:titulo.trim(),imagem:leitor.result,arquivoNome:arquivo.name})});
+        const dados=await resposta.json();
+        if(!resposta.ok) throw new Error(dados.erro||"Não foi possível salvar o projeto");
+        projetosAdicionados.push({id:dados.id,torre:torreSelecionada,andar:pavimentoSelecionado,unidade:unidadeSelecionada,titulo:titulo.trim(),imagem:leitor.result,arquivoNome:arquivo.name});
+        renderizarApartamentosDoPavimento();
+      }catch(erro){ alert(erro.message); }
+    };
+    leitor.readAsDataURL(arquivo);
+  };
+  seletor.click();
+}
+
 function escaparHtml(valor){
   return String(valor || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
@@ -1986,8 +2263,9 @@ function renderizarPlanilha(){
           const chave=chaveRegistro(torreSelecionada,item.andar,item.unidade,item.atividade);
           const registro=obterRegistro(item.andar,item.unidade,item.atividade);
           const possuiValor=Object.prototype.hasOwnProperty.call(registro.especificacoes||{},especificacao);
-          const marcado=possuiValor?Boolean(registro.especificacoes[especificacao]):registro.concluido;
-          return `<td><input class="check-especificacao" type="checkbox" data-chave="${escaparHtml(chave)}" data-especificacao="${escaparHtml(especificacao)}" aria-label="${escaparHtml(especificacao)} — ${escaparHtml(unidade)}" ${marcado?"checked":""}></td>`;
+          const estado=normalizarEstadoEspecificacao(possuiValor?registro.especificacoes[especificacao]:undefined,registro);
+          const selecionada=especificacoesSelecionadas.has(chaveSelecaoEspecificacao(chave,especificacao));
+          return `<td><button class="controle-especificacao ${selecionada?"selecionado":""}" type="button" data-chave="${escaparHtml(chave)}" data-especificacao="${escaparHtml(especificacao)}" data-estado="${estado}" title="${STATUS_ATIVIDADE[estado]} — clique para selecionar" aria-label="${escaparHtml(especificacao)} — ${escaparHtml(unidade)} — ${STATUS_ATIVIDADE[estado]}" aria-pressed="${selecionada}">${simboloEstadoEspecificacao(estado)}</button></td>`;
         }).join("");
         return `<tr><td>${escaparHtml(especificacao)}</td>${celulas}</tr>`;
       }).join("");
@@ -2005,10 +2283,10 @@ function atualizarControlesSelecao(){
   const selecionarTodos = document.getElementById("selecionarTodosRegistros");
   selecionarTodos.checked = caixas.length > 0 && marcadasVisiveis === caixas.length;
   selecionarTodos.indeterminate = marcadasVisiveis > 0 && marcadasVisiveis < caixas.length;
-  const quantidade = registrosSelecionados.size;
+  const quantidade = especificacoesSelecionadas.size||registrosSelecionados.size;
   document.getElementById("quantidadeSelecionada").textContent = quantidade
-    ? `${quantidade} serviço${quantidade===1?"":"s"} selecionado${quantidade===1?"":"s"}`
-    : "Nenhum serviço selecionado";
+    ? `${quantidade} célula${quantidade===1?"":"s"} selecionada${quantidade===1?"":"s"}`
+    : "Nenhuma célula selecionada";
   document.getElementById("aplicarStatusEmLote").disabled = quantidade === 0;
 }
 
@@ -2551,26 +2829,17 @@ document.getElementById("apartamentosGrid").addEventListener("click", event => {
   const unidade = event.target.closest(".apartamento-seletor");
   if(unidade) abrirPlanilhaDaUnidade(unidade.dataset.unidade);
 });
-document.getElementById("listaPendenciasApartamento").addEventListener("change", event => {
-  const seletor = event.target.closest(".status-atividade[data-chave]");
-  if(!seletor) return;
-  const chave = seletor.dataset.chave;
-  const partes = chave.split("|");
-  const atual = obterRegistro(Number(partes[1]),partes[2],partes[3]);
-  atual.status = seletor.value;
-  atual.concluido = seletor.value === "concluido";
-  const agora = new Date();
-  atual.data = seletor.value !== "nao-iniciado"
-    ? `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
-    : "";
-  registrosObra[chave] = atual;
-  salvarRegistros();
-  renderizarApartamentosDoPavimento();
-  renderizarPlanilha();
-  atualizarGraficosOperacionais();
-  atualizarDashboardGeral();
-});
 document.getElementById("corpoPlanilha").addEventListener("click", event => {
+  const controle=event.target.closest(".controle-especificacao");
+  if(controle){
+    const chaveSelecao=chaveSelecaoEspecificacao(controle.dataset.chave,controle.dataset.especificacao);
+    if(especificacoesSelecionadas.has(chaveSelecao)) especificacoesSelecionadas.delete(chaveSelecao);
+    else especificacoesSelecionadas.add(chaveSelecao);
+    controle.classList.toggle("selecionado",especificacoesSelecionadas.has(chaveSelecao));
+    controle.setAttribute("aria-pressed",String(especificacoesSelecionadas.has(chaveSelecao)));
+    atualizarControlesSelecao();
+    return;
+  }
   const unidade = event.target.closest(".link-unidade");
   if(unidade){
     pavimentoSelecionado = Number(unidade.dataset.andar);
@@ -2589,35 +2858,6 @@ document.getElementById("corpoPlanilha").addEventListener("click", event => {
   renderizarPlanilha();
 });
 document.getElementById("corpoPlanilha").addEventListener("change", event => {
-  if(event.target.classList.contains("check-especificacao")){
-    const chave=event.target.dataset.chave;
-    const partes=chave.split("|");
-    const atividade=partes.slice(3).join("|");
-    const atual=obterRegistro(Number(partes[1]),partes[2],atividade,partes[0]);
-    const especificacoes=especificacoesDoServico(atividade);
-    const valores={};
-    especificacoes.forEach(especificacao=>{
-      valores[especificacao]=Object.prototype.hasOwnProperty.call(atual.especificacoes||{},especificacao)
-        ? Boolean(atual.especificacoes[especificacao])
-        : atual.concluido;
-    });
-    valores[event.target.dataset.especificacao]=event.target.checked;
-    const concluidas=Object.values(valores).filter(Boolean).length;
-    atual.especificacoes=valores;
-    atual.status=concluidas===especificacoes.length?"concluido":concluidas?"em-andamento":"nao-iniciado";
-    atual.concluido=atual.status==="concluido";
-    const agora=new Date();
-    atual.data=concluidas
-      ? `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`
-      : "";
-    registrosObra[chave]=atual;
-    salvarRegistros();
-    renderizarPlanilha();
-    renderizarApartamentosDoPavimento();
-    atualizarGraficosOperacionais();
-    atualizarDashboardGeral();
-    return;
-  }
   if(event.target.classList.contains("selecao-registro")){
     const chave = event.target.closest("tr").dataset.chave;
     if(event.target.checked) registrosSelecionados.add(chave);
@@ -2666,6 +2906,30 @@ document.getElementById("selecionarTodosRegistros").addEventListener("change", e
   atualizarControlesSelecao();
 });
 document.getElementById("aplicarStatusEmLote").addEventListener("click", async () => {
+  if(especificacoesSelecionadas.size){
+    const novoStatus=document.getElementById("statusEmLote").value;
+    especificacoesSelecionadas.forEach(chaveSelecao=>{
+      const [chave,especificacao]=JSON.parse(chaveSelecao);
+      const partes=chave.split("|");
+      const atividade=partes.slice(3).join("|");
+      const atual=obterRegistro(Number(partes[1]),partes[2],atividade,partes[0]);
+      const valores={};
+      especificacoesDoServico(atividade).forEach(item=>{
+        valores[item]=normalizarEstadoEspecificacao(atual.especificacoes?.[item],atual);
+      });
+      valores[especificacao]=novoStatus;
+      atual.especificacoes=valores;
+      recalcularStatusPelasEspecificacoes(atual,atividade);
+      registrosObra[chave]=atual;
+    });
+    await salvarRegistros();
+    especificacoesSelecionadas.clear();
+    renderizarPlanilha();
+    renderizarApartamentosDoPavimento();
+    atualizarGraficosOperacionais();
+    atualizarDashboardGeral();
+    return;
+  }
   if(!registrosSelecionados.size) return;
   const novoStatus = document.getElementById("statusEmLote").value;
   if(novoStatus==="pendente"){

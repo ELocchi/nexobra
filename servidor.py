@@ -25,6 +25,7 @@ from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleD
 
 PASTA = Path(__file__).resolve().parent
 ARQUIVO_PLANEJAMENTO = PASTA / "dados_planilha_atual.json"
+ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
@@ -312,7 +313,7 @@ def gerar_pagina_visitante(torre, andar, unidade):
 <section class="painel"><h2>Ocorrências</h2><div class="ocorrencias">{''.join(cards) if cards else '<p>Nenhuma ocorrência vinculada.</p>'}</div></section></main></body></html>""".encode("utf-8")
 
 
-def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos"):
+def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos", status="todos"):
     with conectar() as conexao:
         itens = conexao.execute(
             "SELECT andar, unidade, atividade, status, data_conclusao FROM registros WHERE torre = ? ORDER BY andar, unidade, atividade",
@@ -325,11 +326,50 @@ def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos"
         itens = [item for item in itens if item["unidade"] == unidade]
     if atividade != "todos":
         itens = [item for item in itens if item["atividade"] == atividade]
+    if status != "todos":
+        itens = [item for item in itens if item["status"] == status]
     return itens
 
 
-def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade="todos"):
-    itens = registros_filtrados(torre, andar, unidade, atividade)
+def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade="todos", status="todos", acabamento="todos", ocorrencias="todas"):
+    itens = registros_filtrados(torre, andar, unidade, atividade, status)
+    if acabamento != "todos" and ARQUIVO_ACABAMENTOS.exists():
+        dados_acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8"))
+        def corresponde(item):
+            escolhas = [str(escolha.get("opcao", "")) for escolha in item.get("itens", [])]
+            alteradas = [escolha for escolha in escolhas if escolha.lower() != "opção 1"]
+            if acabamento == "padrao":
+                return bool(escolhas) and not alteradas
+            if acabamento == "alterado":
+                return bool(alteradas)
+            if acabamento == "personalizada":
+                return any("personalizada" in escolha.lower() for escolha in escolhas)
+            if acabamento == "nao-instalar":
+                return any("não instalar" in escolha.lower() or "nao instalar" in escolha.lower() for escolha in escolhas)
+            numero = acabamento.replace("opcao-", "")
+            return any(escolha.lower() == f"opção {numero}" for escolha in escolhas)
+        unidades_acabamento = {
+            chave.split("|", 1)[1] for chave, dados in dados_acabamentos.items()
+            if chave.startswith(f"{torre}|") and corresponde(dados)
+        }
+        itens = [item for item in itens if item["unidade"] in unidades_acabamento]
+    with conectar() as conexao:
+        ocorrencias_banco = conexao.execute(
+            "SELECT andar, unidade, atividade, descricao, status, data_ocorrencia FROM ocorrencias WHERE torre = ? ORDER BY data_ocorrencia DESC, id DESC",
+            (torre,),
+        ).fetchall()
+    ocorrencias_filtradas = [item for item in ocorrencias_banco
+        if (andar == "todos" or item["andar"] == int(andar))
+        and (unidade == "todos" or item["unidade"] == unidade)
+        and (atividade == "todos" or item["atividade"] == atividade)]
+    if ocorrencias in {"pendente", "concluido"}:
+        ocorrencias_filtradas = [item for item in ocorrencias_filtradas if item["status"] == ocorrencias]
+    unidades_com_ocorrencia = {(item["andar"], item["unidade"]) for item in ocorrencias_filtradas}
+    if ocorrencias in {"com", "pendente", "concluido"}:
+        itens = [item for item in itens if (item["andar"], item["unidade"]) in unidades_com_ocorrencia]
+    elif ocorrencias == "sem":
+        todas_ocorrencias = {(item["andar"], item["unidade"]) for item in ocorrencias_banco}
+        itens = [item for item in itens if (item["andar"], item["unidade"]) not in todas_ocorrencias]
     memoria = BytesIO()
     documento = SimpleDocTemplate(memoria, pagesize=landscape(A4), rightMargin=12*mm, leftMargin=12*mm, topMargin=12*mm, bottomMargin=12*mm)
     estilos = getSampleStyleSheet()
@@ -343,6 +383,9 @@ def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade
         f"Andar: {andar if andar != 'todos' else 'Todos'}",
         f"Unidade: {unidade.replace('Apto ', 'Apartamento ') if unidade != 'todos' else 'Todas'}",
         f"Serviço: {atividade if atividade != 'todos' else 'Todos'}",
+        f"Situação: {STATUS_NOMES.get(status, 'Todas') if status != 'todos' else 'Todas'}",
+        f"Acabamento: {acabamento.replace('-', ' ').title() if acabamento != 'todos' else 'Todos'}",
+        f"Ocorrências: {ocorrencias.title()}",
     ]
     elementos.extend([Paragraph(" · ".join(escape(item) for item in filtros), estilos["BodyText"]), Spacer(1, 4*mm)])
     tabela = [["Andar", "Unidade", "Serviço", "Status", "Data da atualização"]]
@@ -358,6 +401,16 @@ def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade
         ("FONTSIZE", (0,0), (-1,-1), 8), ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
     ]))
     elementos.extend([Paragraph(f"<b>Total de serviços:</b> {len(itens)}", estilos["BodyText"]), Spacer(1, 3*mm), quadro])
+    if ocorrencias != "sem":
+        elementos.extend([Spacer(1, 6*mm), Paragraph("<b>Ocorrências</b>", estilos["Heading2"])])
+        tabela_ocorrencias = [["Andar", "Unidade", "Atividade", "Ocorrência", "Status", "Data"]]
+        for item in ocorrencias_filtradas:
+            tabela_ocorrencias.append([f"{item['andar']}º", item["unidade"], item["atividade"], Paragraph(escape(item["descricao"]), estilos["BodyText"]), STATUS_NOMES.get(item["status"], item["status"]), "/".join(reversed(item["data_ocorrencia"].split("-")))])
+        if len(tabela_ocorrencias) == 1:
+            tabela_ocorrencias.append(["—", "—", "—", "Nenhuma ocorrência encontrada", "—", "—"])
+        quadro_ocorrencias = Table(tabela_ocorrencias, colWidths=[18*mm, 35*mm, 55*mm, 92*mm, 34*mm, 28*mm], repeatRows=1)
+        quadro_ocorrencias.setStyle(TableStyle([("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")), ("TEXTCOLOR", (0,0), (-1,0), colors.white), ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")), ("VALIGN", (0,0), (-1,-1), "TOP"), ("FONTSIZE", (0,0), (-1,-1), 7), ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")])]))
+        elementos.append(quadro_ocorrencias)
     documento.build(elementos)
     return memoria.getvalue()
 
@@ -539,6 +592,35 @@ def preparar_banco():
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_ocorrencias_local ON ocorrencias(torre, andar, unidade)"
         )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS projetos_unidade (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                torre TEXT NOT NULL,
+                andar INTEGER NOT NULL,
+                unidade TEXT NOT NULL,
+                titulo TEXT NOT NULL,
+                imagem TEXT NOT NULL,
+                arquivo_nome TEXT NOT NULL DEFAULT '',
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conexao.execute(
+            "CREATE INDEX IF NOT EXISTS idx_projetos_unidade ON projetos_unidade(torre, andar, unidade)"
+        )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS projetos_ocultos (
+                torre TEXT NOT NULL,
+                andar INTEGER NOT NULL,
+                unidade TEXT NOT NULL,
+                imagem TEXT NOT NULL,
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(torre, andar, unidade, imagem)
+            )
+            """
+        )
         importar_planejamento_inicial(conexao)
         preparar_atividades_config(conexao)
 
@@ -618,6 +700,17 @@ def preparar_atividades_config(conexao):
     conexao.execute(
         "CREATE INDEX IF NOT EXISTS idx_atividades_config_escopo ON atividades_config(torre, andar, unidade)"
     )
+    conexao.execute(
+        """
+        CREATE TABLE IF NOT EXISTS atividades_especificacoes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            atividade TEXT NOT NULL,
+            especificacao TEXT NOT NULL,
+            ordem INTEGER NOT NULL DEFAULT 0,
+            UNIQUE(atividade, especificacao)
+        )
+        """
+    )
     marcador = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'atividades_config_inicial'"
     ).fetchone()
@@ -658,12 +751,18 @@ def listar_atividades_config():
         linhas = conexao.execute(
             "SELECT id, nome, torre, andar, unidade FROM atividades_config ORDER BY nome, torre, andar, unidade"
         ).fetchall()
+        linhas_especificacoes = conexao.execute(
+            "SELECT atividade, especificacao FROM atividades_especificacoes ORDER BY atividade, ordem, id"
+        ).fetchall()
     agrupadas = {}
     for linha in linhas:
-        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": []})
+        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": [], "especificacoes": []})
         item["escopos"].append(
             {"id": linha["id"], "torre": linha["torre"], "andar": linha["andar"], "unidade": linha["unidade"]}
         )
+    for linha in linhas_especificacoes:
+        if linha["atividade"] in agrupadas:
+            agrupadas[linha["atividade"]]["especificacoes"].append(linha["especificacao"])
     return list(agrupadas.values())
 
 
@@ -680,6 +779,26 @@ def validar_escopos(escopos):
     if not resultado:
         raise ValueError("Adicione ao menos um pavimento, apartamento ou setor")
     return list(dict.fromkeys(resultado))
+
+
+def validar_especificacoes(especificacoes):
+    resultado = []
+    for especificacao in especificacoes:
+        texto = str(especificacao).strip()
+        if texto and texto not in resultado:
+            resultado.append(texto)
+    if not resultado:
+        raise ValueError("Adicione ao menos uma especificação do serviço")
+    return resultado
+
+
+def salvar_especificacoes_atividade(conexao, nome, especificacoes):
+    conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome,))
+    for ordem, especificacao in enumerate(especificacoes):
+        conexao.execute(
+            "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES (?, ?, ?)",
+            (nome, especificacao, ordem),
+        )
 
 
 def garantir_registros_atividade(conexao, nome, escopos):
@@ -768,14 +887,24 @@ class ServidorObra(SimpleHTTPRequestHandler):
             andar = parametros.get("andar", ["todos"])[0]
             unidade = parametros.get("unidade", ["todos"])[0]
             atividade = parametros.get("atividade", ["todos"])[0]
+            status = parametros.get("status", ["todos"])[0]
+            acabamento = parametros.get("acabamento", ["todos"])[0]
+            ocorrencias = parametros.get("ocorrencias", ["todas"])[0]
             if torre not in TORRES_NOMES or (andar != "todos" and not andar.isdigit()):
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
+                return
+            if status not in {*STATUS_NOMES, "todos"}:
+                self.enviar_json({"erro": "Situação inválida"}, 400)
+                return
+            acabamentos_validos = {"todos", "padrao", "alterado", "personalizada", "nao-instalar", *(f"opcao-{numero}" for numero in range(2, 8))}
+            if acabamento not in acabamentos_validos or ocorrencias not in {"todas", "com", "sem", "pendente", "concluido"}:
+                self.enviar_json({"erro": "Filtro de acabamento ou ocorrência inválido"}, 400)
                 return
             if caminho == "/visitante-relatorios":
                 corpo = gerar_portal_relatorios(torre, andar, unidade, atividade)
                 tipo = "text/html; charset=utf-8"
             elif caminho == "/relatorio-visitante.pdf":
-                corpo = gerar_pdf_visitante_filtros(torre, andar, unidade, atividade)
+                corpo = gerar_pdf_visitante_filtros(torre, andar, unidade, atividade, status, acabamento, ocorrencias)
                 tipo = "application/pdf"
             else:
                 corpo = gerar_qr_svg(self.url_publica(
@@ -905,6 +1034,23 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 ]
             )
             return
+        if caminho == "/api/projetos":
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT * FROM projetos_unidade ORDER BY criado_em, id"
+                ).fetchall()
+            self.enviar_json([
+                {"id": linha["id"], "torre": linha["torre"], "andar": linha["andar"],
+                 "unidade": linha["unidade"], "titulo": linha["titulo"],
+                 "imagem": linha["imagem"], "arquivoNome": linha["arquivo_nome"]}
+                for linha in linhas
+            ])
+            return
+        if caminho == "/api/projetos-ocultos":
+            with conectar() as conexao:
+                linhas = conexao.execute("SELECT torre, andar, unidade, imagem FROM projetos_ocultos").fetchall()
+            self.enviar_json([dict(linha) for linha in linhas])
+            return
         if caminho == "/":
             self.path = "/acompanhamento_obra.html"
         super().do_GET()
@@ -922,13 +1068,16 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 if not nome_original or not nome:
                     raise ValueError("Informe o nome da atividade")
                 escopos = validar_escopos(dados.get("escopos", []))
+                especificacoes = validar_especificacoes(dados.get("especificacoes", []))
                 with conectar() as conexao:
                     conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome_original,))
+                    conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome_original,))
                     for torre, andar, unidade in escopos:
                         conexao.execute(
                             "INSERT INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
                             (nome, torre, andar, unidade),
                         )
+                    salvar_especificacoes_atividade(conexao, nome, especificacoes)
                     garantir_registros_atividade(conexao, nome, escopos)
                 self.enviar_json({"ok": True, "nome": nome})
             except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
@@ -1041,18 +1190,64 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 if not nome:
                     raise ValueError("Informe o nome da atividade")
                 escopos = validar_escopos(dados.get("escopos", []))
+                especificacoes = validar_especificacoes(dados.get("especificacoes", []))
                 with conectar() as conexao:
                     for torre, andar, unidade in escopos:
                         conexao.execute(
                             "INSERT INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
                             (nome, torre, andar, unidade),
                         )
+                    salvar_especificacoes_atividade(conexao, nome, especificacoes)
                     garantir_registros_atividade(conexao, nome, escopos)
                 self.enviar_json({"ok": True, "nome": nome}, 201)
             except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
                 self.enviar_json({"erro": str(erro)}, 400)
             except Exception as erro:
                 self.enviar_json({"erro": f"Falha ao cadastrar atividade: {erro}"}, 500)
+            return
+        if caminho == "/api/projetos":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                if tamanho > 12 * 1024 * 1024:
+                    self.enviar_json({"erro": "Imagem acima do limite permitido"}, 413)
+                    return
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                campos = ("torre", "andar", "unidade", "titulo", "imagem")
+                if any(not dados.get(campo) for campo in campos):
+                    raise ValueError("Informe a unidade, o título e a imagem do projeto")
+                if not str(dados["imagem"]).startswith("data:image/"):
+                    raise ValueError("Envie uma imagem PNG, JPG ou WEBP")
+                with conectar() as conexao:
+                    cursor = conexao.execute(
+                        "INSERT INTO projetos_unidade (torre, andar, unidade, titulo, imagem, arquivo_nome) VALUES (?, ?, ?, ?, ?, ?)",
+                        (dados["torre"], int(dados["andar"]), dados["unidade"],
+                         str(dados["titulo"]).strip(), dados["imagem"], dados.get("arquivoNome", "")),
+                    )
+                self.enviar_json({"ok": True, "id": cursor.lastrowid}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao salvar projeto: {erro}"}, 500)
+            return
+        if caminho == "/api/projetos-ocultos":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                campos = ("torre", "andar", "unidade", "imagem")
+                if any(not dados.get(campo) for campo in campos):
+                    raise ValueError("Projeto inválido")
+                with conectar() as conexao:
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO projetos_ocultos (torre, andar, unidade, imagem) VALUES (?, ?, ?, ?)",
+                        (dados["torre"], int(dados["andar"]), dados["unidade"], dados["imagem"]),
+                    )
+                self.enviar_json({"ok": True}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
             return
         if caminho != "/api/ocorrencias":
             self.enviar_json({"erro": "Rota não encontrada"}, 404)
@@ -1128,6 +1323,21 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_DELETE(self):
         caminho = urlparse(self.path).path
+        partes = caminho.strip("/").split("/")
+        if len(partes) == 3 and partes[:2] == ["api", "projetos"]:
+            if not self.exigir_engenheiro():
+                return
+            try:
+                identificador = int(partes[2])
+                with conectar() as conexao:
+                    cursor = conexao.execute("DELETE FROM projetos_unidade WHERE id = ?", (identificador,))
+                if not cursor.rowcount:
+                    self.enviar_json({"erro": "Projeto não encontrado"}, 404)
+                    return
+                self.enviar_json({"ok": True})
+            except ValueError:
+                self.enviar_json({"erro": "Projeto inválido"}, 400)
+            return
         if caminho == "/api/atividades":
             if not self.exigir_engenheiro():
                 return
@@ -1138,6 +1348,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     raise ValueError("Informe a atividade")
                 with conectar() as conexao:
                     cursor = conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome,))
+                    conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome,))
                 if not cursor.rowcount:
                     self.enviar_json({"erro": "Atividade não encontrada"}, 404)
                     return

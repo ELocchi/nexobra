@@ -1,0 +1,3017 @@
+{
+  "horizonte|Apto 301": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p01.png",
+    "origem": "T1-R00.pdf · página 1"
+  },
+  "horizonte|Apto 302": {
+    "tipo": "OPÇÃO 02 - 1 dormitório, APA e sala ampliada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p08.png",
+    "origem": "T1-R00.pdf · página 8"
+  },
+  "horizonte|Apto 303": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p13.png",
+    "origem": "T1-R00.pdf · página 13"
+  },
+  "horizonte|Apto 304": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p17.png",
+    "origem": "T1-R00.pdf · página 17"
+  },
+  "horizonte|Apto 305": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p21.png",
+    "origem": "T1-R00.pdf · página 21"
+  },
+  "horizonte|Apto 306": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p26.png",
+    "origem": "T1-R00.pdf · página 26"
+  },
+  "horizonte|Apto 309": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p39.png",
+    "origem": "T1-R00.pdf · página 39"
+  },
+  "horizonte|Apto 310": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p47.png",
+    "origem": "T1-R00.pdf · página 47"
+  },
+  "horizonte|Apto 311": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p52.png",
+    "origem": "T1-R00.pdf · página 52"
+  },
+  "horizonte|Apto 312": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p57.png",
+    "origem": "T1-R00.pdf · página 57"
+  },
+  "horizonte|Apto 313": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p62.png",
+    "origem": "T1-R00.pdf · página 62"
+  },
+  "horizonte|Apto 314": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p67.png",
+    "origem": "T1-R00.pdf · página 67"
+  },
+  "horizonte|Apto 401": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p03.png",
+    "origem": "T1-R00.pdf · página 3"
+  },
+  "horizonte|Apto 402": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p09.png",
+    "origem": "T1-R00.pdf · página 9"
+  },
+  "horizonte|Apto 403": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p14.png",
+    "origem": "T1-R00.pdf · página 14"
+  },
+  "horizonte|Apto 404": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p18.png",
+    "origem": "T1-R00.pdf · página 18"
+  },
+  "horizonte|Apto 405": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p22.png",
+    "origem": "T1-R00.pdf · página 22"
+  },
+  "horizonte|Apto 406": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p27.png",
+    "origem": "T1-R00.pdf · página 27"
+  },
+  "horizonte|Apto 408": {
+    "tipo": "OPÇÃO 02 - 1 dormitório, APA e sala ampliada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p36.png",
+    "origem": "T1-R00.pdf · página 36"
+  },
+  "horizonte|Apto 409": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p40.png",
+    "origem": "T1-R00.pdf · página 40"
+  },
+  "horizonte|Apto 410": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p48.png",
+    "origem": "T1-R00.pdf · página 48"
+  },
+  "horizonte|Apto 411": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p53.png",
+    "origem": "T1-R00.pdf · página 53"
+  },
+  "horizonte|Apto 412": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p58.png",
+    "origem": "T1-R00.pdf · página 58"
+  },
+  "horizonte|Apto 413": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p63.png",
+    "origem": "T1-R00.pdf · página 63"
+  },
+  "horizonte|Apto 414": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p68.png",
+    "origem": "T1-R00.pdf · página 68"
+  },
+  "horizonte|Apto 501": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p03.png",
+    "origem": "T1-R00.pdf · página 3"
+  },
+  "horizonte|Apto 502": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p09.png",
+    "origem": "T1-R00.pdf · página 9"
+  },
+  "horizonte|Apto 503": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p14.png",
+    "origem": "T1-R00.pdf · página 14"
+  },
+  "horizonte|Apto 504": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p18.png",
+    "origem": "T1-R00.pdf · página 18"
+  },
+  "horizonte|Apto 505": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p22.png",
+    "origem": "T1-R00.pdf · página 22"
+  },
+  "horizonte|Apto 506": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p27.png",
+    "origem": "T1-R00.pdf · página 27"
+  },
+  "horizonte|Apto 507": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p31.png",
+    "origem": "T1-R00.pdf · página 31"
+  },
+  "horizonte|Apto 508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p35.png",
+    "origem": "T1-R00.pdf · página 35"
+  },
+  "horizonte|Apto 509": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p40.png",
+    "origem": "T1-R00.pdf · página 40"
+  },
+  "horizonte|Apto 510": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p48.png",
+    "origem": "T1-R00.pdf · página 48"
+  },
+  "horizonte|Apto 511": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p53.png",
+    "origem": "T1-R00.pdf · página 53"
+  },
+  "horizonte|Apto 512": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p58.png",
+    "origem": "T1-R00.pdf · página 58"
+  },
+  "horizonte|Apto 513": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p63.png",
+    "origem": "T1-R00.pdf · página 63"
+  },
+  "horizonte|Apto 514": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p68.png",
+    "origem": "T1-R00.pdf · página 68"
+  },
+  "horizonte|Apto 601": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p03.png",
+    "origem": "T1-R00.pdf · página 3"
+  },
+  "horizonte|Apto 602": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p09.png",
+    "origem": "T1-R00.pdf · página 9"
+  },
+  "horizonte|Apto 603": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p14.png",
+    "origem": "T1-R00.pdf · página 14"
+  },
+  "horizonte|Apto 604": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p18.png",
+    "origem": "T1-R00.pdf · página 18"
+  },
+  "horizonte|Apto 605": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p22.png",
+    "origem": "T1-R00.pdf · página 22"
+  },
+  "horizonte|Apto 606": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p27.png",
+    "origem": "T1-R00.pdf · página 27"
+  },
+  "horizonte|Apto 607": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p31.png",
+    "origem": "T1-R00.pdf · página 31"
+  },
+  "horizonte|Apto 608": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p35.png",
+    "origem": "T1-R00.pdf · página 35"
+  },
+  "horizonte|Apto 609": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p41.png",
+    "origem": "T1-R00.pdf · página 41"
+  },
+  "horizonte|Apto 610": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p48.png",
+    "origem": "T1-R00.pdf · página 48"
+  },
+  "horizonte|Apto 611": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p53.png",
+    "origem": "T1-R00.pdf · página 53"
+  },
+  "horizonte|Apto 612": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p58.png",
+    "origem": "T1-R00.pdf · página 58"
+  },
+  "horizonte|Apto 613": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p63.png",
+    "origem": "T1-R00.pdf · página 63"
+  },
+  "horizonte|Apto 614": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p68.png",
+    "origem": "T1-R00.pdf · página 68"
+  },
+  "horizonte|Apto 701": {
+    "tipo": "OPÇÃO 02 - 1 dormitório, APA e sala ampliada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p04.png",
+    "origem": "T1-R00.pdf · página 4"
+  },
+  "horizonte|Apto 702": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p09.png",
+    "origem": "T1-R00.pdf · página 9"
+  },
+  "horizonte|Apto 703": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p14.png",
+    "origem": "T1-R00.pdf · página 14"
+  },
+  "horizonte|Apto 704": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p18.png",
+    "origem": "T1-R00.pdf · página 18"
+  },
+  "horizonte|Apto 705": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p23.png",
+    "origem": "T1-R00.pdf · página 23"
+  },
+  "horizonte|Apto 706": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p28.png",
+    "origem": "T1-R00.pdf · página 28"
+  },
+  "horizonte|Apto 707": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p31.png",
+    "origem": "T1-R00.pdf · página 31"
+  },
+  "horizonte|Apto 708": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p35.png",
+    "origem": "T1-R00.pdf · página 35"
+  },
+  "horizonte|Apto 709": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p42.png",
+    "origem": "T1-R00.pdf · página 42"
+  },
+  "horizonte|Apto 710": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p49.png",
+    "origem": "T1-R00.pdf · página 49"
+  },
+  "horizonte|Apto 711": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p54.png",
+    "origem": "T1-R00.pdf · página 54"
+  },
+  "horizonte|Apto 712": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p59.png",
+    "origem": "T1-R00.pdf · página 59"
+  },
+  "horizonte|Apto 713": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p64.png",
+    "origem": "T1-R00.pdf · página 64"
+  },
+  "horizonte|Apto 714": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p69.png",
+    "origem": "T1-R00.pdf · página 69"
+  },
+  "horizonte|Apto 801": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 802": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 803": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 804": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 805": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 806": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 807": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 808": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 809": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 810": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 811": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 812": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 813": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 814": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 901": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 902": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 903": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 904": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 905": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 906": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 907": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 908": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 909": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 910": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 911": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 912": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 913": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 914": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1001": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1002": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1003": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1004": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1005": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1006": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1007": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1008": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1009": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 1010": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1011": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1012": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1013": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1014": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1101": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1102": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1103": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1104": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1105": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1106": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1107": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1108": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1109": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 1110": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1111": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1112": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1113": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1114": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1201": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1202": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1203": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1204": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1205": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1206": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1207": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1208": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1209": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 1210": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1211": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1212": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1213": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1214": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1301": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1302": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1303": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1304": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1305": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1306": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1307": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1308": {
+    "tipo": "OPÇÃO 02 - 1 dormitório, APA e sala ampliada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p38.png",
+    "origem": "T1-R00.pdf · página 38"
+  },
+  "horizonte|Apto 1309": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 7º ao 13º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p43.png",
+    "origem": "T1-R00.pdf · página 43"
+  },
+  "horizonte|Apto 1310": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1311": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1312": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1313": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1314": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1401": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1402": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1403": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1404": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1405": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1406": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1407": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1408": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1409": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p44.png",
+    "origem": "T1-R00.pdf · página 44"
+  },
+  "horizonte|Apto 1410": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1411": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1412": {
+    "tipo": "DISTRATO",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1413": {
+    "tipo": "DISTRATO",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1414": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1501": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1502": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1503": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p15.png",
+    "origem": "T1-R00.pdf · página 15"
+  },
+  "horizonte|Apto 1504": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p19.png",
+    "origem": "T1-R00.pdf · página 19"
+  },
+  "horizonte|Apto 1505": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p24.png",
+    "origem": "T1-R00.pdf · página 24"
+  },
+  "horizonte|Apto 1506": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p29.png",
+    "origem": "T1-R00.pdf · página 29"
+  },
+  "horizonte|Apto 1507": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1509": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p44.png",
+    "origem": "T1-R00.pdf · página 44"
+  },
+  "horizonte|Apto 1510": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1511": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1512": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1513": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1514": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1601": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1602": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1603": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 1604": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 1605": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 1606": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 1607": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1608": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1609": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p44.png",
+    "origem": "T1-R00.pdf · página 44"
+  },
+  "horizonte|Apto 1610": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p50.png",
+    "origem": "T1-R00.pdf · página 50"
+  },
+  "horizonte|Apto 1611": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p55.png",
+    "origem": "T1-R00.pdf · página 55"
+  },
+  "horizonte|Apto 1612": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p60.png",
+    "origem": "T1-R00.pdf · página 60"
+  },
+  "horizonte|Apto 1613": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p65.png",
+    "origem": "T1-R00.pdf · página 65"
+  },
+  "horizonte|Apto 1614": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p70.png",
+    "origem": "T1-R00.pdf · página 70"
+  },
+  "horizonte|Apto 1701": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1702": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1703": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 1704": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 1705": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 1706": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 1707": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1708": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1709": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p45.png",
+    "origem": "T1-R00.pdf · página 45"
+  },
+  "horizonte|Apto 1710": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 1711": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 1712": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 1713": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 1714": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "horizonte|Apto 1801": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1802": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1803": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 1804": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 1805": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 1806": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 1807": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1808": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1809": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p45.png",
+    "origem": "T1-R00.pdf · página 45"
+  },
+  "horizonte|Apto 1810": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 1811": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 1812": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 1813": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 1814": {
+    "tipo": "DISTRATO - OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "horizonte|Apto 1901": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 1902": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 1903": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 1904": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 1905": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 1906": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 1907": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 1908": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 1909": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p45.png",
+    "origem": "T1-R00.pdf · página 45"
+  },
+  "horizonte|Apto 1910": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 1911": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 1912": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 1913": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 1914": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "horizonte|Apto 2001": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 2002": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 2003": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 2004": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 2005": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 2006": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 2007": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 2008": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 2009": {
+    "tipo": "UNIDADE ACESSÍVEL – 01 dormitório e APA - 3º ao 6º e 14º ao 20º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p45.png",
+    "origem": "T1-R00.pdf · página 45"
+  },
+  "horizonte|Apto 2010": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 2011": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 2012": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 2013": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 2014": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "horizonte|Apto 2101": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 2102": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 2103": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 2104": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 2105": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 2106": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 2107": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 2108": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 2109": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 21º ao 22º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p46.png",
+    "origem": "T1-R00.pdf · página 46"
+  },
+  "horizonte|Apto 2110": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 2111": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 2112": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 2113": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 2114": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "horizonte|Apto 2201": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p05.png",
+    "origem": "T1-R00.pdf · página 5"
+  },
+  "horizonte|Apto 2202": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p11.png",
+    "origem": "T1-R00.pdf · página 11"
+  },
+  "horizonte|Apto 2203": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p16.png",
+    "origem": "T1-R00.pdf · página 16"
+  },
+  "horizonte|Apto 2204": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p20.png",
+    "origem": "T1-R00.pdf · página 20"
+  },
+  "horizonte|Apto 2205": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p25.png",
+    "origem": "T1-R00.pdf · página 25"
+  },
+  "horizonte|Apto 2206": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p30.png",
+    "origem": "T1-R00.pdf · página 30"
+  },
+  "horizonte|Apto 2207": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p33.png",
+    "origem": "T1-R00.pdf · página 33"
+  },
+  "horizonte|Apto 2208": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p37.png",
+    "origem": "T1-R00.pdf · página 37"
+  },
+  "horizonte|Apto 2209": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA – 21º ao 22º Pavimento",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p46.png",
+    "origem": "T1-R00.pdf · página 46"
+  },
+  "horizonte|Apto 2210": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p51.png",
+    "origem": "T1-R00.pdf · página 51"
+  },
+  "horizonte|Apto 2211": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p56.png",
+    "origem": "T1-R00.pdf · página 56"
+  },
+  "horizonte|Apto 2212": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p61.png",
+    "origem": "T1-R00.pdf · página 61"
+  },
+  "horizonte|Apto 2213": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p66.png",
+    "origem": "T1-R00.pdf · página 66"
+  },
+  "horizonte|Apto 2214": {
+    "tipo": "OPÇÃO 01 - 1 suíte e APA",
+    "plantaMiniatura": "/miniaturas_tipos_planta/horizonte-t1-p71.png",
+    "origem": "T1-R00.pdf · página 71"
+  },
+  "aurora|Apto 103": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p14.png",
+    "origem": "T2-R00.pdf · página 14"
+  },
+  "aurora|Apto 104": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p20.png",
+    "origem": "T2-R00.pdf · página 20"
+  },
+  "aurora|Apto 105": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p26.png",
+    "origem": "T2-R00.pdf · página 26"
+  },
+  "aurora|Apto 203": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p14.png",
+    "origem": "T2-R00.pdf · página 14"
+  },
+  "aurora|Apto 204": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p20.png",
+    "origem": "T2-R00.pdf · página 20"
+  },
+  "aurora|Apto 205": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p26.png",
+    "origem": "T2-R00.pdf · página 26"
+  },
+  "aurora|Apto 401": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 402": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 403": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 404": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 405": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 406": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 407": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 408": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 409": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 410": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 501": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-501.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 502": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 503": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 504": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 505": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 506": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 507": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 509": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 510": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-510.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 601": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 602": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 603": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 604": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 605": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 606": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 607": {
+    "tipo": "OPÇÃO 03 - 2 suítes (sendo 1 com banho sr. e sra.), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p42.png",
+    "origem": "T2-R00.pdf · página 42"
+  },
+  "aurora|Apto 608": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 609": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 610": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 701": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 702": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 703": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 704": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 705": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 706": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 707": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 708": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 709": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 710": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 801": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 802": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 803": {
+    "tipo": "DISTRATO - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 804": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 805": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 806": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-806.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 807": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 808": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 809": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 810": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 901": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 902": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 903": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 904": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 905": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 906": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 907": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 908": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 909": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 910": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1001": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1002": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 1003": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1004": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1005": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1006": {
+    "tipo": "OPÇÃO 02 - 3 suítes, cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p33.png",
+    "origem": "T2-R00.pdf · página 33"
+  },
+  "aurora|Apto 1007": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1007.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 1008": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p46.png",
+    "origem": "T2-R00.pdf · página 46"
+  },
+  "aurora|Apto 1009": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1010": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1101": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1102": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1103": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1104": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1105": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1106": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1107": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1108": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1109": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1110": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p52.png",
+    "origem": "T2-R00.pdf · página 52"
+  },
+  "aurora|Apto 1201": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 1202": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1202.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 1203": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1204": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1205": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1206": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1207": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1208": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1209": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1210": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1301": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1302": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1303": {
+    "tipo": "DISTRATO - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1304": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1305": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1306": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1307": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1307.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 1308": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1309": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1310": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1401": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1402": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1403": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1404": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1405": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1406": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1407": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1408": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1409": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1410": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1501": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1502": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 1503": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1504": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1505": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1506": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1506.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 1507": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1509": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1510": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1601": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1602": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 1603": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1604": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1605": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1606": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1607": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1608": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1609": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1610": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1701": {
+    "tipo": "OPÇÃO 02 - 3 dormitórios (sendo 1 suíte), cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p02.png",
+    "origem": "T2-R00.pdf · página 2"
+  },
+  "aurora|Apto 1702": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1703": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1704": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1705": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1706": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1707": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1708": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1709": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1710": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1801": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 1802": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1803": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1804": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1805": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1806": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 1807": {
+    "tipo": "DISTRATO - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1808": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1809": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1810": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 1901": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 1902": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 1903": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 1904": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 1905": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 1906": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-1906.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 1907": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 1908": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 1909": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 1910": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2001": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 2002": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 2003": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2004": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2005": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2006": {
+    "tipo": "OPÇÃO 02 - 3 suítes, cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p33.png",
+    "origem": "T2-R00.pdf · página 33"
+  },
+  "aurora|Apto 2007": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2008": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2009": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2010": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2101": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 2102": {
+    "tipo": "OPÇÃO 02 - 3 dormitórios (sendo 1 suíte), cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p10.png",
+    "origem": "T2-R00.pdf · página 10"
+  },
+  "aurora|Apto 2103": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2104": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2105": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2106": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2107": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2108": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2109": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2110": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2201": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2201.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 2202": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 2203": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2204": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2205": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2206": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2207": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2208": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2209": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2210": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2301": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 2302": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 2303": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2304": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2305": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2306": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2307": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2308": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2309": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2310": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2401": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 2402": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 2403": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2404": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2405": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2406": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2407": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2408": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2409": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2410": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p52.png",
+    "origem": "T2-R00.pdf · página 52"
+  },
+  "aurora|Apto 2501": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 2502": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2502.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 2503": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2504": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p24.png",
+    "origem": "T2-R00.pdf · página 24"
+  },
+  "aurora|Apto 2505": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2506": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2507": {
+    "tipo": "OPÇÃO 03 - 2 suítes (sendo 1 com banho sr. e sra.), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p42.png",
+    "origem": "T2-R00.pdf · página 42"
+  },
+  "aurora|Apto 2508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2509": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2510": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2601": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 2602": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 2603": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2604": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2605": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2606": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2607": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2608": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2609": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2610": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2701": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2701.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 2702": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 2703": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2704": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2705": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2706": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2707": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2708": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2709": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2710": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2801": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 2802": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2802.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 2803": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2804": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2805": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2806": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 2807": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 2808": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2809": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2810": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 2901": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 2902": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 2903": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 2904": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 2905": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 2906": {
+    "tipo": "OPÇÃO 03 - 2 suítes (sendo 1 com banho sr. e sra.), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p34.png",
+    "origem": "T2-R00.pdf · página 34"
+  },
+  "aurora|Apto 2907": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-2907.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 2908": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 2909": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 2910": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3001": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p06.png",
+    "origem": "T2-R00.pdf · página 6"
+  },
+  "aurora|Apto 3002": {
+    "tipo": "LIVRE - OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 3003": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3004": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3005": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p30.png",
+    "origem": "T2-R00.pdf · página 30"
+  },
+  "aurora|Apto 3006": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p37.png",
+    "origem": "T2-R00.pdf · página 37"
+  },
+  "aurora|Apto 3007": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 3008": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3009": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3010": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3101": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 3102": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 3103": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3104": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3105": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 3106": {
+    "tipo": "OPÇÃO 02 - 3 suítes, cozinha fechada e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p33.png",
+    "origem": "T2-R00.pdf · página 33"
+  },
+  "aurora|Apto 3107": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 3108": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3109": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3110": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3201": {
+    "tipo": "LIVRE - OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 3202": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 3203": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3204": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3205": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 3206": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-3206.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 3207": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 3208": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3209": {
+    "tipo": "DISTRATO - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3210": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3301": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 3302": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 3303": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3304": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3305": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 3306": {
+    "tipo": "Projeto alterado",
+    "plantaMiniatura": "/miniaturas_plantas/aurora-3306.png",
+    "origem": "Projeto específico da unidade"
+  },
+  "aurora|Apto 3307": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 3308": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3309": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3310": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3401": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p03.png",
+    "origem": "T2-R00.pdf · página 3"
+  },
+  "aurora|Apto 3402": {
+    "tipo": "OPÇÃO 03 - 2 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p11.png",
+    "origem": "T2-R00.pdf · página 11"
+  },
+  "aurora|Apto 3403": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3404": {
+    "tipo": "LIVRE - OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3405": {
+    "tipo": "OPÇÃO 02 - 2 dormitórios (sendo 1 suíte) e cozinha fechada",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p30.png",
+    "origem": "T2-R00.pdf · página 30"
+  },
+  "aurora|Apto 3406": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 3407": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p40.png",
+    "origem": "T2-R00.pdf · página 40"
+  },
+  "aurora|Apto 3408": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3409": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3410": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  },
+  "aurora|Apto 3501": {
+    "tipo": "LIVRE - OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p01.png",
+    "origem": "T2-R00.pdf · página 1"
+  },
+  "aurora|Apto 3502": {
+    "tipo": "OPÇÃO 01 - 3 dormitórios (sendo 1 suíte), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p09.png",
+    "origem": "T2-R00.pdf · página 9"
+  },
+  "aurora|Apto 3503": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p17.png",
+    "origem": "T2-R00.pdf · página 17"
+  },
+  "aurora|Apto 3504": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p23.png",
+    "origem": "T2-R00.pdf · página 23"
+  },
+  "aurora|Apto 3505": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p29.png",
+    "origem": "T2-R00.pdf · página 29"
+  },
+  "aurora|Apto 3506": {
+    "tipo": "OPÇÃO 01 - 3 suítes, cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p32.png",
+    "origem": "T2-R00.pdf · página 32"
+  },
+  "aurora|Apto 3507": {
+    "tipo": "OPÇÃO 03 - 2 suítes (sendo 1 com banho sr. e sra.), cozinha aberta e lavabo",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p42.png",
+    "origem": "T2-R00.pdf · página 42"
+  },
+  "aurora|Apto 3508": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p45.png",
+    "origem": "T2-R00.pdf · página 45"
+  },
+  "aurora|Apto 3509": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p48.png",
+    "origem": "T2-R00.pdf · página 48"
+  },
+  "aurora|Apto 3510": {
+    "tipo": "OPÇÃO 01 - 2 dormitórios (sendo 1 suíte) e cozinha aberta",
+    "plantaMiniatura": "/miniaturas_tipos_planta/aurora-t2-p51.png",
+    "origem": "T2-R00.pdf · página 51"
+  }
+}
