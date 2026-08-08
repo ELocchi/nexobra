@@ -41,6 +41,15 @@
       linear-gradient(160deg, #176da8 0%, #3d9bd0 52%, #b4d7e7 100%);
     transition:opacity .55s ease, visibility .55s ease;
   }
+  .fundo-empreendimento{
+    position:absolute;inset:0;z-index:0;width:100%;height:100%;
+    object-fit:cover;object-position:center 58%;
+    filter:saturate(.92) contrast(1.02);
+  }
+  .seletor-3d::before{
+    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(14,83,135,.92) 0%,rgba(20,103,159,.74) 32%,rgba(10,55,88,.18) 62%,rgba(5,30,49,.12) 100%);
+  }
   .seletor-3d.fechado{opacity:0;visibility:hidden;pointer-events:none;}
   .seletor-topo{
     display:flex;
@@ -51,7 +60,8 @@
     position:relative;
     z-index:3;
   }
-  .marca{display:flex;align-items:center;}
+  .marca{display:flex;align-items:center;border:0;padding:0;background:transparent;cursor:pointer;border-radius:8px;}
+  .marca:focus-visible{outline:3px solid #fff;outline-offset:4px;}
   .marca-logo{
     display:block;width:clamp(155px,15vw,215px);height:auto;padding:6px 10px;
     border-radius:8px;background:#fff;box-shadow:0 5px 18px rgba(8,43,68,.16);
@@ -64,9 +74,13 @@
     width:min(1320px,100%);
     margin:auto;
     padding:10px clamp(24px,6vw,84px) 0;
+    position:relative;z-index:2;
   }
   .chamada-3d{position:relative;z-index:4;max-width:520px;}
-  .chamada-3d .sobretitulo{color:#80d5ee;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:700;}
+  .logo-empreendimento{
+    display:block;width:clamp(240px,25vw,340px);height:auto;margin:0 0 -18px;
+    transform:translateY(-42px);mix-blend-mode:multiply;border-radius:8px;
+  }
   .chamada-3d h1{font-size:clamp(2.3rem,4.8vw,5.2rem);line-height:.97;margin:16px 0 20px;letter-spacing:-.045em;}
   .chamada-3d p{font-size:clamp(.96rem,1.35vw,1.15rem);line-height:1.6;color:rgba(255,255,255,.72);max-width:460px;}
   .instrucao{display:flex;align-items:center;gap:10px;margin-top:28px;font-size:.83rem;color:#fff;}
@@ -78,6 +92,31 @@
     perspective:1350px;
     perspective-origin:50% 35%;
   }
+  .torre.seletor-modelo{
+    position:absolute;z-index:12;bottom:5%;min-width:150px;padding:10px 15px;
+    border:1px solid rgba(255,255,255,.5);border-radius:12px;
+    color:#fff;background:rgba(5,34,53,.72);backdrop-filter:blur(8px);
+    font:inherit;text-align:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.22);
+    transition:transform .2s ease,background .2s ease;
+  }
+  .torre.seletor-modelo:hover,.torre.seletor-modelo:focus-visible{transform:translateY(-5px);background:rgba(5,34,53,.9);outline:2px solid #fff;}
+  .torre.seletor-modelo strong{display:block;font-size:.88rem;letter-spacing:.04em;}
+  .torre.seletor-modelo span{display:block;margin-top:3px;color:rgba(255,255,255,.7);font-size:.67rem;}
+  .torre.seletor-modelo-smart{left:12%;}
+  .torre.seletor-modelo-home{right:10%;}
+  .grafico-abertura{
+    position:fixed;z-index:10;top:18%;right:clamp(18px,3vw,54px);width:min(440px,calc(100vw - 36px));padding:18px 20px;
+    border:1px solid rgba(255,255,255,.22);border-radius:14px;
+    background:rgba(8,45,72,.34);backdrop-filter:blur(5px);color:#fff;
+    box-shadow:0 12px 32px rgba(0,0,0,.12);
+  }
+  .grafico-abertura h2{margin:0 0 14px;color:#fff;font-size:1.05rem;font-weight:700;letter-spacing:.02em;}
+  .grafico-abertura-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;}
+  .grafico-abertura-item{min-width:0;}
+  .grafico-abertura-rotulo{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;font-size:.72rem;color:rgba(255,255,255,.82);}
+  .grafico-abertura-rotulo strong{color:#fff;font-size:.76rem;}
+  .grafico-abertura-barra{height:4px;background:rgba(255,255,255,.28);overflow:hidden;}
+  .grafico-abertura-barra i{display:block;height:100%;width:var(--percentual);background:rgba(255,255,255,.9);}
   .cenario::before{
     content:"";position:absolute;left:-5%;right:-16%;bottom:3%;height:28%;
     background:
@@ -245,6 +284,8 @@
   }
   .cabecalho-identidade{display:flex;align-items:flex-start;gap:18px;}
   .logo-header{width:128px;height:auto;padding:5px 7px;border-radius:7px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.16);}
+  .logo-header-botao{display:flex;flex:none;border:0;padding:0;background:transparent;cursor:pointer;border-radius:7px;}
+  .logo-header-botao:focus-visible{outline:3px solid var(--vermelho);outline-offset:4px;}
   .torre-atual{
     display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;padding:5px 10px;border-radius:30px;
     color:#dceff8;background:rgba(255,255,255,.12);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
@@ -292,6 +333,7 @@
   .menu-planilha.ativo a,.menu-planilha.ativo .abrir-atividades{color:#fff;background:var(--azul);}
   .menu-planilha.ativo .abrir-atividades:hover{background:#174b85;}
   #dashboardGeral,#apartamentos,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
+  #controleDetalhado{width:92vw;margin-left:calc(50% - 46vw);}
   .painel-aba{display:none;animation:entradaAba .25s ease;}
   .painel-aba.ativo{display:block;}
   @keyframes entradaAba{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -379,14 +421,19 @@
   .painel-planta .personalizacao-secao{margin:0;display:block;}
   .painel-planta .planta-link{display:block;}
   .painel-planta .planta-miniatura{height:auto;min-height:0;max-height:none;}
+  .painel-planta .planta-link.somente-planta-baixa{overflow:hidden;aspect-ratio:1.1;background:#fff;border:1px solid #ccd5dc;border-radius:7px;}
+  .painel-planta .planta-link.somente-planta-baixa .planta-miniatura{width:157%;max-width:none;border:0;border-radius:0;}
   .projetos-carrossel{display:block;}
   .projeto-topo{display:none;}
   .projeto-titulo{padding:5px 9px;border-radius:999px;background:#eaf2f7;color:var(--azul-escuro);font-size:.67rem;font-weight:800;}
   .projeto-contador{color:#657482;font-size:.66rem;font-weight:700;white-space:nowrap;}
   .projeto-viewport{position:relative;min-height:0;display:block;}
   .projeto-slide{display:none;width:100%;}
-  .projeto-slide.ativo{display:block;}
+  .projeto-slide.ativo{display:block;position:relative;}
   .projeto-slide .planta-link{height:auto;}
+  .tipo-planta{position:absolute;z-index:2;top:10px;left:10px;max-width:calc(100% - 20px);padding:8px 11px;border:1px solid #b9dec8;border-radius:8px;background:rgba(240,250,244,.94);box-shadow:0 2px 8px rgba(14,43,67,.12);color:#23683f;font-size:.67rem;line-height:1.35;pointer-events:none;}
+  .tipo-planta small{display:block;margin-bottom:2px;color:#4c725d;font-size:.57rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;}
+  .tipo-planta strong{display:block;color:#195432;font-size:.74rem;}
   .projeto-navegacao{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:9px;}
   .projeto-seta{display:grid;place-items:center;width:34px;height:30px;border:1px solid #b9c8d5;border-radius:7px;background:#fff;color:var(--azul);font-size:1rem;font-weight:900;cursor:pointer;}
   .projeto-seta:hover{background:#edf4fa;border-color:var(--azul);}
@@ -440,10 +487,19 @@
   .relatorio-filtros-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;align-items:end;}
   .relatorio-filtros .acao-relatorio{margin-top:18px;min-height:40px;border:0;cursor:pointer;font:inherit;font-size:.78rem;}
   .documentos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .documentos-bloco{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:19px;}
+  .documentos-bloco{position:relative;background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:19px 19px 58px;}
   .documentos-bloco h3{margin:0 0 6px;color:var(--azul-escuro);font-size:.92rem;}
   .documentos-bloco>p{margin:0 0 14px;color:var(--cinza-texto);font-size:.76rem;line-height:1.5;}
   .documentos-vazio{display:grid;place-items:center;min-height:130px;border:1px dashed #b9c6d0;border-radius:9px;background:#f8fafb;color:#73828e;text-align:center;font-size:.75rem;padding:18px;}
+  .documentos-lista{display:grid;gap:8px;min-height:130px;}
+  .documento-link-item{display:block;padding:11px 13px;border:1px solid #d5dfe6;border-radius:8px;background:#f8fafb;color:var(--azul-escuro);font-size:.76rem;font-weight:700;text-decoration:none;cursor:pointer;}
+  .documento-link-item small{display:block;margin-top:4px;color:#71808d;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .documento-link-item.selecionado{border-color:var(--azul);background:#eaf3f9;box-shadow:0 0 0 2px rgba(23,96,143,.12);}
+  .documentos-acoes{position:absolute;right:16px;bottom:14px;display:flex;gap:7px;}
+  .documentos-acoes button{display:grid;place-items:center;width:30px;height:30px;border:1px solid #9cb0bf;border-radius:50%;background:#fff;color:var(--azul);font:800 1.05rem/1 Arial;cursor:pointer;}
+  .documentos-acoes button:hover{background:var(--azul);color:#fff;}
+  .documentos-acoes .remover{color:var(--vermelho);border-color:#e2aaa5;}
+  .documentos-acoes .remover:hover{background:var(--vermelho);border-color:var(--vermelho);}
   .login-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#0f2d48,#17608f);}
   .login-overlay.oculto{display:none;}
   .login-caixa{width:min(100%,430px);background:#fff;border-radius:16px;padding:28px;box-shadow:0 22px 65px rgba(0,0,0,.38);}
@@ -466,8 +522,9 @@
   .obras-topo h1{font-size:2rem;margin:18px 0 7px;}
   .obras-topo p{margin:0;color:rgba(255,255,255,.8);}
   .obras-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;}
-  .obra-seletor{border:1px solid rgba(255,255,255,.45);border-radius:13px;background:rgba(10,54,83,.38);color:#fff;padding:23px;text-align:left;font:inherit;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.15);}
+  .obra-seletor{border:1px solid rgba(255,255,255,.45);border-radius:13px;background:rgba(10,54,83,.38);color:#fff;padding:0;overflow:hidden;text-align:center;font:inherit;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.15);}
   .obra-seletor:hover{background:rgba(10,54,83,.58);transform:translateY(-2px);}
+  .obra-seletor img{display:block;width:100%;height:auto;margin:0;}
   .obra-seletor strong{display:block;font-size:1.05rem;margin-bottom:8px;}
   .obra-seletor span{display:block;font-size:.75rem;color:rgba(255,255,255,.75);line-height:1.45;}
   .obras-rodape{text-align:center;margin-top:22px;font-size:.7rem;color:rgba(255,255,255,.65);}
@@ -515,7 +572,7 @@
   .dashboard-filtro{min-width:min(100%,280px);}
   .dashboard-filtro label{display:block;margin-bottom:5px;color:rgba(255,255,255,.6);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
   .dashboard-filtro select{width:100%;height:39px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:#fff;color:#17334d;padding:0 10px;font:inherit;font-size:.8rem;}
-  .resumo-geral-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:14px;}
+  .resumo-geral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px;}
   .resumo-geral-card{padding:14px 15px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.07);}
   .resumo-geral-card span{display:block;color:rgba(255,255,255,.6);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
   .resumo-geral-card strong{font-size:1.55rem;}
@@ -533,20 +590,30 @@
   .legenda-torres span{display:flex;align-items:center;gap:5px;}
   .legenda-torres i{width:8px;height:8px;border-radius:2px;display:block;}
   .torres-progresso{
-    min-height:445px;display:flex;align-items:flex-end;justify-content:center;gap:clamp(48px,10vw,130px);
+    min-height:515px;display:flex;align-items:flex-end;justify-content:center;gap:clamp(48px,10vw,130px);
     padding:12px 20px 0;background:linear-gradient(to top,rgba(3,17,28,.32),transparent 45%);
     border-radius:8px;overflow:hidden;
   }
   .torre-progresso-wrap{text-align:center;}
   .predio-progresso{
-    width:clamp(110px,14vw,170px);display:flex;flex-direction:column-reverse;
+    width:clamp(110px,14vw,170px);display:flex;flex-direction:column-reverse;position:relative;
     padding:5px 7px 8px;background:linear-gradient(90deg,#738591,#d7dfe0 12%,#a7b6ba 88%,#596e79);
     border:1px solid rgba(255,255,255,.45);border-radius:3px 3px 0 0;
     filter:drop-shadow(18px 20px 14px rgba(0,0,0,.35));
     overflow:visible;
   }
-  .predio-progresso.aurora{height:390px;}
-  .predio-progresso.horizonte{height:258px;}
+  .predio-progresso.modo-vertical::before{
+    content:"";position:absolute;inset:5px 7px 8px;z-index:0;pointer-events:none;
+    background:linear-gradient(to top,
+      #2e9e5b 0 var(--fim-concluido-geral),
+      #e0a800 var(--fim-concluido-geral) var(--fim-andamento-geral),
+      #d9483d var(--fim-andamento-geral) var(--fim-pendente-geral),
+      #637582 var(--fim-pendente-geral) 100%);
+    transition:background .35s ease;
+  }
+  .predio-progresso.modo-vertical .andar-progresso{z-index:1;background:transparent;}
+  .predio-progresso.aurora{height:455px;}
+  .predio-progresso.horizonte{height:325px;}
   .andar-progresso{
     flex:1;min-height:5px;position:relative;border-top:1px solid rgba(15,43,55,.62);
     background:linear-gradient(90deg,
@@ -624,22 +691,52 @@
   .planilha input[type="date"][readonly]{background:#f3f6f8;color:#526270;cursor:not-allowed;}
   .planilha input[type="text"]{min-width:180px;}
   .matrizes-servicos{padding:16px;display:grid;gap:18px;}
+  .controle-obra>.matrizes-servicos{max-height:none;overflow:visible;}
   .matriz-servico{border:1px solid var(--cinza-borda);border-radius:10px;overflow:hidden;background:#fff;}
+  .matriz-servico>.tabela-scroll{max-height:none;overflow-x:auto;overflow-y:visible;}
   .matriz-servico-titulo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;background:var(--azul-escuro);color:#fff;}
   .matriz-servico-titulo h3{margin:0;font-size:.92rem;}
+  .matriz-servico-identidade{display:flex;align-items:center;gap:12px;min-width:0;}
+  .filtro-subservico{height:29px;max-width:min(430px,55vw);border:1px solid #cad5de;border-radius:6px;background:#fff;color:var(--azul-escuro);padding:0 28px 0 9px;font:700 .7rem Arial;cursor:pointer;field-sizing:content;transition:width .18s ease;}
+  .filtro-subservico option{color:#173a5e;background:#fff;}
   .matriz-servico-titulo span{font-size:.7rem;opacity:.82;white-space:nowrap;}
   .matriz-servico table{min-width:max-content;width:100%;font-size:.76rem;}
   .matriz-servico th,.matriz-servico td{padding:9px 11px;text-align:center;border-right:1px solid #e3e8ec;}
   .matriz-servico th:first-child,.matriz-servico td:first-child{position:sticky;left:0;z-index:2;min-width:240px;text-align:left;background:#fff;}
   .matriz-servico thead th{background:#f3f6f8;color:var(--azul-escuro);white-space:nowrap;}
   .matriz-servico thead th:first-child{z-index:3;background:#f3f6f8;}
+  .matriz-servico .cabecalho-setor,.matriz-servico .selecionar-matriz,.matriz-servico .titulo-linha-especificacao{cursor:pointer;transition:background .15s ease,color .15s ease;}
+  .matriz-servico .cabecalho-setor:hover,.matriz-servico .selecionar-matriz:hover{background:#e5edf4;color:var(--vermelho);}
+  .matriz-servico .titulo-linha-especificacao:hover{background:#f4f7f9;}
   .matriz-servico tbody tr+tr td{border-top:1px solid #e3e8ec;}
+  .especificacao-com-criterio{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .abrir-criterio{flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid #9eb2c2;border-radius:50%;background:#fff;color:var(--azul);font:800 .76rem/1 Arial;cursor:pointer;}
+  .abrir-criterio:hover{background:var(--azul);color:#fff;}
+  .criterio-overlay{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:18px;background:rgba(7,25,41,.58);}
+  .criterio-overlay.oculto{display:none;}
+  .criterio-caixa{width:min(100%,520px);padding:22px;border-radius:14px;background:#fff;box-shadow:0 22px 65px rgba(0,0,0,.35);}
+  .criterio-caixa h3{margin:0;color:var(--azul-escuro);font-size:1rem;}
+  .criterio-caixa p{margin:7px 0 14px;color:var(--cinza-texto);font-size:.76rem;}
+  .criterio-caixa textarea{width:100%;min-height:145px;resize:vertical;border:1px solid #c8d2da;border-radius:8px;padding:11px;font:inherit;font-size:.82rem;line-height:1.5;}
+  .criterio-acoes{display:flex;justify-content:flex-end;gap:9px;margin-top:13px;}
+  .criterio-acoes button{border:0;border-radius:7px;padding:9px 14px;font-weight:700;cursor:pointer;}
+  .criterio-cancelar{background:#e8edf1;color:#526270;}.criterio-salvar{background:var(--azul);color:#fff;}
+  .menu-contexto-setor{position:fixed;z-index:13000;display:grid;min-width:180px;padding:6px;border:1px solid #cbd5dd;border-radius:9px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.22);}
+  .menu-contexto-setor.oculto{display:none;}
+  .menu-contexto-setor button{border:0;border-radius:6px;background:#fff;padding:9px 11px;text-align:left;color:#263746;font:inherit;font-size:.76rem;cursor:pointer;}
+  .menu-contexto-setor button:hover{background:#edf4f8;}.menu-contexto-setor .excluir{color:var(--vermelho);}
+  .pendencia-lista{display:grid;gap:10px;max-height:60vh;overflow:auto;margin-top:14px;}
+  .pendencia-detalhe{padding:13px;border:1px solid #e0e4e8;border-left:4px solid var(--vermelho);border-radius:7px;background:#f8f9fa;}
+  .pendencia-detalhe p{margin:7px 0;color:#263746;font-size:.82rem;line-height:1.5;}
+  .pendencia-detalhe time{color:#687587;font-size:.7rem;font-weight:700;}
+  .pendencia-detalhe img{display:block;max-width:100%;max-height:280px;margin-top:10px;border-radius:6px;object-fit:contain;}
   .matriz-servico .controle-especificacao{width:28px;height:28px;border:1.5px solid #c2ccd4;border-radius:8px;background:#fff;color:transparent;cursor:pointer;display:inline-grid;place-content:center;padding:0;box-shadow:0 1px 2px rgba(15,42,74,.08);font:800 1.15rem/1 Arial,sans-serif;transition:transform .12s ease,box-shadow .12s ease,background .12s ease,border-color .12s ease;}
   .matriz-servico .controle-especificacao:hover{transform:translateY(-1px);box-shadow:0 3px 7px rgba(15,42,74,.18);}
   .matriz-servico .controle-especificacao[data-estado="concluido"]{color:#fff;background:#2e9e5b;border-color:#278c50;}
   .matriz-servico .controle-especificacao[data-estado="pendente"]{color:#fff;background:#d9483d;border-color:#c43e35;}
   .matriz-servico .controle-especificacao[data-estado="em-andamento"]{color:#fff;background:#e0a800;border-color:#c89700;}
   .matriz-servico .controle-especificacao[data-estado="nao-iniciado"]{color:transparent;background:#fff;border-color:#b9c4cc;}
+  .matriz-servico .controle-especificacao[data-estado="nao-aplicavel"]{color:#fff;background:#7d8791;border-color:#6e7882;}
   .matriz-servico .controle-especificacao.selecionado{outline:3px solid #4b8ed8;outline-offset:3px;box-shadow:0 0 0 6px rgba(75,142,216,.15);}
   .matriz-aviso{padding:28px;text-align:center;color:#637582;}
   .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;}
@@ -667,6 +764,13 @@
   .atividade-acoes button{border:0;background:#e8f1f6;color:var(--azul-escuro);border-radius:6px;padding:6px 8px;cursor:pointer;margin-right:4px;}
   .atividade-acoes button.excluir{background:#fdebea;color:var(--vermelho);}
   .atividade-status{margin-top:10px;font-size:.74rem;min-height:18px;}
+  .importacao-setores{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 16px;padding:16px 18px;border:1px solid var(--cinza-borda);border-left:4px solid var(--vermelho);border-radius:5px;background:#fff;box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  .importacao-setores h3{margin:0 0 5px;color:var(--azul-escuro);font-size:.92rem;}
+  .importacao-setores p{margin:0;color:var(--cinza-texto);font-size:.74rem;line-height:1.45;}
+  .importacao-setores-acoes{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .importacao-setores-acoes button{border:0;border-radius:999px;padding:10px 14px;background:var(--azul-escuro);color:#fff;font:700 .74rem Arial;cursor:pointer;white-space:nowrap;}
+  .importacao-setores-acoes button.secundario{background:#e9eef2;color:var(--azul-escuro);}
+  .importacao-setores-status{margin-top:7px;min-height:16px;color:var(--cinza-texto);font-size:.7rem;}
   .foto-campo{display:flex;align-items:center;gap:6px;min-width:125px;}
   .foto-botao{
     display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px dashed #aab7c2;
@@ -812,6 +916,7 @@
     .chamada-3d p{margin-inline:auto;}
     .instrucao{justify-content:center;margin-top:14px;}
     .cenario{height:50vh;min-height:350px;width:min(520px,100%);margin:auto;}
+    .grafico-abertura{top:18%;right:12px;transform:none;width:min(440px,calc(100vw - 24px));}
     .torre{--largura:130px;}
     .torre-b{--largura:100px;left:10%;}
     .torre-a{--largura:142px;right:5%;}
@@ -819,13 +924,14 @@
     .seletor-rodape{display:none;}
   }
   @media (max-width:520px){
+    #controleDetalhado{width:calc(100vw - 24px);margin-left:calc(50% - 50vw + 12px);}
     .dashboard-topo{align-items:stretch;flex-direction:column;}
     .apartamentos-cabecalho{align-items:stretch;flex-direction:column;}
     .resumo-geral-grid{grid-template-columns:1fr 1fr;}
-    .torres-progresso{gap:38px;padding-inline:5px;min-height:390px;}
+    .torres-progresso{gap:38px;padding-inline:5px;min-height:445px;}
     .predio-progresso{width:92px;}
-    .predio-progresso.aurora{height:340px;}
-    .predio-progresso.horizonte{height:225px;}
+    .predio-progresso.aurora{height:397px;}
+    .predio-progresso.horizonte{height:283px;}
     .controle-cabecalho{flex-direction:column;}
     .filtros-planilha{grid-template-columns:1fr;}
     .chamada-3d h1{font-size:2.25rem;margin:10px 0 12px;}
@@ -883,13 +989,68 @@
     padding:1px 5px;
     border-radius:4px;
   }
+  /* Identidade visual inspirada no site institucional da Diálogo */
+  :root{--azul-escuro:#123b6d;--azul:#1b4f86;--laranja:#cf202f;--vermelho:#cf202f;--cinza-bg:#f5f5f3;--cinza-borda:#d9dde2;--cinza-texto:#596575;}
+  body{font-family:Arial,"Helvetica Neue",sans-serif;background:#f5f5f3;color:#172b45;}
+  header{background:#fff;color:var(--azul-escuro);padding:22px clamp(20px,4vw,56px);border-bottom:1px solid #e2e5e8;box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  header .topo{align-items:center;}
+  .logo-header{width:150px;padding:0;border-radius:0;box-shadow:none;}
+  .torre-atual{color:#fff;background:var(--azul-escuro);font-weight:700;}
+  header h1{font-size:clamp(1.35rem,2.2vw,1.85rem);letter-spacing:-.025em;color:var(--azul-escuro);}
+  header .subtitulo{color:#647184;opacity:1;}
+  .trocar-torre{border:1px solid #cbd3dc;background:#fff;color:var(--azul-escuro);border-radius:999px;font-weight:700;}
+  .trocar-torre:hover{border-color:var(--vermelho);background:#fff3f4;color:var(--vermelho);}
+  .usuario-acesso{text-align:right;}
+  .usuario-acesso span{display:block;color:#687587;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
+  .usuario-acesso strong{display:block;margin-top:3px;color:var(--azul-escuro);font-size:.88rem;}
+  .info-obra{border-top:1px solid #e6e8eb;padding-top:16px;}
+  .info-obra div{background:#f4f6f8;border-left:3px solid var(--vermelho);border-radius:2px 10px 10px 2px;}
+  .info-obra span{color:#6d7784;opacity:1;}
+  .menu-principal{background:#fff;border-bottom:1px solid #e2e5e8;box-shadow:0 5px 18px rgba(17,48,82,.06);}
+  .menu-principal nav{padding-block:5px;gap:2px;}
+  .menu-principal a{position:relative;border-radius:0;padding:13px 14px;color:#4f5f72;}
+  .menu-principal a:hover{color:var(--azul-escuro);background:#f7f7f6;}
+  .menu-principal a.ativo{color:var(--azul-escuro);background:transparent;}
+  .menu-principal a.ativo::after{content:"";position:absolute;left:13px;right:13px;bottom:0;height:3px;background:var(--vermelho);}
+  .menu-planilha{border-radius:0;}
+  .menu-planilha.ativo a,.menu-planilha.ativo .abrir-atividades{color:var(--azul-escuro);background:#f7f7f6;}
+  .menu-planilha.ativo a::after{content:"";position:absolute;left:13px;right:0;bottom:0;height:3px;background:var(--vermelho);}
+  main{max-width:1280px;padding-top:30px;}
+  h2{font-size:1.18rem;border-left:0;padding-left:0;letter-spacing:-.015em;}
+  h2::before{content:"";display:inline-block;width:28px;height:4px;margin:0 10px 4px 0;background:var(--vermelho);}
+  .dashboard-geral{background:#fff;color:var(--azul-escuro);border:1px solid #e0e4e8;box-shadow:0 14px 40px rgba(17,48,82,.08);}
+  .dashboard-topo h2{color:var(--azul-escuro);}
+  .dashboard-topo p{color:#687587;}
+  .dashboard-filtro label{color:#667385;}
+  .dashboard-filtro select{border-color:#cbd3dc;}
+  .resumo-geral-card{background:#f5f6f7;border-color:#e0e4e8;border-radius:5px;border-top:3px solid var(--vermelho);}
+  .resumo-geral-card span{color:#687587;}
+  .dashboard-grafico{border:1px solid #e0e4e8;border-radius:5px;}
+  .mapa-progresso{background:linear-gradient(145deg,#123b6d,#0d2948);border-radius:5px;}
+  .mapa-topo h3{color:#fff;}
+  .controle-obra,.documentos-bloco,.grafico-operacional,.kpi-card{border-radius:5px;box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  .controle-cabecalho{border-top:4px solid var(--vermelho);}
+  .filtros-planilha{background:#f5f6f7;}
+  .campo-filtro select,.dashboard-filtro select,.grafico-topo select{border-radius:3px;}
+  .matriz-servico{border-radius:4px;}
+  .matriz-servico-titulo{background:var(--azul-escuro);border-left:5px solid var(--vermelho);}
+  .acoes-lote button,.acao-relatorio{background:var(--azul-escuro);border-radius:999px;}
+  .acao-relatorio,.acao-relatorio:visited,.acao-relatorio:hover{color:#fff;}
+  .acoes-lote button:hover,.acao-relatorio:hover{background:var(--vermelho);}
+  .seletor-obras{background:#f3f4f3;color:var(--azul-escuro);}
+  .obras-topo img{background:transparent;padding:0;border-radius:0;}
+  .obras-topo h1{color:var(--azul-escuro);letter-spacing:-.035em;}
+  .obras-topo p{color:#657286;}
+  .obra-seletor{border-color:#d8dde2;background:#fff;box-shadow:0 16px 40px rgba(18,59,109,.12);}
+  .obra-seletor:hover{background:#fff;border-color:var(--vermelho);box-shadow:0 18px 45px rgba(18,59,109,.18);}
+  .obras-rodape{color:#748092;}
 </style>
 </head>
 <body>
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-caixa">
-    <img src="LOGO-DIALOGO.png" alt="Diálogo Engenharia">
+    <img src="logo dialogo.png" alt="Diálogo Engenharia">
     <h1>BoulevarDiálogo Butantã</h1>
     <p>Acompanhamento de obra</p>
     <div class="login-autoria">Desenvolvido por Locchi Engenharia</div>
@@ -908,72 +1069,67 @@
 
 <div class="seletor-obras" id="seletorObras" aria-label="Seleção de obra">
   <div class="obras-conteudo">
-    <div class="obras-topo"><img src="LOGO-DIALOGO.png" alt="Diálogo Engenharia"><h1>Selecione uma obra</h1><p>Escolha o empreendimento que deseja acompanhar.</p></div>
+    <div class="obras-topo"><img src="logo dialogo.png" alt="Diálogo Engenharia"><h1>Selecione uma obra</h1><p>Escolha o empreendimento que deseja acompanhar.</p></div>
     <div class="obras-grid">
-      <button class="obra-seletor" type="button" data-obra="boulevard-dialogo-butanta"><strong>BoulevarDiálogo Butantã</strong><span>Rua Dráusio, 150 — Butantã — São Paulo/SP</span><span>Torres Home e Smart</span></button>
+      <button class="obra-seletor" type="button" data-obra="boulevard-dialogo-butanta" aria-label="Selecionar Boulevard Diálogo Butantã"><img src="logo boulevard.png" alt="Boulevard Diálogo Butantã"></button>
     </div>
     <div class="obras-rodape">Novas obras poderão ser adicionadas neste espaço · Desenvolvido por Locchi Engenharia</div>
   </div>
 </div>
 
 <div class="seletor-3d fechado" id="seletorTorres" aria-label="Seleção de torre">
+  <img class="fundo-empreendimento" src="Boulevard dialogo.png" alt="">
   <div class="seletor-topo">
-    <div class="marca"><img class="marca-logo" src="LOGO-DIALOGO.png" alt="Diálogo Engenharia"></div>
-    <small>Acompanhamento de obra em tempo real</small>
+    <button class="marca" id="logoVoltarObras" type="button" title="Voltar ao seletor de obras" aria-label="Voltar ao seletor de obras"><img class="marca-logo" src="logo dialogo.png" alt="Diálogo Engenharia"></button>
   </div>
   <div class="seletor-conteudo">
     <div class="chamada-3d">
-      <div class="sobretitulo">BoulevarDiálogo Butantã</div>
-      <h1>A obra,<br>por outro ângulo.</h1>
-      <p>Explore o empreendimento e selecione uma torre para acompanhar a evolução de cada etapa.</p>
+      <img class="logo-empreendimento" src="logo boulevard.png" alt="BoulevarDiálogo Butantã">
+      <h1>Uma obra<br>Uma visão</h1>
+      <p>Do empreendimento ao detalhe: acompanhe cada etapa da execução em um único ambiente.</p>
       <div class="instrucao"><span></span> Clique em uma das torres para continuar</div>
     </div>
     <div class="cenario" id="cenario3d">
-      <span class="lua"></span>
-      <span class="skyline"></span>
-      <div class="cidade" id="cidade3d">
-        <span class="embasamento"></span>
-        <button class="torre torre-a" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares">
-          <span class="grua"></span>
-          <span class="cobertura"></span><span class="ala"></span><span class="lateral"></span>
-          <span class="fachada"><span class="pavimentos" data-andares="36"></span></span>
-          <span class="torre-info"><strong>Torre Home</strong><span>36 andares</span><em>0% concluída</em></span>
-        </button>
-        <button class="torre torre-b" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares">
-          <span class="cobertura"></span><span class="ala"></span><span class="lateral"></span>
-          <span class="fachada"><span class="pavimentos" data-andares="23"></span></span>
-          <span class="torre-info"><strong>Torre Smart</strong><span>23 andares</span><em>0% concluída</em></span>
-        </button>
-        <span class="espelho-dagua"></span>
-        <span class="paisagismo"><i class="arvore"></i><i class="arvore"></i><i class="arvore"></i><i class="arvore"></i></span>
-      </div>
+      <aside class="grafico-abertura" aria-label="Percentual físico por serviço">
+        <h2>Acompanhe a obra</h2>
+        <div class="grafico-abertura-grid">
+          <div class="grafico-abertura-item" data-resumo="fundacao"><div class="grafico-abertura-rotulo"><span>Fundação</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+          <div class="grafico-abertura-item" data-resumo="estrutura"><div class="grafico-abertura-rotulo"><span>Estruturação</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+          <div class="grafico-abertura-item" data-resumo="alvenaria"><div class="grafico-abertura-rotulo"><span>Alvenaria</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+          <div class="grafico-abertura-item" data-resumo="acabamento"><div class="grafico-abertura-rotulo"><span>Acabamentos internos</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+          <div class="grafico-abertura-item" data-resumo="fachada"><div class="grafico-abertura-rotulo"><span>Fachada</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+          <div class="grafico-abertura-item" data-resumo="pintura"><div class="grafico-abertura-rotulo"><span>Pintura</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
+        </div>
+      </aside>
+      <button class="torre seletor-modelo seletor-modelo-smart" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares"><strong>Torre Smart</strong><span>23 andares</span></button>
+      <button class="torre seletor-modelo seletor-modelo-home" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares"><strong>Torre Home</strong><span>36 andares</span></button>
     </div>
   </div>
-  <div class="seletor-rodape"><span>Desenvolvido por Locchi Engenharia</span><span>Arraste o cursor para mudar a perspectiva</span></div>
+  <div class="seletor-rodape"><span>Desenvolvido por Locchi Engenharia</span></div>
 </div>
 
 <header>
   <div class="topo">
     <div class="cabecalho-identidade">
-      <img class="logo-header" src="LOGO-DIALOGO.png" alt="Diálogo Engenharia">
+      <button class="logo-header-botao" id="logoHeaderTorres" type="button" title="Selecionar outra torre" aria-label="Voltar à seleção das torres"><img class="logo-header" src="logo dialogo.png" alt="Diálogo Engenharia"></button>
       <div>
         <div class="torre-atual" id="torreAtual">Torre Home · 36 andares</div>
         <h1 id="nomeObra">BoulevarDiálogo Butantã</h1>
         <div class="subtitulo" id="enderecoObra">Rua Dráusio, 150 — Butantã — São Paulo/SP</div>
       </div>
     </div>
-    <div style="text-align:right;">
-      <div class="subtitulo">Atualizado em</div>
-      <strong id="dataAtualizacao">30/07/2026</strong>
-      <div><button class="trocar-torre" id="trocarObra" type="button">Ver outra obra</button> <button class="trocar-torre" id="trocarTorre" type="button">Ver outra torre</button> <button class="trocar-torre" id="sairSistema" type="button">Sair</button></div>
+    <div class="usuario-acesso">
+      <span>Usuário em acesso</span>
+      <strong id="usuarioAcesso">—</strong>
+      <button class="trocar-torre" id="sairSistema" type="button">Sair</button>
     </div>
   </div>
 
   <div class="info-obra">
-    <div><span>Responsável técnico</span><strong id="responsavel">Eng. Emanuel Locchi</strong></div>
+    <div><span>Responsável técnico</span><strong id="responsavel">Eng. Guilherme Gudjenian</strong></div>
     <div><span>Início da obra</span><strong id="dataInicio">01/02/2025</strong></div>
-    <div><span>Previsão de término</span><strong id="dataFim">30/11/2027</strong></div>
-    <div><span>Dias corridos</span><strong id="diasCorridos">544 de 1.032 dias</strong></div>
+    <div><span>Previsão de término</span><strong id="dataFim">30/09/2027</strong></div>
+    <div><span>Dias corridos</span><strong id="diasCorridos">544 de 971 dias</strong></div>
   </div>
 </header>
 
@@ -1007,7 +1163,6 @@
     </div>
     <div class="resumo-geral-grid">
       <div class="resumo-geral-card"><span>Avanço geral</span><strong id="dashAvanco">0%</strong></div>
-      <div class="resumo-geral-card"><span>Serviços realizados</span><strong id="dashRealizados">0</strong></div>
       <div class="resumo-geral-card"><span>Serviços pendentes</span><strong id="dashPendentes">0</strong></div>
       <div class="resumo-geral-card"><span>Pavimentos concluídos</span><strong id="dashPavimentos">0</strong></div>
     </div>
@@ -1031,7 +1186,7 @@
       </div>
       <div class="apartamento-acoes-relatorio">
         <div class="campo-filtro"><label for="andarAbaApartamentos">Mudar pavimento</label><select id="andarAbaApartamentos"></select></div>
-        <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>↓ Baixar PDF do apartamento</a>
+        <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>Gerar PDF</a>
       </div>
     </div>
     <div class="apartamentos-seletor" id="apartamentosGrid"></div>
@@ -1100,6 +1255,7 @@
           <option value="em-andamento">Em andamento</option>
           <option value="pendente">Pendente</option>
           <option value="concluido">Concluído</option>
+          <option value="nao-aplicavel">Não aplicável</option>
         </select>
         <button id="aplicarStatusEmLote" type="button" disabled>Aplicar aos selecionados</button>
       </div>
@@ -1111,6 +1267,10 @@
   <section id="atividadesAdmin" class="painel-aba">
     <div class="apartamentos-cabecalho">
       <div><h2>Atividades</h2><p>Cadastre, edite ou exclua atividades e defina onde cada uma será acompanhada.</p></div>
+    </div>
+    <div class="importacao-setores">
+      <div><h3>Cadastro massivo de setores</h3><p>Importe uma planilha CSV no padrão Torre, Pavimento, Atividade e Setor.</p><div class="importacao-setores-status" id="statusImportacaoSetores"></div></div>
+      <div class="importacao-setores-acoes"><button class="secundario" id="baixarModeloSetores" type="button">Baixar planilha padrão</button><button id="importarSetores" type="button">Importar planilha</button><input id="arquivoSetores" type="file" accept=".csv,text/csv" hidden></div>
     </div>
     <div class="atividades-admin">
       <form class="atividade-editor" id="formAtividade">
@@ -1165,6 +1325,8 @@
         <div class="campo-filtro"><label for="ocAndar">Pavimento</label><select id="ocAndar" required></select></div>
         <div class="campo-filtro"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
         <div class="campo-filtro"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
+        <div class="campo-filtro" id="ocCampoSubatividade" hidden><label for="ocSubatividade">Subatividade</label><select id="ocSubatividade"></select></div>
+        <div class="campo-filtro" id="ocCampoEspecificacao"><label for="ocEspecificacao">Especificação do serviço</label><select id="ocEspecificacao" required></select></div>
         <div class="campo-filtro"><label for="ocData">Data da ocorrência</label><input id="ocData" type="date" required></div>
         <div class="campo-filtro largo"><label for="ocDescricao">Descrição da ocorrência</label><textarea id="ocDescricao" required placeholder="Descreva a ocorrência, pendência ou problema encontrado"></textarea></div>
       </div>
@@ -1178,9 +1340,9 @@
     <div class="ocorrencias-toolbar">
       <h3 style="margin:0;color:var(--azul-escuro);font-size:.9rem">Histórico de ocorrências</h3>
       <div class="campo-filtro"><label for="filtroAndarOcorrencias">Andar</label><select id="filtroAndarOcorrencias"></select></div>
-      <div class="campo-filtro"><label for="filtroPeriodoOcorrencias">Período</label><select id="filtroPeriodoOcorrencias"><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="todas">Todas as ocorrências</option></select></div>
+      <div class="campo-filtro"><label for="filtroApartamentoOcorrencias">Apartamento</label><select id="filtroApartamentoOcorrencias"><option value="todos">Todos os apartamentos</option></select></div>
       <div class="campo-filtro"><label for="filtroStatusOcorrencias">Status</label><select id="filtroStatusOcorrencias"><option value="todos">Todos os status</option><option value="pendente">Pendente</option><option value="concluido">Concluída</option></select></div>
-      <a class="acao-relatorio" id="baixarHistoricoOcorrencias" href="#" download>↓ Gerar PDF do histórico</a>
+      <a class="acao-relatorio" id="baixarHistoricoOcorrencias" href="#" download>Gerar PDF</a>
     </div>
     <div class="ocorrencias-cards" id="listaOcorrencias"></div>
   </section>
@@ -1197,27 +1359,55 @@
         <div class="campo-filtro"><label for="relatorioAcabamento">Opção de acabamento</label><select id="relatorioAcabamento"><option value="todos">Todas as opções</option><option value="padrao">Opção padrão</option><option value="alterado">Com alterações</option><option value="opcao-2">Opção 2</option><option value="opcao-3">Opção 3</option><option value="opcao-4">Opção 4</option><option value="opcao-5">Opção 5</option><option value="opcao-6">Opção 6</option><option value="opcao-7">Opção 7</option><option value="personalizada">Opção personalizada</option><option value="nao-instalar">Não instalar</option></select></div>
         <div class="campo-filtro"><label for="relatorioOcorrencias">Ocorrências</label><select id="relatorioOcorrencias"><option value="todas">Todas</option><option value="com">Com ocorrências</option><option value="sem">Sem ocorrências</option><option value="pendente">Pendentes</option><option value="concluido">Concluídas</option></select></div>
       </div>
-      <button class="acao-relatorio" type="button" onclick="gerarPdfRelatorio()">↓ Gerar PDF com os filtros selecionados</button>
+      <button class="acao-relatorio" type="button" onclick="gerarPdfRelatorio()">Gerar PDF</button>
     </div>
   </section>
 
   <section id="documentosLinks" class="painel-aba">
     <h2>Documentos e links importantes</h2>
     <div class="documentos-grid">
-      <div class="documentos-bloco">
+      <div class="documentos-bloco" data-tipo-item="documentos">
         <h3>Documentos</h3>
         <p>Área reservada para projetos, memoriais, atas, relatórios e outros arquivos da obra.</p>
-        <div class="documentos-vazio">Nenhum documento adicionado.</div>
+        <div class="documentos-lista" id="listaDocumentos"></div>
+        <div class="documentos-acoes"><button type="button" class="adicionar" aria-label="Adicionar documento" title="Adicionar documento">+</button><button type="button" class="remover" aria-label="Remover documento selecionado" title="Remover documento selecionado">×</button></div>
       </div>
-      <div class="documentos-bloco">
+      <div class="documentos-bloco" data-tipo-item="links">
         <h3>Links importantes</h3>
         <p>Área reservada para acessos externos, portais, sistemas e páginas relacionadas à obra.</p>
-        <div class="documentos-vazio">Nenhum link adicionado.</div>
+        <div class="documentos-lista" id="listaLinksImportantes"></div>
+        <div class="documentos-acoes"><button type="button" class="adicionar" aria-label="Adicionar link" title="Adicionar link">+</button><button type="button" class="remover" aria-label="Remover link selecionado" title="Remover link selecionado">×</button></div>
       </div>
     </div>
   </section>
 
 </main>
+
+<div class="criterio-overlay oculto" id="criterioOverlay" role="dialog" aria-modal="true" aria-labelledby="criterioTitulo">
+  <div class="criterio-caixa">
+    <h3 id="criterioTitulo">Critério da especificação</h3>
+    <p id="criterioContexto"></p>
+    <textarea id="criterioTexto" placeholder="Descreva o critério de aceitação, tolerâncias, método de verificação e demais observações."></textarea>
+    <div class="criterio-acoes"><button class="criterio-cancelar" id="cancelarCriterio" type="button">Cancelar</button><button class="criterio-salvar" id="salvarCriterio" type="button">Salvar critério</button></div>
+  </div>
+</div>
+<div class="menu-contexto-setor oculto" id="menuContextoSetor"><button type="button" id="adicionarSetor">Adicionar novo setor</button><button type="button" id="editarNomeSetor">Editar nome</button><button type="button" class="excluir" id="excluirSetor">Excluir setor</button></div>
+<div class="menu-contexto-setor oculto" id="menuContextoPendencia">
+  <button type="button" data-status-check="nao-iniciado">Não iniciado</button>
+  <button type="button" data-status-check="em-andamento">Em andamento</button>
+  <button type="button" data-status-check="pendente">Pendente</button>
+  <button type="button" data-status-check="concluido">Concluído</button>
+  <button type="button" data-status-check="nao-aplicavel">Não aplicável</button>
+  <button type="button" id="verPendencia">Ver pendência</button>
+</div>
+<div class="criterio-overlay oculto" id="pendenciaOverlay" role="dialog" aria-modal="true" aria-labelledby="pendenciaTitulo">
+  <div class="criterio-caixa">
+    <h3 id="pendenciaTitulo">Pendência da especificação</h3>
+    <p id="pendenciaContexto"></p>
+    <div class="pendencia-lista" id="pendenciaLista"></div>
+    <div class="criterio-acoes"><button class="criterio-cancelar" id="fecharPendencia" type="button">Fechar</button></div>
+  </div>
+</div>
 
 <footer>
   Painel de acompanhamento de obra — uso interno da equipe técnica.<br>
@@ -1233,10 +1423,10 @@ const DADOS = {
   obra: {
     nome: "BoulevarDiálogo Butantã",
     endereco: "Rua Dráusio, 150 — Butantã — São Paulo/SP",
-    responsavel: "Eng. Emanuel Locchi",
+    responsavel: "Eng. Guilherme Gudjenian",
     dataInicio: "01/02/2025",
-    dataFim: "30/11/2027",
-    diasCorridos: "544 de 1.032 dias",
+    dataFim: "30/09/2027",
+    diasCorridos: "544 de 971 dias",
     dataAtualizacao: "30/07/2026"
   },
 
@@ -1281,7 +1471,7 @@ const DADOS = {
 
 const TORRES = {
   aurora: {
-    nome: "Torre Home", andares: 36, conclusao: "72%",
+    nome: "Torre Home", andares: 36, conclusao: "72%", dataFim: "30/09/2027", diasCorridos: "544 de 971 dias",
     kpis: {
       avancoFisico: { valor: "72%", nota: "1 p.p. acima do planejado", classe: "ok" },
       avancoFinanceiro: { valor: "69%", nota: "Dentro do orçamento", classe: "ok" },
@@ -1310,7 +1500,7 @@ const TORRES = {
     ]
   },
   horizonte: {
-    nome: "Torre Smart", andares: 23, conclusao: "44%",
+    nome: "Torre Smart", andares: 23, conclusao: "44%", dataFim: "31/03/2027", diasCorridos: "544 de 788 dias",
     kpis: {
       avancoFisico: { valor: "44%", nota: "4 p.p. abaixo do planejado", classe: "alerta" },
       avancoFinanceiro: { valor: "47%", nota: "2 p.p. acima do previsto", classe: "alerta" },
@@ -1341,45 +1531,265 @@ const TORRES = {
 };
 
 let ATIVIDADES_UNIDADE = [];
+const ANDARES_ESPECIAIS=[-2,-1,0];
+const PAVIMENTOS_TECNICOS=[101,102,103];
+const ROTULOS_PAVIMENTOS_TECNICOS={101:"Barrilete",102:"Reservatório",103:"Cobertura"};
+function rotuloAndar(andar){
+  const numero=Number(andar);
+  return numero===-2?"Fundação":numero===-1?"1º Subsolo":numero===0?"Térreo":ROTULOS_PAVIMENTOS_TECNICOS[numero]||`${andar}º andar`;
+}
+function opcoesAndares(torre,incluirTodos=false){
+  const valores=[...ANDARES_ESPECIAIS,...Array.from({length:TORRES[torre].andares},(_,i)=>i+1),...PAVIMENTOS_TECNICOS];
+  return (incluirTodos?`<option value="todos">Todos os andares</option>`:"")+valores.map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`).join("");
+}
+function pavimentosDaTorre(torre){
+  return [...ANDARES_ESPECIAIS,...Array.from({length:TORRES[torre].andares},(_,i)=>i+1),...PAVIMENTOS_TECNICOS];
+}
 const SERVICOS_GERAIS = [];
 const STATUS_ATIVIDADE={
   "nao-iniciado":"Não iniciado",
   "em-andamento":"Em andamento",
   "pendente":"Pendente",
-  "concluido":"Concluído"
+  "concluido":"Concluído",
+  "nao-aplicavel":"Não aplicável"
 };
 const ESPECIFICACOES_SERVICOS={
-  "Acabamentos Elétricos":[
-    "Instalação das tomadas",
-    "Instalação dos interruptores",
-    "Instalação das luminárias",
-    "Teste dos circuitos"
+  "Instalações Hidráulicas":[
+    "Condição para início dos serviços",
+    "Posicionamento dos Ralos",
+    "Posicionamento dos Pontos (Consumo de Água, Registros, Válvulas, Sistema de Esgoto e Gás)",
+    "Prumadas",
+    "Chumbamento das Tubulações e Ralos",
+    "Posicionamento e Distribuição dos Esgotos (Aranha)",
+    "Kit Hidráulico",
+    "Tubos para Exaustão dos banhos com Ventilação Forçada",
+    "Chumbamento de Passantes Fachada",
+    "Encamisamento/Ventilação do Gás",
+    "Cavaletes de Água e Redutoras de Pressão",
+    "Pressurização da Tubulação de Gás (Antes do Fechamento)",
+    "Pressurização da Tubulação de Gás (Depois da Conclusão dos Revestimentos Cerâmicos)",
+    "Funcionamento do Sistema de Esgoto",
+    "Funcionamento do Sistema de Combate a Incêndio",
+    "Proteção dos Registros",
+    "Medidor de Água Fria",
+    "Limpeza e Proteção dos Ralos",
+    "Instalação de Louças (Bacias)",
+    "Acabamento de Registros",
+    "Metais",
+    "Sifão e Acessórios"
+  ],
+  "Instalações Elétricas":[
+    "Condição para início dos serviços",
+    "Passagem e Diâmetro dos Eletrodutos Embutidos nas Paredes e Caixas Elétricas",
+    "Quadros Elétricos",
+    "Tomadas, Pontos de TV, Interruptores, Telefone e Interfone",
+    "Tomadas 220V",
+    "Prumadas de Cabos Busway",
+    "Fiação e Arame Guia",
+    "Proteção de Caixas de Elétrica"
   ]
 };
+const DIVISOES_ESTRUTURA={
+  "Piso Armado":[
+    "Condições para Início do Serviço",
+    "Espessura da Camada de Brita",
+    "Lona Plástica Preta Reforçada",
+    "Isopor",
+    "Armadura",
+    "Lançamento do concreto",
+    "Cura Química",
+    "Juntas Serradas",
+    "Dreno nas Cortinas",
+    "Aplicação do Selante (1,0cm)",
+    "Juntas de Dilatação (Juntas de Construção)"
+  ],
+  "Lajes":[
+    "Cabo de Aço para Atrelar o Cinto de Segurança – Linha de Vida",
+    "Transferência dos Eixos Principais (Para Assoalho)",
+    "Posicionamento do Assoalho em Relação aos Eixos Principais",
+    "Escoramento",
+    "Armação",
+    "Arranques",
+    "Itens de Segurança",
+    "Passagens em Lajes",
+    "Travamento e Encaixe dos Painéis e Nivelamento das Lajes",
+    "Limpeza do Assoalho",
+    "Componentes Embutidos",
+    "Lançamento do Concreto",
+    "Cura Química",
+    "Reescoramento",
+    "Falhas de Concretagem e Aspecto Geral da Laje",
+    "Limpeza dos Painéis"
+  ],
+  "Blocos, Vigas e Cortinas de Fundação":[
+    "Condição de Início de Serviço",
+    "Verificar as Medidas, Níveis e Prumos dos Blocos",
+    "Verificar as Medidas, Níveis e Prumos das Vigas de Fundação",
+    "Verificar as Medidas, Níveis e Prumos das Cortinas de Fundação",
+    "Locação de Forma",
+    "Travamento da Forma",
+    "Armação",
+    "Posição das Peças",
+    "Geral",
+    "Falhas de Concretagem",
+    "Verificar a Posição da Estaca em Relação aos Blocos"
+  ],
+  "Pilares":["Condição para início dos serviços","Locação dos pilares","Montagem das armaduras","Formas, prumo e alinhamento","Concretagem","Desforma e cura"],
+  "Vigas":[
+    "Cabo de Aço para Atrelar o Cinto de Segurança – Linha de Vida",
+    "Transferências dos Eixos Principais (para Assoalho)",
+    "Posicionamento das Vigas em Relação aos Eixos Principais",
+    "Aplicação do Desmoldante",
+    "Armação",
+    "Aterramento",
+    "Arranques",
+    "Componentes Embutidos",
+    "Escoramento",
+    "Passagens em Vigas",
+    "Travamento e Encaixe dos Painéis e Nivelamento das Vigas",
+    "Limpeza do Assoalho",
+    "Reescoramento",
+    "Cura do Concreto",
+    "Falhas de Concretagem e Aspecto Geral das Vigas"
+  ]
+};
+const DIVISOES_ALVENARIA={
+  "Marcação Alvenaria":[
+    "Condições para Início dos Serviços",
+    "Posicionamento da Fiada de Marcação",
+    "Esquadro da Fiada de Marcação",
+    "Alinhamento da Fiada de Marcação",
+    "Tubulação de Dreno",
+    "Condutes Elétricos",
+    "Nivelamento da Fiada de Marcação"
+  ],
+  "Elevação Alvenaria":[
+    "Condições para Início dos Serviços",
+    "Dreno do Ar-Condicionado",
+    "Tela Galvanizada",
+    "Preenchimento com Argamassa dos Blocos da Marcação",
+    "Prumo da Alvenaria",
+    "Planeza da Alvenaria",
+    "Prumo de Vãos de Portas e Dimensões dos Vãos de Janelas e Portas",
+    "Aspecto Geral da Alvenaria",
+    "Espessura do Vão para Encunhamento"
+  ],
+  "Encunhamento":[
+    "Condições para Início dos Serviços",
+    "Encunhamento"
+  ]
+};
+const DIVISOES_REVESTIMENTO={
+  "Massa Interna":[
+    "Condições para Início do Serviço",
+    "Planicidade",
+    "Nivelamento e Prumo",
+    "Esquadro",
+    "Cantos Riscados",
+    "Tela Entre Alvenaria e Estrutura",
+    "Aspecto Final"
+  ],
+  "Gesso Liso":[
+    "Condições para Início do Serviço",
+    "Planicidade",
+    "Nivelamento e Prumo",
+    "Esquadro",
+    "Cantos Riscados",
+    "Tela Entre Alvenaria e Estrutura",
+    "Aspecto Final"
+  ],
+  "Externo em Argamassa":[
+    "Condições para Início do Serviço",
+    "Posicionamento dos Arames",
+    "Requadração dos Vãos",
+    "Tela Metálica",
+    "Passantes na Fachada",
+    "Espessura do Revestimento",
+    "Planicidade, Prumo e Alinhamento",
+    "Aspecto Final",
+    "Ensaio de Aderência",
+    "Relatório de Execução"
+  ],
+  "Piso Cerâmico":[
+    "Condição para Início dos Serviços",
+    "Juntas",
+    "Planicidade e Nivelamento",
+    "Condição para Rejuntamento",
+    "Aspecto Final",
+    "Caimento",
+    "Proteção"
+  ],
+  "Parede em Cerâmica":[
+    "Condição para Início dos Serviços",
+    "Juntas",
+    "Planicidade e Prumo do Revestimento",
+    "Aderência das Placas",
+    "Condição para Rejuntamento",
+    "Aspecto Final"
+  ]
+};
+const divisaoServicoPorAndar={};
+function divisoesDoServico(atividade,andar){
+  if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar);
+  if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA);
+  if(atividade==="Revestimento")return Object.keys(DIVISOES_REVESTIMENTO);
+  return [];
+}
+function mapaDivisoesDoServico(atividade){
+  return atividade==="Estrutura"?DIVISOES_ESTRUTURA
+    :atividade==="Alvenaria"?DIVISOES_ALVENARIA
+    :atividade==="Revestimento"?DIVISOES_REVESTIMENTO
+    :null;
+}
+function chaveDivisaoServico(atividade,andar){return `${atividade}|${andar}`;}
+function divisoesEstruturaDoAndar(andar){
+  const todas=Object.keys(DIVISOES_ESTRUTURA);
+  if(Number(andar)===-2)return ["Blocos, Vigas e Cortinas de Fundação"];
+  const semFundacao=todas.filter(divisao=>divisao!=="Blocos, Vigas e Cortinas de Fundação");
+  return Number(andar)===-1?semFundacao:semFundacao.filter(divisao=>divisao!=="Piso Armado");
+}
 function especificacoesDoServico(atividade){
+  if(atividade==="Estrutura") return Object.entries(DIVISOES_ESTRUTURA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Alvenaria") return Object.entries(DIVISOES_ALVENARIA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Revestimento") return Object.entries(DIVISOES_REVESTIMENTO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
   if(cadastrada?.especificacoes?.length) return cadastrada.especificacoes;
   return ESPECIFICACOES_SERVICOS[atividade]||["Execução do serviço"];
 }
+function especificacoesExibidasServico(atividade,andar){
+  const mapa=mapaDivisoesDoServico(atividade);
+  if(!mapa)return especificacoesDoServico(atividade);
+  const disponiveis=divisoesDoServico(atividade,andar);
+  const chave=chaveDivisaoServico(atividade,andar);
+  const divisao=disponiveis.includes(divisaoServicoPorAndar[chave])?divisaoServicoPorAndar[chave]:disponiveis[0];
+  return (mapa[divisao]||[]).map(item=>`${divisao} :: ${item}`);
+}
+function rotuloEspecificacao(especificacao){return especificacao.includes(" :: ")?especificacao.split(" :: ").slice(1).join(" :: "):especificacao;}
 function normalizarEstadoEspecificacao(valor,registro){
-  if(["concluido","pendente","em-andamento","nao-iniciado"].includes(valor)) return valor;
+  if(["concluido","pendente","em-andamento","nao-iniciado","nao-aplicavel"].includes(valor)) return valor;
   if(valor===true) return "concluido";
   if(valor===false) return "nao-iniciado";
   return registro.concluido?"concluido":"nao-iniciado";
 }
 function simboloEstadoEspecificacao(estado){
-  return {"concluido":"✓","pendente":"×","em-andamento":"−","nao-iniciado":""}[estado]||"";
+  return {"concluido":"✓","pendente":"×","em-andamento":"−","nao-iniciado":"","nao-aplicavel":"−"}[estado]||"";
 }
 function chaveSelecaoEspecificacao(chave,especificacao){
   return JSON.stringify([chave,especificacao]);
 }
-function recalcularStatusPelasEspecificacoes(registro,atividade){
-  const estados=especificacoesDoServico(atividade).map(especificacao=>
+function especificacoesDoServicoNoAndar(atividade,andar){
+  const mapa=mapaDivisoesDoServico(atividade);
+  if(!mapa)return especificacoesDoServico(atividade);
+  return divisoesDoServico(atividade,andar).flatMap(divisao=>mapa[divisao].map(item=>`${divisao} :: ${item}`));
+}
+function recalcularStatusPelasEspecificacoes(registro,atividade,andar){
+  const estados=especificacoesDoServicoNoAndar(atividade,andar).map(especificacao=>
     normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro)
   );
-  registro.status=estados.includes("pendente")?"pendente"
-    :estados.every(estado=>estado==="concluido")?"concluido"
-    :estados.some(estado=>estado!=="nao-iniciado")?"em-andamento"
+  const aplicaveis=estados.filter(estado=>estado!=="nao-aplicavel");
+  registro.status=aplicaveis.includes("pendente")?"pendente"
+    :aplicaveis.length&&aplicaveis.every(estado=>estado==="concluido")?"concluido"
+    :aplicaveis.some(estado=>estado!=="nao-iniciado")?"em-andamento"
     :"nao-iniciado";
   registro.concluido=registro.status==="concluido";
   const agora=new Date();
@@ -1435,6 +1845,42 @@ let graficoStatusGeral;
 let graficoApartamento;
 let graficoServico;
 
+function categoriaResumoAbertura(atividade,especificacao=""){
+  const nome=(atividade||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const divisao=especificacao.includes(" :: ")?especificacao.split(" :: ")[0]:"";
+  if(atividade==="Estrutura"){
+    if(divisao==="Blocos, Vigas e Cortinas de Fundação")return "fundacao";
+    if(["Lajes","Vigas","Pilares","Piso Armado"].includes(divisao))return "estrutura";
+  }
+  if(atividade==="Alvenaria")return "alvenaria";
+  if(atividade==="Revestimento"&&divisao==="Externo em Argamassa")return "fachada";
+  if(/pintura/.test(nome))return "pintura";
+  return "acabamento";
+}
+function atualizarGraficoAbertura(){
+  const grupos={fundacao:[],estrutura:[],alvenaria:[],acabamento:[],fachada:[],pintura:[]};
+  Object.entries(registrosObra).forEach(([chave,registro])=>{
+    const partes=chave.split("|");
+    if(!["aurora","horizonte"].includes(partes[0])) return;
+    const andar=Number(partes[1]);
+    const atividade=partes.slice(3).join("|");
+    especificacoesDoServicoNoAndar(atividade,andar).forEach(especificacao=>{
+      const categoria=categoriaResumoAbertura(atividade,especificacao);
+      const estado=normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro);
+      if(estado==="nao-aplicavel")return;
+      grupos[categoria].push(estado==="concluido");
+    });
+  });
+  Object.entries(grupos).forEach(([categoria,itens])=>{
+    const concluidos=itens.filter(Boolean).length;
+    const percentual=itens.length?Math.round(concluidos/itens.length*100):0;
+    const elemento=document.querySelector(`[data-resumo="${categoria}"]`);
+    if(!elemento)return;
+    elemento.querySelector("strong").textContent=`${percentual}%`;
+    elemento.querySelector("i").style.setProperty("--percentual",`${percentual}%`);
+  });
+}
+
 async function carregarRegistrosDoBanco(){
   const status = document.getElementById("statusSalvamento");
   try{
@@ -1469,6 +1915,7 @@ async function carregarRegistrosDoBanco(){
       registro.concluido = registro.status === "concluido";
       if(registro.status === "nao-iniciado") registro.data = "";
     });
+    atualizarGraficoAbertura();
     status.textContent = "Dados da obra atualizados";
     status.style.color = "";
     document.getElementById("filtroServicoDashboard").innerHTML="";
@@ -1517,6 +1964,7 @@ async function salvarRegistros(){
     status.textContent = "Não foi possível salvar no banco";
     status.style.color = "var(--vermelho)";
   }
+  atualizarGraficoAbertura();
 }
 
 async function carregarOcorrenciasDoBanco(){
@@ -1524,6 +1972,7 @@ async function carregarOcorrenciasDoBanco(){
     const resposta = await fetch("/api/ocorrencias",{cache:"no-store"});
     if(!resposta.ok) throw new Error("Falha ao carregar ocorrências");
     ocorrenciasBanco = await resposta.json();
+    atualizarApartamentosFiltroOcorrencias();
     preencherOcorrencias();
     renderizarApartamentosDoPavimento();
     atualizarDashboardGeral();
@@ -1569,6 +2018,7 @@ function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
 }
 
 function apartamentosDoAndar(torre, andar){
+  if(PAVIMENTOS_TECNICOS.includes(Number(andar)))return [];
   if(torre === "horizonte"){
     return andar >= 4
       ? Array.from({length:14},(_,i)=>`${andar}${String(i+1).padStart(2,"0")}`)
@@ -1582,9 +2032,9 @@ function apartamentosDoAndar(torre, andar){
   return [];
 }
 
-function unidadesDoAndar(torre,andar){
+function unidadesDoAndar(torre,andar,atividadeNome=null){
   const apartamentos=apartamentosDoAndar(torre,andar).map(numero=>`Apto ${numero}`);
-  const escopos=atividadesCadastro.flatMap(item=>item.escopos).filter(escopo=>
+  const escopos=atividadesCadastro.filter(item=>!atividadeNome||item.nome===atividadeNome).flatMap(item=>item.escopos).filter(escopo=>
     escopo.torre===torre&&Number(escopo.andar)===Number(andar)
   );
   const unidadesEspecificas=escopos.filter(escopo=>escopo.unidade!=="*").map(escopo=>escopo.unidade);
@@ -1597,7 +2047,7 @@ function listaRegistros(torre = torreSelecionada){
   atividadesCadastro.forEach(atividade=>{
     atividade.escopos.filter(escopo=>escopo.torre===torre).forEach(escopo=>{
       const unidades=escopo.unidade==="*"
-        ? unidadesDoAndar(torre,Number(escopo.andar))
+        ? unidadesDoAndar(torre,Number(escopo.andar),atividade.nome)
         : [escopo.unidade];
       unidades.forEach((unidade,indice)=>itens.push({
         andar:Number(escopo.andar),unidade,
@@ -1611,12 +2061,19 @@ function listaRegistros(torre = torreSelecionada){
 
 function renderizarApartamentosDoPavimento(){
   const seletorAndar=document.getElementById("andarAbaApartamentos");
-  if(seletorAndar.dataset.torre!==torreSelecionada){
-    seletorAndar.innerHTML=Array.from({length:TORRES[torreSelecionada].andares},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
-    seletorAndar.dataset.torre=torreSelecionada;
+  const pavimentosComApartamentos=pavimentosDaTorre(torreSelecionada).filter(andar=>
+    unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade))
+  );
+  seletorAndar.innerHTML=pavimentosComApartamentos
+    .map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`)
+    .join("");
+  seletorAndar.dataset.torre=torreSelecionada;
+  if(!pavimentosComApartamentos.includes(Number(pavimentoSelecionado))){
+    pavimentoSelecionado=pavimentosComApartamentos[0]??1;
+    unidadeSelecionada=null;
   }
   seletorAndar.value=String(pavimentoSelecionado);
-  const unidades = unidadesDoAndar(torreSelecionada,pavimentoSelecionado);
+  const unidades = unidadesDoAndar(torreSelecionada,pavimentoSelecionado).filter(unidade=>/^(apartamento|apto)\s/i.test(unidade));
   document.getElementById("apartamentosGrid").innerHTML = unidades.map(unidade => {
     const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidade);
     const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
@@ -1659,7 +2116,7 @@ function renderizarApartamentosDoPavimento(){
     slidesProjetos.push({id:projeto.id,titulo:projeto.titulo||"Projeto adicionado",imagem:projeto.imagem});
   });
   const blocoPlanta=slidesProjetos.length
-    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}"><a class="planta-link" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
+    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}">${planta?.tipo?`<div class="tipo-planta"><small>Opção de planta</small><strong>${escaparHtml(planta.tipo)}</strong></div>`:""}<a class="planta-link ${slide.imagem.includes("/miniaturas_tipos_planta/")?"somente-planta-baixa":""}" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
     :`<div class="personalizacao-secao"><div class="planta-indisponivel">Nenhum projeto identificado para esta unidade.</div></div>`;
   const itensAcabamentos=(acabamentos?.itens||[]).filter(item=>!/^Opção\s*1(?:\s*\(padrão\))?$/i.test(item.opcao.trim()));
   const gruposAcabamentos=itensAcabamentos.reduce((grupos,item)=>{
@@ -1691,7 +2148,7 @@ function renderizarApartamentosDoPavimento(){
     oc.status==="pendente"
   );
   document.getElementById("ocorrenciasApartamento").innerHTML = ocorrenciasUnidade.length
-    ? ocorrenciasUnidade.map(oc=>`<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}"><button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button><div class="meta">${escaparHtml(oc.atividade||"Não informada")}</div><p>${escaparHtml(oc.descricao)}</p><select class="status-ocorrencia ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-id="${oc.id}" aria-label="Alterar status da ocorrência">${opcoesStatusOcorrencia(oc.status)}</select><br><time>Ocorrência em ${(oc.dataOcorrencia||oc.criadoEm.slice(0,10)).split("-").reverse().join("/")}</time>${oc.foto?`<img class="ocorrencia-foto" src="${oc.foto}" alt="Foto da ocorrência"><a class="download-foto" href="${oc.foto}" download="${escaparHtml(oc.fotoNome||`ocorrencia-${oc.id}.jpg`)}">↓ Baixar foto</a>`:""}</article>`).join("")
+    ? ocorrenciasUnidade.map(oc=>`<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}"><button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button><div class="meta">${escaparHtml([oc.atividade||"Não informada",oc.subatividade,oc.especificacao?rotuloEspecificacao(oc.especificacao):""].filter(Boolean).join(" · "))}</div><p>${escaparHtml(oc.descricao)}</p><select class="status-ocorrencia ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-id="${oc.id}" aria-label="Alterar status da ocorrência">${opcoesStatusOcorrencia(oc.status)}</select><br><time>Ocorrência em ${(oc.dataOcorrencia||oc.criadoEm.slice(0,10)).split("-").reverse().join("/")}</time>${oc.foto?`<img class="ocorrencia-foto" src="${oc.foto}" alt="Foto da ocorrência"><a class="download-foto" href="${oc.foto}" download="${escaparHtml(oc.fotoNome||`ocorrencia-${oc.id}.jpg`)}">↓ Baixar foto</a>`:""}</article>`).join("")
     : `<div style="color:var(--cinza-texto);font-size:.76rem">Nenhuma ocorrência pendente vinculada a esta unidade.</div>`;
   const contagemStatusApartamento={"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
   itens.forEach(item=>{
@@ -1749,15 +2206,25 @@ function atualizarFiltroApartamentos(){
   filtro.value = [...filtro.options].some(opcao=>opcao.value===valorAtual) ? valorAtual : "todos";
 }
 
+function atualizarFiltroAtividadesPorAndar(){
+  const filtro=document.getElementById("filtroAtividade");
+  const andar=document.getElementById("filtroAndar").value;
+  const valorAtual=filtro.value||"todas";
+  const atividades=andar==="todos"?ATIVIDADES_UNIDADE:[...new Set(listaRegistros().filter(item=>item.andar===Number(andar)).map(item=>item.atividade))];
+  atividades.sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  filtro.innerHTML=`<option value="todas">Todas as atividades</option>`+atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("");
+  filtro.value=[...filtro.options].some(opcao=>opcao.value===valorAtual)?valorAtual:"todas";
+}
+
 function atualizarAndaresOcorrencia(){
   const torre=document.getElementById("ocTorre").value;
-  document.getElementById("ocAndar").innerHTML=Array.from({length:TORRES[torre].andares},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
+  document.getElementById("ocAndar").innerHTML=opcoesAndares(torre);
   atualizarUnidadesOcorrencia();
 }
 
 function atualizarUnidadesOcorrencia(){
   const torre=document.getElementById("ocTorre").value;
-  const andar=Number(document.getElementById("ocAndar").value)||1;
+  const andar=Number(document.getElementById("ocAndar").value);
   const unidades=unidadesDoAndar(torre,andar);
   document.getElementById("ocUnidade").innerHTML = unidades
     .map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
@@ -1766,10 +2233,48 @@ function atualizarUnidadesOcorrencia(){
 
 function atualizarAtividadesOcorrencia(){
   const torre=document.getElementById("ocTorre").value||torreSelecionada;
-  const andar=Number(document.getElementById("ocAndar").value)||1;
+  const andar=Number(document.getElementById("ocAndar").value);
   const unidade=document.getElementById("ocUnidade").value;
-  const atividades=(planejamentoObra.torres?.[torre]?.[String(andar)]||[]).map(servico=>servico.atividade);
-  document.getElementById("ocAtividade").innerHTML=atividades.map(atividade=>`<option value="${atividade}">${atividade}</option>`).join("");
+  const seletor=document.getElementById("ocAtividade");
+  const valorAtual=seletor.value;
+  const atividades=[...new Set(listaRegistros(torre)
+    .filter(item=>item.andar===andar&&item.unidade===unidade)
+    .map(item=>item.atividade))]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  seletor.innerHTML=atividades.length
+    ?atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("")
+    :`<option value="">Nenhuma atividade disponível</option>`;
+  if(atividades.includes(valorAtual))seletor.value=valorAtual;
+  atualizarSubatividadesOcorrencia();
+}
+
+function atualizarSubatividadesOcorrencia(){
+  const atividade=document.getElementById("ocAtividade").value;
+  const andar=Number(document.getElementById("ocAndar").value);
+  const campo=document.getElementById("ocCampoSubatividade");
+  const seletor=document.getElementById("ocSubatividade");
+  const valorAtual=seletor.value;
+  const subatividades=divisoesDoServico(atividade,andar);
+  campo.hidden=subatividades.length===0;
+  seletor.required=subatividades.length>0;
+  seletor.innerHTML=subatividades.map(item=>`<option value="${escaparHtml(item)}">${escaparHtml(item)}</option>`).join("");
+  if(subatividades.includes(valorAtual))seletor.value=valorAtual;
+  atualizarEspecificacoesOcorrencia();
+}
+
+function atualizarEspecificacoesOcorrencia(){
+  const atividade=document.getElementById("ocAtividade").value;
+  const subatividade=document.getElementById("ocSubatividade").value;
+  const mapa=mapaDivisoesDoServico(atividade);
+  const especificacoes=mapa&&subatividade
+    ?(mapa[subatividade]||[]).map(item=>`${subatividade} :: ${item}`)
+    :atividade?especificacoesDoServico(atividade):[];
+  const seletor=document.getElementById("ocEspecificacao");
+  const valorAtual=seletor.value;
+  seletor.innerHTML=especificacoes.length
+    ?especificacoes.map(item=>`<option value="${escaparHtml(item)}">${escaparHtml(rotuloEspecificacao(item))}</option>`).join("")
+    :`<option value="">Nenhuma especificação disponível</option>`;
+  if(especificacoes.includes(valorAtual))seletor.value=valorAtual;
 }
 
 function prepararFormularioOcorrencia(){
@@ -1782,9 +2287,22 @@ function prepararFormularioOcorrencia(){
   }
   const filtroAndar=document.getElementById("filtroAndarOcorrencias");
   if(!filtroAndar.options.length){
-    filtroAndar.innerHTML=`<option value="todos">Todos os andares</option>`+
-      Array.from({length:36},(_,i)=>`<option value="${i+1}">${i+1}º andar</option>`).join("");
+    filtroAndar.innerHTML=opcoesAndares(torreSelecionada,true);
   }
+  atualizarApartamentosFiltroOcorrencias();
+}
+
+function atualizarApartamentosFiltroOcorrencias(){
+  const filtro=document.getElementById("filtroApartamentoOcorrencias");
+  const andar=document.getElementById("filtroAndarOcorrencias").value;
+  const valorAtual=filtro.value;
+  const unidades=andar==="todos"
+    ? [...new Set(ocorrenciasBanco.filter(oc=>oc.torre===torreSelecionada).map(oc=>oc.unidade))]
+    : unidadesDoAndar(torreSelecionada,Number(andar));
+  unidades.sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+  filtro.innerHTML=`<option value="todos">Todos os apartamentos</option>`+
+    unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+  filtro.value=[...filtro.options].some(opcao=>opcao.value===valorAtual)?valorAtual:"todos";
 }
 
 function atualizarPortalRelatorios(){
@@ -1803,7 +2321,7 @@ function atualizarFiltrosRelatorio(){
   const torre=document.getElementById("relatorioTorre").value;
   const andar=document.getElementById("relatorioAndar");
   const atual=andar.value||"todos";
-  andar.innerHTML=`<option value="todos">Todos os andares</option>`+Array.from({length:TORRES[torre].andares},(_,indice)=>`<option value="${indice+1}">${indice+1}º andar</option>`).join("");
+  andar.innerHTML=opcoesAndares(torre,true);
   andar.value=[...andar.options].some(opcao=>opcao.value===atual)?atual:"todos";
   const atividade=document.getElementById("relatorioAtividade");
   atividade.innerHTML=`<option value="todos">Todas as atividades</option>`+atividadesCadastro.map(item=>`<option value="${escaparHtml(item.nome)}">${escaparHtml(item.nome)}</option>`).join("");
@@ -1838,6 +2356,7 @@ function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
   document.getElementById("ocUnidade").value=unidade;
   atualizarAtividadesOcorrencia();
   document.getElementById("ocAtividade").value=atividade;
+  atualizarSubatividadesOcorrencia();
   const hoje=new Date();
   document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
   ativarAba("ocorrencias");
@@ -1857,6 +2376,48 @@ function existeOcorrenciaAtiva(torre, andar, unidade, atividade){
   );
 }
 
+function analisarLinhaCsvSetores(linha,delimitador){
+  const campos=[];let atual="",aspas=false;
+  for(let i=0;i<linha.length;i++){
+    const caractere=linha[i];
+    if(caractere==='"'&&aspas&&linha[i+1]==='"'){atual+='"';i++;continue;}
+    if(caractere==='"'){aspas=!aspas;continue;}
+    if(caractere===delimitador&&!aspas){campos.push(atual.trim());atual="";continue;}
+    atual+=caractere;
+  }
+  campos.push(atual.trim());return campos;
+}
+function normalizarCabecalhoCsv(valor){return valor.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();}
+document.getElementById("baixarModeloSetores").addEventListener("click",()=>{
+  const conteudo="\uFEFFTorre;Pavimento;Atividade;Setor\r\nHome;1;Alvenaria;Área técnica\r\nSmart;Cobertura;Todas;Casa de máquinas\r\n";
+  const url=URL.createObjectURL(new Blob([conteudo],{type:"text/csv;charset=utf-8"}));
+  const link=document.createElement("a");link.href=url;link.download="modelo_importacao_setores.csv";link.click();URL.revokeObjectURL(url);
+});
+document.getElementById("importarSetores").addEventListener("click",()=>document.getElementById("arquivoSetores").click());
+document.getElementById("arquivoSetores").addEventListener("change",async event=>{
+  const arquivo=event.target.files[0];if(!arquivo)return;
+  const status=document.getElementById("statusImportacaoSetores");
+  try{
+    status.textContent="Lendo e validando a planilha…";status.style.color="var(--azul)";
+    const texto=(await arquivo.text()).replace(/^\uFEFF/,"");
+    const linhasTexto=texto.split(/\r?\n/).filter(linha=>linha.trim());
+    if(linhasTexto.length<2)throw new Error("A planilha não possui linhas para importar.");
+    const delimitador=(linhasTexto[0].match(/;/g)||[]).length>=(linhasTexto[0].match(/,/g)||[]).length?";":",";
+    const cabecalhos=analisarLinhaCsvSetores(linhasTexto.shift(),delimitador).map(normalizarCabecalhoCsv);
+    const indices={torre:cabecalhos.indexOf("torre"),pavimento:cabecalhos.indexOf("pavimento"),atividade:cabecalhos.indexOf("atividade"),setor:cabecalhos.indexOf("setor")};
+    if(Object.values(indices).some(indice=>indice<0))throw new Error("Use as colunas Torre, Pavimento, Atividade e Setor do modelo padrão.");
+    const linhas=linhasTexto.map(linha=>{const campos=analisarLinhaCsvSetores(linha,delimitador);return {torre:campos[indices.torre]||"",pavimento:campos[indices.pavimento]||"",atividade:campos[indices.atividade]||"",setor:campos[indices.setor]||""};});
+    const resposta=await fetch("/api/setores/importar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({linhas})});
+    const resultado=await resposta.json().catch(()=>({}));
+    if(!resposta.ok)throw new Error(resultado.erro||"Não foi possível importar a planilha.");
+    status.textContent=`${resultado.criados} cadastro(s) criado(s)${resultado.ignorados?` · ${resultado.ignorados} duplicado(s) ignorado(s)`:""}${resultado.erros?.length?` · ${resultado.erros.length} linha(s) com erro`:""}.`;
+    status.style.color=resultado.erros?.length?"var(--laranja)":"var(--verde)";
+    if(resultado.erros?.length)alert(`Importação concluída com avisos:\n\n${resultado.erros.join("\n")}`);
+    await carregarRegistrosDoBanco();
+  }catch(erro){status.textContent=erro.message;status.style.color="var(--vermelho)";}
+  finally{event.target.value="";}
+});
+
 function nomeTorreAtividade(torre){return torre==="aurora"?"Torre Home":"Torre Smart";}
 function rotuloEscopoAtividade(escopo){
   const destino=escopo.unidade==="*"?"Todos os apartamentos/setores":escopo.unidade.replace("Apto ","Apartamento ");
@@ -1864,14 +2425,13 @@ function rotuloEscopoAtividade(escopo){
 }
 function atualizarAndaresAtividade(){
   const torre=document.getElementById("atividadeTorre").value;
-  document.getElementById("atividadeAndar").innerHTML=`<option value="todos">Todos os pavimentos</option>`+
-    Array.from({length:TORRES[torre].andares},(_,i)=>`<option value="${i+1}">${i+1}º pavimento</option>`).join("");
+  document.getElementById("atividadeAndar").innerHTML=opcoesAndares(torre,true).replace("Todos os andares","Todos os pavimentos");
   atualizarUnidadesAtividade();
 }
 function atualizarUnidadesAtividade(){
   const torre=document.getElementById("atividadeTorre").value;
   const valor=document.getElementById("atividadeAndar").value;
-  const andar=valor==="todos"?1:Number(valor)||1;
+  const andar=valor==="todos"?1:Number(valor);
   const unidades=valor==="todos"?[]:unidadesDoAndar(torre,andar);
   document.getElementById("atividadeUnidade").innerHTML=`<option value="*">Todos os apartamentos/setores</option>`+
     unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
@@ -2060,8 +2620,18 @@ function renderizarAbaServicos(){
 function renderizarTorresProgresso(servico){
   document.getElementById("torresProgresso").innerHTML = [torreSelecionada].map(torre => {
     const dados = TORRES[torre];
-    const andares = Array.from({length:dados.andares},(_,i)=>{
-      const andar = i+1;
+    const pavimentos=pavimentosDaTorre(torre);
+    const modoVertical=servico==="Estrutura";
+    const itensEstrutura=modoVertical?listaRegistros(torre).filter(item=>item.atividade==="Estrutura"&&pavimentos.includes(item.andar)):[];
+    const totalEstrutura=itensEstrutura.length||1;
+    const quantidadeEstrutura=status=>itensEstrutura.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
+    const concluidosEstrutura=quantidadeEstrutura("concluido");
+    const andamentoEstrutura=quantidadeEstrutura("em-andamento");
+    const pendentesEstrutura=quantidadeEstrutura("pendente");
+    const fimConcluidoGeral=concluidosEstrutura/totalEstrutura*100;
+    const fimAndamentoGeral=fimConcluidoGeral+andamentoEstrutura/totalEstrutura*100;
+    const fimPendenteGeral=fimAndamentoGeral+pendentesEstrutura/totalEstrutura*100;
+    const andares = pavimentos.map(andar=>{
       const itens = listaRegistros(torre).filter(item => item.andar === andar && (servico === "todos" || item.atividade === servico));
       const total=itens.length||1;
       const quantidade=status=>itens.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
@@ -2072,10 +2642,12 @@ function renderizarTorresProgresso(servico){
       const fimConcluido=concluidos/total*100;
       const fimAndamento=fimConcluido+andamento/total*100;
       const fimPendente=fimAndamento+pendentes/total*100;
-      const marco = `${andar}º`;
-      return `<span class="andar-progresso" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${dados.nome} · ${andar}º andar · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído" aria-label="Ver apartamentos da ${dados.nome}, ${andar}º andar"></span>`;
+      const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
+      const rotulo=rotuloAndar(andar);
+      return `<span class="andar-progresso" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${dados.nome} · ${rotulo} · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído" aria-label="Ver ${rotulo} da ${dados.nome}"></span>`;
     }).join("");
-    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} pavimentos</small></div>`;
+    const estiloVertical=modoVertical?`--fim-concluido-geral:${fimConcluidoGeral}%;--fim-andamento-geral:${fimAndamentoGeral}%;--fim-pendente-geral:${fimPendenteGeral}%`:"";
+    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${modoVertical?"modo-vertical":""}" style="${estiloVertical}">${andares}</div><strong>${dados.nome}</strong><small>${pavimentos.length} pavimentos</small></div>`;
   }).join("");
 }
 
@@ -2089,7 +2661,8 @@ function atualizarDashboardGeral(){
   });
   const total = dadosTorres.reduce((s,t)=>s+t.itens.length,0);
   const realizados = dadosTorres.reduce((s,t)=>s+t.realizados,0);
-  const pendentes = total-realizados;
+  const chavesVisiveis=new Set(dadosTorres.flatMap(grupo=>grupo.itens.map(item=>chaveRegistro(grupo.torre,item.andar,item.unidade,item.atividade))));
+  const pendentes=new Set(ocorrenciasBanco.filter(oc=>chavesVisiveis.has(chaveRegistro(oc.torre,Number(oc.andar),oc.unidade,oc.atividade))).map(oc=>chaveRegistro(oc.torre,Number(oc.andar),oc.unidade,oc.atividade))).size;
   const contagemStatus = {"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
   dadosTorres.forEach(grupo => {
     grupo.itens.forEach(item => {
@@ -2099,15 +2672,14 @@ function atualizarDashboardGeral(){
   });
   let pavimentosConcluidos = 0;
   torresDashboard.forEach(torre => {
-    for(let andar=1;andar<=TORRES[torre].andares;andar++){
+    pavimentosDaTorre(torre).forEach(andar=>{
       const itens = listaRegistros(torre).filter(i=>i.andar===andar && (servico==="todos" || i.atividade===servico));
       if(itens.length && itens.every(i=>obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido)) pavimentosConcluidos++;
-    }
+    });
   });
   document.getElementById("dashAvanco").textContent = `${total?Math.round(realizados/total*100):0}%`;
-  document.getElementById("dashRealizados").textContent = realizados.toLocaleString("pt-BR");
   document.getElementById("dashPendentes").textContent = pendentes.toLocaleString("pt-BR");
-  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${TORRES[torreSelecionada].andares}`;
+  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${pavimentosDaTorre(torreSelecionada).length}`;
   document.querySelector("#dashboardGeral .dashboard-topo h2").textContent =
     `Visão geral — ${TORRES[torreSelecionada].nome}`;
   document.querySelector("#dashboardGeral .dashboard-topo p").textContent =
@@ -2206,13 +2778,13 @@ function prepararPlanilha(){
   const torre = TORRES[torreSelecionada];
   const filtroAndar = document.getElementById("filtroAndar");
   const andarAtual = filtroAndar.value || "todos";
-  filtroAndar.innerHTML = `<option value="todos">Todos os andares</option>` +
-    Array.from({length:torre.andares},(_,i) => `<option value="${i+1}">${i+1}º andar</option>`).join("");
-  filtroAndar.value = andarAtual === "todos" ? "todos" : Math.min(Number(andarAtual) || 1, torre.andares);
+  filtroAndar.innerHTML=opcoesAndares(torreSelecionada,true);
+  filtroAndar.value=[...filtroAndar.options].some(opcao=>opcao.value===andarAtual)?andarAtual:"todos";
   atualizarFiltroApartamentos();
   document.getElementById("filtroAtividade").innerHTML =
     `<option value="todas">Todas as atividades</option><optgroup label="Apartamentos">${ATIVIDADES_UNIDADE.map(a=>`<option>${a}</option>`).join("")}</optgroup>` +
     `<optgroup label="Serviços gerais">${SERVICOS_GERAIS.map(a=>`<option>${a}</option>`).join("")}</optgroup>`;
+  atualizarFiltroAtividadesPorAndar();
   document.getElementById("subtituloPlanilha").textContent = torreSelecionada === "horizonte"
     ? `${torre.nome} · 23 andares · 14 apartamentos do 4º ao 23º · 1º, 2º e 3º de áreas comuns`
     : `${torre.nome} · 36 andares · unidades específicas por pavimento · 3º andar de área comum`;
@@ -2254,8 +2826,13 @@ function renderizarPlanilha(){
     });
     corpo.innerHTML=[...grupos.values()].map(grupo=>{
       const unidades=[...new Set(grupo.itens.map(item=>item.unidade))].sort((a,b)=>comparadorPlanilha.compare(a,b));
-      const especificacoes=especificacoesDoServico(grupo.atividade);
-      const cabecalho=unidades.map(unidade=>`<th>${escaparHtml(unidade)}</th>`).join("");
+      const especificacoes=especificacoesExibidasServico(grupo.atividade,grupo.andar);
+      const divisoesDisponiveis=divisoesDoServico(grupo.atividade,grupo.andar);
+      const chaveDivisao=chaveDivisaoServico(grupo.atividade,grupo.andar);
+      const divisaoAtual=divisoesDisponiveis.includes(divisaoServicoPorAndar[chaveDivisao])?divisaoServicoPorAndar[chaveDivisao]:divisoesDisponiveis[0];
+      const larguraDivisao=Math.min(48,Math.max(16,(divisaoAtual||"").length+8));
+      const filtroDivisao=divisoesDisponiveis.length?`<select class="filtro-subservico" style="width:${larguraDivisao}ch" data-atividade-subservico="${escaparHtml(grupo.atividade)}" data-andar-subservico="${grupo.andar}" aria-label="Subserviço de ${escaparHtml(grupo.atividade)}">${divisoesDisponiveis.map(divisao=>`<option value="${escaparHtml(divisao)}" ${divisao===divisaoAtual?"selected":""}>${escaparHtml(divisao)}</option>`).join("")}</select>`:"";
+      const cabecalho=unidades.map(unidade=>`<th class="cabecalho-setor" data-unidade="${escaparHtml(unidade)}" data-andar="${grupo.andar}" data-atividade="${escaparHtml(grupo.atividade)}" title="Clique com o botão direito para adicionar, editar ou excluir setores">${escaparHtml(unidade)}</th>`).join("");
       const linhas=especificacoes.map(especificacao=>{
         const celulas=unidades.map(unidade=>{
           const item=grupo.itens.find(registro=>registro.unidade===unidade);
@@ -2265,11 +2842,11 @@ function renderizarPlanilha(){
           const possuiValor=Object.prototype.hasOwnProperty.call(registro.especificacoes||{},especificacao);
           const estado=normalizarEstadoEspecificacao(possuiValor?registro.especificacoes[especificacao]:undefined,registro);
           const selecionada=especificacoesSelecionadas.has(chaveSelecaoEspecificacao(chave,especificacao));
-          return `<td><button class="controle-especificacao ${selecionada?"selecionado":""}" type="button" data-chave="${escaparHtml(chave)}" data-especificacao="${escaparHtml(especificacao)}" data-estado="${estado}" title="${STATUS_ATIVIDADE[estado]} — clique para selecionar" aria-label="${escaparHtml(especificacao)} — ${escaparHtml(unidade)} — ${STATUS_ATIVIDADE[estado]}" aria-pressed="${selecionada}">${simboloEstadoEspecificacao(estado)}</button></td>`;
+          return `<td><button class="controle-especificacao ${selecionada?"selecionado":""}" type="button" data-chave="${escaparHtml(chave)}" data-especificacao="${escaparHtml(especificacao)}" data-estado="${estado}" title="${STATUS_ATIVIDADE[estado]} — clique para selecionar" aria-label="${escaparHtml(rotuloEspecificacao(especificacao))} — ${escaparHtml(unidade)} — ${STATUS_ATIVIDADE[estado]}" aria-pressed="${selecionada}">${simboloEstadoEspecificacao(estado)}</button></td>`;
         }).join("");
-        return `<tr><td>${escaparHtml(especificacao)}</td>${celulas}</tr>`;
+        return `<tr><td class="titulo-linha-especificacao" title="Selecionar ou desmarcar toda esta linha"><div class="especificacao-com-criterio"><span>${escaparHtml(rotuloEspecificacao(especificacao))}</span><button class="abrir-criterio" type="button" data-atividade-criterio="${escaparHtml(grupo.atividade)}" data-especificacao-criterio="${escaparHtml(especificacao)}" title="Ver ou editar critério" aria-label="Critério de ${escaparHtml(rotuloEspecificacao(especificacao))}">?</button></div></td>${celulas}</tr>`;
       }).join("");
-      return `<section class="matriz-servico"><div class="matriz-servico-titulo"><h3>${escaparHtml(grupo.atividade)}</h3><span>${grupo.andar}º andar</span></div><div class="tabela-scroll"><table><thead><tr><th>Especificação do serviço</th>${cabecalho}</tr></thead><tbody>${linhas}</tbody></table></div></section>`;
+      return `<section class="matriz-servico"><div class="matriz-servico-titulo"><div class="matriz-servico-identidade"><h3>${escaparHtml(grupo.atividade)}</h3>${filtroDivisao}</div><span>${rotuloAndar(grupo.andar)}</span></div><div class="tabela-scroll"><table><thead><tr><th class="selecionar-matriz" title="Selecionar ou desmarcar toda a tabela">Especificação do serviço</th>${cabecalho}</tr></thead><tbody>${linhas}</tbody></table></div></section>`;
     }).join("");
   }
   const concluidos = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade).concluido).length;
@@ -2289,6 +2866,146 @@ function atualizarControlesSelecao(){
     : "Nenhuma célula selecionada";
   document.getElementById("aplicarStatusEmLote").disabled = quantidade === 0;
 }
+
+const CHAVE_CRITERIOS_ESPECIFICACOES="obra-criterios-especificacoes-v1";
+let criteriosEspecificacoes=(()=>{try{return JSON.parse(localStorage.getItem(CHAVE_CRITERIOS_ESPECIFICACOES))||{}}catch(e){return {}}})();
+let criterioEmEdicao=null;
+function chaveCriterio(atividade,especificacao){return JSON.stringify([atividade,especificacao]);}
+function abrirPopupCriterio(atividade,especificacao){
+  criterioEmEdicao={atividade,especificacao};
+  document.getElementById("criterioContexto").textContent=`${atividade} · ${especificacao.replace(" :: "," · ")}`;
+  document.getElementById("criterioTexto").value=criteriosEspecificacoes[chaveCriterio(atividade,especificacao)]||"";
+  document.getElementById("criterioOverlay").classList.remove("oculto");
+  setTimeout(()=>document.getElementById("criterioTexto").focus(),0);
+}
+function fecharPopupCriterio(){document.getElementById("criterioOverlay").classList.add("oculto");criterioEmEdicao=null;}
+document.getElementById("corpoPlanilha").addEventListener("click",event=>{
+  const botao=event.target.closest(".abrir-criterio");
+  if(botao) abrirPopupCriterio(botao.dataset.atividadeCriterio,botao.dataset.especificacaoCriterio);
+});
+document.getElementById("cancelarCriterio").addEventListener("click",fecharPopupCriterio);
+document.getElementById("salvarCriterio").addEventListener("click",()=>{
+  if(!criterioEmEdicao)return;
+  criteriosEspecificacoes[chaveCriterio(criterioEmEdicao.atividade,criterioEmEdicao.especificacao)]=document.getElementById("criterioTexto").value.trim();
+  localStorage.setItem(CHAVE_CRITERIOS_ESPECIFICACOES,JSON.stringify(criteriosEspecificacoes));
+  fecharPopupCriterio();
+});
+document.getElementById("criterioOverlay").addEventListener("click",event=>{if(event.target.id==="criterioOverlay")fecharPopupCriterio();});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!document.getElementById("criterioOverlay").classList.contains("oculto"))fecharPopupCriterio();});
+let pendenciaContexto=null;
+const menuContextoPendencia=document.getElementById("menuContextoPendencia");
+function fecharMenuPendencia(){menuContextoPendencia.classList.add("oculto");}
+function fecharPopupPendencia(){document.getElementById("pendenciaOverlay").classList.add("oculto");pendenciaContexto=null;}
+document.getElementById("corpoPlanilha").addEventListener("contextmenu",event=>{
+  const controle=event.target.closest(".controle-especificacao");
+  if(!controle)return;
+  event.preventDefault();
+  pendenciaContexto={chave:controle.dataset.chave,especificacao:controle.dataset.especificacao};
+  const partes=pendenciaContexto.chave.split("|");
+  const atividade=partes.slice(3).join("|");
+  const temOcorrencia=ocorrenciasBanco.some(oc=>oc.torre===partes[0]&&Number(oc.andar)===Number(partes[1])&&oc.unidade===partes[2]&&oc.atividade===atividade&&oc.especificacao===pendenciaContexto.especificacao);
+  document.getElementById("verPendencia").hidden=!temOcorrencia;
+  menuContextoPendencia.querySelectorAll("[data-status-check]").forEach(botao=>{
+    botao.style.fontWeight=botao.dataset.statusCheck===controle.dataset.estado?"800":"400";
+  });
+  menuContextoPendencia.style.left=`${Math.min(event.clientX,window.innerWidth-190)}px`;
+  menuContextoPendencia.style.top=`${Math.min(event.clientY,window.innerHeight-(temOcorrencia?240:205))}px`;
+  menuContextoPendencia.classList.remove("oculto");
+});
+menuContextoPendencia.addEventListener("click",async event=>{
+  const botao=event.target.closest("[data-status-check]");
+  if(!botao||!pendenciaContexto)return;
+  const partes=pendenciaContexto.chave.split("|");
+  const atividade=partes.slice(3).join("|");
+  const andar=Number(partes[1]);
+  const registro=obterRegistro(andar,partes[2],atividade,partes[0]);
+  const valores={};
+  especificacoesDoServicoNoAndar(atividade,andar).forEach(item=>{
+    valores[item]=normalizarEstadoEspecificacao(registro.especificacoes?.[item],registro);
+  });
+  valores[pendenciaContexto.especificacao]=botao.dataset.statusCheck;
+  registro.especificacoes=valores;
+  recalcularStatusPelasEspecificacoes(registro,atividade,andar);
+  registrosObra[pendenciaContexto.chave]=registro;
+  fecharMenuPendencia();
+  pendenciaContexto=null;
+  await salvarRegistros();
+  renderizarPlanilha();
+  renderizarApartamentosDoPavimento();
+  atualizarGraficosOperacionais();
+  atualizarDashboardGeral();
+});
+document.getElementById("verPendencia").addEventListener("click",()=>{
+  if(!pendenciaContexto)return;
+  const partes=pendenciaContexto.chave.split("|");
+  const torre=partes[0],andar=Number(partes[1]),unidade=partes[2],atividade=partes.slice(3).join("|");
+  const especificacao=pendenciaContexto.especificacao;
+  const ocorrencias=ocorrenciasBanco.filter(oc=>
+    oc.torre===torre&&Number(oc.andar)===andar&&oc.unidade===unidade&&oc.atividade===atividade&&
+    oc.especificacao===especificacao
+  );
+  document.getElementById("pendenciaContexto").textContent=`${TORRES[torre]?.nome||torre} · ${rotuloAndar(andar)} · ${unidade} · ${atividade} · ${rotuloEspecificacao(especificacao)}`;
+  document.getElementById("pendenciaLista").innerHTML=ocorrencias.length?ocorrencias.map(oc=>{
+    const data=(oc.dataOcorrencia||oc.criadoEm?.slice(0,10)||"").split("-").reverse().join("/");
+    return `<article class="pendencia-detalhe"><time>Ocorrência em ${escaparHtml(data)} · ${escaparHtml(STATUS_OCORRENCIA[oc.status||"pendente"])}</time><p>${escaparHtml(oc.descricao)}</p>${oc.foto?`<img src="${escaparHtml(oc.foto)}" alt="Foto da pendência">`:""}</article>`;
+  }).join(""):`<div class="pendencia-detalhe"><p>A especificação está pendente, mas não há uma ocorrência aberta vinculada a ela.</p></div>`;
+  fecharMenuPendencia();
+  document.getElementById("pendenciaOverlay").classList.remove("oculto");
+});
+document.addEventListener("click",event=>{if(!event.target.closest("#menuContextoPendencia"))fecharMenuPendencia();});
+document.getElementById("fecharPendencia").addEventListener("click",fecharPopupPendencia);
+document.getElementById("pendenciaOverlay").addEventListener("click",event=>{if(event.target.id==="pendenciaOverlay")fecharPopupPendencia();});
+document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!document.getElementById("pendenciaOverlay").classList.contains("oculto"))fecharPopupPendencia();});
+let setorContexto=null;
+const menuContextoSetor=document.getElementById("menuContextoSetor");
+function fecharMenuSetor(){menuContextoSetor.classList.add("oculto");setorContexto=null;}
+document.getElementById("corpoPlanilha").addEventListener("contextmenu",event=>{
+  const cabecalho=event.target.closest(".cabecalho-setor");if(!cabecalho)return;
+  event.preventDefault();setorContexto={unidade:cabecalho.dataset.unidade,andar:Number(cabecalho.dataset.andar),atividade:cabecalho.dataset.atividade};
+  menuContextoSetor.style.left=`${Math.min(event.clientX,window.innerWidth-195)}px`;
+  menuContextoSetor.style.top=`${Math.min(event.clientY,window.innerHeight-135)}px`;
+  menuContextoSetor.classList.remove("oculto");
+});
+document.getElementById("corpoPlanilha").addEventListener("change",event=>{
+  if(!event.target.classList.contains("filtro-subservico"))return;
+  const atividade=event.target.dataset.atividadeSubservico;
+  const andar=Number(event.target.dataset.andarSubservico);
+  const filtroAndar=document.getElementById("filtroAndar").value;
+  const andaresAplicados=filtroAndar==="todos"
+    ?[...new Set(listaRegistros().filter(item=>item.atividade===atividade).map(item=>item.andar))]
+    :[andar];
+  andaresAplicados.forEach(andarAplicado=>{
+    const divisoesDisponiveis=divisoesDoServico(atividade,andarAplicado);
+    if(divisoesDisponiveis.includes(event.target.value)){
+      divisaoServicoPorAndar[chaveDivisaoServico(atividade,andarAplicado)]=event.target.value;
+    }
+  });
+  renderizarPlanilha();
+});
+document.addEventListener("click",event=>{if(!event.target.closest("#menuContextoSetor"))fecharMenuSetor();});
+document.getElementById("adicionarSetor").addEventListener("click",async()=>{
+  if(!setorContexto)return;const atual={...setorContexto};
+  const nome=prompt(`Nome do novo setor para ${atual.atividade} em ${rotuloAndar(atual.andar)}:`);
+  if(!nome?.trim()){fecharMenuSetor();return;}
+  const resposta=await fetch("/api/setores",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,unidade:nome.trim()})});
+  if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível adicionar o setor.");return;}
+  fecharMenuSetor();await carregarRegistrosDoBanco();
+});
+document.getElementById("editarNomeSetor").addEventListener("click",async()=>{
+  if(!setorContexto)return;const atual={...setorContexto};
+  const novo=prompt("Novo nome do setor ou apartamento:",atual.unidade);if(!novo?.trim()||novo.trim()===atual.unidade){fecharMenuSetor();return;}
+  const resposta=await fetch("/api/setores",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,novaUnidade:novo.trim()})});
+  if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível alterar o nome.");return;}
+  fecharMenuSetor();await carregarRegistrosDoBanco();
+});
+document.getElementById("excluirSetor").addEventListener("click",async()=>{
+  if(!setorContexto)return;const atual={...setorContexto};
+  if(!confirm(`Excluir “${atual.unidade}” e todos os seus registros neste andar?`))return;
+  const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade});
+  const resposta=await fetch(`/api/setores?${consulta}`,{method:"DELETE"});
+  if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível excluir o setor.");return;}
+  fecharMenuSetor();await carregarRegistrosDoBanco();
+});
 
 function atualizarRegistro(elemento){
   const linha = elemento.closest("tr");
@@ -2397,7 +3114,6 @@ function preencherCabecalho(){
   document.getElementById('dataInicio').textContent = DADOS.obra.dataInicio;
   document.getElementById('dataFim').textContent = DADOS.obra.dataFim;
   document.getElementById('diasCorridos').textContent = DADOS.obra.diasCorridos;
-  document.getElementById('dataAtualizacao').textContent = DADOS.obra.dataAtualizacao;
   document.title = "Acompanhamento de Obra — " + DADOS.obra.nome;
 }
 
@@ -2411,6 +3127,9 @@ function selecionarTorre(chave){
   DADOS.ocorrencias = torre.ocorrencias;
   DADOS.curvaS.realizadoFisico = torre.realizados;
   DADOS.curvaS.realizadoFinanceiro = torre.financeiro;
+  DADOS.obra.dataFim = torre.dataFim;
+  DADOS.obra.diasCorridos = torre.diasCorridos;
+  preencherCabecalho();
   document.getElementById('torreAtual').textContent = `${torre.nome} · ${torre.andares} andares`;
   preencherKpis();
   preencherEtapas();
@@ -2517,19 +3236,16 @@ function opcoesStatusOcorrencia(atual){
 
 function preencherOcorrencias(){
   const lista = document.getElementById('listaOcorrencias');
-  const periodo=document.getElementById("filtroPeriodoOcorrencias")?.value||"7";
+  const apartamentoFiltro=document.getElementById("filtroApartamentoOcorrencias")?.value||"todos";
   const statusFiltro=document.getElementById("filtroStatusOcorrencias")?.value||"todos";
   const andarFiltro=document.getElementById("filtroAndarOcorrencias")?.value||"todos";
   document.getElementById("baixarHistoricoOcorrencias").href="/relatorio-ocorrencias.pdf?"+
-    new URLSearchParams({torre:torreSelecionada,andar:andarFiltro,status:statusFiltro,periodo}).toString();
-  const hoje=new Date(); hoje.setHours(23,59,59,999);
+    new URLSearchParams({torre:torreSelecionada,andar:andarFiltro,unidade:apartamentoFiltro,status:statusFiltro}).toString();
   const ocorrenciasFiltradas=ocorrenciasBanco.filter(oc=>{
     if(statusFiltro!=="todos"&&(oc.status||"pendente")!==statusFiltro) return false;
     if(andarFiltro!=="todos"&&Number(oc.andar)!==Number(andarFiltro)) return false;
-    if(periodo==="todas") return true;
-    const data=new Date(`${oc.dataOcorrencia||oc.criadoEm.slice(0,10)}T00:00:00`);
-    const limite=new Date(hoje); limite.setDate(limite.getDate()-Number(periodo)+1); limite.setHours(0,0,0,0);
-    return data>=limite&&data<=hoje;
+    if(apartamentoFiltro!=="todos"&&oc.unidade!==apartamentoFiltro) return false;
+    return true;
   });
   if(!ocorrenciasFiltradas.length){
     lista.innerHTML = `<div class="card" style="color:var(--cinza-texto);font-size:.8rem">Nenhuma ocorrência registrada.</div>`;
@@ -2541,11 +3257,43 @@ function preencherOcorrencias(){
     return `<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}">
       <button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button>
       <div class="meta">${escaparHtml(TORRES[oc.torre]?.nome || oc.torre)} · ${oc.andar}º andar · ${escaparHtml(oc.unidade)}</div>
-      <div class="meta" style="color:var(--cinza-texto)">${escaparHtml(oc.atividade||"Não informada")}</div>
+      <div class="meta" style="color:var(--cinza-texto)">${escaparHtml([oc.atividade||"Não informada",oc.subatividade,oc.especificacao?rotuloEspecificacao(oc.especificacao):""].filter(Boolean).join(" · "))}</div>
       <p>${escaparHtml(oc.descricao)}</p><span class="status-tag ${classeStatusOcorrencia(oc.status)}">${STATUS_OCORRENCIA[oc.status||"pendente"]}</span><br><time>Ocorrência em ${data}</time><div><select class="status-ocorrencia ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-id="${oc.id}" aria-label="Status da ocorrência">${opcoesStatusOcorrencia(oc.status)}</select></div>${foto}
     </article>`;
   }).join("");
 }
+
+const CHAVE_DOCUMENTOS_LINKS="obra-documentos-links-v1";
+let documentosLinks=(()=>{try{return JSON.parse(localStorage.getItem(CHAVE_DOCUMENTOS_LINKS))||{documentos:[],links:[]}}catch(e){return {documentos:[],links:[]}}})();
+let itemDocumentoSelecionado={documentos:null,links:null};
+function salvarDocumentosLinks(){localStorage.setItem(CHAVE_DOCUMENTOS_LINKS,JSON.stringify(documentosLinks));}
+function renderizarDocumentosLinks(){
+  [["documentos","listaDocumentos","Nenhum documento adicionado."],["links","listaLinksImportantes","Nenhum link adicionado."]].forEach(([tipo,id,vazio])=>{
+    const lista=document.getElementById(id);const itens=documentosLinks[tipo]||[];
+    lista.innerHTML=itens.length?itens.map((item,indice)=>`<article class="documento-link-item ${itemDocumentoSelecionado[tipo]===indice?"selecionado":""}" data-indice="${indice}"><a href="${escaparHtml(item.url)}" target="_blank" rel="noopener">${escaparHtml(item.titulo)}</a><small>${escaparHtml(item.url)}</small></article>`).join(""):`<div class="documentos-vazio">${vazio}</div>`;
+  });
+}
+document.querySelectorAll(".documentos-bloco").forEach(bloco=>{
+  const tipo=bloco.dataset.tipoItem;
+  bloco.querySelector(".documentos-lista").addEventListener("click",event=>{
+    const item=event.target.closest(".documento-link-item");if(!item)return;
+    itemDocumentoSelecionado[tipo]=Number(item.dataset.indice);renderizarDocumentosLinks();
+  });
+  bloco.querySelector(".adicionar").addEventListener("click",()=>{
+    const rotulo=tipo==="documentos"?"documento":"link";
+    const titulo=prompt(`Nome do ${rotulo}:`);if(!titulo?.trim())return;
+    const url=prompt(`Endereço do ${rotulo} (URL):`,"https://");if(!url?.trim())return;
+    documentosLinks[tipo].push({titulo:titulo.trim(),url:url.trim()});
+    itemDocumentoSelecionado[tipo]=documentosLinks[tipo].length-1;salvarDocumentosLinks();renderizarDocumentosLinks();
+  });
+  bloco.querySelector(".remover").addEventListener("click",()=>{
+    const indice=itemDocumentoSelecionado[tipo];
+    if(indice===null||!documentosLinks[tipo][indice]){alert("Selecione um item para remover.");return;}
+    if(!confirm(`Remover “${documentosLinks[tipo][indice].titulo}”?`))return;
+    documentosLinks[tipo].splice(indice,1);itemDocumentoSelecionado[tipo]=null;salvarDocumentosLinks();renderizarDocumentosLinks();
+  });
+});
+renderizarDocumentosLinks();
 
 let graficoCurva;
 function desenharCurvaS(){
@@ -2634,13 +3382,18 @@ function abrirSelecaoDeObras(){
 document.querySelectorAll(".obra-seletor").forEach(obra=>{
   obra.addEventListener("click",abrirSelecaoDeTorres);
 });
-document.getElementById('trocarObra').addEventListener('click', abrirSelecaoDeObras);
-document.getElementById('trocarTorre').addEventListener('click', abrirSelecaoDeTorres);
+document.getElementById('logoVoltarObras').addEventListener('click', abrirSelecaoDeObras);
+document.getElementById('logoHeaderTorres').addEventListener('click', abrirSelecaoDeTorres);
 document.getElementById("ocTorre").addEventListener("change",atualizarAndaresOcorrencia);
 document.getElementById("ocAndar").addEventListener("change",atualizarUnidadesOcorrencia);
 document.getElementById("ocUnidade").addEventListener("change",atualizarAtividadesOcorrencia);
-document.getElementById("filtroPeriodoOcorrencias").addEventListener("change",preencherOcorrencias);
-document.getElementById("filtroAndarOcorrencias").addEventListener("change",preencherOcorrencias);
+document.getElementById("ocAtividade").addEventListener("change",atualizarSubatividadesOcorrencia);
+document.getElementById("ocSubatividade").addEventListener("change",atualizarEspecificacoesOcorrencia);
+document.getElementById("filtroApartamentoOcorrencias").addEventListener("change",preencherOcorrencias);
+document.getElementById("filtroAndarOcorrencias").addEventListener("change",()=>{
+  atualizarApartamentosFiltroOcorrencias();
+  preencherOcorrencias();
+});
 document.getElementById("andarAbaApartamentos").addEventListener("change",event=>{
   pavimentoSelecionado=Number(event.target.value);
   unidadeSelecionada=null;
@@ -2729,6 +3482,8 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
       andar:Number(document.getElementById("ocAndar").value),
       unidade:document.getElementById("ocUnidade").value,
       atividade:document.getElementById("ocAtividade").value,
+      subatividade:document.getElementById("ocCampoSubatividade").hidden?"":document.getElementById("ocSubatividade").value,
+      especificacao:document.getElementById("ocEspecificacao").value,
       descricao:document.getElementById("ocDescricao").value.trim(),
       dataOcorrencia:document.getElementById("ocData").value,
       status:"pendente",
@@ -2737,23 +3492,13 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
     };
     const resposta=await fetch("/api/ocorrencias",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});
     if(!resposta.ok) throw new Error("Falha ao salvar");
-    if(servicoAguardandoOcorrencia){
-      const partes=servicoAguardandoOcorrencia.split("|");
-      const correspondeAoServico=
-        partes[0]===dados.torre &&
-        Number(partes[1])===dados.andar &&
-        partes[2]===dados.unidade &&
-        partes[3]===dados.atividade;
-      if(correspondeAoServico){
-        const registro=obterRegistro(Number(partes[1]),partes[2],partes[3],partes[0]);
-        registro.status="pendente";
-        registro.concluido=false;
-        registro.data=dados.dataOcorrencia;
-        registrosObra[servicoAguardandoOcorrencia]=registro;
-        await salvarRegistros();
-      }
-      servicoAguardandoOcorrencia=null;
-    }
+    const chaveVinculada=chaveRegistro(dados.torre,dados.andar,dados.unidade,dados.atividade);
+    const registro=obterRegistro(dados.andar,dados.unidade,dados.atividade,dados.torre);
+    registro.especificacoes={...(registro.especificacoes||{}),[dados.especificacao]:"pendente"};
+    recalcularStatusPelasEspecificacoes(registro,dados.atividade,dados.andar);
+    registro.data=dados.dataOcorrencia;
+    registrosObra[chaveVinculada]=registro;
+    servicoAguardandoOcorrencia=null;
     document.getElementById("ocDescricao").value="";
     document.getElementById("ocFoto").value="";
     document.getElementById("previewOcorrencia").classList.remove("visivel");
@@ -2770,6 +3515,7 @@ document.getElementById("filtroAndar").addEventListener("change", () => {
   const valor = document.getElementById("filtroAndar").value;
   if(valor !== "todos") pavimentoSelecionado = Number(valor);
   atualizarFiltroApartamentos();
+  atualizarFiltroAtividadesPorAndar();
   renderizarPlanilha();
   atualizarGraficosOperacionais();
 });
@@ -2829,7 +3575,30 @@ document.getElementById("apartamentosGrid").addEventListener("click", event => {
   const unidade = event.target.closest(".apartamento-seletor");
   if(unidade) abrirPlanilhaDaUnidade(unidade.dataset.unidade);
 });
+function alternarSelecaoControles(controles){
+  const validos=[...controles].filter(Boolean);
+  if(!validos.length)return;
+  const todosSelecionados=validos.every(controle=>especificacoesSelecionadas.has(chaveSelecaoEspecificacao(controle.dataset.chave,controle.dataset.especificacao)));
+  validos.forEach(controle=>{
+    const chave=chaveSelecaoEspecificacao(controle.dataset.chave,controle.dataset.especificacao);
+    if(todosSelecionados)especificacoesSelecionadas.delete(chave);else especificacoesSelecionadas.add(chave);
+    controle.classList.toggle("selecionado",!todosSelecionados);
+    controle.setAttribute("aria-pressed",String(!todosSelecionados));
+  });
+  atualizarControlesSelecao();
+}
 document.getElementById("corpoPlanilha").addEventListener("click", event => {
+  if(event.target.closest(".abrir-criterio"))return;
+  const selecionarMatriz=event.target.closest(".selecionar-matriz");
+  if(selecionarMatriz){alternarSelecaoControles(selecionarMatriz.closest("table").querySelectorAll("tbody .controle-especificacao"));return;}
+  const cabecalhoColuna=event.target.closest(".cabecalho-setor");
+  if(cabecalhoColuna){
+    const tabela=cabecalhoColuna.closest("table");
+    const indice=[...cabecalhoColuna.parentElement.children].indexOf(cabecalhoColuna)+1;
+    alternarSelecaoControles(tabela.querySelectorAll(`tbody tr td:nth-child(${indice}) .controle-especificacao`));return;
+  }
+  const tituloLinha=event.target.closest(".titulo-linha-especificacao");
+  if(tituloLinha){alternarSelecaoControles(tituloLinha.parentElement.querySelectorAll(".controle-especificacao"));return;}
   const controle=event.target.closest(".controle-especificacao");
   if(controle){
     const chaveSelecao=chaveSelecaoEspecificacao(controle.dataset.chave,controle.dataset.especificacao);
@@ -2914,12 +3683,12 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
       const atividade=partes.slice(3).join("|");
       const atual=obterRegistro(Number(partes[1]),partes[2],atividade,partes[0]);
       const valores={};
-      especificacoesDoServico(atividade).forEach(item=>{
+      especificacoesDoServicoNoAndar(atividade,Number(partes[1])).forEach(item=>{
         valores[item]=normalizarEstadoEspecificacao(atual.especificacoes?.[item],atual);
       });
       valores[especificacao]=novoStatus;
       atual.especificacoes=valores;
-      recalcularStatusPelasEspecificacoes(atual,atividade);
+      recalcularStatusPelasEspecificacoes(atual,atividade,Number(partes[1]));
       registrosObra[chave]=atual;
     });
     await salvarRegistros();
@@ -2964,21 +3733,14 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
   atualizarDashboardGeral();
 });
 const cenario3d = document.getElementById('cenario3d');
-cenario3d.addEventListener('pointermove', event => {
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const area = cenario3d.getBoundingClientRect();
-  const x = (event.clientX - area.left) / area.width - .5;
-  const y = (event.clientY - area.top) / area.height - .5;
-  document.getElementById('cidade3d').style.transform = `rotateX(${-3-y*5}deg) rotateY(${-10+x*14}deg) translateZ(${Math.abs(x)*5}px)`;
-});
-cenario3d.addEventListener('pointerleave', () => {
-  document.getElementById('cidade3d').style.transform = '';
-});
 async function verificarSessaoEngenheiro(){
   try{
     const resposta=await fetch("/api/sessao",{cache:"no-store"});
     const dados=await resposta.json();
-    if(dados.autenticado) document.getElementById("loginOverlay").classList.add("oculto");
+    if(dados.autenticado){
+      document.getElementById("usuarioAcesso").textContent=dados.usuario||"Usuário autenticado";
+      document.getElementById("loginOverlay").classList.add("oculto");
+    }
   }catch(e){}
 }
 document.getElementById("formLoginEngenheiro").addEventListener("submit",async event=>{
@@ -2997,13 +3759,16 @@ document.getElementById("formLoginEngenheiro").addEventListener("submit",async e
     erro.textContent="Usuário ou senha inválidos.";
     return;
   }
+  const dados=await resposta.json();
   erro.textContent="";
+  document.getElementById("usuarioAcesso").textContent=dados.usuario||document.getElementById("loginUsuario").value.trim();
   document.getElementById("loginSenha").value="";
   abrirSelecaoDeObras();
   document.getElementById("loginOverlay").classList.add("oculto");
 });
 document.getElementById("sairSistema").addEventListener("click",async()=>{
   await fetch("/api/logout",{method:"POST"});
+  document.getElementById("usuarioAcesso").textContent="—";
   document.getElementById("loginOverlay").classList.remove("oculto");
   document.getElementById("loginUsuario").focus();
 });

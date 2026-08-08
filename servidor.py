@@ -30,6 +30,7 @@ BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
+PAVIMENTOS_TECNICOS = {101: "Barrilete", 102: "Reservatório", 103: "Cobertura"}
 STATUS_NOMES = {
     "nao-iniciado": "Não iniciado",
     "em-andamento": "Em andamento",
@@ -45,6 +46,20 @@ if CONFIGURACAO_LOCAL.exists():
         configuracao_local = {}
 USUARIO_ENGENHEIRO = os.environ.get("OBRA_USUARIO", configuracao_local.get("usuario_engenheiro", ""))
 SENHA_ENGENHEIRO = os.environ.get("OBRA_SENHA", configuracao_local.get("senha_engenheiro", ""))
+
+
+def nome_exibicao_usuario(usuario):
+    texto = str(usuario or "").strip()
+    nomes_conhecidos = {"LOCCHI": "Emanuel Locchi"}
+    if texto.upper() in nomes_conhecidos:
+        return nomes_conhecidos[texto.upper()]
+    identificador = texto.split("@", 1)[0]
+    partes = identificador.replace("_", ".").replace("-", ".").split(".")
+    nome = " ".join(parte.capitalize() for parte in partes if parte)
+    return nome or "Usuário autenticado"
+
+
+NOME_USUARIO_ENGENHEIRO = nome_exibicao_usuario(USUARIO_ENGENHEIRO)
 SESSOES_ENGENHEIRO = set()
 
 
@@ -108,7 +123,7 @@ def gerar_relatorio_pdf(torre, andar, unidade):
     documento = SimpleDocTemplate(memoria, pagesize=A4, rightMargin=16*mm, leftMargin=16*mm, topMargin=14*mm, bottomMargin=14*mm)
     estilos = getSampleStyleSheet()
     elementos = []
-    logo = PASTA / "LOGO-DIALOGO.png"
+    logo = PASTA / "logo dialogo.png"
     if logo.exists():
         elementos.extend([Image(str(logo), width=48*mm, height=16*mm), Spacer(1, 4*mm)])
     nome_unidade = unidade.replace("Apto ", "Apartamento ")
@@ -158,7 +173,7 @@ def gerar_relatorio_pdf(torre, andar, unidade):
     return memoria.getvalue()
 
 
-def gerar_historico_ocorrencias_pdf(torre, andar="todos", status="todos", periodo="todas"):
+def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", status="todos"):
     with conectar() as conexao:
         ocorrencias = conexao.execute(
             "SELECT id, andar, unidade, atividade, status, data_ocorrencia, descricao, foto, foto_nome, criado_em FROM ocorrencias WHERE torre = ? ORDER BY data_ocorrencia DESC, id DESC",
@@ -166,14 +181,10 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", status="todos", period
         ).fetchall()
     if andar != "todos":
         ocorrencias = [item for item in ocorrencias if item["andar"] == int(andar)]
+    if unidade != "todos":
+        ocorrencias = [item for item in ocorrencias if item["unidade"] == unidade]
     if status != "todos":
         ocorrencias = [item for item in ocorrencias if item["status"] == status]
-    if periodo != "todas":
-        limite = date.today() - timedelta(days=max(int(periodo) - 1, 0))
-        ocorrencias = [
-            item for item in ocorrencias
-            if item["data_ocorrencia"] and date.fromisoformat(item["data_ocorrencia"]) >= limite
-        ]
     memoria = BytesIO()
     documento = SimpleDocTemplate(
         memoria, pagesize=A4, rightMargin=18*mm, leftMargin=18*mm,
@@ -209,7 +220,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", status="todos", period
         canvas.setLineWidth(.7)
         canvas.line(20*mm, altura-34*mm, largura-20*mm, altura-34*mm)
         canvas.line(20*mm, 17*mm, largura-20*mm, 17*mm)
-        logo = PASTA / "LOGO-DIALOGO.png"
+        logo = PASTA / "logo dialogo.png"
         if logo.exists():
             canvas.drawImage(str(logo), 20*mm, 6*mm, width=24*mm, height=8*mm, preserveAspectRatio=True, mask="auto")
         canvas.setFont("Helvetica", 7)
@@ -307,7 +318,7 @@ def gerar_pagina_visitante(torre, andar, unidade):
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{escape(nome_unidade)} — acompanhamento</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1050px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.35rem;margin:15px 0 4px}}header p{{margin:0;color:#d9e3eb}}main{{padding:18px}}.avanco,.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}.avanco strong{{font-size:1.8rem;color:#173a5e}}.barra{{height:10px;background:#e5e9ec;border-radius:8px;overflow:hidden;margin-top:8px}}.barra i{{display:block;height:100%;width:{percentual}%;background:#2e9e5b}}h2{{font-size:1rem;color:#173a5e}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left;vertical-align:top}}th{{background:#eef3f6}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.status.nao-iniciado{{background:#e8ecef;color:#637582}}.status.em-andamento{{background:#fff1bd;color:#8a6a00}}.status.pendente{{background:#fbe0dd;color:#d9483d}}.status.concluido{{background:#def2e5;color:#2e9e5b}}.ocorrencias{{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}}.ocorrencia{{background:#fff;border-left:4px solid #637582;border-radius:8px;padding:12px}}.ocorrencia.em-andamento{{border-color:#e0a800}}.ocorrencia.pendente{{border-color:#d9483d}}.ocorrencia.concluido{{border-color:#2e9e5b}}.ocorrencia strong{{display:block;margin:0 0 7px}}.ocorrencia p{{font-size:.8rem;line-height:1.45}}.ocorrencia img{{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:7px;margin-top:9px}}.botao,.foto{{display:inline-block;color:#fff;background:#17608f;border-radius:7px;padding:9px 12px;text-decoration:none;font-size:.76rem;font-weight:bold}}.foto{{padding:5px 7px}}.aviso{{font-size:.72rem;color:#687887;margin-top:10px}}@media(max-width:700px){{main{{padding:10px}}.tabela{{overflow:auto}}table{{min-width:720px}}}}
-</style></head><body><header><div><img src="/LOGO-DIALOGO.png" alt="Diálogo Engenharia"><h1>{escape(nome_unidade)} · {andar}º andar</h1><p>{escape(TORRES_NOMES.get(torre, torre))} · visualização para visitantes</p></div></header>
+</style></head><body><header><div><img src="/logo%20dialogo.png" alt="Diálogo Engenharia"><h1>{escape(nome_unidade)} · {andar}º andar</h1><p>{escape(TORRES_NOMES.get(torre, torre))} · visualização para visitantes</p></div></header>
 <main><section class="avanco"><strong>{percentual}% concluído</strong><div class="barra"><i></i></div><p>{concluidos} de {total} serviços concluídos</p><a class="botao" href="/relatorio.pdf?{consulta}">Abrir relatório em PDF</a><div class="aviso">Página somente para consulta. Nenhuma informação pode ser alterada neste acesso.</div></section>
 <section class="painel"><h2>Serviços da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhum serviço registrado.</td></tr>'}</tbody></table></div></section>
 <section class="painel"><h2>Ocorrências</h2><div class="ocorrencias">{''.join(cards) if cards else '<p>Nenhuma ocorrência vinculada.</p>'}</div></section></main></body></html>""".encode("utf-8")
@@ -374,7 +385,7 @@ def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade
     documento = SimpleDocTemplate(memoria, pagesize=landscape(A4), rightMargin=12*mm, leftMargin=12*mm, topMargin=12*mm, bottomMargin=12*mm)
     estilos = getSampleStyleSheet()
     elementos = []
-    logo = PASTA / "LOGO-DIALOGO.png"
+    logo = PASTA / "logo dialogo.png"
     if logo.exists():
         elementos.extend([Image(str(logo), width=42*mm, height=14*mm), Spacer(1, 3*mm)])
     elementos.append(Paragraph("<b>Relatório de acompanhamento da obra</b>", estilos["Title"]))
@@ -477,7 +488,7 @@ def gerar_portal_relatorios(torre, andar="todos", unidade="todos", atividade="to
     consulta_pdf = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "atividade": atividade})
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Relatórios — visão visitante</title><style>
 *{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1150px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.3rem;margin:13px 0 3px}}main{{padding:18px}}.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}form{{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;align-items:end}}label{{display:block;font-size:.68rem;font-weight:bold;margin-bottom:5px}}select{{width:100%;height:38px;border:1px solid #bdc8d0;border-radius:7px;background:#fff;padding:0 8px}}button,.pdf{{height:38px;border:0;border-radius:7px;background:#17608f;color:#fff;padding:0 14px;font-weight:bold;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}}.dashboard{{background:#123554;border-radius:13px;padding:16px;margin-bottom:15px;color:#fff}}.kpis{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}}.kpi{{padding:14px;border:1px solid #49647d;border-radius:9px;background:#294965}}.kpi span{{display:block;color:#bdcbd6;font-size:.68rem;text-transform:uppercase}}.kpi strong{{display:block;font-size:1.45rem;margin-top:4px}}.grafico-status{{background:#fff;color:#243445;border-radius:10px;padding:14px;text-align:center;margin-bottom:14px}}.rosca{{width:190px;height:190px;border-radius:50%;margin:10px auto;display:grid;place-items:center}}.rosca:after{{content:"";width:112px;height:112px;border-radius:50%;background:#fff}}.legenda{{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;font-size:.68rem}}.legenda i{{display:inline-block;width:10px;height:10px;margin-right:4px}}.evolucao{{background:#294965;border:1px solid #49647d;border-radius:10px;padding:14px}}.torre-vis{{width:min(100%,360px);margin:12px auto}}.andar-vis{{display:grid;grid-template-columns:30px 1fr;gap:5px;align-items:center;height:12px}}.andar-vis b{{font-size:.52rem;text-align:right;color:#fff}}.andar-vis i{{display:block;height:8px;border:1px solid rgba(255,255,255,.18)}}.nome-torre{{text-align:center;font-weight:bold;margin-top:10px}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left}}th{{background:#eef3f6}}.tabela{{overflow:auto}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.nao-iniciado{{background:#e8ecef;color:#637582}}.em-andamento{{background:#fff1bd;color:#8a6a00}}.pendente{{background:#fbe0dd;color:#d9483d}}.concluido{{background:#def2e5;color:#2e9e5b}}.aviso{{font-size:.72rem;color:#687887;margin-top:8px}}@media(max-width:750px){{form{{grid-template-columns:1fr}}.kpis{{grid-template-columns:1fr 1fr}}main{{padding:10px}}table{{min-width:720px}}}}
-</style></head><body><header><div><img src="/LOGO-DIALOGO.png" alt="Diálogo Engenharia"><h1>Relatórios da obra — visão visitante</h1><p>{escape(TORRES_NOMES.get(torre, torre))}</p></div></header><main>
+</style></head><body><header><div><img src="/logo%20dialogo.png" alt="Diálogo Engenharia"><h1>Relatórios da obra — visão visitante</h1><p>{escape(TORRES_NOMES.get(torre, torre))}</p></div></header><main>
 <section class="painel"><form method="get" action="/visitante-relatorios"><input type="hidden" name="torre" value="{escape(torre)}"><div><label>Pavimento</label><select name="andar">{opcoes_andar}</select></div><div><label>Apartamento / setor</label><select name="unidade">{opcoes_unidade}</select></div><div><label>Serviço</label><select name="atividade">{opcoes_atividade}</select></div><button type="submit">Aplicar filtros</button></form><div class="aviso">Acesso somente para consulta. Nenhuma informação pode ser alterada.</div></section>
 <section class="dashboard"><div class="kpis"><div class="kpi"><span>Avanço geral</span><strong>{avanco}%</strong></div><div class="kpi"><span>Serviços realizados</span><strong>{realizados}</strong></div><div class="kpi"><span>Serviços pendentes</span><strong>{servicos_pendentes}</strong></div><div class="kpi"><span>Pavimentos concluídos</span><strong>{pavimentos_concluidos} / {len(andares_no_escopo)}</strong></div></div>
 <div class="grafico-status"><h2>Status geral</h2><div class="rosca" style="background:{gradiente_status}"></div><div class="legenda"><span><i style="background:#637582"></i>Não iniciado</span><span><i style="background:#e0a800"></i>Em andamento</span><span><i style="background:#d9483d"></i>Pendente</span><span><i style="background:#2e9e5b"></i>Concluído</span></div></div>
@@ -507,7 +518,7 @@ def endereco_rede():
 def gerar_inicio_visitante():
     return """<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acesso visitante</title><style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#123554;font-family:Arial,sans-serif;color:#243445}.caixa{width:min(92%,720px);background:#fff;border-radius:15px;padding:28px;box-shadow:0 18px 50px #0005;text-align:center}.logo{width:190px;margin-bottom:18px}h1{color:#173a5e}.torres{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}.torre{display:block;padding:25px 15px;border:1px solid #ccd6de;border-radius:11px;text-decoration:none;color:#173a5e;font-weight:bold;background:#f4f7f9}.torre:hover{background:#e8f1f6;border-color:#17608f}.torre span{display:block;font-size:.75rem;color:#687887;margin-top:7px;font-weight:normal}.aviso{font-size:.75rem;color:#687887;margin-top:20px}@media(max-width:550px){.torres{grid-template-columns:1fr}}
-</style></head><body><main class="caixa"><img class="logo" src="/LOGO-DIALOGO.png" alt="Diálogo Engenharia"><h1>Visão visitante</h1><p>Selecione a torre que deseja consultar.</p><div class="torres"><a class="torre" href="/visitante-relatorios?torre=aurora">Torre Home<span>36 pavimentos</span></a><a class="torre" href="/visitante-relatorios?torre=horizonte">Torre Smart<span>23 pavimentos</span></a></div><div class="aviso">Acesso somente para leitura. Não é possível alterar informações.</div></main></body></html>""".encode("utf-8")
+</style></head><body><main class="caixa"><img class="logo" src="/logo%20dialogo.png" alt="Diálogo Engenharia"><h1>Visão visitante</h1><p>Selecione a torre que deseja consultar.</p><div class="torres"><a class="torre" href="/visitante-relatorios?torre=aurora">Torre Home<span>36 pavimentos</span></a><a class="torre" href="/visitante-relatorios?torre=horizonte">Torre Smart<span>23 pavimentos</span></a></div><div class="aviso">Acesso somente para leitura. Não é possível alterar informações.</div></main></body></html>""".encode("utf-8")
 
 
 def preparar_banco():
@@ -589,6 +600,14 @@ def preparar_banco():
             conexao.execute(
                 "ALTER TABLE ocorrencias ADD COLUMN atividade TEXT NOT NULL DEFAULT 'Não informada'"
             )
+        if "subatividade" not in colunas:
+            conexao.execute(
+                "ALTER TABLE ocorrencias ADD COLUMN subatividade TEXT NOT NULL DEFAULT ''"
+            )
+        if "especificacao" not in colunas:
+            conexao.execute(
+                "ALTER TABLE ocorrencias ADD COLUMN especificacao TEXT NOT NULL DEFAULT ''"
+            )
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_ocorrencias_local ON ocorrencias(torre, andar, unidade)"
         )
@@ -626,6 +645,8 @@ def preparar_banco():
 
 
 def apartamentos_do_andar(torre, andar):
+    if andar in PAVIMENTOS_TECNICOS:
+        return []
     if torre == "horizonte":
         return [f"Apto {andar}{numero:02d}" for numero in range(1, 15)] if andar >= 4 else []
     if andar == 1:
@@ -744,6 +765,541 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_registros_config_v1', '1')"
         )
+    marcador_hidraulica = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'instalacoes_hidraulicas_v1'"
+    ).fetchone()
+    if not marcador_hidraulica and ARQUIVO_PLANEJAMENTO.exists():
+        nome = "Instalações Hidráulicas"
+        especificacoes = [
+            "Condição para início dos serviços",
+            "Posicionamento dos Ralos",
+            "Posicionamento dos Pontos (Consumo de Água, Registros, Válvulas, Sistema de Esgoto e Gás)",
+            "Prumadas",
+            "Chumbamento das Tubulações e Ralos",
+            "Posicionamento e Distribuição dos Esgotos (Aranha)",
+            "Kit Hidráulico",
+            "Tubos para Exaustão dos banhos com Ventilação Forçada",
+            "Chumbamento de Passantes Fachada",
+            "Encamisamento/Ventilação do Gás",
+            "Cavaletes de Água e Redutoras de Pressão",
+            "Pressurização da Tubulação de Gás (Antes do Fechamento)",
+            "Pressurização da Tubulação de Gás (Depois da Conclusão dos Revestimentos Cerâmicos)",
+            "Funcionamento do Sistema de Esgoto",
+            "Funcionamento do Sistema de Combate a Incêndio",
+            "Proteção dos Registros",
+            "Medidor de Água Fria",
+            "Limpeza e Proteção dos Ralos",
+            "Instalação de Louças (Bacias)",
+            "Acabamento de Registros",
+            "Metais",
+            "Sifão e Acessórios",
+        ]
+        planejamento = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
+        escopos = []
+        for torre, andares in planejamento.get("torres", {}).items():
+            for andar in andares:
+                escopo = (torre, int(andar), "*")
+                escopos.append(escopo)
+                conexao.execute(
+                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                    (nome, torre, int(andar)),
+                )
+        salvar_especificacoes_atividade(conexao, nome, especificacoes)
+        garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('instalacoes_hidraulicas_v1', '1')"
+        )
+    marcador_remocao_hidraulica = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_hidraulicos_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_hidraulica:
+        servicos_removidos = [
+            "Kit Hidráulico",
+            "Louças e Metais",
+            "Prumadas AP, AF, ES e Ventilação",
+            "Prumadas de Incêndio, AQ e Gás",
+            "Ramais e Aranhas",
+            "Teste PEX",
+            "Pex Aéreo",
+        ]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_hidraulicos_legados_v1', '1')"
+        )
+    marcador_eletrica = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'instalacoes_eletricas_v1'"
+    ).fetchone()
+    if not marcador_eletrica and ARQUIVO_PLANEJAMENTO.exists():
+        nome = "Instalações Elétricas"
+        especificacoes = [
+            "Condição para início dos serviços",
+            "Passagem e Diâmetro dos Eletrodutos Embutidos nas Paredes e Caixas Elétricas",
+            "Quadros Elétricos",
+            "Tomadas, Pontos de TV, Interruptores, Telefone e Interfone",
+            "Tomadas 220V",
+            "Prumadas de Cabos Busway",
+            "Fiação e Arame Guia",
+            "Proteção de Caixas de Elétrica",
+        ]
+        planejamento = json.loads(ARQUIVO_PLANEJAMENTO.read_text(encoding="utf-8"))
+        escopos = []
+        for torre, andares in planejamento.get("torres", {}).items():
+            for andar in andares:
+                escopos.append((torre, int(andar), "*"))
+                conexao.execute(
+                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                    (nome, torre, int(andar)),
+                )
+        salvar_especificacoes_atividade(conexao, nome, especificacoes)
+        garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('instalacoes_eletricas_v1', '1')"
+        )
+    marcador_remocao_eletrica = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_eletricos_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_eletrica:
+        servicos_removidos = ["Acabamentos Elétricos", "Caixinha Elétrica"]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_eletricos_legados_v1', '1')"
+        )
+    marcador_andares_especiais = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'todos_servicos_andares_especiais_v1'"
+    ).fetchone()
+    if not marcador_andares_especiais:
+        atividades = [
+            linha["nome"]
+            for linha in conexao.execute("SELECT DISTINCT nome FROM atividades_config ORDER BY nome").fetchall()
+        ]
+        for nome in atividades:
+            escopos = []
+            for torre in TORRES_NOMES:
+                for andar in (-1, 0):
+                    escopo = (torre, andar, "*")
+                    escopos.append(escopo)
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                        (nome, torre, andar),
+                    )
+            garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('todos_servicos_andares_especiais_v1', '1')"
+        )
+    marcador_fundacao = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'andar_fundacao_estrutura_v1'"
+    ).fetchone()
+    if not marcador_fundacao:
+        nome = "Estrutura"
+        escopos = []
+        for torre in TORRES_NOMES:
+            escopo = (torre, -2, "*")
+            escopos.append(escopo)
+            conexao.execute(
+                "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, -2, '*')",
+                (nome, torre),
+            )
+        garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('andar_fundacao_estrutura_v1', '1')"
+        )
+    marcador_remocao_estrutura = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_estrutura_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_estrutura:
+        servicos_removidos = ["Perfil", "Hélice", "Escavação", "Bloco"]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_estrutura_legados_v1', '1')"
+        )
+    marcador_alvenaria = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'servico_alvenaria_subservicos_v1'"
+    ).fetchone()
+    if not marcador_alvenaria:
+        nome = "Alvenaria"
+        especificacoes = [
+            "Marcação Alvenaria :: Execução do serviço",
+            "Elevação Alvenaria :: Execução do serviço",
+            "Encunhamento :: Execução do serviço",
+        ]
+        escopos = []
+        for torre in TORRES_NOMES:
+            andares = [-1, 0] + list(range(1, 37 if torre == "aurora" else 24))
+            for andar in andares:
+                escopo = (torre, andar, "*")
+                escopos.append(escopo)
+                conexao.execute(
+                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                    (nome, torre, andar),
+                )
+        salvar_especificacoes_atividade(conexao, nome, especificacoes)
+        garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('servico_alvenaria_subservicos_v1', '1')"
+        )
+    marcador_marcacao_alvenaria = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_marcacao_alvenaria_v1'"
+    ).fetchone()
+    if not marcador_marcacao_alvenaria:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Alvenaria",
+            [
+                "Marcação Alvenaria :: Condições para Início dos Serviços",
+                "Marcação Alvenaria :: Posicionamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Esquadro da Fiada de Marcação",
+                "Marcação Alvenaria :: Alinhamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Tubulação de Dreno",
+                "Marcação Alvenaria :: Condutes Elétricos",
+                "Marcação Alvenaria :: Nivelamento da Fiada de Marcação",
+                "Elevação Alvenaria :: Execução do serviço",
+                "Encunhamento :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_marcacao_alvenaria_v1', '1')"
+        )
+    marcador_elevacao_alvenaria = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_elevacao_alvenaria_v1'"
+    ).fetchone()
+    if not marcador_elevacao_alvenaria:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Alvenaria",
+            [
+                "Marcação Alvenaria :: Condições para Início dos Serviços",
+                "Marcação Alvenaria :: Posicionamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Esquadro da Fiada de Marcação",
+                "Marcação Alvenaria :: Alinhamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Tubulação de Dreno",
+                "Marcação Alvenaria :: Condutes Elétricos",
+                "Marcação Alvenaria :: Nivelamento da Fiada de Marcação",
+                "Elevação Alvenaria :: Condições para Início dos Serviços",
+                "Elevação Alvenaria :: Dreno do Ar-Condicionado",
+                "Elevação Alvenaria :: Tela Galvanizada",
+                "Elevação Alvenaria :: Preenchimento com Argamassa dos Blocos da Marcação",
+                "Elevação Alvenaria :: Prumo da Alvenaria",
+                "Elevação Alvenaria :: Planeza da Alvenaria",
+                "Elevação Alvenaria :: Prumo de Vãos de Portas e Dimensões dos Vãos de Janelas e Portas",
+                "Elevação Alvenaria :: Aspecto Geral da Alvenaria",
+                "Elevação Alvenaria :: Espessura do Vão para Encunhamento",
+                "Encunhamento :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_elevacao_alvenaria_v1', '1')"
+        )
+    marcador_encunhamento_alvenaria = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_encunhamento_alvenaria_v1'"
+    ).fetchone()
+    if not marcador_encunhamento_alvenaria:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Alvenaria",
+            [
+                "Marcação Alvenaria :: Condições para Início dos Serviços",
+                "Marcação Alvenaria :: Posicionamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Esquadro da Fiada de Marcação",
+                "Marcação Alvenaria :: Alinhamento da Fiada de Marcação",
+                "Marcação Alvenaria :: Tubulação de Dreno",
+                "Marcação Alvenaria :: Condutes Elétricos",
+                "Marcação Alvenaria :: Nivelamento da Fiada de Marcação",
+                "Elevação Alvenaria :: Condições para Início dos Serviços",
+                "Elevação Alvenaria :: Dreno do Ar-Condicionado",
+                "Elevação Alvenaria :: Tela Galvanizada",
+                "Elevação Alvenaria :: Preenchimento com Argamassa dos Blocos da Marcação",
+                "Elevação Alvenaria :: Prumo da Alvenaria",
+                "Elevação Alvenaria :: Planeza da Alvenaria",
+                "Elevação Alvenaria :: Prumo de Vãos de Portas e Dimensões dos Vãos de Janelas e Portas",
+                "Elevação Alvenaria :: Aspecto Geral da Alvenaria",
+                "Elevação Alvenaria :: Espessura do Vão para Encunhamento",
+                "Encunhamento :: Condições para Início dos Serviços",
+                "Encunhamento :: Encunhamento",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_encunhamento_alvenaria_v1', '1')"
+        )
+    marcador_remocao_alvenaria_legada = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_alvenaria_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_alvenaria_legada:
+        servicos_removidos = [
+            "Elevação da Alvenaria",
+            "Encunhamento",
+            "Marcação da Alvenaria",
+        ]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_alvenaria_legados_v1', '1')"
+        )
+    marcador_revestimento = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'servico_revestimento_subservicos_v1'"
+    ).fetchone()
+    if not marcador_revestimento:
+        nome = "Revestimento"
+        especificacoes = [
+            "Massa Interna :: Execução do serviço",
+            "Gesso Liso :: Execução do serviço",
+            "Argamassa Externa :: Execução do serviço",
+        ]
+        escopos = []
+        for torre in TORRES_NOMES:
+            ultimo_andar = 36 if torre == "aurora" else 23
+            for andar in [-2, -1, 0] + list(range(1, ultimo_andar + 1)):
+                escopo = (torre, andar, "*")
+                escopos.append(escopo)
+                conexao.execute(
+                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                    (nome, torre, andar),
+                )
+        salvar_especificacoes_atividade(conexao, nome, especificacoes)
+        garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('servico_revestimento_subservicos_v1', '1')"
+        )
+    marcador_revestimento_ceramico = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'subservicos_revestimento_ceramico_v1'"
+    ).fetchone()
+    if not marcador_revestimento_ceramico:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Revestimento",
+            [
+                "Massa Interna :: Execução do serviço",
+                "Gesso Liso :: Execução do serviço",
+                "Argamassa Externa :: Execução do serviço",
+                "Piso Cerâmico :: Execução do serviço",
+                "Parede em Cerâmica :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('subservicos_revestimento_ceramico_v1', '1')"
+        )
+    marcador_gesso_liso = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_gesso_liso_v1'"
+    ).fetchone()
+    if not marcador_gesso_liso:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Revestimento",
+            [
+                "Massa Interna :: Execução do serviço",
+                "Gesso Liso :: Condições para Início do Serviço",
+                "Gesso Liso :: Planicidade",
+                "Gesso Liso :: Nivelamento e Prumo",
+                "Gesso Liso :: Esquadro",
+                "Gesso Liso :: Cantos Riscados",
+                "Gesso Liso :: Tela Entre Alvenaria e Estrutura",
+                "Gesso Liso :: Aspecto Final",
+                "Argamassa Externa :: Execução do serviço",
+                "Piso Cerâmico :: Execução do serviço",
+                "Parede em Cerâmica :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_gesso_liso_v1', '1')"
+        )
+    marcador_massa_interna = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_massa_interna_v1'"
+    ).fetchone()
+    if not marcador_massa_interna:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Revestimento",
+            [
+                "Massa Interna :: Condições para Início do Serviço",
+                "Massa Interna :: Planicidade",
+                "Massa Interna :: Nivelamento e Prumo",
+                "Massa Interna :: Esquadro",
+                "Massa Interna :: Cantos Riscados",
+                "Massa Interna :: Tela Entre Alvenaria e Estrutura",
+                "Massa Interna :: Aspecto Final",
+                "Gesso Liso :: Condições para Início do Serviço",
+                "Gesso Liso :: Planicidade",
+                "Gesso Liso :: Nivelamento e Prumo",
+                "Gesso Liso :: Esquadro",
+                "Gesso Liso :: Cantos Riscados",
+                "Gesso Liso :: Tela Entre Alvenaria e Estrutura",
+                "Gesso Liso :: Aspecto Final",
+                "Argamassa Externa :: Execução do serviço",
+                "Piso Cerâmico :: Execução do serviço",
+                "Parede em Cerâmica :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_massa_interna_v1', '1')"
+        )
+    marcador_argamassa_externa = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_externo_argamassa_v1'"
+    ).fetchone()
+    if not marcador_argamassa_externa:
+        salvar_especificacoes_atividade(
+            conexao,
+            "Revestimento",
+            [
+                "Massa Interna :: Condições para Início do Serviço",
+                "Massa Interna :: Planicidade",
+                "Massa Interna :: Nivelamento e Prumo",
+                "Massa Interna :: Esquadro",
+                "Massa Interna :: Cantos Riscados",
+                "Massa Interna :: Tela Entre Alvenaria e Estrutura",
+                "Massa Interna :: Aspecto Final",
+                "Gesso Liso :: Condições para Início do Serviço",
+                "Gesso Liso :: Planicidade",
+                "Gesso Liso :: Nivelamento e Prumo",
+                "Gesso Liso :: Esquadro",
+                "Gesso Liso :: Cantos Riscados",
+                "Gesso Liso :: Tela Entre Alvenaria e Estrutura",
+                "Gesso Liso :: Aspecto Final",
+                "Externo em Argamassa :: Condições para Início do Serviço",
+                "Externo em Argamassa :: Posicionamento dos Arames",
+                "Externo em Argamassa :: Requadração dos Vãos",
+                "Externo em Argamassa :: Tela Metálica",
+                "Externo em Argamassa :: Passantes na Fachada",
+                "Externo em Argamassa :: Espessura do Revestimento",
+                "Externo em Argamassa :: Planicidade, Prumo e Alinhamento",
+                "Externo em Argamassa :: Aspecto Final",
+                "Externo em Argamassa :: Ensaio de Aderência",
+                "Externo em Argamassa :: Relatório de Execução",
+                "Piso Cerâmico :: Execução do serviço",
+                "Parede em Cerâmica :: Execução do serviço",
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_externo_argamassa_v1', '1')"
+        )
+    marcador_piso_ceramico = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_piso_ceramico_v1'"
+    ).fetchone()
+    if not marcador_piso_ceramico:
+        conexao.execute(
+            "DELETE FROM atividades_especificacoes WHERE atividade = 'Revestimento' AND especificacao LIKE 'Piso Cerâmico :: %'"
+        )
+        conexao.execute(
+            "UPDATE atividades_especificacoes SET ordem = 31 WHERE atividade = 'Revestimento' AND especificacao LIKE 'Parede em Cerâmica :: %'"
+        )
+        especificacoes = [
+            "Condição para Início dos Serviços",
+            "Juntas",
+            "Planicidade e Nivelamento",
+            "Condição para Rejuntamento",
+            "Aspecto Final",
+            "Caimento",
+            "Proteção",
+        ]
+        for ordem, especificacao in enumerate(especificacoes, start=24):
+            conexao.execute(
+                "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES ('Revestimento', ?, ?)",
+                (f"Piso Cerâmico :: {especificacao}", ordem),
+            )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_piso_ceramico_v1', '1')"
+        )
+    marcador_parede_ceramica = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_parede_ceramica_v1'"
+    ).fetchone()
+    if not marcador_parede_ceramica:
+        conexao.execute(
+            "DELETE FROM atividades_especificacoes WHERE atividade = 'Revestimento' AND especificacao LIKE 'Parede em Cerâmica :: %'"
+        )
+        especificacoes = [
+            "Condição para Início dos Serviços",
+            "Juntas",
+            "Planicidade e Prumo do Revestimento",
+            "Aderência das Placas",
+            "Condição para Rejuntamento",
+            "Aspecto Final",
+        ]
+        for ordem, especificacao in enumerate(especificacoes, start=31):
+            conexao.execute(
+                "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES ('Revestimento', ?, ?)",
+                (f"Parede em Cerâmica :: {especificacao}", ordem),
+            )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_parede_ceramica_v1', '1')"
+        )
+    marcador_remocao_revestimentos_legados = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_revestimentos_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_revestimentos_legados:
+        servicos_removidos = [
+            "Azulejo",
+            "Piso Cerâmico - Hall",
+            "Piso Interno",
+            "Piso Sacada",
+            "Rejunte",
+        ]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_revestimentos_legados_v1', '1')"
+        )
+    marcador_remocao_massas_legadas = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'remover_servicos_massas_legados_v1'"
+    ).fetchone()
+    if not marcador_remocao_massas_legadas:
+        servicos_removidos = [
+            "Gesso",
+            "Massa Interna",
+            "Massa Fachada",
+            "Chapisco Fachada",
+        ]
+        marcadores = ",".join("?" for _ in servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_config WHERE nome IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM atividades_especificacoes WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(f"DELETE FROM registros WHERE atividade IN ({marcadores})", servicos_removidos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_massas_legados_v1', '1')"
+        )
+    marcador_pavimentos_tecnicos = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'pavimentos_tecnicos_todos_servicos_v1'"
+    ).fetchone()
+    if not marcador_pavimentos_tecnicos:
+        atividades = [
+            linha["nome"]
+            for linha in conexao.execute("SELECT DISTINCT nome FROM atividades_config ORDER BY nome").fetchall()
+        ]
+        for nome in atividades:
+            escopos = []
+            for torre in TORRES_NOMES:
+                for andar in PAVIMENTOS_TECNICOS:
+                    escopo = (torre, andar, "*")
+                    escopos.append(escopo)
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                        (nome, torre, andar),
+                    )
+            garantir_registros_atividade(conexao, nome, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('pavimentos_tecnicos_todos_servicos_v1', '1')"
+        )
+    marcador_correcao_pavimentos_tecnicos = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'corrigir_unidades_pavimentos_tecnicos_v1'"
+    ).fetchone()
+    if not marcador_correcao_pavimentos_tecnicos:
+        marcadores = ",".join("?" for _ in PAVIMENTOS_TECNICOS)
+        conexao.execute(
+            f"DELETE FROM registros WHERE andar IN ({marcadores}) AND unidade != 'Área comum'",
+            tuple(PAVIMENTOS_TECNICOS),
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('corrigir_unidades_pavimentos_tecnicos_v1', '1')"
+        )
 
 
 def listar_atividades_config():
@@ -773,7 +1329,7 @@ def validar_escopos(escopos):
         andar = int(escopo.get("andar", 0))
         unidade = str(escopo.get("unidade", "*")).strip() or "*"
         maximo = 36 if torre == "aurora" else 23 if torre == "horizonte" else 0
-        if not maximo or andar < 1 or andar > maximo:
+        if not maximo or andar < -2 or (andar > maximo and andar not in PAVIMENTOS_TECNICOS):
             raise ValueError("Escopo de torre ou pavimento inválido")
         resultado.append((torre, andar, unidade))
     if not resultado:
@@ -871,7 +1427,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
         caminho = url.path
         parametros = parse_qs(url.query)
         if caminho == "/api/sessao":
-            self.enviar_json({"autenticado": self.sessao_engenheiro()})
+            autenticado = self.sessao_engenheiro()
+            self.enviar_json({"autenticado": autenticado, "usuario": NOME_USUARIO_ENGENHEIRO if autenticado else ""})
             return
         if caminho == "/visitante-inicio":
             corpo = gerar_inicio_visitante()
@@ -923,15 +1480,15 @@ class ServidorObra(SimpleHTTPRequestHandler):
         if caminho == "/relatorio-ocorrencias.pdf":
             torre = parametros.get("torre", [""])[0]
             andar = parametros.get("andar", ["todos"])[0]
+            unidade = parametros.get("unidade", ["todos"])[0]
             status = parametros.get("status", ["todos"])[0]
-            periodo = parametros.get("periodo", ["todas"])[0]
             if torre not in TORRES_NOMES or (andar != "todos" and not andar.isdigit()):
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
                 return
-            if status not in {*STATUS_NOMES.keys(), "todos"} or periodo not in {"7", "30", "90", "todas"}:
+            if status not in {*STATUS_NOMES.keys(), "todos"}:
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
                 return
-            corpo = gerar_historico_ocorrencias_pdf(torre, andar, status, periodo)
+            corpo = gerar_historico_ocorrencias_pdf(torre, andar, unidade, status)
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
             self.send_header("Content-Disposition", 'inline; filename="historico-ocorrencias.pdf"')
@@ -947,7 +1504,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 andar = int(parametros.get("andar", ["0"])[0])
             except ValueError:
                 andar = 0
-            if torre not in TORRES_NOMES or andar < 1 or not unidade:
+            if torre not in TORRES_NOMES or andar < -2 or not unidade:
                 self.enviar_json({"erro": "Unidade inválida"}, 400)
                 return
             if caminho == "/visitante":
@@ -1028,11 +1585,121 @@ class ServidorObra(SimpleHTTPRequestHandler):
                         "dataOcorrencia": linha["data_ocorrencia"],
                         "status": linha["status"],
                         "atividade": linha["atividade"],
+                        "subatividade": linha["subatividade"],
+                        "especificacao": linha["especificacao"],
                         "criadoEm": linha["criado_em"],
                     }
                     for linha in linhas
                 ]
             )
+            return
+        if caminho == "/api/setores":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                torre = str(dados.get("torre", ""))
+                andar = int(dados.get("andar", 0))
+                atividade = str(dados.get("atividade", "")).strip()
+                unidade = str(dados.get("unidade", "")).strip()
+                validar_escopos([{"torre": torre, "andar": andar, "unidade": unidade}])
+                if not atividade or not unidade:
+                    raise ValueError("Informe o serviço e o nome do setor")
+                with conectar() as conexao:
+                    atividade_no_andar = conexao.execute(
+                        "SELECT 1 FROM atividades_config WHERE nome=? AND torre=? AND andar=? LIMIT 1",
+                        (atividade, torre, andar),
+                    ).fetchone()
+                    if not atividade_no_andar:
+                        raise ValueError("O serviço não está disponível neste pavimento")
+                    conflito = conexao.execute(
+                        "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
+                        (torre, andar, unidade, atividade),
+                    ).fetchone()
+                    if conflito:
+                        raise ValueError("Este setor já existe para o serviço neste pavimento")
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                        (atividade, torre, andar, unidade),
+                    )
+                    garantir_registros_atividade(conexao, atividade, [(torre, andar, unidade)])
+                self.enviar_json({"ok": True, "unidade": unidade}, 201)
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if caminho == "/api/setores/importar":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                linhas = dados.get("linhas", [])
+                if not isinstance(linhas, list) or not linhas or len(linhas) > 5000:
+                    raise ValueError("A planilha deve conter entre 1 e 5.000 linhas")
+                mapa_torres = {
+                    "home": "aurora", "torre home": "aurora", "aurora": "aurora",
+                    "smart": "horizonte", "torre smart": "horizonte", "horizonte": "horizonte",
+                }
+                mapa_pavimentos = {
+                    "fundacao": -2, "fundação": -2, "1 subsolo": -1, "1º subsolo": -1,
+                    "subsolo": -1, "terreo": 0, "térreo": 0, "barrilete": 101,
+                    "reservatorio": 102, "reservatório": 102, "cobertura": 103,
+                }
+                criados = 0
+                ignorados = 0
+                erros = []
+                with conectar() as conexao:
+                    for indice, linha in enumerate(linhas, start=2):
+                        try:
+                            torre_texto = str(linha.get("torre", "")).strip().lower()
+                            torre = mapa_torres.get(torre_texto)
+                            pavimento_texto = str(linha.get("pavimento", "")).strip().lower()
+                            pavimento_normalizado = pavimento_texto.replace("º andar", "").replace(" andar", "").strip()
+                            andar = mapa_pavimentos.get(pavimento_texto)
+                            if andar is None:
+                                andar = int(pavimento_normalizado)
+                            setor = str(linha.get("setor", "")).strip()
+                            atividade_texto = str(linha.get("atividade", "")).strip()
+                            validar_escopos([{"torre": torre or "", "andar": andar, "unidade": setor}])
+                            if not setor:
+                                raise ValueError("setor não informado")
+                            if atividade_texto.lower() in {"todas", "todos", "*"}:
+                                atividades = [
+                                    item["nome"] for item in conexao.execute(
+                                        "SELECT DISTINCT nome FROM atividades_config WHERE torre=? AND andar=? ORDER BY nome",
+                                        (torre, andar),
+                                    ).fetchall()
+                                ]
+                            else:
+                                atividades = [atividade_texto]
+                            if not atividades:
+                                raise ValueError("nenhuma atividade disponível no pavimento")
+                            for atividade in atividades:
+                                existe = conexao.execute(
+                                    "SELECT 1 FROM atividades_config WHERE nome=? AND torre=? AND andar=? LIMIT 1",
+                                    (atividade, torre, andar),
+                                ).fetchone()
+                                if not existe:
+                                    raise ValueError(f"atividade '{atividade}' não disponível no pavimento")
+                                conflito = conexao.execute(
+                                    "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
+                                    (torre, andar, setor, atividade),
+                                ).fetchone()
+                                if conflito:
+                                    ignorados += 1
+                                    continue
+                                conexao.execute(
+                                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                                    (atividade, torre, andar, setor),
+                                )
+                                garantir_registros_atividade(conexao, atividade, [(torre, andar, setor)])
+                                criados += 1
+                        except (ValueError, TypeError) as erro:
+                            erros.append(f"Linha {indice}: {erro}")
+                self.enviar_json({"ok": True, "criados": criados, "ignorados": ignorados, "erros": erros[:30]}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
             return
         if caminho == "/api/projetos":
             with conectar() as conexao:
@@ -1057,6 +1724,34 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_PUT(self):
         caminho = urlparse(self.path).path
+        if caminho == "/api/setores":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                torre = str(dados.get("torre", ""))
+                andar = int(dados.get("andar", 0))
+                unidade = str(dados.get("unidade", "")).strip()
+                nova_unidade = str(dados.get("novaUnidade", "")).strip()
+                if torre not in TORRES_NOMES or not unidade or not nova_unidade or andar < -2:
+                    raise ValueError("Setor inválido")
+                with conectar() as conexao:
+                    conflito = conexao.execute("SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? LIMIT 1", (torre, andar, nova_unidade)).fetchone()
+                    if conflito:
+                        raise ValueError("Já existe um setor com esse nome neste andar")
+                    linhas = conexao.execute("SELECT chave, atividade FROM registros WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade)).fetchall()
+                    if not linhas:
+                        raise ValueError("Setor não encontrado")
+                    for linha in linhas:
+                        nova_chave = f"{torre}|{andar}|{nova_unidade}|{linha['atividade']}"
+                        conexao.execute("UPDATE registros SET chave=?, unidade=? WHERE chave=?", (nova_chave, nova_unidade, linha["chave"]))
+                    for tabela in ("ocorrencias", "projetos_unidade", "projetos_ocultos", "atividades_config"):
+                        conexao.execute(f"UPDATE {tabela} SET unidade=? WHERE torre=? AND andar=? AND unidade=?", (nova_unidade, torre, andar, unidade))
+                self.enviar_json({"ok": True, "unidade": nova_unidade})
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
         if caminho == "/api/atividades":
             if not self.exigir_engenheiro():
                 return
@@ -1158,7 +1853,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     return
                 token = secrets.token_urlsafe(32)
                 SESSOES_ENGENHEIRO.add(token)
-                corpo = json.dumps({"ok": True, "usuario": USUARIO_ENGENHEIRO}).encode("utf-8")
+                corpo = json.dumps({"ok": True, "usuario": NOME_USUARIO_ENGENHEIRO}, ensure_ascii=False).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.send_header("Set-Cookie", f"sessao_obra={token}; Path=/; HttpOnly; SameSite=Strict")
@@ -1260,7 +1955,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.enviar_json({"erro": "Foto acima do limite permitido"}, 413)
                 return
             dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
-            campos = ("torre", "andar", "unidade", "atividade", "descricao", "dataOcorrencia")
+            campos = ("torre", "andar", "unidade", "atividade", "especificacao", "descricao", "dataOcorrencia")
             if any(not dados.get(campo) for campo in campos):
                 self.enviar_json({"erro": "Preencha torre, andar, unidade e descrição"}, 400)
                 return
@@ -1268,14 +1963,16 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 cursor = conexao.execute(
                     """
                     INSERT INTO ocorrencias
-                    (torre, andar, unidade, atividade, descricao, foto, foto_nome, data_ocorrencia, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (torre, andar, unidade, atividade, subatividade, especificacao, descricao, foto, foto_nome, data_ocorrencia, status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         dados["torre"],
                         int(dados["andar"]),
                         dados["unidade"],
                         dados["atividade"],
+                        dados.get("subatividade", ""),
+                        dados.get("especificacao", ""),
                         dados["descricao"],
                         dados.get("foto", ""),
                         dados.get("fotoNome", ""),
@@ -1284,6 +1981,27 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     ),
                 )
                 identificador = cursor.lastrowid
+                chave_registro = f"{dados['torre']}|{int(dados['andar'])}|{dados['unidade']}|{dados['atividade']}"
+                linha_registro = conexao.execute(
+                    "SELECT especificacoes FROM registros WHERE chave = ?",
+                    (chave_registro,),
+                ).fetchone()
+                if not linha_registro:
+                    raise ValueError("O serviço selecionado não existe para este apartamento ou setor")
+                try:
+                    estados_especificacoes = json.loads(linha_registro["especificacoes"] or "{}")
+                except (json.JSONDecodeError, TypeError):
+                    estados_especificacoes = {}
+                estados_especificacoes[dados["especificacao"]] = "pendente"
+                conexao.execute(
+                    """
+                    UPDATE registros
+                    SET especificacoes=?, status='pendente', concluido=0,
+                        data_conclusao=?, atualizado_em=CURRENT_TIMESTAMP
+                    WHERE chave=?
+                    """,
+                    (json.dumps(estados_especificacoes, ensure_ascii=False), dados["dataOcorrencia"], chave_registro),
+                )
             self.enviar_json({"ok": True, "id": identificador}, 201)
         except (ValueError, json.JSONDecodeError) as erro:
             self.enviar_json({"erro": str(erro)}, 400)
@@ -1324,6 +2042,28 @@ class ServidorObra(SimpleHTTPRequestHandler):
     def do_DELETE(self):
         caminho = urlparse(self.path).path
         partes = caminho.strip("/").split("/")
+        if caminho == "/api/setores":
+            if not self.exigir_engenheiro():
+                return
+            try:
+                parametros = parse_qs(urlparse(self.path).query)
+                torre = parametros.get("torre", [""])[0]
+                andar = int(parametros.get("andar", ["0"])[0])
+                unidade = parametros.get("unidade", [""])[0].strip()
+                if torre not in TORRES_NOMES or not unidade or andar < -2:
+                    raise ValueError("Setor inválido")
+                with conectar() as conexao:
+                    cursor = conexao.execute("DELETE FROM registros WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                    for tabela in ("ocorrencias", "projetos_unidade", "projetos_ocultos"):
+                        conexao.execute(f"DELETE FROM {tabela} WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                    conexao.execute("DELETE FROM atividades_config WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                if not cursor.rowcount:
+                    self.enviar_json({"erro": "Setor não encontrado"}, 404)
+                    return
+                self.enviar_json({"ok": True})
+            except ValueError as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
         if len(partes) == 3 and partes[:2] == ["api", "projetos"]:
             if not self.exigir_engenheiro():
                 return
