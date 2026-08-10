@@ -715,12 +715,22 @@
   .criterio-overlay{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:18px;background:rgba(7,25,41,.58);}
   .criterio-overlay.oculto{display:none;}
   .criterio-caixa{width:min(100%,520px);padding:22px;border-radius:14px;background:#fff;box-shadow:0 22px 65px rgba(0,0,0,.35);}
+  .criterio-cabecalho{display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .criterio-caixa h3{margin:0;color:var(--azul-escuro);font-size:1rem;}
+  .criterio-editar{display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid #b8c7d3;border-radius:8px;background:#fff;color:var(--azul);cursor:pointer;}
+  .criterio-editar[hidden]{display:none;}
+  .criterio-editar:hover{background:var(--azul);border-color:var(--azul);color:#fff;}
+  .criterio-editar svg{width:17px;height:17px;fill:currentColor;}
   .criterio-caixa p{margin:7px 0 14px;color:var(--cinza-texto);font-size:.76rem;}
   .criterio-caixa textarea{width:100%;min-height:145px;resize:vertical;border:1px solid #c8d2da;border-radius:8px;padding:11px;font:inherit;font-size:.82rem;line-height:1.5;}
+  .criterio-caixa textarea[readonly]{resize:none;border-color:transparent;background:#f6f8fa;color:#152637;outline:none;}
   .criterio-acoes{display:flex;justify-content:flex-end;gap:9px;margin-top:13px;}
+  .criterio-acoes.oculto{display:none;}
   .criterio-acoes button{border:0;border-radius:7px;padding:9px 14px;font-weight:700;cursor:pointer;}
-  .criterio-cancelar{background:#e8edf1;color:#526270;}.criterio-salvar{background:var(--azul);color:#fff;}
+  .criterio-cancelar{background:#e8edf1;color:#526270;}
+  .criterio-cancelar:hover{background:#d92732;color:#fff;}
+  .criterio-salvar{background:var(--azul-escuro);color:#fff;}
+  .criterio-salvar:hover{background:var(--azul);}
   .menu-contexto-setor{position:fixed;z-index:13000;display:grid;min-width:180px;padding:6px;border:1px solid #cbd5dd;border-radius:9px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.22);}
   .menu-contexto-setor.oculto{display:none;}
   .menu-contexto-setor button{border:0;border-radius:6px;background:#fff;padding:9px 11px;text-align:left;color:#263746;font:inherit;font-size:.76rem;cursor:pointer;}
@@ -1339,6 +1349,7 @@
     </form>
     <div class="ocorrencias-toolbar">
       <h3 style="margin:0;color:var(--azul-escuro);font-size:.9rem">Histórico de ocorrências</h3>
+      <div class="campo-filtro"><label for="filtroTorreOcorrencias">Torre</label><select id="filtroTorreOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroAndarOcorrencias">Andar</label><select id="filtroAndarOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroApartamentoOcorrencias">Apartamento</label><select id="filtroApartamentoOcorrencias"><option value="todos">Todos os apartamentos</option></select></div>
       <div class="campo-filtro"><label for="filtroStatusOcorrencias">Status</label><select id="filtroStatusOcorrencias"><option value="todos">Todos os status</option><option value="pendente">Pendente</option><option value="concluido">Concluída</option></select></div>
@@ -1385,10 +1396,10 @@
 
 <div class="criterio-overlay oculto" id="criterioOverlay" role="dialog" aria-modal="true" aria-labelledby="criterioTitulo">
   <div class="criterio-caixa">
-    <h3 id="criterioTitulo">Critério da especificação</h3>
+    <div class="criterio-cabecalho"><h3 id="criterioTitulo">Critério da especificação</h3><button class="criterio-editar" id="editarCriterio" type="button" title="Editar critério" aria-label="Editar critério"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.96 1.96 3.75 3.75 2.13-1.79Z"/></svg></button></div>
     <p id="criterioContexto"></p>
-    <textarea id="criterioTexto" placeholder="Descreva o critério de aceitação, tolerâncias, método de verificação e demais observações."></textarea>
-    <div class="criterio-acoes"><button class="criterio-cancelar" id="cancelarCriterio" type="button">Cancelar</button><button class="criterio-salvar" id="salvarCriterio" type="button">Salvar critério</button></div>
+    <textarea id="criterioTexto" readonly placeholder="Nenhum critério cadastrado."></textarea>
+    <div class="criterio-acoes oculto" id="acoesCriterio"><button class="criterio-cancelar" id="cancelarCriterio" type="button">Cancelar</button><button class="criterio-salvar" id="salvarCriterio" type="button">Salvar critério</button></div>
   </div>
 </div>
 <div class="menu-contexto-setor oculto" id="menuContextoSetor"><button type="button" id="adicionarSetor">Adicionar novo setor</button><button type="button" id="editarNomeSetor">Editar nome</button><button type="button" class="excluir" id="excluirSetor">Excluir setor</button></div>
@@ -1689,15 +1700,6 @@ const DIVISOES_REVESTIMENTO={
     "Tela Entre Alvenaria e Estrutura",
     "Aspecto Final"
   ],
-  "Gesso Liso":[
-    "Condições para Início do Serviço",
-    "Planicidade",
-    "Nivelamento e Prumo",
-    "Esquadro",
-    "Cantos Riscados",
-    "Tela Entre Alvenaria e Estrutura",
-    "Aspecto Final"
-  ],
   "Externo em Argamassa":[
     "Condições para Início do Serviço",
     "Posicionamento dos Arames",
@@ -1728,17 +1730,140 @@ const DIVISOES_REVESTIMENTO={
     "Aspecto Final"
   ]
 };
+const DIVISOES_GESSO={
+  "Gesso Liso":[
+    "Condições para Início do Serviço",
+    "Planicidade",
+    "Nivelamento e Prumo",
+    "Esquadro",
+    "Cantos Riscados",
+    "Tela Entre Alvenaria e Estrutura",
+    "Aspecto Final"
+  ],
+  "Paredes em Drywall":[
+    "Condição para Início do Serviço",
+    "Marcação das Paredes e Vão de Portas",
+    "Reforço de Madeira",
+    "Esquadro das Paredes",
+    "Prumo das Paredes e Pontos Elétricos Antes do Fechamento",
+    "Planicidade",
+    "Cantoneira de Canto",
+    "Aspecto Geral"
+  ],
+  "Shaft em Drywall":[
+    "Condição para Início do Serviço",
+    "Transpasse e Posicionamento dos Montantes",
+    "Prumo",
+    "Planicidade",
+    "Esquadro",
+    "Reforço de Madeira",
+    "Aspecto Geral"
+  ],
+  "Forro em Placas de Gesso Acartonado":[
+    "Marcação do Nível do Forro",
+    "Tipo de Placa",
+    "Fixação da Estrutura",
+    "Planicidade",
+    "Aspecto Geral"
+  ]
+};
+const DIVISOES_IMPERMEABILIZACAO={
+  "Impermeabilização com Manta":[
+    "Condições de Início dos Serviços",
+    "Regularização Acabada",
+    "Pintura da Base",
+    "Cola das Emendas",
+    "Cantos e Detalhes",
+    "Ralos",
+    "Juntas de Dilatação",
+    "Estanqueidade",
+    "Proteção Mecânica"
+  ],
+  "Impermeabilização Interna":[
+    "Condições de Início dos Serviços",
+    "Reforço nos Ralos e Aplicação do Produto",
+    "Falhas na Superfície",
+    "Estanqueidade",
+    "Proteção, Piso Acabado, Contrapiso com Caída e Piso “OCO” após 7 dias"
+  ]
+};
+const DIVISOES_PRODUCAO_ARGAMASSA=Object.fromEntries([
+  "Revestimento Externo",
+  "Contrapiso",
+  "Contrapiso Acústico",
+  "Revestimento Interno",
+  "Assentamento de Alvenaria"
+].map(divisao=>[divisao,["Equipamento","Balde Dosador","Traço"]]));
+const DIVISOES_CONTRAPISO={
+  "Contrapiso":[
+    "Condições para Início dos Serviços",
+    "Tela Soldada (para Locais de Execução sobre Camada de Regularização)",
+    "Nível das Taliscas",
+    "Acabamento da Superfície",
+    "Planicidade",
+    "Caimento em Direção aos Ralos",
+    "Aderência da Base"
+  ],
+  "Contrapiso Acústico":[
+    "Condições para Início dos Serviços",
+    "Nível das Taliscas",
+    "Manta Acústica",
+    "Tela Metálica",
+    "Planicidade",
+    "Acabamento da Superfície"
+  ]
+};
+const DIVISOES_ESQUADRIAS={
+  "Taliscas e Contramarco":[
+    "Condições para Início do Serviço",
+    "Personalização",
+    "Prumo das Taliscas",
+    "Esquadro das Taliscas",
+    "Esquadro do Contramarco em Relação à Fachada",
+    "Altura do Vão em Relação ao Piso Acabado",
+    "Grapas Nivelamento das Travessas",
+    "Checar Prumo e Esquadro do Contramarco",
+    "Checar o Chumbamento com o Gabarito e Remoção das Fitas Hellerman"
+  ],
+  "Colocação de Batente Metálico":[
+    "Sentido de Abertura da Porta",
+    "Preenchimento da Argamassa",
+    "Prumo e Nível",
+    "Fixação"
+  ],
+  "Colocação de Gradil":[
+    "Verificar o Prumo da Fachada e Locação",
+    "Verificar Alinhamento do Gradil",
+    "Nivelamento do Gradil",
+    "Prumo do Gradil",
+    "Verificar o Chumbamento/Firmeza (Fixação no Concreto/Alvenaria)",
+    "Distância e Medidas",
+    "Pintura ou Proteção de Gradis de Alumínio, Aço e suas Ligas",
+    "Ensaios"
+  ],
+  "Caixilho de Alumínio":["Execução do serviço"]
+};
 const divisaoServicoPorAndar={};
 function divisoesDoServico(atividade,andar){
   if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar);
   if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA);
   if(atividade==="Revestimento")return Object.keys(DIVISOES_REVESTIMENTO);
+  if(atividade==="Contrapiso")return Object.keys(DIVISOES_CONTRAPISO);
+  if(atividade==="Esquadrias")return Object.keys(DIVISOES_ESQUADRIAS);
+  if(atividade==="Gesso")return Object.keys(DIVISOES_GESSO);
+  if(atividade==="Impermeabilização")return Object.keys(DIVISOES_IMPERMEABILIZACAO);
+  if(atividade==="Produção de Argamassa")return Object.keys(DIVISOES_PRODUCAO_ARGAMASSA);
   return [];
 }
 function mapaDivisoesDoServico(atividade){
   return atividade==="Estrutura"?DIVISOES_ESTRUTURA
     :atividade==="Alvenaria"?DIVISOES_ALVENARIA
     :atividade==="Revestimento"?DIVISOES_REVESTIMENTO
+    :atividade==="Contrapiso"?DIVISOES_CONTRAPISO
+    :atividade==="Esquadrias"?DIVISOES_ESQUADRIAS
+    :atividade==="Gesso"?DIVISOES_GESSO
+    :atividade==="Impermeabilização"?DIVISOES_IMPERMEABILIZACAO
+    :atividade==="Produção de Argamassa"?DIVISOES_PRODUCAO_ARGAMASSA
     :null;
 }
 function chaveDivisaoServico(atividade,andar){return `${atividade}|${andar}`;}
@@ -1752,6 +1877,11 @@ function especificacoesDoServico(atividade){
   if(atividade==="Estrutura") return Object.entries(DIVISOES_ESTRUTURA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   if(atividade==="Alvenaria") return Object.entries(DIVISOES_ALVENARIA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   if(atividade==="Revestimento") return Object.entries(DIVISOES_REVESTIMENTO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Contrapiso") return Object.entries(DIVISOES_CONTRAPISO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Esquadrias") return Object.entries(DIVISOES_ESQUADRIAS).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Gesso") return Object.entries(DIVISOES_GESSO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Impermeabilização") return Object.entries(DIVISOES_IMPERMEABILIZACAO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
+  if(atividade==="Produção de Argamassa") return Object.entries(DIVISOES_PRODUCAO_ARGAMASSA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
   if(cadastrada?.especificacoes?.length) return cadastrada.especificacoes;
   return ESPECIFICACOES_SERVICOS[atividade]||["Execução do serviço"];
@@ -2285,20 +2415,24 @@ function prepararFormularioOcorrencia(){
     const hoje=new Date();
     document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
   }
+  const filtroTorre=document.getElementById("filtroTorreOcorrencias");
+  if(!filtroTorre.options.length) filtroTorre.innerHTML=`<option value="todos">Todas as torres</option>`+Object.keys(TORRES).map(chave=>`<option value="${chave}">${TORRES[chave].nome}</option>`).join("");
+  filtroTorre.value=torreSelecionada;
   const filtroAndar=document.getElementById("filtroAndarOcorrencias");
-  if(!filtroAndar.options.length){
-    filtroAndar.innerHTML=opcoesAndares(torreSelecionada,true);
-  }
+  filtroAndar.innerHTML=opcoesAndares(filtroTorre.value==="todos"?"aurora":filtroTorre.value,true);
   atualizarApartamentosFiltroOcorrencias();
 }
 
 function atualizarApartamentosFiltroOcorrencias(){
   const filtro=document.getElementById("filtroApartamentoOcorrencias");
+  const torre=document.getElementById("filtroTorreOcorrencias")?.value||torreSelecionada;
   const andar=document.getElementById("filtroAndarOcorrencias").value;
   const valorAtual=filtro.value;
   const unidades=andar==="todos"
-    ? [...new Set(ocorrenciasBanco.filter(oc=>oc.torre===torreSelecionada).map(oc=>oc.unidade))]
-    : unidadesDoAndar(torreSelecionada,Number(andar));
+    ? [...new Set(ocorrenciasBanco.filter(oc=>torre==="todos"||oc.torre===torre).map(oc=>oc.unidade))]
+    : torre==="todos"
+      ? [...new Set(Object.keys(TORRES).flatMap(chave=>unidadesDoAndar(chave,Number(andar))))]
+      : unidadesDoAndar(torre,Number(andar));
   unidades.sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
   filtro.innerHTML=`<option value="todos">Todos os apartamentos</option>`+
     unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
@@ -2868,27 +3002,113 @@ function atualizarControlesSelecao(){
 }
 
 const CHAVE_CRITERIOS_ESPECIFICACOES="obra-criterios-especificacoes-v1";
-let criteriosEspecificacoes=(()=>{try{return JSON.parse(localStorage.getItem(CHAVE_CRITERIOS_ESPECIFICACOES))||{}}catch(e){return {}}})();
+const CRITERIOS_PADRAO_ALVENARIA=Object.fromEntries([
+  ["Marcação Alvenaria :: Condições para Início dos Serviços","INSTRUÇÃO:\nA opção de planta do apartamento deverá estar identificada na entrada. Verificar visualmente a limpeza geral, a transferência dos eixos, o chapisco nos locais necessários e se o nível de referência está definido."],
+  ["Marcação Alvenaria :: Posicionamento da Fiada de Marcação","INSTRUÇÃO:\nAtravés de trena metálica, verificar a posição em relação aos eixos, de acordo com o projeto, incluindo a análise dos vãos.\n\nTOLERÂNCIA:\n± 3 mm."],
+  ["Marcação Alvenaria :: Esquadro da Fiada de Marcação","INSTRUÇÃO:\nVerificar através de esquadro metálico de 60 cm × 80 cm.\n\nTOLERÂNCIA:\n± 3 mm na ponta de 60 cm."],
+  ["Marcação Alvenaria :: Alinhamento da Fiada de Marcação","INSTRUÇÃO:\nVerificar através da linha e considerar a possibilidade de adequação pela estrutura.\n\nTOLERÂNCIA:\nAté 3 mm de diferença em relação à linha esticada; 10 mm para caso de estrutura."],
+  ["Marcação Alvenaria :: Tubulação de Dreno","INSTRUÇÃO:\nA tubulação dos drenos deverá estar posicionada no centro da marcação, a uma altura de pelo menos 1,0 metro.\n\nMÉTODO/PROCEDIMENTO:\nVisual."],
+  ["Marcação Alvenaria :: Condutes Elétricos","INSTRUÇÃO:\nTodos os conduítes deverão estar posicionados conforme o projeto de vedação.\n\nMÉTODO/PROCEDIMENTO:\nVisual."],
+  ["Marcação Alvenaria :: Nivelamento da Fiada de Marcação","INSTRUÇÃO:\nVerificar através de nível alemão, régua de bolha ou nível de mangueira.\n\nTOLERÂNCIA:\n3 mm em relação ao nível de referência ou bolha entre linhas, quando utilizada régua de bolha."],
+  ["Elevação Alvenaria :: Condições para Início dos Serviços","INSTRUÇÃO:\nÉ necessário que o dreno do ar-condicionado fique com a altura conforme o projeto.\n\nMÉTODO/PROCEDIMENTO:\nVisual."],
+  ["Elevação Alvenaria :: Dreno do Ar-Condicionado","INSTRUÇÃO:\nÉ necessário que o dreno do ar-condicionado fique com a altura conforme o projeto.\n\nMÉTODO/PROCEDIMENTO:\nVisual."],
+  ["Elevação Alvenaria :: Tela Galvanizada","INSTRUÇÃO:\nPosicionar as telas na estrutura a cada 40 cm, em duas fiadas, antes do início da elevação.\n\nCRITÉRIO DE ACEITAÇÃO:\n± 1 cm."],
+  ["Elevação Alvenaria :: Preenchimento com Argamassa dos Blocos da Marcação","INSTRUÇÃO:\nVerificar visualmente se o preenchimento com argamassa dos blocos da marcação e do shaft foi realizado."],
+  ["Elevação Alvenaria :: Prumo da Alvenaria","INSTRUÇÃO:\nVerificar através de régua metálica de 1,80 m com nível de bolha acoplado.\n\nCRITÉRIO DE ACEITAÇÃO:\nBolha entre linhas."],
+  ["Elevação Alvenaria :: Planeza da Alvenaria","INSTRUÇÃO:\nVerificar através de trena metálica e régua metálica de 1,80 m com nível de bolha acoplado.\n\nTOLERÂNCIA:\n± 4 mm."],
+  ["Elevação Alvenaria :: Prumo de Vãos de Portas e Dimensões dos Vãos de Janelas e Portas","INSTRUÇÃO:\nVerificar através de régua metálica de 1,80 m com nível de bolha acoplado. Conferir as dimensões dos vãos das janelas e portas com auxílio de trena e régua.\n\nCRITÉRIO DE ACEITAÇÃO:\nBolha entre linhas."],
+  ["Elevação Alvenaria :: Aspecto Geral da Alvenaria","INSTRUÇÃO:\nVerificar visualmente rebarbas, nivelamento, uniformidade, preenchimento das juntas e existência de blocos quebrados."],
+  ["Elevação Alvenaria :: Espessura do Vão para Encunhamento","INSTRUÇÃO:\nVerificar visualmente a espessura do vão de encunhamento para posterior preenchimento na FVS002/C.\n\nTOLERÂNCIA:\n1,0 cm a 3,5 cm."],
+  ["Encunhamento :: Condições para Início dos Serviços","INSTRUÇÃO:\nA fixação deve ser realizada das lajes superiores para as inferiores. Recomenda-se o uso de bisnaga para encunhamento. Seguir o fluxo conforme o PES de Alvenaria."],
+  ["Encunhamento :: Encunhamento","INSTRUÇÃO:\nApós a conclusão da alvenaria, a argamassa deve cobrir a espessura da parede do bloco, com dois cordões de massa de cada lado da parede.\n\nTOLERÂNCIA:\n1,5 cm a 3,5 cm."]
+].map(([especificacao,criterio])=>[JSON.stringify(["Alvenaria",especificacao]),criterio]));
+const CRITERIOS_PADRAO_IMPERMEABILIZACAO=Object.fromEntries([
+  ["Impermeabilização com Manta :: Condições de Início dos Serviços","INSTRUÇÃO:\nVerificar visualmente as condições da base. Não deve haver material solto, pontas de aço de armaduras nem rebarbas de concreto. As tubulações também devem estar chumbadas. Verificar se existem juntas de dilatação na área a ser impermeabilizada. Vedar o local de execução durante a realização da atividade."],
+  ["Impermeabilização com Manta :: Regularização Acabada","INSTRUÇÃO:\nDemarcar as floreiras, muros e muretas para definir os caimentos antes da execução da regularização acabada."],
+  ["Impermeabilização com Manta :: Pintura da Base","INSTRUÇÃO:\nVerificar visualmente, durante a aplicação, se o primer está sendo aplicado nos pontos de aderência da manta à base. A base deve estar totalmente seca."],
+  ["Impermeabilização com Manta :: Cola das Emendas","INSTRUÇÃO:\nVerificar visualmente, durante a aplicação, se as emendas estão com a sobreposição correta e aderidas.\n\nTOLERÂNCIA:\nMínimo de 10 cm."],
+  ["Impermeabilização com Manta :: Cantos e Detalhes","INSTRUÇÃO:\nVerificar visualmente, durante a aplicação, se a manta sobe pelos rodapés e tubulações emergentes e se está acima do nível da água e do jardim. Checar se os cantos estão arredondados. Verificar se foi aplicada tela plástica ou de galinheiro com a mesma altura que a manta no local.\n\nTOLERÂNCIA:\nMínimo de 20 cm."],
+  ["Impermeabilização com Manta :: Ralos","INSTRUÇÃO:\nVerificar se a impermeabilização desce para o interior do tubo e se há sobreposição da manta nesses locais. Verificar se os tubos coletores possuem diâmetro nominal mínimo de 100 mm."],
+  ["Impermeabilização com Manta :: Juntas de Dilatação","INSTRUÇÃO:\nVerificar se há juntas de dilatação no local, respeitando as distâncias máximas de 3 metros em um sentido e 2 metros no sentido perpendicular ao primeiro."],
+  ["Impermeabilização com Manta :: Estanqueidade","INSTRUÇÃO:\nApós a aplicação da manta, aplicar uma lâmina de água sobre o local, com no mínimo 10 cm de altura, e aguardar 72 horas.\n\nCRITÉRIO DE ACEITAÇÃO:\nNão pode haver vazamento."],
+  ["Impermeabilização com Manta :: Proteção Mecânica","INSTRUÇÃO:\nVerificar a execução da proteção mecânica, composta por argamassa de cimento e areia, onde necessária, e sua espessura em função do local. A proteção mecânica deve possuir tela de fios de arame galvanizados ou plásticos nas áreas verticais."],
+  ["Impermeabilização Interna :: Condições de Início dos Serviços","INSTRUÇÃO:\nAntes de começar os serviços, verificar visualmente se os ralos estão chumbados, se o piso está regularizado e se a primeira fiada de alvenaria foi executada na área a ser impermeabilizada para posterior recebimento dos shafts. Verificar também a limpeza da base."],
+  ["Impermeabilização Interna :: Reforço nos Ralos e Aplicação do Produto","INSTRUÇÃO:\nVerificar visualmente se os ralos possuem tela de reforço na execução do serviço. Conferir se o produto foi aplicado em três demãos cruzadas."],
+  ["Impermeabilização Interna :: Falhas na Superfície","INSTRUÇÃO:\nApós a aplicação da impermeabilização e antes da proteção, verificar visualmente se toda a superfície do ambiente foi coberta, virando o rodapé arredondado em 40 cm, e se há falhas. Checar se o produto foi aplicado corretamente dentro dos ralos e se os tubos passantes possuem pelo menos 5 cm de impermeabilização. Analisar se há caimento de 0,5% ou conforme o projeto nas áreas com ralos."],
+  ["Impermeabilização Interna :: Estanqueidade","INSTRUÇÃO:\nApós a aplicação da impermeabilização, aplicar uma lâmina de água sobre o local e aguardar 72 horas.\n\nTOLERÂNCIA:\nNão pode haver vazamento."],
+  ["Impermeabilização Interna :: Proteção, Piso Acabado, Contrapiso com Caída e Piso “OCO” após 7 dias","INSTRUÇÃO:\nVerificar o caimento da área molhada e, após sete dias, se não há piso “oco”. Analisar se há juntas de retração e de trabalho térmico onde necessário."]
+].map(([especificacao,criterio])=>[JSON.stringify(["Impermeabilização",especificacao]),criterio]));
+const CRITERIOS_PADRAO_GESSO=Object.fromEntries([
+  ["Paredes em Drywall :: Condição para Início do Serviço","INSTRUÇÃO:\nO local deve estar limpo. Contrapiso, massa interna ou gesso liso de parede e teto devem estar concluídos. Verificar visualmente se o tipo de placa (ST, RE, RU ou cimentícia) atende ao local de aplicação ou à especificação do projeto."],
+  ["Paredes em Drywall :: Marcação das Paredes e Vão de Portas","INSTRUÇÃO:\nConferir as medidas de acordo com o projeto."],
+  ["Paredes em Drywall :: Reforço de Madeira","INSTRUÇÃO:\nVerificar a instalação da chapa virolinha nos pontos de tanque e bancada."],
+  ["Paredes em Drywall :: Esquadro das Paredes","INSTRUÇÃO:\nVerificar através de esquadro metálico de 60 cm × 80 cm.\n\nTOLERÂNCIA:\n± 3 mm."],
+  ["Paredes em Drywall :: Prumo das Paredes e Pontos Elétricos Antes do Fechamento","INSTRUÇÃO:\nConferir o prumo e a planicidade das paredes com auxílio de uma régua de 1,80 m com nível de bolha, além dos pontos elétricos antes do fechamento."],
+  ["Paredes em Drywall :: Planicidade","INSTRUÇÃO:\nVerificar a planicidade da superfície por meio de uma régua metálica de 2,0 m de comprimento.\n\nCRITÉRIO DE ACEITAÇÃO:\nAté 5 mm."],
+  ["Paredes em Drywall :: Cantoneira de Canto","INSTRUÇÃO:\nVerificar se a cantoneira está instalada, caso seja necessária."],
+  ["Paredes em Drywall :: Aspecto Geral","INSTRUÇÃO:\nVerificar o aspecto geral da instalação e se os elementos necessários estão instalados."],
+  ["Shaft em Drywall :: Condição para Início do Serviço","INSTRUÇÃO:\nA marcação deve estar preenchida no box e na área de serviço, as taliscas conferidas e as prumadas hidráulicas chumbadas. Verificar visualmente se o tipo de placa (ST, RE, RU ou cimentícia) atende ao local de aplicação ou à especificação do projeto."],
+  ["Shaft em Drywall :: Transpasse e Posicionamento dos Montantes","INSTRUÇÃO:\nCom auxílio de trena, verificar se os transpasses possuem pelo menos 30 cm e estão desencontrados; se o espaçamento entre montantes é de no máximo 60 cm; e se os vãos de portas possuem transpasse de 20 cm."],
+  ["Shaft em Drywall :: Prumo","INSTRUÇÃO:\nVerificar através de régua metálica de 1,80 m com nível de bolha acoplado.\n\nCRITÉRIO DE ACEITAÇÃO:\nBolha entre linhas."],
+  ["Shaft em Drywall :: Planicidade","INSTRUÇÃO:\nVerificar a planicidade da superfície por meio de uma régua metálica de 2,0 m de comprimento.\n\nCRITÉRIO DE ACEITAÇÃO:\nAté 5 mm."],
+  ["Shaft em Drywall :: Esquadro","INSTRUÇÃO:\nVerificar através de esquadro metálico de 60 cm × 80 cm.\n\nTOLERÂNCIA:\n± 3 mm."],
+  ["Shaft em Drywall :: Reforço de Madeira","INSTRUÇÃO:\nVerificar a instalação da chapa de virolinha nos pontos de tanque e bancadas."],
+  ["Shaft em Drywall :: Aspecto Geral","INSTRUÇÃO:\nAntes do fechamento, verificar a limpeza interna do shaft, a aplicação e o acabamento da fita e da massa de rejunte. A superfície final das paredes não deve estar contaminada por pó nem possuir deformações."]
+].map(([especificacao,criterio])=>[JSON.stringify(["Gesso",especificacao]),criterio]));
+const CRITERIOS_PADRAO_CERAMICA=Object.fromEntries([
+  ["Piso Cerâmico :: Condição para Início dos Serviços","INSTRUÇÃO:\nVerificar se o ambiente está limpo, se a área está desobstruída e se a impermeabilização está finalizada. Conferir a paginação dos pisos com o projeto de arquitetura, o lote e a especificação do revestimento."],
+  ["Piso Cerâmico :: Juntas","INSTRUÇÃO:\nApós o assentamento de todas as peças e antes do rejunte, verificar a espessura e o alinhamento das juntas e a existência de dentes sobressalentes.\n\nTOLERÂNCIA:\nAté 1 mm."],
+  ["Piso Cerâmico :: Planicidade e Nivelamento","INSTRUÇÃO:\nVerificar a planicidade e o nivelamento do piso. O início do rejuntamento deverá ocorrer três dias após o assentamento da cerâmica; limpar e umedecer as juntas e preparar o produto conforme as instruções do fabricante."],
+  ["Piso Cerâmico :: Condição para Rejuntamento","INSTRUÇÃO:\nVerificar visualmente o preenchimento das juntas entre as peças, sem falhas por falta ou excesso de rejunte, e a limpeza das peças e do rejunte. Conferir diferenças de tonalidade, defeitos, quebras e lascas. Verificar a aderência das placas com martelo de borracha ou cabo de vassoura.\n\nTOLERÂNCIA:\nNão pode haver som cavo em mais de um ponto por peça."],
+  ["Piso Cerâmico :: Aspecto Final","INSTRUÇÃO:\nVerificar visualmente o preenchimento das juntas entre as peças, sem falhas por falta ou excesso de rejunte, e a limpeza. Conferir diferenças de tonalidade, defeitos, quebras e lascas. Verificar a aderência das placas com martelo de borracha ou cabo de vassoura.\n\nTOLERÂNCIA:\nNão pode haver som cavo em mais de um ponto por peça."],
+  ["Piso Cerâmico :: Caimento","INSTRUÇÃO:\nVerificar, por meio de nível a laser ou água, o caimento para os ralos nas áreas molhadas e molháveis, quando indicado em projeto.\n\nTOLERÂNCIA:\nNão deve formar lâmina de água nos cantos; a água deve seguir para o ralo."],
+  ["Piso Cerâmico :: Proteção","INSTRUÇÃO:\nVerificar a proteção com lona plástica ou papelão após a conclusão do serviço."],
+  ["Parede em Cerâmica :: Condição para Início dos Serviços","INSTRUÇÃO:\nVerificar se o ambiente está limpo, se a área está desobstruída e se a impermeabilização está finalizada. Conferir a paginação dos azulejos com o projeto de arquitetura, o lote e a especificação do revestimento."],
+  ["Parede em Cerâmica :: Juntas","INSTRUÇÃO:\nApós o assentamento de todas as peças e antes do rejunte, verificar a espessura e o alinhamento das juntas e a existência de dentes sobressalentes.\n\nTOLERÂNCIA:\nAté 2 mm."],
+  ["Parede em Cerâmica :: Planicidade e Prumo do Revestimento","INSTRUÇÃO:\nVerificar a planicidade do revestimento com régua metálica e o prumo com régua dotada de nível de bolha.\n\nTOLERÂNCIA:\nBolha entre as linhas."],
+  ["Parede em Cerâmica :: Aderência das Placas","INSTRUÇÃO:\nRemover uma placa escolhida ao acaso e assentada há no máximo 30 minutos; seu tardoz deve estar inteiramente impregnado de argamassa colante. Verificar também a aderência das placas com martelo de borracha ou cabo de vassoura."],
+  ["Parede em Cerâmica :: Condição para Rejuntamento","INSTRUÇÃO:\nO rejuntamento deverá começar três dias após o assentamento da cerâmica. Limpar e umedecer as juntas e preparar o produto conforme as instruções do fabricante."],
+  ["Parede em Cerâmica :: Aspecto Final","INSTRUÇÃO:\nApós o término do serviço, verificar visualmente a regularidade do acabamento das juntas, cantos, recortes e arremates, além da tonalidade das peças. Conferir o preenchimento das juntas, sem falhas por falta ou excesso de rejunte, e a limpeza das peças e do rejunte."]
+].map(([especificacao,criterio])=>[JSON.stringify(["Revestimento",especificacao]),criterio]));
+let criteriosEspecificacoes=(()=>{try{return {...CRITERIOS_PADRAO_ALVENARIA,...CRITERIOS_PADRAO_IMPERMEABILIZACAO,...CRITERIOS_PADRAO_GESSO,...CRITERIOS_PADRAO_CERAMICA,...(JSON.parse(localStorage.getItem(CHAVE_CRITERIOS_ESPECIFICACOES))||{})}}catch(e){return {...CRITERIOS_PADRAO_ALVENARIA,...CRITERIOS_PADRAO_IMPERMEABILIZACAO,...CRITERIOS_PADRAO_GESSO,...CRITERIOS_PADRAO_CERAMICA}}})();
 let criterioEmEdicao=null;
+let textoCriterioAntesDaEdicao="";
 function chaveCriterio(atividade,especificacao){return JSON.stringify([atividade,especificacao]);}
+function alternarEdicaoCriterio(editando){
+  const texto=document.getElementById("criterioTexto");
+  texto.readOnly=!editando;
+  document.getElementById("acoesCriterio").classList.toggle("oculto",!editando);
+  document.getElementById("editarCriterio").hidden=editando;
+  if(editando){
+    textoCriterioAntesDaEdicao=texto.value;
+    texto.placeholder="Descreva o critério de aceitação, tolerâncias, método de verificação e demais observações.";
+    setTimeout(()=>texto.focus(),0);
+  }else{
+    texto.placeholder="Nenhum critério cadastrado.";
+  }
+}
 function abrirPopupCriterio(atividade,especificacao){
   criterioEmEdicao={atividade,especificacao};
   document.getElementById("criterioContexto").textContent=`${atividade} · ${especificacao.replace(" :: "," · ")}`;
   document.getElementById("criterioTexto").value=criteriosEspecificacoes[chaveCriterio(atividade,especificacao)]||"";
+  alternarEdicaoCriterio(false);
   document.getElementById("criterioOverlay").classList.remove("oculto");
-  setTimeout(()=>document.getElementById("criterioTexto").focus(),0);
 }
 function fecharPopupCriterio(){document.getElementById("criterioOverlay").classList.add("oculto");criterioEmEdicao=null;}
 document.getElementById("corpoPlanilha").addEventListener("click",event=>{
   const botao=event.target.closest(".abrir-criterio");
   if(botao) abrirPopupCriterio(botao.dataset.atividadeCriterio,botao.dataset.especificacaoCriterio);
 });
-document.getElementById("cancelarCriterio").addEventListener("click",fecharPopupCriterio);
+document.getElementById("editarCriterio").addEventListener("click",()=>alternarEdicaoCriterio(true));
+document.getElementById("cancelarCriterio").addEventListener("click",()=>{
+  document.getElementById("criterioTexto").value=textoCriterioAntesDaEdicao;
+  alternarEdicaoCriterio(false);
+});
 document.getElementById("salvarCriterio").addEventListener("click",()=>{
   if(!criterioEmEdicao)return;
   criteriosEspecificacoes[chaveCriterio(criterioEmEdicao.atividade,criterioEmEdicao.especificacao)]=document.getElementById("criterioTexto").value.trim();
   localStorage.setItem(CHAVE_CRITERIOS_ESPECIFICACOES,JSON.stringify(criteriosEspecificacoes));
-  fecharPopupCriterio();
+  alternarEdicaoCriterio(false);
 });
 document.getElementById("criterioOverlay").addEventListener("click",event=>{if(event.target.id==="criterioOverlay")fecharPopupCriterio();});
 document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!document.getElementById("criterioOverlay").classList.contains("oculto"))fecharPopupCriterio();});
@@ -3236,12 +3456,14 @@ function opcoesStatusOcorrencia(atual){
 
 function preencherOcorrencias(){
   const lista = document.getElementById('listaOcorrencias');
+  const torreFiltro=document.getElementById("filtroTorreOcorrencias")?.value||torreSelecionada;
   const apartamentoFiltro=document.getElementById("filtroApartamentoOcorrencias")?.value||"todos";
   const statusFiltro=document.getElementById("filtroStatusOcorrencias")?.value||"todos";
   const andarFiltro=document.getElementById("filtroAndarOcorrencias")?.value||"todos";
   document.getElementById("baixarHistoricoOcorrencias").href="/relatorio-ocorrencias.pdf?"+
-    new URLSearchParams({torre:torreSelecionada,andar:andarFiltro,unidade:apartamentoFiltro,status:statusFiltro}).toString();
+    new URLSearchParams({torre:torreFiltro,andar:andarFiltro,unidade:apartamentoFiltro,status:statusFiltro}).toString();
   const ocorrenciasFiltradas=ocorrenciasBanco.filter(oc=>{
+    if(torreFiltro!=="todos"&&oc.torre!==torreFiltro) return false;
     if(statusFiltro!=="todos"&&(oc.status||"pendente")!==statusFiltro) return false;
     if(andarFiltro!=="todos"&&Number(oc.andar)!==Number(andarFiltro)) return false;
     if(apartamentoFiltro!=="todos"&&oc.unidade!==apartamentoFiltro) return false;
@@ -3389,6 +3611,13 @@ document.getElementById("ocAndar").addEventListener("change",atualizarUnidadesOc
 document.getElementById("ocUnidade").addEventListener("change",atualizarAtividadesOcorrencia);
 document.getElementById("ocAtividade").addEventListener("change",atualizarSubatividadesOcorrencia);
 document.getElementById("ocSubatividade").addEventListener("change",atualizarEspecificacoesOcorrencia);
+document.getElementById("filtroTorreOcorrencias").addEventListener("change",event=>{
+  const filtroAndar=document.getElementById("filtroAndarOcorrencias");
+  filtroAndar.innerHTML=opcoesAndares(event.target.value==="todos"?"aurora":event.target.value,true);
+  filtroAndar.value="todos";
+  atualizarApartamentosFiltroOcorrencias();
+  preencherOcorrencias();
+});
 document.getElementById("filtroApartamentoOcorrencias").addEventListener("change",preencherOcorrencias);
 document.getElementById("filtroAndarOcorrencias").addEventListener("change",()=>{
   atualizarApartamentosFiltroOcorrencias();
