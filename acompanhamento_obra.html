@@ -508,12 +508,16 @@
   .login-caixa>p{text-align:center;color:var(--cinza-texto);font-size:.78rem;margin:0 0 20px;}
   .login-autoria{text-align:center;color:var(--azul-escuro);font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:-13px 0 19px;}
   .login-caixa label{display:block;margin:11px 0 5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;}
-  .login-caixa input{width:100%;height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;font:inherit;}
-  .login-caixa button,.login-visitante{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:13px;border:0;border-radius:8px;background:var(--azul);color:#fff;font:700 .8rem Arial;text-decoration:none;cursor:pointer;}
-  .login-visitante{background:#eef3f6;color:var(--azul-escuro);border:1px solid #c7d2da;}
-  .login-divisor{display:flex;align-items:center;gap:9px;margin:16px 0;color:#8997a2;font-size:.68rem;}
-  .login-divisor:before,.login-divisor:after{content:"";height:1px;flex:1;background:#dce2e7;}
+  .login-caixa input,.login-caixa select{width:100%;height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;background:#fff;font:inherit;}
+  .login-caixa button{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:13px;border:0;border-radius:8px;background:var(--azul);color:#fff;font:700 .8rem Arial;text-decoration:none;cursor:pointer;}
   .login-erro{min-height:18px;margin-top:8px;color:var(--vermelho);font-size:.72rem;text-align:center;}
+  .login-modos{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 0 15px;padding:4px;border-radius:9px;background:#edf2f5;}
+  .login-modos button{height:34px;margin:0;background:transparent;color:var(--azul-escuro);}
+  .login-modos button.ativo{background:#fff;color:var(--azul-escuro);box-shadow:0 1px 5px rgba(15,45,72,.14);}
+  .cadastro-acesso[hidden],.login-acesso[hidden]{display:none;}
+  .cadastro-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 9px;}.cadastro-grid .largo{grid-column:1/-1;}
+  .cadastro-perfil{height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;background:#edf2f5;color:var(--azul-escuro);font-weight:700;display:flex;align-items:center;}
+  .cadastro-aviso{margin:9px 0 0;color:#687887;font-size:.68rem;line-height:1.4;text-align:center;}
   .seletor-obras{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:25px;background:linear-gradient(145deg,#176da8,#4aa6d5);color:#fff;transition:opacity .45s,visibility .45s;}
   .seletor-obras.fechado{opacity:0;visibility:hidden;pointer-events:none;}
   .obras-conteudo{width:min(100%,850px);}
@@ -774,6 +778,33 @@
   .atividade-acoes button{border:0;background:#e8f1f6;color:var(--azul-escuro);border-radius:6px;padding:6px 8px;cursor:pointer;margin-right:4px;}
   .atividade-acoes button.excluir{background:#fdebea;color:var(--vermelho);}
   .atividade-status{margin-top:10px;font-size:.74rem;min-height:18px;}
+  .administracao-link[hidden]{display:none;}
+  .administracao-abas{display:flex;gap:4px;margin:0 0 15px;border-bottom:1px solid var(--cinza-borda);}
+  .administracao-abas button{border:0;border-bottom:3px solid transparent;background:transparent;color:#58697a;padding:10px 14px;font-weight:700;cursor:pointer;}
+  .administracao-abas button.ativo{border-bottom-color:var(--vermelho);color:var(--azul-escuro);}
+  .administracao-subaba{display:none}.administracao-subaba.ativo{display:block;}
+  .administracao-grid{display:grid;grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:16px;align-items:start;}
+  .administracao-card{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:18px;}
+  .administracao-card h3{margin:0 0 14px;color:var(--azul-escuro);}
+  .administracao-form{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .administracao-form .largo{grid-column:1/-1;}
+  .administracao-form label{display:block;margin-bottom:5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;}
+  .administracao-form input,.administracao-form select{width:100%;height:39px;border:1px solid #c7d2da;border-radius:7px;padding:0 9px;background:#fff;}
+  .administracao-torres{display:flex;gap:18px;align-items:center;min-height:39px;}
+  .administracao-torres label{display:flex;align-items:center;gap:6px;margin:0;text-transform:none;}
+  .administracao-torres input{width:auto;height:auto;}
+  .administracao-acoes{display:flex;gap:8px;}
+  .administracao-acoes button{border:0;border-radius:7px;padding:10px 13px;font-weight:700;cursor:pointer;}
+  .administracao-acoes .salvar{background:var(--azul-escuro);color:#fff;}.administracao-acoes .cancelar{background:#e8edf1;color:#526270;}
+  .administracao-tabela{width:100%;font-size:.72rem;}.administracao-tabela th,.administracao-tabela td{padding:9px 7px;vertical-align:top;}
+  .administracao-tabela button{border:0;border-radius:6px;padding:6px 8px;background:#e8f1f6;color:var(--azul-escuro);font-weight:700;cursor:pointer;}
+  .administracao-tabela button.excluir{margin-left:4px;background:#fdebea;color:var(--vermelho);}.administracao-tabela button.excluir:hover{background:var(--vermelho);color:#fff;}
+  .perfil-lista{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}.perfil-lista span{padding:6px 9px;border-radius:999px;background:#edf3f7;color:var(--azul-escuro);font-size:.68rem;font-weight:700;}
+  .permissoes-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:8px 14px;padding:12px;border:1px solid var(--cinza-borda);border-radius:8px;background:#f8fafb;}
+  .permissoes-grade label{display:flex;align-items:center;gap:8px;margin:0;padding:7px;color:var(--azul-escuro);font-size:.74rem;text-transform:none;}
+  .permissoes-grade input{width:auto;height:auto;}
+  .historico-admin{margin-top:16px;}.historico-admin .tabela-scroll{max-height:360px;}
+  @media(max-width:850px){.administracao-grid{grid-template-columns:1fr}.administracao-form{grid-template-columns:1fr}.administracao-form .largo{grid-column:auto;}}
   .importacao-setores{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 16px;padding:16px 18px;border:1px solid var(--cinza-borda);border-left:4px solid var(--vermelho);border-radius:5px;background:#fff;box-shadow:0 8px 25px rgba(17,48,82,.06);}
   .importacao-setores h3{margin:0 0 5px;color:var(--azul-escuro);font-size:.92rem;}
   .importacao-setores p{margin:0;color:var(--cinza-texto);font-size:.74rem;line-height:1.45;}
@@ -1063,16 +1094,28 @@
     <img src="logo dialogo.png" alt="Diálogo Engenharia">
     <p>Acompanhamento de obra</p>
     <div class="login-autoria">Desenvolvido por Locchi Engenharia</div>
-    <form id="formLoginEngenheiro">
-      <label for="loginUsuario">Usuário do engenheiro</label>
+    <div class="login-modos"><button type="button" class="ativo" data-login-modo="entrar">Entrar</button><button type="button" data-login-modo="cadastrar">Cadastre-se</button></div>
+    <div class="login-acesso" id="painelLoginAcesso"><form id="formLoginEngenheiro">
+      <label for="loginUsuario">Usuário</label>
       <input id="loginUsuario" name="usuario" autocomplete="username" required>
       <label for="loginSenha">Senha</label>
       <input id="loginSenha" name="senha" type="password" autocomplete="current-password" required>
-      <button type="submit">Entrar como engenheiro</button>
+      <button type="submit">Entrar</button>
       <div class="login-erro" id="loginErro"></div>
     </form>
-    <div class="login-divisor">ou</div>
-    <a class="login-visitante" href="/visitante-inicio">Entrar como visitante</a>
+    </div>
+    <form class="cadastro-acesso" id="formCadastroAcesso" hidden>
+      <div class="cadastro-grid">
+        <div class="largo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" required autocomplete="name"></div>
+        <div class="largo"><label for="cadastroEmail">E-mail corporativo</label><input id="cadastroEmail" type="email" required autocomplete="email" placeholder="nome@dialogo.com.br"></div>
+        <div><label for="cadastroCargo">Cargo</label><select id="cadastroCargo" required></select></div>
+        <div><label>Perfil</label><div class="cadastro-perfil" id="cadastroPerfil">—</div></div>
+        <div class="largo"><label for="cadastroSenha">Senha (mínimo 8 caracteres)</label><input id="cadastroSenha" type="password" minlength="8" required autocomplete="new-password"></div>
+      </div>
+      <button type="submit">Solicitar cadastro</button>
+      <p class="cadastro-aviso">O acesso será liberado após aprovação do Administrador ou Engenheiro responsável.</p>
+      <div class="login-erro" id="cadastroErro"></div>
+    </form>
   </div>
 </div>
 
@@ -1154,6 +1197,7 @@
     <a href="#ocorrencias"><span>!</span>Ocorrências</a>
     <a href="#relatorios"><span>▤</span>Relatórios</a>
     <a href="#documentosLinks"><span>⌘</span>Documentos/Links</a>
+    <a href="#administracao" class="administracao-link" id="linkAdministracao" hidden><span>⚙</span>Administração</a>
   </nav>
 </div>
 
@@ -1305,6 +1349,35 @@
         <div class="tabela-scroll"><table class="atividades-tabela"><thead><tr><th>Atividade</th><th>Destinos</th><th>Ações</th></tr></thead><tbody id="listaAtividadesAdmin"></tbody></table></div>
       </div>
     </div>
+  </section>
+
+  <section id="administracao" class="painel-aba">
+    <div class="apartamentos-cabecalho"><div><h2>Administração</h2><p>Gerencie a equipe, os perfis de acesso e consulte o histórico administrativo.</p></div></div>
+    <div class="administracao-abas"><button type="button" class="ativo" data-admin-aba="usuarios">Usuários</button><button type="button" data-admin-aba="cargos">Cargos e perfis</button><button type="button" data-admin-aba="historico">Histórico</button></div>
+    <div class="administracao-subaba ativo" data-admin-painel="usuarios"><div class="administracao-grid">
+      <form class="administracao-card" id="formUsuarioAdmin">
+        <h3 id="tituloUsuarioAdmin">Novo usuário</h3><input id="usuarioAdminId" type="hidden">
+        <div class="administracao-form">
+          <div class="largo"><label for="usuarioAdminNome">Nome completo</label><input id="usuarioAdminNome" required></div>
+          <div class="largo"><label for="usuarioAdminEmail">E-mail corporativo</label><input id="usuarioAdminEmail" type="email" required placeholder="nome@dialogo.com.br"></div>
+          <div><label for="usuarioAdminCargo">Cargo</label><select id="usuarioAdminCargo" required></select></div>
+          <div><label for="usuarioAdminPerfil">Perfil automático</label><select id="usuarioAdminPerfil" disabled></select></div>
+          <div class="largo"><label for="usuarioAdminSenha">Senha <span id="senhaUsuarioAjuda">(mínimo 8 caracteres)</span></label><input id="usuarioAdminSenha" type="password" minlength="8"></div>
+          <div class="largo"><label>Torres permitidas</label><div class="administracao-torres"><label><input type="checkbox" name="torreUsuario" value="aurora" checked> Torre Home</label><label><input type="checkbox" name="torreUsuario" value="horizonte" checked> Torre Smart</label><label><input id="usuarioAdminAtivo" type="checkbox" checked> Usuário ativo</label></div></div>
+          <div class="largo administracao-acoes"><button class="salvar" type="submit">Salvar usuário</button><button class="cancelar" id="cancelarUsuarioAdmin" type="button">Limpar</button></div>
+          <div class="largo atividade-status" id="statusUsuarioAdmin"></div>
+        </div>
+      </form>
+      <div class="administracao-card"><h3>Usuários cadastrados</h3><div class="tabela-scroll"><table class="administracao-tabela"><thead><tr><th>Usuário</th><th>Cargo e perfil</th><th>Acesso</th><th>Ação</th></tr></thead><tbody id="listaUsuariosAdmin"></tbody></table></div></div>
+    </div></div>
+    <div class="administracao-subaba" data-admin-painel="cargos">
+      <div class="administracao-grid">
+        <form class="administracao-card" id="formCargoAdmin"><h3 id="tituloCargoAdmin">Novo cargo</h3><input id="cargoAdminId" type="hidden"><div class="administracao-form"><div class="largo"><label for="cargoAdminNome">Nome do cargo</label><input id="cargoAdminNome" required placeholder="Ex.: Coordenador de obras"></div><div><label for="cargoAdminPerfil">Perfil de acesso</label><select id="cargoAdminPerfil" required></select></div><div class="administracao-torres"><label><input id="cargoAdminAtivo" type="checkbox" checked> Cargo ativo</label></div><div class="largo administracao-acoes"><button class="salvar" type="submit">Salvar cargo</button><button class="cancelar" id="cancelarCargoAdmin" type="button">Limpar</button></div><div class="largo atividade-status" id="statusCargoAdmin"></div></div></form>
+        <div class="administracao-card"><h3>Cargos e perfis cadastrados</h3><div class="perfil-lista" id="perfisCadastrados"></div><div class="tabela-scroll"><table class="administracao-tabela"><thead><tr><th>Cargo</th><th>Perfil</th><th>Situação</th><th>Ação</th></tr></thead><tbody id="listaCargosAdmin"></tbody></table></div></div>
+      </div>
+      <div class="administracao-card historico-admin"><h3>Permissões dos perfis</h3><p style="color:var(--cinza-texto);font-size:.74rem">Selecione um perfil e defina quais áreas e ações ele poderá utilizar.</p><div class="administracao-form"><div><label for="perfilPermissaoSelecionado">Perfil</label><select id="perfilPermissaoSelecionado"></select></div><div></div><div class="largo permissoes-grade" id="permissoesPerfilAdmin"></div><div class="largo administracao-acoes"><button class="salvar" id="salvarPermissoesPerfil" type="button">Salvar permissões</button></div><div class="largo atividade-status" id="statusPermissoesPerfil"></div></div></div>
+    </div>
+    <div class="administracao-subaba" data-admin-painel="historico"><div class="administracao-card historico-admin"><h3>Histórico de alterações e acessos</h3><div class="tabela-scroll"><table class="administracao-tabela"><thead><tr><th>Data</th><th>Usuário</th><th>Ação</th><th>Detalhes</th></tr></thead><tbody id="listaHistoricoAdmin"></tbody></table></div></div></div>
   </section>
 
   <section id="graficos" class="painel-aba">
@@ -3867,6 +3940,7 @@ function ativarAba(id, rolar = true){
   if(id === "servicos" && graficoServico){
     requestAnimationFrame(()=>graficoServico.resize());
   }
+  if(id === "administracao") carregarAdministracao();
   if(rolar) document.querySelector("main").scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.querySelectorAll(".menu-principal a").forEach(link => {
@@ -4048,6 +4122,83 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
   atualizarGraficosOperacionais();
   atualizarDashboardGeral();
 });
+let usuariosAdministracao=[];
+let cargosAdministracao=[];
+let perfisAdministracao={};
+let acoesAdministracao={};
+let permissoesAdministracao={};
+function configurarAcessoAdministracao(dados){
+  const permitido=Boolean(dados?.podeAdministrar);
+  document.getElementById("linkAdministracao").hidden=!permitido;
+  if(!permitido&&document.getElementById("administracao").classList.contains("ativo"))ativarAba("dashboardGeral",false);
+}
+function limparFormularioUsuario(){
+  document.getElementById("formUsuarioAdmin").reset();
+  document.getElementById("usuarioAdminId").value="";
+  document.getElementById("usuarioAdminAtivo").checked=true;
+  document.querySelectorAll('[name="torreUsuario"]').forEach(item=>item.checked=true);
+  document.getElementById("tituloUsuarioAdmin").textContent="Novo usuário";
+  document.getElementById("senhaUsuarioAjuda").textContent="(mínimo 8 caracteres)";
+  document.getElementById("statusUsuarioAdmin").textContent="";
+}
+function formatarDataAdmin(valor){
+  if(!valor)return "—";
+  const data=new Date(String(valor).replace(" ","T")+"Z");
+  return Number.isNaN(data.getTime())?valor:data.toLocaleString("pt-BR");
+}
+function renderizarUsuariosAdmin(){
+  document.getElementById("perfisCadastrados").innerHTML=Object.values(perfisAdministracao).map(nome=>`<span>${escaparHtml(nome)}</span>`).join("");
+  document.getElementById("usuarioAdminPerfil").innerHTML=Object.entries(perfisAdministracao).map(([valor,nome])=>`<option value="${escaparHtml(valor)}">${escaparHtml(nome)}</option>`).join("");
+  document.getElementById("cargoAdminPerfil").innerHTML=Object.entries(perfisAdministracao).map(([valor,nome])=>`<option value="${escaparHtml(valor)}">${escaparHtml(nome)}</option>`).join("");
+  const cargoAtual=document.getElementById("usuarioAdminCargo").value;
+  document.getElementById("usuarioAdminCargo").innerHTML=cargosAdministracao.filter(item=>item.ativo).map(item=>`<option value="${escaparHtml(item.cargo)}">${escaparHtml(item.cargo)}</option>`).join("");
+  if(cargosAdministracao.some(item=>item.ativo&&item.cargo===cargoAtual))document.getElementById("usuarioAdminCargo").value=cargoAtual;
+  document.getElementById("listaUsuariosAdmin").innerHTML=usuariosAdministracao.map(usuario=>{
+    let torres=[];try{torres=JSON.parse(usuario.torres||"[]")}catch(e){}
+    return `<tr><td><strong>${escaparHtml(usuario.nome)}</strong><br>${escaparHtml(usuario.email)}<br><small>${usuario.ativo?"Ativo":"Bloqueado"}</small></td><td>${escaparHtml(usuario.cargo)}<br><small>${escaparHtml(perfisAdministracao[usuario.perfil]||usuario.perfil)}</small></td><td>${torres.map(t=>escaparHtml(TORRES[t]?.nome||t)).join(", ")}<br><small>Último: ${escaparHtml(formatarDataAdmin(usuario.ultimo_acesso))}</small></td><td><button type="button" data-editar-usuario="${usuario.id}">Editar</button></td></tr>`;
+  }).join("")||'<tr><td colspan="4">Nenhum usuário cadastrado.</td></tr>';
+  document.getElementById("listaCargosAdmin").innerHTML=cargosAdministracao.map(item=>`<tr><td><strong>${escaparHtml(item.cargo)}</strong></td><td>${escaparHtml(perfisAdministracao[item.perfil]||item.perfil)}</td><td>${item.ativo?"Ativo":"Inativo"}</td><td><button type="button" data-editar-cargo="${item.id}">Editar</button><button class="excluir" type="button" data-excluir-cargo="${item.id}">Excluir</button></td></tr>`).join("")||'<tr><td colspan="4">Nenhum cargo cadastrado.</td></tr>';
+  atualizarPerfilCargoUsuario();
+  const seletorPerfil=document.getElementById("perfilPermissaoSelecionado");const perfilAtual=seletorPerfil.value;
+  seletorPerfil.innerHTML=Object.entries(perfisAdministracao).map(([valor,nome])=>`<option value="${escaparHtml(valor)}">${escaparHtml(nome)}</option>`).join("");
+  if(perfisAdministracao[perfilAtual])seletorPerfil.value=perfilAtual;renderizarPermissoesPerfil();
+}
+function atualizarPerfilCargoUsuario(){const cargo=cargosAdministracao.find(item=>item.cargo===document.getElementById("usuarioAdminCargo").value);if(cargo)document.getElementById("usuarioAdminPerfil").value=cargo.perfil;}
+function renderizarPermissoesPerfil(){const perfil=document.getElementById("perfilPermissaoSelecionado").value;const atuais=permissoesAdministracao[perfil]||[];document.getElementById("permissoesPerfilAdmin").innerHTML=Object.entries(acoesAdministracao).map(([acao,nome])=>{const obrigatoria=acao==="visualizar"||(acao==="administrar_acessos"&&["administrador","engenheiro-responsavel"].includes(perfil));return `<label><input type="checkbox" value="${escaparHtml(acao)}" ${atuais.includes(acao)?"checked":""} ${obrigatoria?"disabled":""}> ${escaparHtml(nome)}${obrigatoria?" (obrigatória)":""}</label>`}).join("");}
+async function carregarAdministracao(){
+  const [respostaUsuarios,respostaCargos,respostaPerfis,respostaHistorico]=await Promise.all([fetch("/api/admin/usuarios",{cache:"no-store"}),fetch("/api/admin/cargos",{cache:"no-store"}),fetch("/api/admin/perfis",{cache:"no-store"}),fetch("/api/admin/historico",{cache:"no-store"})]);
+  if(!respostaUsuarios.ok)return;
+  const dados=await respostaUsuarios.json();const dadosCargos=respostaCargos.ok?await respostaCargos.json():{cargos:[]};
+  const dadosPerfis=respostaPerfis.ok?await respostaPerfis.json():{acoes:{},permissoes:{}};
+  usuariosAdministracao=dados.usuarios||[];perfisAdministracao=dados.perfis||{};cargosAdministracao=dadosCargos.cargos||[];acoesAdministracao=dadosPerfis.acoes||{};permissoesAdministracao=dadosPerfis.permissoes||{};renderizarUsuariosAdmin();
+  const historico=respostaHistorico.ok?await respostaHistorico.json():[];
+  document.getElementById("listaHistoricoAdmin").innerHTML=historico.map(item=>`<tr><td>${escaparHtml(formatarDataAdmin(item.criado_em))}</td><td>${escaparHtml(item.usuario_nome)}</td><td>${escaparHtml(item.acao)}</td><td>${escaparHtml(item.detalhes||"—")}</td></tr>`).join("")||'<tr><td colspan="4">Nenhum evento registrado.</td></tr>';
+}
+document.getElementById("usuarioAdminCargo").addEventListener("change",atualizarPerfilCargoUsuario);
+document.getElementById("perfilPermissaoSelecionado").addEventListener("change",renderizarPermissoesPerfil);
+document.getElementById("salvarPermissoesPerfil").addEventListener("click",async()=>{const perfil=document.getElementById("perfilPermissaoSelecionado").value;const permissoes=[...document.querySelectorAll("#permissoesPerfilAdmin input:checked")].map(item=>item.value);const status=document.getElementById("statusPermissoesPerfil");status.textContent="Salvando…";const resposta=await fetch(`/api/admin/perfis/${perfil}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({permissoes})});const dados=await resposta.json();if(!resposta.ok){status.textContent=dados.erro||"Não foi possível salvar.";status.style.color="var(--vermelho)";return;}status.textContent="Permissões atualizadas.";status.style.color="var(--verde)";await carregarAdministracao();});
+document.querySelector(".administracao-abas").addEventListener("click",event=>{const botao=event.target.closest("[data-admin-aba]");if(!botao)return;document.querySelectorAll("[data-admin-aba]").forEach(item=>item.classList.toggle("ativo",item===botao));document.querySelectorAll("[data-admin-painel]").forEach(item=>item.classList.toggle("ativo",item.dataset.adminPainel===botao.dataset.adminAba));});
+document.getElementById("listaUsuariosAdmin").addEventListener("click",event=>{
+  const botao=event.target.closest("[data-editar-usuario]");if(!botao)return;
+  const usuario=usuariosAdministracao.find(item=>item.id===Number(botao.dataset.editarUsuario));if(!usuario)return;
+  document.getElementById("usuarioAdminId").value=usuario.id;document.getElementById("usuarioAdminNome").value=usuario.nome;document.getElementById("usuarioAdminEmail").value=usuario.email;document.getElementById("usuarioAdminCargo").value=usuario.cargo;document.getElementById("usuarioAdminPerfil").value=usuario.perfil;document.getElementById("usuarioAdminAtivo").checked=Boolean(usuario.ativo);document.getElementById("usuarioAdminSenha").value="";
+  let torres=[];try{torres=JSON.parse(usuario.torres||"[]")}catch(e){}
+  document.querySelectorAll('[name="torreUsuario"]').forEach(item=>item.checked=torres.includes(item.value));
+  document.getElementById("tituloUsuarioAdmin").textContent="Editar usuário";document.getElementById("senhaUsuarioAjuda").textContent="(deixe em branco para manter)";document.getElementById("formUsuarioAdmin").scrollIntoView({behavior:"smooth"});
+});
+document.getElementById("cancelarUsuarioAdmin").addEventListener("click",limparFormularioUsuario);
+document.getElementById("formUsuarioAdmin").addEventListener("submit",async event=>{
+  event.preventDefault();const id=document.getElementById("usuarioAdminId").value;
+  const dados={nome:document.getElementById("usuarioAdminNome").value.trim(),email:document.getElementById("usuarioAdminEmail").value.trim(),cargo:document.getElementById("usuarioAdminCargo").value.trim(),perfil:document.getElementById("usuarioAdminPerfil").value,senha:document.getElementById("usuarioAdminSenha").value,ativo:document.getElementById("usuarioAdminAtivo").checked,torres:[...document.querySelectorAll('[name="torreUsuario"]:checked')].map(item=>item.value)};
+  const status=document.getElementById("statusUsuarioAdmin");status.textContent="Salvando…";
+  const resposta=await fetch(id?`/api/admin/usuarios/${id}`:"/api/admin/usuarios",{method:id?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});
+  const retorno=await resposta.json();if(!resposta.ok){status.textContent=retorno.erro||"Não foi possível salvar.";status.style.color="var(--vermelho)";return;}
+  limparFormularioUsuario();await carregarAdministracao();
+});
+function limparFormularioCargo(){document.getElementById("formCargoAdmin").reset();document.getElementById("cargoAdminId").value="";document.getElementById("cargoAdminAtivo").checked=true;document.getElementById("tituloCargoAdmin").textContent="Novo cargo";document.getElementById("statusCargoAdmin").textContent="";}
+document.getElementById("listaCargosAdmin").addEventListener("click",async event=>{const editar=event.target.closest("[data-editar-cargo]");const excluir=event.target.closest("[data-excluir-cargo]");const id=Number((editar||excluir)?.dataset[editar?"editarCargo":"excluirCargo"]);const item=cargosAdministracao.find(cargo=>cargo.id===id);if(!item)return;if(editar){document.getElementById("cargoAdminId").value=item.id;document.getElementById("cargoAdminNome").value=item.cargo;document.getElementById("cargoAdminPerfil").value=item.perfil;document.getElementById("cargoAdminAtivo").checked=Boolean(item.ativo);document.getElementById("tituloCargoAdmin").textContent="Editar cargo";return;}if(!confirm(`Excluir o cargo “${item.cargo}”?`))return;const resposta=await fetch(`/api/admin/cargos/${item.id}`,{method:"DELETE"});const dados=await resposta.json();if(!resposta.ok){alert(dados.erro||"Não foi possível excluir o cargo.");return;}limparFormularioCargo();await carregarAdministracao();});
+document.getElementById("cancelarCargoAdmin").addEventListener("click",limparFormularioCargo);
+document.getElementById("formCargoAdmin").addEventListener("submit",async event=>{event.preventDefault();const id=document.getElementById("cargoAdminId").value;const dados={cargo:document.getElementById("cargoAdminNome").value.trim(),perfil:document.getElementById("cargoAdminPerfil").value,ativo:document.getElementById("cargoAdminAtivo").checked};const status=document.getElementById("statusCargoAdmin");status.textContent="Salvando…";const resposta=await fetch(id?`/api/admin/cargos/${id}`:"/api/admin/cargos",{method:id?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});const retorno=await resposta.json();if(!resposta.ok){status.textContent=retorno.erro||"Não foi possível salvar.";status.style.color="var(--vermelho)";return;}limparFormularioCargo();await carregarAdministracao();});
 const cenario3d = document.getElementById('cenario3d');
 async function verificarSessaoEngenheiro(){
   try{
@@ -4055,10 +4206,24 @@ async function verificarSessaoEngenheiro(){
     const dados=await resposta.json();
     if(dados.autenticado){
       document.getElementById("usuarioAcesso").textContent=dados.usuario||"Usuário autenticado";
+      configurarAcessoAdministracao(dados);
       document.getElementById("loginOverlay").classList.add("oculto");
     }
   }catch(e){}
 }
+let cargosCadastroPublico=[];
+function atualizarPerfilCadastro(){const item=cargosCadastroPublico.find(cargo=>cargo.cargo===document.getElementById("cadastroCargo").value);document.getElementById("cadastroPerfil").textContent=item?.perfilNome||"—";}
+async function carregarCargosCadastro(){
+  const resposta=await fetch("/api/cargos-publicos",{cache:"no-store"});if(!resposta.ok)return;
+  cargosCadastroPublico=await resposta.json();document.getElementById("cadastroCargo").innerHTML=cargosCadastroPublico.map(item=>`<option value="${escaparHtml(item.cargo)}">${escaparHtml(item.cargo)}</option>`).join("");atualizarPerfilCadastro();
+}
+document.getElementById("cadastroCargo").addEventListener("change",atualizarPerfilCadastro);
+document.querySelector(".login-modos").addEventListener("click",event=>{const botao=event.target.closest("[data-login-modo]");if(!botao)return;const cadastrar=botao.dataset.loginModo==="cadastrar";document.querySelectorAll("[data-login-modo]").forEach(item=>item.classList.toggle("ativo",item===botao));document.getElementById("painelLoginAcesso").hidden=cadastrar;document.getElementById("formCadastroAcesso").hidden=!cadastrar;if(cadastrar){carregarCargosCadastro();setTimeout(()=>document.getElementById("cadastroNome").focus(),0);}});
+document.getElementById("formCadastroAcesso").addEventListener("submit",async event=>{
+  event.preventDefault();const status=document.getElementById("cadastroErro");status.textContent="Enviando cadastro…";status.style.color="";
+  const resposta=await fetch("/api/cadastro",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:document.getElementById("cadastroNome").value.trim(),email:document.getElementById("cadastroEmail").value.trim(),cargo:document.getElementById("cadastroCargo").value,senha:document.getElementById("cadastroSenha").value})});
+  const dados=await resposta.json();if(!resposta.ok){status.textContent=dados.erro||"Não foi possível solicitar o cadastro.";return;}status.textContent="Cadastro enviado. Aguarde a aprovação da equipe responsável.";status.style.color="var(--verde)";document.getElementById("formCadastroAcesso").reset();atualizarPerfilCadastro();
+});
 document.getElementById("formLoginEngenheiro").addEventListener("submit",async event=>{
   event.preventDefault();
   const erro=document.getElementById("loginErro");
@@ -4078,6 +4243,7 @@ document.getElementById("formLoginEngenheiro").addEventListener("submit",async e
   const dados=await resposta.json();
   erro.textContent="";
   document.getElementById("usuarioAcesso").textContent=dados.usuario||document.getElementById("loginUsuario").value.trim();
+  configurarAcessoAdministracao(dados);
   document.getElementById("loginSenha").value="";
   abrirSelecaoDeObras();
   document.getElementById("loginOverlay").classList.add("oculto");
@@ -4085,6 +4251,7 @@ document.getElementById("formLoginEngenheiro").addEventListener("submit",async e
 document.getElementById("sairSistema").addEventListener("click",async()=>{
   await fetch("/api/logout",{method:"POST"});
   document.getElementById("usuarioAcesso").textContent="—";
+  configurarAcessoAdministracao(null);
   document.getElementById("loginOverlay").classList.remove("oculto");
   document.getElementById("loginUsuario").focus();
 });

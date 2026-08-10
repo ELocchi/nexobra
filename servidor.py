@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import base64
+import hashlib
+import hmac
 import json
 import os
 import secrets
@@ -60,7 +62,67 @@ def nome_exibicao_usuario(usuario):
 
 
 NOME_USUARIO_ENGENHEIRO = nome_exibicao_usuario(USUARIO_ENGENHEIRO)
-SESSOES_ENGENHEIRO = set()
+SESSOES_ENGENHEIRO = {}
+PERFIS_ACESSO = {
+    "administrador": "Administrador",
+    "engenheiro-responsavel": "Engenheiro responsável",
+    "operacional": "Operacional",
+    "consulta": "Consulta",
+    "visitante": "Visitante",
+}
+PERFIS_ADMINISTRACAO = {"administrador", "engenheiro-responsavel"}
+ACOES_PERFIL = {
+    "visualizar": "Visualizar dados da obra",
+    "atualizar_acompanhamento": "Atualizar planilha de acompanhamento",
+    "gerenciar_ocorrencias": "Cadastrar e atualizar ocorrências",
+    "gerenciar_setores": "Cadastrar, editar e excluir setores",
+    "gerenciar_atividades": "Cadastrar, editar e excluir atividades",
+    "gerenciar_projetos": "Adicionar e remover projetos das unidades",
+    "gerenciar_documentos": "Adicionar e remover documentos e links",
+    "gerar_pdf": "Gerar relatórios em PDF",
+    "administrar_acessos": "Administrar usuários, cargos e perfis",
+}
+PERMISSOES_PADRAO = {
+    "administrador": list(ACOES_PERFIL),
+    "engenheiro-responsavel": list(ACOES_PERFIL),
+    "operacional": ["visualizar", "atualizar_acompanhamento", "gerenciar_ocorrencias", "gerar_pdf"],
+    "consulta": ["visualizar", "gerar_pdf"],
+    "visitante": ["visualizar"],
+}
+
+
+def gerar_hash_senha(senha):
+    salt = secrets.token_bytes(16)
+    derivada = hashlib.pbkdf2_hmac("sha256", str(senha).encode("utf-8"), salt, 310_000)
+    return f"pbkdf2_sha256$310000${salt.hex()}${derivada.hex()}"
+
+
+def conferir_senha(senha, valor):
+    try:
+        algoritmo, iteracoes, salt, esperado = str(valor).split("$", 3)
+        if algoritmo != "pbkdf2_sha256":
+            return False
+        derivada = hashlib.pbkdf2_hmac(
+            "sha256", str(senha).encode("utf-8"), bytes.fromhex(salt), int(iteracoes)
+        )
+        return hmac.compare_digest(derivada.hex(), esperado)
+    except (ValueError, TypeError):
+        return False
+
+
+def registrar_auditoria(conexao, usuario_id, usuario_nome, acao, detalhes=""):
+    conexao.execute(
+        "INSERT INTO auditoria_acessos (usuario_id, usuario_nome, acao, detalhes) VALUES (?, ?, ?, ?)",
+        (usuario_id, usuario_nome or "Usuário", acao, detalhes),
+    )
+
+
+def permissoes_do_perfil(conexao, perfil):
+    linha = conexao.execute("SELECT permissoes FROM perfis_permissoes WHERE perfil=?", (perfil,)).fetchone()
+    try:
+        return [acao for acao in json.loads(linha["permissoes"] if linha else "[]") if acao in ACOES_PERFIL]
+    except (json.JSONDecodeError, TypeError):
+        return []
 
 
 def rotulo_pavimento(andar):
@@ -670,6 +732,94 @@ def preparar_banco():
             )
             """
         )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS usuarios_acesso (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+                cargo TEXT NOT NULL DEFAULT '',
+                perfil TEXT NOT NULL,
+                senha_hash TEXT NOT NULL,
+                torres TEXT NOT NULL DEFAULT '["aurora", "horizonte"]',
+                ativo INTEGER NOT NULL DEFAULT 1,
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                ultimo_acesso TEXT NOT NULL DEFAULT ''
+            )
+            """
+        )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS auditoria_acessos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario_id INTEGER,
+                usuario_nome TEXT NOT NULL,
+                acao TEXT NOT NULL,
+                detalhes TEXT NOT NULL DEFAULT '',
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conexao.execute(
+            "CREATE INDEX IF NOT EXISTS idx_auditoria_acessos_data ON auditoria_acessos(criado_em DESC)"
+        )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS cargos_perfis (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                cargo TEXT NOT NULL COLLATE NOCASE UNIQUE,
+                perfil TEXT NOT NULL,
+                ativo INTEGER NOT NULL DEFAULT 1,
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        cargos_iniciais = [
+            ("Administrador da obra", "administrador"),
+            ("Engenheiro responsável", "engenheiro-responsavel"),
+            ("Engenheiro", "operacional"),
+            ("Assistente de engenharia", "operacional"),
+            ("Mestre de obras", "operacional"),
+            ("Encarregado", "operacional"),
+            ("Consultor", "consulta"),
+            ("Cliente", "visitante"),
+        ]
+        conexao.executemany(
+            "INSERT OR IGNORE INTO cargos_perfis (cargo, perfil) VALUES (?, ?)",
+            cargos_iniciais,
+        )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS perfis_permissoes (
+                perfil TEXT PRIMARY KEY,
+                permissoes TEXT NOT NULL,
+                atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conexao.executemany(
+            "INSERT OR IGNORE INTO perfis_permissoes (perfil, permissoes) VALUES (?, ?)",
+            [(perfil, json.dumps(permissoes)) for perfil, permissoes in PERMISSOES_PADRAO.items()],
+        )
+        if USUARIO_ENGENHEIRO and SENHA_ENGENHEIRO:
+            usuario_inicial = conexao.execute(
+                "SELECT id FROM usuarios_acesso WHERE email = ? COLLATE NOCASE",
+                (USUARIO_ENGENHEIRO,),
+            ).fetchone()
+            if not usuario_inicial:
+                cursor = conexao.execute(
+                    """
+                    INSERT INTO usuarios_acesso (nome, email, cargo, perfil, senha_hash)
+                    VALUES (?, ?, 'Administrador da obra', 'administrador', ?)
+                    """,
+                    (NOME_USUARIO_ENGENHEIRO, USUARIO_ENGENHEIRO, gerar_hash_senha(SENHA_ENGENHEIRO)),
+                )
+                registrar_auditoria(
+                    conexao, cursor.lastrowid, NOME_USUARIO_ENGENHEIRO,
+                    "Cadastro inicial", "Administrador inicial criado a partir da configuração do sistema."
+                )
         importar_planejamento_inicial(conexao)
         preparar_atividades_config(conexao)
 
@@ -1989,13 +2139,30 @@ class ServidorObra(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(corpo)
 
-    def sessao_engenheiro(self):
+    def sessao_usuario(self):
         cookies = self.headers.get("Cookie", "")
         token = next(
             (parte.split("=", 1)[1] for parte in cookies.split("; ") if parte.startswith("sessao_obra=")),
             "",
         )
-        return token in SESSOES_ENGENHEIRO
+        sessao = SESSOES_ENGENHEIRO.get(token)
+        if not sessao:
+            return None
+        with conectar() as conexao:
+            linha = conexao.execute(
+                "SELECT id, nome, email, perfil, ativo FROM usuarios_acesso WHERE id=?",
+                (sessao["id"],),
+            ).fetchone()
+            permissoes = permissoes_do_perfil(conexao, linha["perfil"]) if linha and linha["ativo"] else []
+        if not linha or not linha["ativo"]:
+            SESSOES_ENGENHEIRO.pop(token, None)
+            return None
+        usuario = {"id": linha["id"], "nome": linha["nome"], "email": linha["email"], "perfil": linha["perfil"], "permissoes": permissoes}
+        SESSOES_ENGENHEIRO[token] = usuario
+        return usuario
+
+    def sessao_engenheiro(self):
+        return bool(self.sessao_usuario())
 
     def exigir_engenheiro(self):
         if self.sessao_engenheiro():
@@ -2003,13 +2170,81 @@ class ServidorObra(SimpleHTTPRequestHandler):
         self.enviar_json({"erro": "Acesso restrito ao engenheiro"}, 401)
         return False
 
+    def exigir_administracao(self):
+        usuario = self.sessao_usuario()
+        if usuario and usuario.get("perfil") in PERFIS_ADMINISTRACAO and "administrar_acessos" in usuario.get("permissoes", []):
+            return usuario
+        self.enviar_json({"erro": "Acesso restrito à administração"}, 403 if usuario else 401)
+        return None
+
+    def exigir_permissao(self, permissao):
+        usuario = self.sessao_usuario()
+        if usuario and permissao in usuario.get("permissoes", []):
+            return usuario
+        self.enviar_json({"erro": "Seu perfil não possui permissão para esta ação"}, 403 if usuario else 401)
+        return None
+
     def do_GET(self):
         url = urlparse(self.path)
         caminho = url.path
         parametros = parse_qs(url.query)
         if caminho == "/api/sessao":
-            autenticado = self.sessao_engenheiro()
-            self.enviar_json({"autenticado": autenticado, "usuario": NOME_USUARIO_ENGENHEIRO if autenticado else ""})
+            usuario = self.sessao_usuario()
+            self.enviar_json({
+                "autenticado": bool(usuario),
+                "usuario": usuario.get("nome", "") if usuario else "",
+                "perfil": usuario.get("perfil", "") if usuario else "",
+                "perfilNome": PERFIS_ACESSO.get(usuario.get("perfil"), "") if usuario else "",
+                "permissoes": usuario.get("permissoes", []) if usuario else [],
+                "podeAdministrar": bool(usuario and usuario.get("perfil") in PERFIS_ADMINISTRACAO and "administrar_acessos" in usuario.get("permissoes", [])),
+            })
+            return
+        if caminho == "/api/cargos-publicos":
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT cargo, perfil FROM cargos_perfis WHERE ativo=1 ORDER BY cargo COLLATE NOCASE"
+                ).fetchall()
+            self.enviar_json([
+                {"cargo": linha["cargo"], "perfil": linha["perfil"], "perfilNome": PERFIS_ACESSO.get(linha["perfil"], linha["perfil"])}
+                for linha in linhas
+            ])
+            return
+        if caminho == "/api/admin/usuarios":
+            if not self.exigir_administracao():
+                return
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT id, nome, email, cargo, perfil, torres, ativo, criado_em, atualizado_em, ultimo_acesso FROM usuarios_acesso ORDER BY nome COLLATE NOCASE"
+                ).fetchall()
+            self.enviar_json({"perfis": PERFIS_ACESSO, "usuarios": [dict(linha) for linha in linhas]})
+            return
+        if caminho == "/api/admin/cargos":
+            if not self.exigir_administracao():
+                return
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT id, cargo, perfil, ativo, criado_em, atualizado_em FROM cargos_perfis ORDER BY cargo COLLATE NOCASE"
+                ).fetchall()
+            self.enviar_json({"perfis": PERFIS_ACESSO, "cargos": [dict(linha) for linha in linhas]})
+            return
+        if caminho == "/api/admin/perfis":
+            if not self.exigir_administracao():
+                return
+            with conectar() as conexao:
+                perfis = {
+                    perfil: permissoes_do_perfil(conexao, perfil)
+                    for perfil in PERFIS_ACESSO
+                }
+            self.enviar_json({"perfis": PERFIS_ACESSO, "acoes": ACOES_PERFIL, "permissoes": perfis})
+            return
+        if caminho == "/api/admin/historico":
+            if not self.exigir_administracao():
+                return
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT id, usuario_nome, acao, detalhes, criado_em FROM auditoria_acessos ORDER BY id DESC LIMIT 500"
+                ).fetchall()
+            self.enviar_json([dict(linha) for linha in linhas])
             return
         if caminho == "/visitante-inicio":
             corpo = gerar_inicio_visitante()
@@ -2272,6 +2507,115 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_PUT(self):
         caminho = urlparse(self.path).path
+        partes = caminho.strip("/").split("/")
+        permissao_rota = {
+            "/api/setores": "gerenciar_setores",
+            "/api/atividades": "gerenciar_atividades",
+            "/api/registros": "atualizar_acompanhamento",
+        }.get(caminho)
+        if permissao_rota and not self.exigir_permissao(permissao_rota):
+            return
+        if len(partes) == 4 and partes[:3] == ["api", "admin", "perfis"]:
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                perfil = partes[3]
+                if perfil not in PERFIS_ACESSO:
+                    raise ValueError("Perfil inválido")
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                permissoes = list(dict.fromkeys(acao for acao in dados.get("permissoes", []) if acao in ACOES_PERFIL))
+                if "visualizar" not in permissoes:
+                    permissoes.insert(0, "visualizar")
+                if perfil in PERFIS_ADMINISTRACAO and "administrar_acessos" not in permissoes:
+                    permissoes.append("administrar_acessos")
+                with conectar() as conexao:
+                    conexao.execute(
+                        "INSERT INTO perfis_permissoes (perfil,permissoes,atualizado_em) VALUES (?,?,CURRENT_TIMESTAMP) ON CONFLICT(perfil) DO UPDATE SET permissoes=excluded.permissoes,atualizado_em=CURRENT_TIMESTAMP",
+                        (perfil, json.dumps(permissoes)),
+                    )
+                    nomes = ", ".join(ACOES_PERFIL[item] for item in permissoes)
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Permissões de perfil alteradas", f"{PERFIS_ACESSO[perfil]} · {nomes}")
+                self.enviar_json({"ok": True, "perfil": perfil, "permissoes": permissoes})
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if len(partes) == 4 and partes[:3] == ["api", "admin", "cargos"]:
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                cargo_id = int(partes[3])
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                cargo = str(dados.get("cargo", "")).strip()
+                perfil = str(dados.get("perfil", "")).strip()
+                ativo = 1 if dados.get("ativo", True) else 0
+                if not cargo or perfil not in PERFIS_ACESSO:
+                    raise ValueError("Informe o cargo e um perfil válido")
+                with conectar() as conexao:
+                    anterior = conexao.execute("SELECT cargo FROM cargos_perfis WHERE id=?", (cargo_id,)).fetchone()
+                    if not anterior:
+                        raise ValueError("Cargo não encontrado")
+                    conexao.execute(
+                        "UPDATE cargos_perfis SET cargo=?,perfil=?,ativo=?,atualizado_em=CURRENT_TIMESTAMP WHERE id=?",
+                        (cargo, perfil, ativo, cargo_id),
+                    )
+                    atualizados = conexao.execute(
+                        "UPDATE usuarios_acesso SET cargo=?,perfil=?,atualizado_em=CURRENT_TIMESTAMP WHERE cargo=? COLLATE NOCASE",
+                        (cargo, perfil, anterior["cargo"]),
+                    ).rowcount
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Cargo e perfil alterados", f"{cargo} · {PERFIS_ACESSO[perfil]} · {atualizados} usuário(s) atualizado(s)")
+                self.enviar_json({"ok": True, "id": cargo_id, "usuariosAtualizados": atualizados})
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                mensagem = "Este cargo já está cadastrado" if isinstance(erro, sqlite3.IntegrityError) else str(erro)
+                self.enviar_json({"erro": mensagem}, 400)
+            return
+        if len(partes) == 4 and partes[:3] == ["api", "admin", "usuarios"]:
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                usuario_id = int(partes[3])
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                nome = str(dados.get("nome", "")).strip()
+                email = str(dados.get("email", "")).strip().lower()
+                cargo = str(dados.get("cargo", "")).strip()
+                senha = str(dados.get("senha", ""))
+                ativo = 1 if dados.get("ativo", True) else 0
+                torres = [torre for torre in dados.get("torres", []) if torre in TORRES_NOMES]
+                if not nome or "@" not in email or not cargo or not torres:
+                    raise ValueError("Informe nome, e-mail, cargo e ao menos uma torre")
+                if senha and len(senha) < 8:
+                    raise ValueError("A nova senha deve ter ao menos 8 caracteres")
+                with conectar() as conexao:
+                    cargo_config = conexao.execute(
+                        "SELECT cargo, perfil FROM cargos_perfis WHERE cargo=? COLLATE NOCASE AND ativo=1", (cargo,)
+                    ).fetchone()
+                    if not cargo_config:
+                        raise ValueError("Selecione um cargo ativo cadastrado")
+                    cargo, perfil = cargo_config["cargo"], cargo_config["perfil"]
+                    if usuario_id == administrador["id"] and (not ativo or perfil not in PERFIS_ADMINISTRACAO):
+                        raise ValueError("Você não pode retirar o próprio acesso administrativo")
+                    anterior = conexao.execute("SELECT * FROM usuarios_acesso WHERE id=?", (usuario_id,)).fetchone()
+                    if not anterior:
+                        raise ValueError("Usuário não encontrado")
+                    campos = [nome, email, cargo, perfil, json.dumps(torres), ativo]
+                    consulta = "UPDATE usuarios_acesso SET nome=?,email=?,cargo=?,perfil=?,torres=?,ativo=?,atualizado_em=CURRENT_TIMESTAMP"
+                    if senha:
+                        consulta += ",senha_hash=?"
+                        campos.append(gerar_hash_senha(senha))
+                    consulta += " WHERE id=?"
+                    campos.append(usuario_id)
+                    conexao.execute(consulta, campos)
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Usuário alterado", f"{nome} · {email} · {PERFIS_ACESSO[perfil]} · {'ativo' if ativo else 'bloqueado'}")
+                self.enviar_json({"ok": True, "id": usuario_id})
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                mensagem = "Este e-mail já está cadastrado" if isinstance(erro, sqlite3.IntegrityError) else str(erro)
+                self.enviar_json({"erro": mensagem}, 400)
+            return
         if caminho == "/api/setores":
             if not self.exigir_engenheiro():
                 return
@@ -2392,19 +2736,72 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         caminho = urlparse(self.path).path
+        permissao_rota = {
+            "/api/setores": "gerenciar_setores",
+            "/api/setores/importar": "gerenciar_setores",
+            "/api/atividades": "gerenciar_atividades",
+            "/api/projetos": "gerenciar_projetos",
+            "/api/projetos-ocultos": "gerenciar_projetos",
+            "/api/ocorrencias": "gerenciar_ocorrencias",
+        }.get(caminho)
+        if permissao_rota and not self.exigir_permissao(permissao_rota):
+            return
+        if caminho == "/api/cadastro":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                nome = str(dados.get("nome", "")).strip()
+                email = str(dados.get("email", "")).strip().lower()
+                cargo = str(dados.get("cargo", "")).strip()
+                senha = str(dados.get("senha", ""))
+                if not nome or not email.endswith("@dialogo.com.br") or len(senha) < 8:
+                    raise ValueError("Informe nome, e-mail @dialogo.com.br e senha com ao menos 8 caracteres")
+                with conectar() as conexao:
+                    cargo_config = conexao.execute(
+                        "SELECT cargo, perfil FROM cargos_perfis WHERE cargo=? COLLATE NOCASE AND ativo=1", (cargo,)
+                    ).fetchone()
+                    if not cargo_config:
+                        raise ValueError("Selecione um cargo válido")
+                    cursor = conexao.execute(
+                        """
+                        INSERT INTO usuarios_acesso (nome,email,cargo,perfil,senha_hash,torres,ativo)
+                        VALUES (?,?,?,?,?,'["aurora", "horizonte"]',0)
+                        """,
+                        (nome, email, cargo_config["cargo"], cargo_config["perfil"], gerar_hash_senha(senha)),
+                    )
+                    registrar_auditoria(conexao, cursor.lastrowid, nome, "Cadastro solicitado", f"{email} · {cargo_config['cargo']} · aguardando aprovação")
+                self.enviar_json({"ok": True, "mensagem": "Cadastro enviado para aprovação."}, 201)
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                mensagem = "Este e-mail já está cadastrado" if isinstance(erro, sqlite3.IntegrityError) else str(erro)
+                self.enviar_json({"erro": mensagem}, 400)
+            return
         if caminho == "/api/login":
             try:
                 tamanho = int(self.headers.get("Content-Length", "0"))
                 dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
-                if str(dados.get("usuario", "")).upper() != USUARIO_ENGENHEIRO or str(dados.get("senha", "")) != SENHA_ENGENHEIRO:
+                identificador = str(dados.get("usuario", "")).strip()
+                with conectar() as conexao:
+                    usuario = conexao.execute(
+                        "SELECT * FROM usuarios_acesso WHERE email = ? COLLATE NOCASE AND ativo = 1",
+                        (identificador,),
+                    ).fetchone()
+                    if not usuario or not conferir_senha(dados.get("senha", ""), usuario["senha_hash"]):
+                        registrar_auditoria(conexao, None, identificador or "Não informado", "Acesso recusado", "Credenciais inválidas ou usuário inativo.")
+                        self.enviar_json({"erro": "Usuário ou senha inválidos"}, 401)
+                        return
+                    conexao.execute("UPDATE usuarios_acesso SET ultimo_acesso=CURRENT_TIMESTAMP WHERE id=?", (usuario["id"],))
+                    registrar_auditoria(conexao, usuario["id"], usuario["nome"], "Acesso realizado", usuario["email"])
+                    permissoes = permissoes_do_perfil(conexao, usuario["perfil"])
+                if not usuario:
                     self.enviar_json({"erro": "Usuário ou senha inválidos"}, 401)
                     return
                 token = secrets.token_urlsafe(32)
-                SESSOES_ENGENHEIRO.add(token)
-                corpo = json.dumps({"ok": True, "usuario": NOME_USUARIO_ENGENHEIRO}, ensure_ascii=False).encode("utf-8")
+                SESSOES_ENGENHEIRO[token] = {"id": usuario["id"], "nome": usuario["nome"], "email": usuario["email"], "perfil": usuario["perfil"], "permissoes": permissoes}
+                corpo = json.dumps({"ok": True, "usuario": usuario["nome"], "perfil": usuario["perfil"], "permissoes": permissoes, "podeAdministrar": usuario["perfil"] in PERFIS_ADMINISTRACAO and "administrar_acessos" in permissoes}, ensure_ascii=False).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.send_header("Set-Cookie", f"sessao_obra={token}; Path=/; HttpOnly; SameSite=Strict")
+                seguro = "; Secure" if self.headers.get("X-Forwarded-Proto", "").split(",", 1)[0].strip() == "https" else ""
+                self.send_header("Set-Cookie", f"sessao_obra={token}; Path=/; HttpOnly; SameSite=Strict{seguro}")
                 self.send_header("Content-Length", str(len(corpo)))
                 self.end_headers()
                 self.wfile.write(corpo)
@@ -2414,7 +2811,10 @@ class ServidorObra(SimpleHTTPRequestHandler):
         if caminho == "/api/logout":
             cookies = self.headers.get("Cookie", "")
             token = next((parte.split("=", 1)[1] for parte in cookies.split("; ") if parte.startswith("sessao_obra=")), "")
-            SESSOES_ENGENHEIRO.discard(token)
+            usuario = SESSOES_ENGENHEIRO.pop(token, None)
+            if usuario:
+                with conectar() as conexao:
+                    registrar_auditoria(conexao, usuario["id"], usuario["nome"], "Saída do sistema", usuario["email"])
             corpo = b'{"ok":true}'
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -2422,6 +2822,58 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.send_header("Content-Length", str(len(corpo)))
             self.end_headers()
             self.wfile.write(corpo)
+            return
+        if caminho == "/api/admin/usuarios":
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                nome = str(dados.get("nome", "")).strip()
+                email = str(dados.get("email", "")).strip().lower()
+                cargo = str(dados.get("cargo", "")).strip()
+                senha = str(dados.get("senha", ""))
+                torres = [torre for torre in dados.get("torres", []) if torre in TORRES_NOMES]
+                if not nome or "@" not in email or not cargo or len(senha) < 8:
+                    raise ValueError("Informe nome, e-mail, cargo e senha com ao menos 8 caracteres")
+                if not torres:
+                    raise ValueError("Selecione ao menos uma torre")
+                with conectar() as conexao:
+                    cargo_config = conexao.execute(
+                        "SELECT cargo, perfil FROM cargos_perfis WHERE cargo=? COLLATE NOCASE AND ativo=1", (cargo,)
+                    ).fetchone()
+                    if not cargo_config:
+                        raise ValueError("Selecione um cargo ativo cadastrado")
+                    cargo, perfil = cargo_config["cargo"], cargo_config["perfil"]
+                    cursor = conexao.execute(
+                        "INSERT INTO usuarios_acesso (nome,email,cargo,perfil,senha_hash,torres) VALUES (?,?,?,?,?,?)",
+                        (nome, email, cargo, perfil, gerar_hash_senha(senha), json.dumps(torres)),
+                    )
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Usuário cadastrado", f"{nome} · {email} · {PERFIS_ACESSO[perfil]}")
+                self.enviar_json({"ok": True, "id": cursor.lastrowid}, 201)
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                mensagem = "Este e-mail já está cadastrado" if isinstance(erro, sqlite3.IntegrityError) else str(erro)
+                self.enviar_json({"erro": mensagem}, 400)
+            return
+        if caminho == "/api/admin/cargos":
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                cargo = str(dados.get("cargo", "")).strip()
+                perfil = str(dados.get("perfil", "")).strip()
+                if not cargo or perfil not in PERFIS_ACESSO:
+                    raise ValueError("Informe o cargo e um perfil válido")
+                with conectar() as conexao:
+                    cursor = conexao.execute("INSERT INTO cargos_perfis (cargo, perfil) VALUES (?, ?)", (cargo, perfil))
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Cargo cadastrado", f"{cargo} · {PERFIS_ACESSO[perfil]}")
+                self.enviar_json({"ok": True, "id": cursor.lastrowid}, 201)
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                mensagem = "Este cargo já está cadastrado" if isinstance(erro, sqlite3.IntegrityError) else str(erro)
+                self.enviar_json({"erro": mensagem}, 400)
             return
         if caminho == "/api/setores":
             if not self.exigir_engenheiro():
@@ -2593,6 +3045,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def do_PATCH(self):
         caminho = urlparse(self.path).path
+        if caminho.startswith("/api/ocorrencias/") and not self.exigir_permissao("gerenciar_ocorrencias"):
+            return
         partes = caminho.strip("/").split("/")
         if len(partes) != 3 or partes[:2] != ["api", "ocorrencias"]:
             self.enviar_json({"erro": "Rota não encontrada"}, 404)
@@ -2625,6 +3079,35 @@ class ServidorObra(SimpleHTTPRequestHandler):
     def do_DELETE(self):
         caminho = urlparse(self.path).path
         partes = caminho.strip("/").split("/")
+        if len(partes) == 4 and partes[:3] == ["api", "admin", "cargos"]:
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                cargo_id = int(partes[3])
+                with conectar() as conexao:
+                    cargo = conexao.execute("SELECT cargo FROM cargos_perfis WHERE id=?", (cargo_id,)).fetchone()
+                    if not cargo:
+                        raise ValueError("Cargo não encontrado")
+                    vinculados = conexao.execute(
+                        "SELECT COUNT(*) AS total FROM usuarios_acesso WHERE cargo=? COLLATE NOCASE", (cargo["cargo"],)
+                    ).fetchone()["total"]
+                    if vinculados:
+                        raise ValueError(f"Este cargo possui {vinculados} usuário(s) vinculado(s). Altere o cargo desses usuários antes de excluir.")
+                    conexao.execute("DELETE FROM cargos_perfis WHERE id=?", (cargo_id,))
+                    registrar_auditoria(conexao, administrador["id"], administrador["nome"], "Cargo excluído", cargo["cargo"])
+                self.enviar_json({"ok": True, "id": cargo_id})
+            except ValueError as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if caminho == "/api/setores" and not self.exigir_permissao("gerenciar_setores"):
+            return
+        if caminho == "/api/atividades" and not self.exigir_permissao("gerenciar_atividades"):
+            return
+        if len(partes) == 3 and partes[:2] == ["api", "projetos"] and not self.exigir_permissao("gerenciar_projetos"):
+            return
+        if len(partes) == 3 and partes[:2] == ["api", "ocorrencias"] and not self.exigir_permissao("gerenciar_ocorrencias"):
+            return
         if caminho == "/api/setores":
             if not self.exigir_engenheiro():
                 return
