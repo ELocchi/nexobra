@@ -37,6 +37,29 @@ BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
+SERVICOS_MANUAIS_BASE = [
+    "Alvenaria",
+    "Bancada de Pedra Natural",
+    "Check List",
+    "Coifa de Churrasqueira",
+    "Contrapiso",
+    "Esquadrias",
+    "Estrutura",
+    "Gesso",
+    "Impermeabilização",
+    "Infra Ar Condicionado",
+    "Instalações Elétricas",
+    "Instalações Hidráulicas",
+    "Limpeza Final",
+    "Pintura - Fachada",
+    "Pintura 1° Demão",
+    "Pintura 2° Demão (Geral)",
+    "Pintura Hall 1° Demão",
+    "Porta Pronta",
+    "Portas Shafts",
+    "Produção de Argamassa",
+    "Revestimento",
+]
 NS_FVS = {
     "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
@@ -986,59 +1009,23 @@ def limpar_servicos_fvs_duplicados(conexao):
         linha["nome"]
         for linha in conexao.execute("SELECT DISTINCT nome FROM atividades_config ORDER BY nome").fetchall()
     ]
-    nomes_norm = {normalizar_texto_fvs(nome): nome for nome in nomes}
     para_remover = set()
     for nome in nomes:
-        nome_norm = normalizar_texto_fvs(nome)
-        for outro in nomes:
-            if nome == outro:
-                continue
-            outro_norm = normalizar_texto_fvs(outro)
-            if nome_norm == outro_norm:
-                continue
-            if nome_norm.startswith(outro_norm + " ") or nome_norm.endswith(" " + outro_norm):
-                para_remover.add(nome)
-                break
+        if nome not in SERVICOS_MANUAIS_BASE:
+            para_remover.add(nome)
     if not para_remover:
         return 0
     for nome in sorted(para_remover):
         conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome,))
+        conexao.execute("DELETE FROM registros WHERE atividade = ?", (nome,))
+        conexao.execute("DELETE FROM ocorrencias WHERE atividade = ?", (nome,))
         conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome,))
     conexao.commit()
     return len(para_remover)
 
 
 def sincronizar_atividades_fvs(conexao):
-    if not ARQUIVO_LISTA_MESTRA_FVS.exists():
-        return 0
-    servicos = extrair_servicos_fvs_da_planilha(ARQUIVO_LISTA_MESTRA_FVS)
-    if not servicos:
-        return 0
-    existentes = {
-        normalizar_texto_fvs(nome[0])
-        for nome in conexao.execute("SELECT DISTINCT nome FROM atividades_config").fetchall()
-    }
-    adicionados = 0
-    for nome_servico, criterios in servicos.items():
-        chave = normalizar_texto_fvs(nome_servico)
-        if chave in existentes or servico_fvs_ja_representado_no_modelo(nome_servico, existentes):
-            continue
-        for torre in ("aurora", "horizonte"):
-            max_andar = 36 if torre == "aurora" else 23
-            andares = [-2, -1, 0] + list(range(1, max_andar + 1)) + [101, 102, 103]
-            for andar in andares:
-                conexao.execute(
-                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
-                    (nome_servico, torre, andar),
-                )
-        for ordem, criterio in enumerate(criterios):
-            conexao.execute(
-                "INSERT OR IGNORE INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES (?, ?, ?)",
-                (nome_servico, criterio, ordem),
-            )
-        existentes.add(chave)
-        adicionados += 1
-    return adicionados
+    return 0
 
 
 def preparar_atividades_config(conexao):
