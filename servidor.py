@@ -98,6 +98,18 @@ SERVICOS_MANUAIS_BASE = [
     "Produção de Argamassa",
     "Revestimento",
 ]
+SERVICOS_LEGADOS_OCULTOS = {
+    "Check List",
+    "Coifa de Churrasqueira",
+    "Infra Ar Condicionado",
+    "Limpeza Final",
+    "Pintura - Fachada",
+    "Pintura 1° Demão",
+    "Pintura 2° Demão (Geral)",
+    "Pintura Hall 1° Demão",
+    "Porta Pronta",
+    "Portas Shafts",
+}
 NS_FVS = {
     "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
@@ -2243,8 +2255,10 @@ def preparar_atividades_config(conexao):
 
 def listar_atividades_config():
     with conectar() as conexao:
+        marcadores = ",".join("?" for _ in SERVICOS_LEGADOS_OCULTOS)
         linhas = conexao.execute(
-            "SELECT id, nome, torre, andar, unidade FROM atividades_config WHERE nome != 'Portas Shafts' ORDER BY nome, torre, andar, unidade"
+            f"SELECT id, nome, torre, andar, unidade FROM atividades_config WHERE nome NOT IN ({marcadores}) ORDER BY nome, torre, andar, unidade",
+            tuple(SERVICOS_LEGADOS_OCULTOS),
         ).fetchall()
         linhas_especificacoes = conexao.execute(
             "SELECT atividade, especificacao FROM atividades_especificacoes ORDER BY atividade, ordem, id"
