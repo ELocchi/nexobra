@@ -119,8 +119,9 @@ def gerar_miniatura(contrato_com_pagina, torre, numero):
         temporaria = Path(temporaria)
         pagina_pdf = temporaria / "planta-contrato.pdf"
         leitor = PdfReader(contrato)
+        pagina_origem = leitor.pages[indice_pagina]
         escritor = PdfWriter()
-        escritor.add_page(leitor.pages[indice_pagina])
+        escritor.add_page(pagina_origem)
         with pagina_pdf.open("wb") as saida:
             escritor.write(saida)
         subprocess.run(
@@ -135,17 +136,56 @@ def gerar_miniatura(contrato_com_pagina, torre, numero):
         shutil.move(str(miniaturas[0]), destino)
     imagem = Image.open(destino).convert("RGB")
     largura, altura = imagem.size
+    limite_legenda_pdf = []
+    def localizar_legenda(texto, matriz_corrente, matriz_texto, fonte, tamanho_fonte):
+        texto_normalizado = sem_acentos(texto).upper()
+        if "TORRE 2" in texto_normalizado and "RESIDENCIAL" in texto_normalizado or "APTO FINAL" in texto_normalizado:
+            escala_y = abs(float(matriz_corrente[3] or 1))
+            y = float(matriz_corrente[5]) + float(matriz_texto[5]) * escala_y
+            limite_legenda_pdf.append((y, float(tamanho_fonte) * escala_y))
+    pagina_origem.extract_text(visitor_text=localizar_legenda)
+    altura_pagina = float(pagina_origem.mediabox.height)
+    limite_inferior = int(altura * .96)
+    if limite_legenda_pdf and altura_pagina:
+        y_legenda, tamanho_legenda = max(limite_legenda_pdf, key=lambda item: item[0])
+        limite_inferior = int(altura * (1 - (y_legenda + tamanho_legenda * 1.35) / altura_pagina))
     # A última página contém a prancha contratual; remove carimbo e margens,
     # preservando a área da planta arquitetônica.
-    imagem = imagem.crop((int(largura * .03), int(altura * .04), int(largura * .70), int(altura * .96)))
+    imagem = imagem.crop((int(largura * .03), int(altura * .04), int(largura * .70), max(int(altura * .45), limite_inferior)))
+    # A legenda das plantas alteradas começa após uma barra horizontal longa.
+    # Procura apenas essa barra no rodapé, evitando confundi-la com paredes.
     cinza = imagem.convert("L")
-    linhas = []
-    for y in range(int(imagem.height * .72), int(imagem.height * .95)):
-        histograma = cinza.crop((0, y, imagem.width, y + 1)).histogram()
-        if sum(histograma[:255]) / imagem.width >= .64:
-            linhas.append(y)
-    if linhas:
-        imagem = imagem.crop((0, 0, imagem.width, max(1, linhas[0] - 78)))
+    inicio_busca = int(imagem.height * .80)
+    fim_busca = int(imagem.height * .97)
+    linha_legenda = None
+    for y in range(inicio_busca, fim_busca):
+        pixels = list(cinza.crop((0, y, imagem.width, y + 1)).getdata())
+        proporcao_escura = sum(valor < 190 for valor in pixels) / max(1, imagem.width)
+        if proporcao_escura >= .72:
+            linha_legenda = y
+            break
+    if linha_legenda is not None:
+        imagem = imagem.crop((0, 0, imagem.width, max(1, linha_legenda - 8)))
+    else:
+        # Algumas pranchas não têm barra separadora, apenas uma faixa branca
+        # antes do título. Remove o rodapé somente quando houver conteúdo
+        # novamente depois de uma faixa vazia longa.
+        proporcoes = []
+        for y in range(int(imagem.height * .70), imagem.height):
+            pixels = list(cinza.crop((0, y, imagem.width, y + 1)).getdata())
+            proporcoes.append(sum(valor < 190 for valor in pixels) / max(1, imagem.width))
+        inicio_faixa = None
+        for indice, proporcao in enumerate(proporcoes):
+            if proporcao < .002:
+                if inicio_faixa is None:
+                    inicio_faixa = indice
+                continue
+            if inicio_faixa is not None and indice - inicio_faixa >= 28:
+                if any(valor >= .01 for valor in proporcoes[indice:]):
+                    corte = int(imagem.height * .70) + inicio_faixa
+                    imagem = imagem.crop((0, 0, imagem.width, max(1, corte - 8)))
+                break
+            inicio_faixa = None
     fundo = Image.new("RGB", imagem.size, "white")
     limite = ImageChops.difference(imagem, fundo).convert("L").point(lambda valor: 255 if valor > 18 else 0).getbbox()
     if limite:

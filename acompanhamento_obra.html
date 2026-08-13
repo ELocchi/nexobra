@@ -64,8 +64,8 @@
   .marca{display:flex;align-items:center;border:0;padding:0;background:transparent;cursor:pointer;border-radius:8px;}
   .marca:focus-visible{outline:3px solid #fff;outline-offset:4px;}
   .marca-logo{
-    display:block;width:clamp(155px,15vw,215px);height:auto;padding:6px 10px;
-    border-radius:8px;background:#fff;box-shadow:0 5px 18px rgba(8,43,68,.16);
+    display:block;width:clamp(155px,15vw,215px);height:auto;padding:0;
+    border-radius:0;background:transparent;box-shadow:none;
   }
   .seletor-topo small{color:rgba(255,255,255,.62);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;}
   .seletor-conteudo{
@@ -79,9 +79,10 @@
   }
   .chamada-3d{position:relative;z-index:4;max-width:520px;}
   .logo-empreendimento{
-    display:block;width:clamp(240px,25vw,340px);height:auto;margin:0 0 -18px;
-    transform:translateY(-42px);mix-blend-mode:multiply;border-radius:8px;
+    display:block;width:clamp(240px,25vw,340px);height:auto;margin:0 0 18px;
+    transform:none;mix-blend-mode:normal;border-radius:8px;
   }
+  .chamada-textos{width:fit-content;max-width:100%;padding:20px 22px;border:1px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(8,45,72,.38);backdrop-filter:blur(5px);box-shadow:0 12px 32px rgba(0,0,0,.1);}
   .chamada-3d h1{font-size:clamp(2.3rem,4.8vw,5.2rem);line-height:.97;margin:16px 0 20px;letter-spacing:-.045em;}
   .chamada-3d p{font-size:clamp(.96rem,1.35vw,1.15rem);line-height:1.6;color:rgba(255,255,255,.72);max-width:460px;}
   .instrucao{display:flex;align-items:center;gap:10px;margin-top:28px;font-size:.83rem;color:#fff;}
@@ -106,11 +107,14 @@
   .torre.seletor-modelo-smart{left:12%;}
   .torre.seletor-modelo-home{right:10%;}
   .grafico-abertura{
-    position:fixed;z-index:10;top:18%;right:clamp(18px,3vw,54px);width:min(440px,calc(100vw - 36px));padding:18px 20px;
+    position:absolute;z-index:10;top:50%;left:50%;width:min(440px,calc(100vw - 36px));padding:18px 20px;
+    transform:translate(-50%,-50%);
     border:1px solid rgba(255,255,255,.22);border-radius:14px;
     background:rgba(8,45,72,.34);backdrop-filter:blur(5px);color:#fff;
     box-shadow:0 12px 32px rgba(0,0,0,.12);
   }
+  .grafico-abertura[role="button"]{cursor:pointer;transition:transform .2s ease,background .2s ease,box-shadow .2s ease;}
+  .grafico-abertura[role="button"]:hover,.grafico-abertura[role="button"]:focus-visible{transform:translate(-50%,calc(-50% - 3px));background:rgba(8,45,72,.5);box-shadow:0 16px 38px rgba(0,0,0,.2);outline:2px solid rgba(255,255,255,.85);outline-offset:3px;}
   .grafico-abertura h2{margin:0 0 14px;color:#fff;font-size:1.05rem;font-weight:700;letter-spacing:.02em;}
   .grafico-abertura-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px;}
   .grafico-abertura-item{min-width:0;}
@@ -288,9 +292,19 @@
   .logo-header-botao{display:flex;flex:none;border:0;padding:0;background:transparent;cursor:pointer;border-radius:7px;}
   .logo-header-botao:focus-visible{outline:3px solid var(--vermelho);outline-offset:4px;}
   .torre-atual{
-    display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;padding:5px 10px;border-radius:30px;
+    display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:5px 10px;border-radius:30px;
     color:#dceff8;background:rgba(255,255,255,.12);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;
   }
+  .torre-navegacao{position:relative;display:flex;align-items:center;gap:6px;}
+  .selecionar-torre-cabecalho{display:grid;place-items:center;width:27px;height:27px;margin-top:10px;padding:0;border:1px solid rgba(255,255,255,.34);border-radius:50%;background:rgba(255,255,255,.08);color:#fff;cursor:pointer;}
+  .selecionar-torre-cabecalho svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .selecionar-torre-cabecalho:hover{background:rgba(255,255,255,.18);}
+  .menu-torres-cabecalho{position:absolute;right:0;top:39px;z-index:450;width:150px;padding:5px;border:1px solid #d9dde2;border-radius:9px;background:#fff;box-shadow:0 10px 28px rgba(17,48,82,.18);}
+  .menu-torres-cabecalho[hidden]{display:none;}
+  .menu-torres-cabecalho button{display:block;width:100%;padding:8px 10px;border:0;border-radius:6px;background:transparent;color:var(--azul-escuro);font:inherit;font-size:.72rem;text-align:left;cursor:pointer;}
+  .menu-torres-cabecalho button:hover{background:#eef3f8;}
+  .menu-torres-cabecalho button.ativa{background:var(--azul-escuro);color:#fff;font-weight:700;}
+  body.modo-visao-geral .menu-principal nav>:not(a[href="#dashboardGeral"]){display:none!important;}
   .trocar-torre{
     border:1px solid rgba(255,255,255,.34);border-radius:8px;background:rgba(255,255,255,.08);
     color:#fff;padding:8px 12px;margin-top:10px;cursor:pointer;font:inherit;font-size:.76rem;
@@ -322,18 +336,66 @@
   .menu-principal a:hover{color:var(--azul);background:#edf4f8;}
   .menu-principal a.ativo{color:#fff;background:var(--azul);}
   .menu-principal a span{font-size:.9rem;}
+  .menu-icone{display:inline-grid;place-items:center;width:17px;height:17px;flex:none;color:currentColor;}
+  .menu-icone svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .menu-icone.preenchido svg .preenchimento{fill:var(--azul-escuro);stroke:var(--azul-escuro);}
+  .menu-icone.preenchido svg .marca{stroke:#fff;stroke-width:2.1;}
+  .menu-icone.personal{width:18px;height:20px;background:url('D%20dialogo%20personal.png?v=2') center/contain no-repeat;overflow:visible;}
+  .menu-icone.personal svg{display:none;}
+  .menu-principal a[href="#personalizacao"]{color:#111;}
+  .menu-principal a[href="#personalizacao"].ativo::after{background:#f5a035;}
+  .menu-personalizacao{display:inline-flex;align-items:stretch;flex:none;}
+  .menu-personalizacao .adicionar-personalizacao-menu{display:none;width:26px;padding:0;border:0;background:transparent;color:#111;font:800 1.05rem/1 Arial;cursor:pointer;}
+  .menu-personalizacao.ativo .adicionar-personalizacao-menu{display:block;}
+  .menu-personalizacao .adicionar-personalizacao-menu:hover{color:#f5a035;}
+  .menu-principal a:not(.ativo) .menu-rotulo{display:none;}
+  .menu-principal a.ativo .menu-rotulo{display:inline;}
   .menu-planilha{
     display:inline-flex;align-items:stretch;border-radius:7px;overflow:hidden;flex:none;
   }
   .menu-planilha a{border-radius:0;padding-right:4px;}
   .menu-planilha .abrir-atividades{
-    width:23px;padding:0 4px 0 0;border:0;background:transparent;color:#536171;
+    display:none;width:23px;padding:0 4px 0 0;border:0;background:transparent;color:#536171;
     font:700 1rem/1 sans-serif;cursor:pointer;transition:background .2s ease,color .2s ease;
   }
+  .menu-planilha.ativo .abrir-atividades{display:block;}
   .menu-planilha .abrir-atividades:hover{color:var(--azul);background:#edf4f8;}
   .menu-planilha.ativo a,.menu-planilha.ativo .abrir-atividades{color:#fff;background:var(--azul);}
   .menu-planilha.ativo .abrir-atividades:hover{background:#174b85;}
-  #dashboardGeral,#apartamentos,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
+  #dashboardGeral,#apartamentos,#personalizacao,#cadastroPersonalizacao,#controleDetalhado,#servicos,#graficos,#ocorrencias{scroll-margin-top:72px;}
+  #subtituloApartamentos:empty{display:none;}
+  .personalizacao-topo{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:14px;}
+  .personalizacao-acoes{display:flex;align-items:end;gap:9px;flex-wrap:wrap;}
+  .adicionar-personalizacao{display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:9px;background:#f5a035;color:#080808;font-size:1.25rem;font-weight:800;cursor:pointer;}
+  .personalizacao-form{width:min(520px,100%);padding:20px;border-radius:12px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.25);}
+  .personalizacao-form-pagina{width:100%;max-width:none;padding:24px;border:1px solid var(--cinza-borda);box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  .personalizacao-form-pagina .personalizacao-form-grade{max-width:760px;}
+  .importacao-personalizacao{margin-bottom:16px;padding:22px 24px;border:1px solid var(--cinza-borda);border-radius:12px;background:#fff;box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  .importacao-personalizacao-topo{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;}.importacao-personalizacao-topo h3{margin:0;color:var(--azul-escuro);}.importacao-personalizacao-grade{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:14px;}.importacao-personalizacao-grade input{display:block;width:100%;min-height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:7px;font-size:.74rem;}.importar-personalizacoes{height:39px;padding:0 18px;border:0;border-radius:999px;background:var(--azul-escuro);color:#fff;font-weight:700;cursor:pointer;}.importar-personalizacoes:disabled{opacity:.55;cursor:wait;}.status-importacao-personalizacao{min-height:18px;margin-top:10px;color:var(--cinza-texto);font-size:.74rem;}
+  .personalizacao-form h3{margin:0 0 15px;color:var(--azul-escuro);}
+  #formNovaPersonalizacao{border-bottom:5px solid #f5a035;color:#111;}
+  #formNovaPersonalizacao h3{margin-top:8px;color:#111;}
+  .personalizacao-logo-modal{display:block;width:220px;max-width:70%;height:auto;aspect-ratio:3/1;object-fit:contain;object-position:left center;border:0;}
+  #formNovaPersonalizacao .campo-filtro label{color:#292929;}
+  #formNovaPersonalizacao input:focus,#formNovaPersonalizacao select:focus{outline:0;border-color:#f5a035;box-shadow:0 0 0 3px rgba(245,160,53,.2);}
+  #formNovaPersonalizacao .administracao-acoes .salvar{background:#111;color:#fff;border-bottom:3px solid #f5a035;}
+  #formNovaPersonalizacao .administracao-acoes .salvar:hover{background:#292929;}
+  #formNovaPersonalizacao .administracao-acoes .cancelar{background:#f3eee7;color:#292929;}
+  .personalizacao-form-grade{display:grid;grid-template-columns:1fr 1fr;gap:11px;}.personalizacao-form-grade .largo{grid-column:1/-1;}
+  .personalizacao-form-grade input,.personalizacao-form-grade select{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;padding:0 9px;background:#fff;}
+  .ambientes-personalizacao{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px;border:1px solid #dce4ea;border-radius:8px;background:#f8fafb;}
+  .ambientes-personalizacao[hidden]{display:none;}.ambiente-personalizacao-campo{display:flex;flex-direction:column;gap:5px;}.ambiente-personalizacao-campo label{color:var(--azul-escuro);font-size:.68rem;font-weight:700;}.abrir-ambiente-personalizacao{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:36px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:7px 9px;color:var(--azul-escuro);font-size:.72rem;text-align:left;cursor:pointer}.abrir-ambiente-personalizacao::after{content:'›';font-size:1.1rem;font-weight:800}.abrir-ambiente-personalizacao:hover{border-color:var(--azul);background:#f4f8fc}.ambiente-personalizacao-resumo{font-size:.62rem;color:#647382}.ambiente-itens-form{display:grid;gap:10px}.ambiente-item-campo{display:grid;gap:5px}.ambiente-item-campo label{color:var(--azul-escuro);font-size:.72rem;font-weight:700}.ambiente-item-campo select{width:100%;height:38px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px}.ambiente-personalizacao-modal{width:min(480px,100%);max-height:min(680px,88vh);overflow:auto;padding:20px;border-radius:12px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.25)}.ambiente-personalizacao-modal h3{margin:0 0 5px;color:var(--azul-escuro)}.ambiente-personalizacao-modal>p{margin:0 0 16px;color:var(--cinza-texto);font-size:.72rem}
+  .personalizacao-topo p{margin:4px 0 0;color:var(--cinza-texto);font-size:.78rem;}
+  .personalizacao-logo{display:block;width:min(310px,58vw);height:auto;aspect-ratio:3/1;object-fit:contain;object-position:left center;border:0;}
+  .personalizacao-grade{display:grid;gap:15px;}
+  .personalizacao-grupo-andar{min-width:0;}
+  .personalizacao-grupo-andar h3{margin:0 0 7px;color:#111;font-size:.78rem;}
+  .personalizacao-linha-andar{display:flex;align-items:stretch;gap:10px;overflow-x:auto;padding:0 0 7px;scrollbar-width:thin;scrollbar-color:#c7cdd2 transparent;}
+  .personalizacao-linha-andar .personalizacao-unidade-card{flex:0 0 190px;}
+  .personalizacao-unidade-card{min-height:142px;overflow:visible;border:1px solid #d8dde1;border-bottom:4px solid #f5a035;border-radius:10px;background:#fff;padding:14px;color:#080808;text-align:left;cursor:pointer;}
+  .personalizacao-unidade-card:hover{border-color:#f5a035;box-shadow:0 5px 16px rgba(245,160,53,.16);}
+  .personalizacao-unidade-card strong,.personalizacao-unidade-card span{display:block;}
+  .personalizacao-unidade-card strong{min-height:18px;font-size:.82rem;line-height:18px;white-space:nowrap;}.personalizacao-unidade-card .personalizacao-card-descricao{display:grid;align-content:start;gap:4px;margin-top:4px;}.personalizacao-unidade-card .personalizacao-card-descricao span{margin:0;color:#596570;font-size:.68rem;line-height:1.25;}
   #controleDetalhado{width:92vw;margin-left:calc(50% - 46vw);}
   .painel-aba{display:none;animation:entradaAba .25s ease;}
   .painel-aba.ativo{display:block;}
@@ -343,7 +405,8 @@
   }
   .apartamentos-cabecalho h2{margin-bottom:5px;}
   .apartamentos-cabecalho p{margin:0;color:var(--cinza-texto);font-size:.82rem;}
-  .apartamento-acoes-relatorio{display:flex;flex-direction:column;gap:7px;min-width:180px;}
+  .apartamento-acoes-relatorio{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:7px 10px;min-width:min(620px,60vw);}
+  .apartamento-acoes-relatorio .acao-relatorio{grid-column:1/-1;justify-self:end;}
   .acao-relatorio{display:flex;align-items:center;justify-content:center;height:35px;border:1px solid var(--azul);border-radius:7px;background:#fff;color:var(--azul);font:700 .72rem Arial;text-decoration:none;cursor:pointer;}
   .acao-relatorio:hover{background:var(--azul);color:#fff;}
   .acao-relatorio:disabled,.acao-relatorio.desabilitado{opacity:.45;pointer-events:none;}
@@ -361,12 +424,30 @@
   .apartamento-progresso i{display:block;height:100%;border-radius:inherit;background:var(--verde);}
   .apartamento-percentual{display:block;margin-top:6px;color:var(--azul-escuro);font-size:.68rem;font-weight:700;}
   .apartamentos-seletor{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:14px;}
+  .apartamentos-seletor.por-andar{display:grid;gap:15px;overflow:visible;padding-bottom:4px;}
+  .apartamentos-grupo-andar{min-width:0;margin:0;}
+  .apartamentos-grupo-andar h3{margin:0 0 7px;color:var(--azul-escuro);font-size:.76rem;}
+  .apartamentos-linha-andar{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 9px;scrollbar-width:thin;}
+  .apartamentos-linha-andar .apartamento-seletor{flex:0 0 118px;}
+  .apartamentos-recolhidos-topo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px;}
+  .apartamentos-recolhidos-topo h3{margin:0;}
+  .expandir-apartamentos{border:1px solid #c8d3dc;border-radius:999px;background:#fff;padding:7px 11px;color:var(--azul);font-size:.68rem;font-weight:700;cursor:pointer;}
+  .expandir-apartamentos:hover{border-color:var(--azul);background:#f2f7fb;}
   .apartamento-seletor{
     min-width:118px;border:1px solid var(--cinza-borda);border-radius:9px;background:#fff;padding:10px;
     color:var(--azul-escuro);font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;text-align:left;
   }
+  .apartamento-seletor small{display:block;margin-top:2px;color:var(--azul);font-size:.66rem;font-weight:700;}
   .apartamento-seletor span{display:block;margin-top:4px;color:var(--cinza-texto);font-size:.64rem;font-weight:500;}
   .apartamento-seletor:hover,.apartamento-seletor.ativo{border-color:var(--azul);background:#edf4f8;}
+  .apartamento-seletor.padrao{border-color:var(--cinza-borda);border-bottom:4px solid var(--azul-escuro);background:#fff;color:var(--azul-escuro);box-shadow:none;}
+  .apartamento-seletor.padrao small{color:var(--azul-escuro);}
+  .apartamento-seletor.padrao span{color:#526270;}
+  .apartamento-seletor.padrao:hover,.apartamento-seletor.padrao.ativo{border-color:var(--azul-escuro);border-bottom-color:var(--azul-escuro);background:#fff;box-shadow:0 0 0 2px rgba(17,48,82,.14);}
+  .apartamento-seletor.personalizado{border-color:var(--cinza-borda);border-bottom:4px solid #f5a035;background:#fff;color:#080808;box-shadow:none;}
+  .apartamento-seletor.personalizado small{color:#080808;}
+  .apartamento-seletor.personalizado span{color:#555;}
+  .apartamento-seletor.personalizado:hover,.apartamento-seletor.personalizado.ativo{border-color:#f5a035;border-bottom-color:#f5a035;background:#fff;box-shadow:0 0 0 2px rgba(245,160,53,.18);}
   .dashboard-apartamento{display:none;}
   .dashboard-apartamento.visivel{display:block;}
   .apartamento-analises{display:grid;grid-template-columns:.72fr 1.28fr;gap:14px;margin-bottom:15px;align-items:stretch;}
@@ -422,8 +503,8 @@
   .painel-planta .personalizacao-secao{margin:0;display:block;}
   .painel-planta .planta-link{display:block;}
   .painel-planta .planta-miniatura{height:auto;min-height:0;max-height:none;}
-  .painel-planta .planta-link.somente-planta-baixa{overflow:hidden;aspect-ratio:1.1;background:#fff;border:1px solid #ccd5dc;border-radius:7px;}
-  .painel-planta .planta-link.somente-planta-baixa .planta-miniatura{width:157%;max-width:none;border:0;border-radius:0;}
+  .painel-planta .planta-link.somente-planta-baixa{display:flex;align-items:center;justify-content:center;overflow:visible;background:#fff;border:1px solid #ccd5dc;border-radius:7px;}
+  .painel-planta .planta-link.somente-planta-baixa .planta-miniatura{width:100%;max-width:100%;height:auto;object-fit:contain;border:0;border-radius:7px;}
   .projetos-carrossel{display:block;}
   .projeto-topo{display:none;}
   .projeto-titulo{padding:5px 9px;border-radius:999px;background:#eaf2f7;color:var(--azul-escuro);font-size:.67rem;font-weight:800;}
@@ -452,6 +533,8 @@
   .painel-acabamentos .personalizacao-secao{margin-bottom:0;}
   .foto-tabela{width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--cinza-borda);}
   .ocorrencia-form{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;margin-bottom:16px;}
+  .ocorrencias-titulo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.ocorrencias-titulo h2{margin:0}.adicionar-ocorrencia{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:8px;background:var(--azul-escuro);color:#fff;font-size:1.2rem;font-weight:800;cursor:pointer}.ocorrencia-overlay .ocorrencia-form{width:min(1050px,96vw);max-height:90vh;overflow:auto;margin:0}.ocorrencia-form-topo{display:flex;align-items:center;justify-content:space-between;gap:12px}.fechar-ocorrencia{border:0;background:transparent;color:#687587;font-size:1.45rem;cursor:pointer}
+  .foto-inicial-caixa{width:min(430px,92vw);padding:22px;border-radius:12px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.25)}.foto-inicial-caixa h3{margin:0 0 7px;color:var(--azul-escuro)}.foto-inicial-caixa p{margin:0 0 17px;color:var(--cinza-texto);font-size:.76rem}.foto-inicial-opcoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}.foto-inicial-opcoes label{display:grid;place-items:center;min-height:74px;border:1px solid #cad5de;border-radius:9px;background:#f8fafb;color:var(--azul-escuro);font-size:.78rem;font-weight:700;cursor:pointer}.foto-inicial-opcoes label:hover{border-color:var(--azul);background:#edf4f8}.foto-inicial-opcoes input{display:none}
   .ocorrencia-form h3{margin:0 0 14px;color:var(--azul-escuro);font-size:.9rem;}
   .ocorrencia-campos{display:grid;grid-template-columns:1fr .7fr 1fr .8fr;gap:12px;}
   .ocorrencia-campos .campo-filtro.largo{grid-column:1/-1;}
@@ -481,7 +564,7 @@
   .preview-ocorrencia.visivel{display:flex;}
   .preview-ocorrencia img{width:76px;height:60px;object-fit:cover;border-radius:6px;}
   .preview-ocorrencia span{font-size:.72rem;color:var(--cinza-texto);}
-  .ocorrencias-toolbar{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin:18px 0 12px;}
+  .ocorrencias-toolbar{display:flex;align-items:flex-end;flex-wrap:wrap;gap:14px;margin:0 0 15px;}.ocorrencias-toolbar .acao-relatorio{margin-left:auto}.ocorrencias-historico-titulo{margin:0 0 10px;color:var(--azul-escuro);font-size:.9rem}
   .download-foto{display:inline-flex;align-items:center;gap:5px;margin-top:7px;color:var(--azul);font-size:.68rem;font-weight:700;text-decoration:none;}
   .download-foto:hover{color:var(--laranja);text-decoration:underline;}
   .relatorio-filtros{background:#fff;border:1px solid var(--cinza-borda);border-radius:11px;padding:20px;}
@@ -507,7 +590,7 @@
   .login-caixa img{display:block;width:190px;margin:0 auto 20px;}
   .login-caixa h1{text-align:center;color:var(--azul-escuro);font-size:1.35rem;margin-bottom:5px;}
   .login-caixa>p{text-align:center;color:var(--cinza-texto);font-size:.78rem;margin:0 0 20px;}
-  .login-autoria{text-align:center;color:var(--azul-escuro);font-size:.67rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:-13px 0 19px;}
+  .login-autoria{text-align:center;color:var(--azul-escuro);font-size:.67rem;font-weight:700;letter-spacing:.06em;margin:11px 0 0;}
   .login-caixa label{display:block;margin:11px 0 5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;}
   .login-caixa input,.login-caixa select{width:100%;height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;background:#fff;font:inherit;}
   .login-caixa button{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:13px;border:0;border-radius:8px;background:var(--azul);color:#fff;font:700 .8rem Arial;text-decoration:none;cursor:pointer;}
@@ -521,6 +604,8 @@
   .cadastro-aviso{margin:9px 0 0;color:#687887;font-size:.68rem;line-height:1.4;text-align:center;}
   .seletor-obras{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:25px;background:linear-gradient(145deg,#176da8,#4aa6d5);color:#fff;transition:opacity .45s,visibility .45s;}
   .seletor-obras.fechado{opacity:0;visibility:hidden;pointer-events:none;}
+  .sair-seletor-obras{position:absolute;top:22px;right:26px;z-index:2;padding:8px 17px;border:1px solid #cbd3dc;border-radius:999px;background:#fff;color:var(--azul-escuro);font:700 .76rem Arial;cursor:pointer;box-shadow:0 5px 16px rgba(17,48,82,.1);}
+  .sair-seletor-obras:hover{border-color:var(--vermelho);color:var(--vermelho);background:#fff7f7;}
   .obras-conteudo{width:min(100%,850px);}
   .obras-topo{text-align:center;margin-bottom:25px;}
   .obras-topo img{width:190px;background:#fff;border-radius:8px;padding:7px;}
@@ -754,9 +839,15 @@
   .matriz-servico .controle-especificacao[data-estado="nao-aplicavel"]{color:#fff;background:#7d8791;border-color:#6e7882;}
   .matriz-servico .controle-especificacao.selecionado{outline:3px solid #4b8ed8;outline-offset:3px;box-shadow:0 0 0 6px rgba(75,142,216,.15);}
   .matriz-aviso{padding:28px;text-align:center;color:#637582;}
-  .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;}
+  .atividades-admin{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px;align-items:start;margin-top:16px;}
   .atividade-editor,.atividade-listagem{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;}
-  .atividade-editor h3,.atividade-listagem h3{margin:0 0 14px;color:var(--azul-escuro);}
+  .atividade-editor{display:block;}
+  .atividade-editor.oculto{display:none;}
+  .atividade-editor.oculto + .atividade-listagem{grid-column:1/-1;}
+  .atividade-listagem-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .atividade-listagem-header h3{margin:0;color:var(--azul-escuro);}
+  .atividade-listagem-header button{display:grid;place-items:center;width:34px;height:34px;border:0;border-radius:9px;background:var(--azul);color:#fff;cursor:pointer;font-size:1.2rem;line-height:1;box-shadow:0 6px 16px rgba(38,96,156,.22);}
+  .atividade-listagem-header button:hover{background:var(--azul-escuro);}
   .atividade-campos{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
   .atividade-campos .largo{grid-column:1/-1;}
   .atividade-campos input,.atividade-campos select{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
@@ -775,6 +866,8 @@
   .atividades-tabela{width:100%;font-size:.76rem;}
   .atividades-tabela td,.atividades-tabela th{padding:9px 7px;vertical-align:top;}
   .atividade-escopos-resumo{color:var(--cinza-texto);line-height:1.45;}
+  .atividade-subservicos{min-width:150px;color:var(--cinza-texto);font-size:.69rem;line-height:1.45;}
+  .atividade-subservicos span{display:block;}
   .atividade-acoes{white-space:nowrap;}
   .atividade-acoes button{border:0;background:#e8f1f6;color:var(--azul-escuro);border-radius:6px;padding:6px 8px;cursor:pointer;margin-right:4px;}
   .atividade-acoes button.excluir{background:#fdebea;color:var(--vermelho);}
@@ -813,6 +906,45 @@
   .importacao-setores-acoes button{border:0;border-radius:999px;padding:10px 14px;background:var(--azul-escuro);color:#fff;font:700 .74rem Arial;cursor:pointer;white-space:nowrap;}
   .importacao-setores-acoes button.secundario{background:#e9eef2;color:var(--azul-escuro);}
   .importacao-setores-status{margin-top:7px;min-height:16px;color:var(--cinza-texto);font-size:.7rem;}
+  .cadastro-massivo{margin-top:16px;padding:22px 24px;border:1px solid var(--cinza-borda);border-radius:12px;background:#fff;box-shadow:0 8px 25px rgba(17,48,82,.06);}
+  .cadastro-massivo-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;}
+  .cadastro-massivo-header h3{margin:0;color:var(--azul-escuro);font-size:1.05rem;}
+  .cadastro-massivo-toggle{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border:1px solid #b9c6d0;border-radius:999px;background:#fff;color:var(--azul-escuro);cursor:pointer;font-size:.74rem;font-weight:700;line-height:1;box-shadow:0 4px 10px rgba(17,48,82,.06);}
+  .cadastro-massivo-toggle:hover{border-color:var(--azul);background:#f2f7fb;}
+  .cadastro-massivo-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:14px 48px;align-items:start;}
+  .cadastro-massivo-body.oculta{display:none;}
+  .cadastro-massivo-acoes{grid-column:1/-1;display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;margin-top:2px;}
+  .cadastro-massivo-acoes button{border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;}
+  .cadastro-massivo-acoes .primario{background:var(--azul-escuro);color:#fff;}
+  .cadastro-massivo-acoes .secundario{background:#e9eef2;color:var(--azul-escuro);}
+  .cadastro-massivo-filtros{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:12px;}
+  .cadastro-massivo-filtros .campo-filtro{display:flex;flex-direction:column;gap:5px;}
+  .cadastro-massivo-filtros label{font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--cinza-texto);}
+  .cadastro-massivo-filtros select,.cadastro-massivo-filtros input{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
+  .cadastro-andar-multiplo{position:relative;}
+  .cadastro-andar-multiplo summary{display:flex;align-items:center;justify-content:space-between;width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 10px;color:#263746;font-size:.8rem;cursor:pointer;list-style:none;white-space:nowrap;overflow:hidden;}
+  .cadastro-andar-multiplo summary::-webkit-details-marker{display:none;}
+  .cadastro-andar-multiplo summary::after{content:"▾";flex:none;margin-left:8px;color:#637582;font-size:.7rem;}
+  .cadastro-andar-multiplo[open] summary{border-color:var(--azul);box-shadow:0 0 0 2px rgba(38,96,156,.1);}
+  .cadastro-andar-opcoes{position:absolute;z-index:20;top:44px;right:0;left:0;max-height:260px;overflow:auto;padding:7px;border:1px solid #ccd4dc;border-radius:8px;background:#fff;box-shadow:0 10px 25px rgba(17,48,82,.16);}
+  .cadastro-andar-opcoes label{display:flex!important;align-items:center;gap:8px;padding:7px 6px;border-radius:5px;color:#263746!important;font-size:.76rem!important;font-weight:500!important;text-transform:none!important;cursor:pointer;}
+  .cadastro-andar-opcoes label:hover{background:#f2f7fb;}
+  .cadastro-andar-opcoes input{width:auto!important;height:auto!important;margin:0;accent-color:var(--azul);}
+  .cadastro-andar-opcoes .todos{margin-bottom:4px;border-bottom:1px solid #e5eaee;border-radius:0;font-weight:700!important;}
+  .cadastro-massivo-setores{display:flex;flex-direction:column;gap:9px;}
+  .cadastro-massivo-setores>label{font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--cinza-texto);}
+  .cadastro-massivo-linha{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;}
+  .cadastro-massivo-linha input{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
+  .cadastro-massivo-linha.setor-existente{grid-template-columns:minmax(0,1fr) auto auto;}
+  .cadastro-massivo-linha.setor-existente input{border-color:#d59a17;background:#fffaf0;box-shadow:0 0 0 2px rgba(213,154,23,.09);}
+  .cadastro-setor-existente{padding:5px 8px;border-radius:999px;background:#fff0c7;color:#795500;font-size:.65rem;font-weight:700;white-space:nowrap;}
+  .cadastro-massivo-adicionar{align-self:flex-start;border:0;background:transparent;color:var(--azul);padding:3px 0;font-size:.76rem;font-weight:700;cursor:pointer;}
+  .cadastro-massivo-adicionar:hover{text-decoration:underline;}
+  .cadastro-massivo-remover{border:0;border-radius:7px;padding:7px 9px;background:#fdebea;color:var(--vermelho);font-weight:700;cursor:pointer;}
+  .cadastro-massivo-vazio{padding:14px;color:var(--cinza-texto);font-size:.76rem;}
+  .cadastro-massivo-status{grid-column:1/-1;min-height:0;margin-top:0;}
+  .cadastro-massivo-status:empty{display:none;}
+  .cadastro-importacao-apoio{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
   .foto-campo{display:flex;align-items:center;gap:6px;min-width:125px;}
   .foto-botao{
     display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px dashed #aab7c2;
@@ -954,21 +1086,30 @@
     .servicos-resumo{grid-template-columns:1fr;}
     .dashboard-graficos{grid-template-columns:1fr;}
     .seletor-conteudo{grid-template-columns:1fr;align-content:start;padding-top:3vh;}
-    .chamada-3d{text-align:center;margin:auto;}
+    .chamada-3d{width:min(520px,100%);text-align:center;margin:auto;}
+    .logo-empreendimento{margin:0 auto 18px;transform:none;mix-blend-mode:normal;}
+    .chamada-textos{width:auto;margin:0;padding:22px 20px;border-color:rgba(255,255,255,.2);box-shadow:0 12px 32px rgba(0,0,0,.14);}
     .chamada-3d p{margin-inline:auto;}
     .instrucao{justify-content:center;margin-top:14px;}
-    .cenario{height:50vh;min-height:350px;width:min(520px,100%);margin:auto;}
-    .grafico-abertura{top:18%;right:12px;transform:none;width:min(440px,calc(100vw - 24px));}
+    .cenario{height:auto;min-height:0;width:min(520px,100%);margin:18px auto 0;}
+    .grafico-abertura{position:relative;top:auto;left:auto;right:auto;transform:none;width:min(440px,calc(100vw - 24px));margin:auto;}
+    .grafico-abertura[role="button"]:hover,.grafico-abertura[role="button"]:focus-visible{transform:translateY(-3px);}
     .torre{--largura:130px;}
     .torre-b{--largura:100px;left:10%;}
     .torre-a{--largura:142px;right:5%;}
     .seletor-topo{padding-block:18px;}
     .seletor-rodape{display:none;}
+    .cadastro-massivo-body{grid-template-columns:1fr;gap:22px;}
+    .importacao-personalizacao-grade{grid-template-columns:1fr;}
+    .cadastro-massivo-acoes,.cadastro-massivo-status{grid-column:auto;}
+    .cadastro-massivo-status{margin-top:-12px;}
   }
   @media (max-width:520px){
     #controleDetalhado{width:calc(100vw - 24px);margin-left:calc(50% - 50vw + 12px);}
     .dashboard-topo{align-items:stretch;flex-direction:column;}
     .apartamentos-cabecalho{align-items:stretch;flex-direction:column;}
+    .apartamento-acoes-relatorio{grid-template-columns:1fr;min-width:0;}
+    .apartamento-acoes-relatorio .acao-relatorio{grid-column:auto;justify-self:stretch;}
     .resumo-geral-grid{grid-template-columns:1fr 1fr;}
     .torres-progresso{gap:38px;padding-inline:5px;min-height:445px;}
     .predio-progresso{width:92px;}
@@ -986,6 +1127,11 @@
     .seletor-topo small{display:none;}
     .cabecalho-identidade{flex-direction:column;gap:10px;}
     .logo-header{width:112px;}
+    .cadastro-massivo{padding:18px 16px;}
+    .cadastro-massivo-header{align-items:flex-start;margin-bottom:22px;}
+    .cadastro-massivo-filtros{grid-template-columns:1fr;}
+    .cadastro-massivo-acoes{justify-content:stretch;}
+    .cadastro-massivo-acoes button{flex:1;}
   }
   @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;}}
 
@@ -1038,6 +1184,8 @@
   header .topo{align-items:center;}
   .logo-header{width:150px;padding:0;border-radius:0;box-shadow:none;}
   .torre-atual{color:#fff;background:var(--azul-escuro);font-weight:700;}
+  .selecionar-torre-cabecalho{border-color:#cbd3dc;background:#fff;color:var(--azul-escuro);}
+  .selecionar-torre-cabecalho:hover{border-color:var(--azul-escuro);background:#eef3f8;}
   header h1{font-size:clamp(1.35rem,2.2vw,1.85rem);letter-spacing:-.025em;color:var(--azul-escuro);}
   header .subtitulo{color:#647184;opacity:1;}
   .trocar-torre{border:1px solid #cbd3dc;background:#fff;color:var(--azul-escuro);border-radius:999px;font-weight:700;}
@@ -1045,6 +1193,9 @@
   .usuario-acesso{text-align:right;}
   .usuario-acesso span{display:block;color:#687587;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
   .usuario-acesso strong{display:block;margin-top:3px;color:var(--azul-escuro);font-size:.88rem;}
+  .usuario-linha{display:flex;align-items:center;justify-content:flex-end;gap:9px}.notificacoes-botao{position:relative;display:grid;place-items:center;width:34px;height:34px;border:1px solid #cbd3dc;border-radius:50%;background:#fff;color:var(--azul-escuro);cursor:pointer}.notificacoes-botao svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}.notificacoes-contador{position:absolute;right:-5px;top:-6px;min-width:18px;height:18px;padding:0 4px;border:2px solid #fff;border-radius:10px;background:#cf202f;color:#fff;font-size:.61rem;line-height:14px;text-align:center}.notificacoes-contador[hidden]{display:none}.notificacoes-painel{position:absolute;right:0;top:42px;z-index:400;width:min(350px,88vw);max-height:410px;overflow:auto;padding:12px;border:1px solid #d9dde2;border-radius:10px;background:#fff;box-shadow:0 12px 32px rgba(0,0,0,.2);text-align:left}.notificacoes-painel[hidden]{display:none}.notificacoes-painel>strong{margin:0 0 9px}.notificacoes-painel button{display:block;width:100%;border:0;border-radius:7px;background:#f4f6f8;padding:9px;margin-top:6px;color:var(--azul-escuro);text-align:left;cursor:pointer}.notificacao-item small{display:block;margin-top:4px;color:#718091;font-size:.62rem}.notificacao-vazia{padding:10px;color:#718091;font-size:.7rem}
+  .notificacoes-painel .ver-todas-notificacoes{margin-top:10px;background:var(--azul-escuro);color:#fff;text-align:center;font-weight:700}.historico-notificacoes-caixa{width:min(620px,94vw);max-height:86vh;overflow:auto;padding:20px;border-radius:12px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.25)}.historico-notificacoes-caixa h3{margin:0;color:var(--azul-escuro)}.historico-notificacoes-caixa>p{margin:6px 0 14px;color:#718091;font-size:.72rem}.historico-notificacoes-lista{display:grid;gap:8px}.historico-notificacao-item{position:relative}.historico-notificacao-item>.abrir-historico-notificacao{display:block;width:100%;border:1px solid #dce3e8;border-radius:8px;background:#f8fafb;padding:11px 42px 11px 11px;color:var(--azul-escuro);text-align:left;cursor:pointer}.historico-notificacoes-lista small{display:block;margin-top:5px;color:#718091;font-size:.64rem}.excluir-notificacao{position:absolute;right:8px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:27px;height:27px;border:1px solid #efc5c1;border-radius:50%;background:#fff;color:#cf202f;font-size:1rem;font-weight:800;cursor:pointer}.excluir-notificacao:hover{background:#cf202f;color:#fff}
+  .destaque-notificacao{position:relative;z-index:2;animation:piscarNotificacao .65s ease-in-out 6!important}@keyframes piscarNotificacao{0%,100%{box-shadow:0 0 0 0 rgba(245,160,53,0)}50%{box-shadow:0 0 0 5px rgba(245,160,53,.75);background:#fff4df}}
   .info-obra{border-top:1px solid #e6e8eb;padding-top:16px;}
   .info-obra div{background:#f4f6f8;border-left:3px solid var(--vermelho);border-radius:2px 10px 10px 2px;}
   .info-obra span{color:#6d7784;opacity:1;}
@@ -1093,8 +1244,6 @@
 <div class="login-overlay" id="loginOverlay">
   <div class="login-caixa">
     <img src="logo dialogo.png" alt="Diálogo Engenharia">
-    <p>Acompanhamento de obra</p>
-    <div class="login-autoria">Desenvolvido por Locchi Engenharia</div>
     <div class="login-modos"><button type="button" class="ativo" data-login-modo="entrar">Entrar</button><button type="button" data-login-modo="cadastrar">Cadastre-se</button></div>
     <div class="login-acesso" id="painelLoginAcesso"><form id="formLoginEngenheiro">
       <label for="loginUsuario">Usuário</label>
@@ -1102,6 +1251,7 @@
       <label for="loginSenha">Senha</label>
       <input id="loginSenha" name="senha" type="password" autocomplete="current-password" required>
       <button type="submit">Entrar</button>
+      <div class="login-autoria">Development by LOCCHI ENGENHARIA</div>
       <div class="login-erro" id="loginErro"></div>
     </form>
     </div>
@@ -1109,8 +1259,7 @@
       <div class="cadastro-grid">
         <div class="largo"><label for="cadastroNome">Nome completo</label><input id="cadastroNome" required autocomplete="name"></div>
         <div class="largo"><label for="cadastroEmail">E-mail corporativo</label><input id="cadastroEmail" type="email" required autocomplete="email" placeholder="nome@dialogo.com.br"></div>
-        <div><label for="cadastroCargo">Cargo</label><select id="cadastroCargo" required></select></div>
-        <div><label>Perfil</label><div class="cadastro-perfil" id="cadastroPerfil">—</div></div>
+        <div class="largo"><label for="cadastroCargo">Cargo</label><select id="cadastroCargo" required></select></div>
         <div class="largo"><label for="cadastroSenha">Senha (mínimo 8 caracteres)</label><input id="cadastroSenha" type="password" minlength="8" required autocomplete="new-password"></div>
       </div>
       <button type="submit">Solicitar cadastro</button>
@@ -1121,12 +1270,13 @@
 </div>
 
 <div class="seletor-obras" id="seletorObras" aria-label="Seleção de obra">
+  <button class="sair-seletor-obras" id="sairSeletorObras" type="button">Sair</button>
   <div class="obras-conteudo">
     <div class="obras-topo"><img src="logo dialogo.png" alt="Diálogo Engenharia"><h1>Selecione uma obra</h1><p>Escolha o empreendimento que deseja acompanhar.</p></div>
     <div class="obras-grid">
-      <button class="obra-seletor" type="button" data-obra="boulevard-dialogo-butanta" aria-label="Selecionar Boulevard Diálogo Butantã"><img src="logo boulevard.png" alt="Boulevard Diálogo Butantã"></button>
+      <button class="obra-seletor" type="button" data-obra="boulevard-dialogo-butanta" aria-label="Selecionar Boulevard Diálogo Butantã"><img src="boulevardialogo.png?v=2" alt="Boulevard Diálogo Butantã"></button>
     </div>
-    <div class="obras-rodape">Novas obras poderão ser adicionadas neste espaço · Desenvolvido por Locchi Engenharia</div>
+    <div class="obras-rodape">Development by LOCCHI ENGENHARIA</div>
   </div>
 </div>
 
@@ -1137,13 +1287,15 @@
   </div>
   <div class="seletor-conteudo">
     <div class="chamada-3d">
-      <img class="logo-empreendimento" src="logo boulevard.png" alt="BoulevarDiálogo Butantã">
-      <h1>Uma obra<br>Uma visão</h1>
-      <p>Do empreendimento ao detalhe: acompanhe cada etapa da execução em um único ambiente.</p>
-      <div class="instrucao"><span></span> Clique em uma das torres para continuar</div>
+      <div class="chamada-textos">
+        <img class="logo-empreendimento" src="boulevardialogo.png?v=2" alt="Boulevard Diálogo Butantã">
+        <h1>Uma obra<br>Uma visão</h1>
+        <p>Do empreendimento ao detalhe: acompanhe cada etapa da execução em um único ambiente.</p>
+        <div class="instrucao"><span></span> Clique em “Acompanhe a obra” para continuar</div>
+      </div>
     </div>
     <div class="cenario" id="cenario3d">
-      <aside class="grafico-abertura" aria-label="Percentual físico por serviço">
+      <aside class="grafico-abertura" id="abrirVisaoGeralObra" role="button" tabindex="0" aria-label="Abrir visão geral da obra">
         <h2>Acompanhe a obra</h2>
         <div class="grafico-abertura-grid">
           <div class="grafico-abertura-item" data-resumo="fundacao"><div class="grafico-abertura-rotulo"><span>Fundação</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
@@ -1154,11 +1306,9 @@
           <div class="grafico-abertura-item" data-resumo="pintura"><div class="grafico-abertura-rotulo"><span>Pintura</span><strong>0%</strong></div><div class="grafico-abertura-barra"><i style="--percentual:0%"></i></div></div>
         </div>
       </aside>
-      <button class="torre seletor-modelo seletor-modelo-smart" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares"><strong>Torre Smart</strong><span>23 andares</span></button>
-      <button class="torre seletor-modelo seletor-modelo-home" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares"><strong>Torre Home</strong><span>36 andares</span></button>
     </div>
   </div>
-  <div class="seletor-rodape"><span>Desenvolvido por Locchi Engenharia</span></div>
+  <div class="seletor-rodape"><span>Development by LOCCHI ENGENHARIA</span></div>
 </div>
 
 <header>
@@ -1166,14 +1316,18 @@
     <div class="cabecalho-identidade">
       <button class="logo-header-botao" id="logoHeaderTorres" type="button" title="Selecionar outra torre" aria-label="Voltar à seleção das torres"><img class="logo-header" src="logo dialogo.png" alt="Diálogo Engenharia"></button>
       <div>
-        <div class="torre-atual" id="torreAtual">Torre Home · 36 andares</div>
         <h1 id="nomeObra">BoulevarDiálogo Butantã</h1>
         <div class="subtitulo" id="enderecoObra">Rua Dráusio, 150 — Butantã — São Paulo/SP</div>
+        <div class="torre-navegacao">
+          <div class="torre-atual" id="torreAtual">Torre Home</div>
+          <button class="selecionar-torre-cabecalho" id="selecionarTorreCabecalho" type="button" title="Trocar torre" aria-label="Selecionar outra torre" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 7 4-4 4 4M12 3v14M16 17l-4 4-4-4"/></svg></button>
+          <div class="menu-torres-cabecalho" id="menuTorresCabecalho" hidden><button type="button" data-selecionar-torre="geral">Geral</button><button type="button" data-selecionar-torre="aurora">Torre Home</button><button type="button" data-selecionar-torre="horizonte">Torre Smart</button></div>
+        </div>
       </div>
     </div>
     <div class="usuario-acesso">
       <span>Usuário em acesso</span>
-      <strong id="usuarioAcesso">—</strong>
+      <div class="usuario-linha"><strong id="usuarioAcesso">—</strong><div style="position:relative"><button class="notificacoes-botao" id="abrirNotificacoes" type="button" title="Notificações" aria-label="Abrir notificações"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><i class="notificacoes-contador" id="contadorNotificacoes" hidden>0</i></button><div class="notificacoes-painel" id="painelNotificacoes" hidden><strong>Notificações não lidas</strong><div id="listaNotificacoes"></div><button class="ver-todas-notificacoes" id="verTodasNotificacoes" type="button">Ver todas</button></div></div></div>
       <button class="trocar-torre" id="sairSistema" type="button">Sair</button>
     </div>
   </div>
@@ -1188,17 +1342,18 @@
 
 <div class="menu-principal">
   <nav aria-label="Navegação do acompanhamento">
-    <a href="#dashboardGeral" class="ativo"><span>▦</span>Visão geral</a>
+    <a href="#dashboardGeral" class="ativo" title="Visão geral"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5l7-3 7 3v16M8 7h2m4 0h2M8 11h2m4 0h2M8 15h2m4 0h2M3 21h18M10 21v-3h4v3"/></svg></span><span class="menu-rotulo">Visão geral</span></a>
     <div class="menu-planilha">
-      <a href="#controleDetalhado"><span>≣</span>Planilha de acompanhamento</a>
+      <a href="#controleDetalhado" title="Planilha de acompanhamento"><span class="menu-icone preenchido"><svg viewBox="0 0 24 24" aria-hidden="true"><rect class="preenchimento" x="3" y="3" width="18" height="18" rx="2"/><path class="marca" d="m7 12 3 3 7-7"/></svg></span><span class="menu-rotulo">Planilha de acompanhamento</span></a>
       <button class="abrir-atividades" id="abrirAtividadesAdmin" type="button" title="Gerenciar atividades" aria-label="Gerenciar atividades">＋</button>
     </div>
-    <a href="#apartamentos"><span>⌂</span>Apartamentos</a>
-    <a href="#graficos"><span>▥</span>Gráficos</a>
-    <a href="#ocorrencias"><span>!</span>Ocorrências</a>
-    <a href="#relatorios"><span>▤</span>Relatórios</a>
-    <a href="#documentosLinks"><span>⌘</span>Documentos/Links</a>
-    <a href="#administracao" class="administracao-link" id="linkAdministracao" hidden><span>⚙</span>Administração</a>
+    <a href="#ocorrencias" title="Ocorrências"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.7 20h18.6L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg></span><span class="menu-rotulo">Ocorrências</span></a>
+    <a href="#apartamentos" title="Apartamentos"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8v10H3V11Z"/><path d="M9 21v-6h6v6"/></svg></span><span class="menu-rotulo">Apartamentos</span></a>
+    <div class="menu-personalizacao"><a href="#personalizacao" title="Personalização"><span class="menu-icone personal"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d-personal" d="M5 3v18h5c5.3 0 9-3.4 9-9s-3.7-9-9-9H5Z"/><path class="curva-personal" d="M5 8h5a4 4 0 0 1 0 8H5"/></svg></span><span class="menu-rotulo">Personalização</span></a><button class="adicionar-personalizacao-menu" id="adicionarPersonalizacao" type="button" title="Adicionar personalização" aria-label="Adicionar personalização">＋</button></div>
+    <a href="#graficos" title="Gráficos"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4m0 16h17M6 17l4-5 4 2 5-8"/></svg></span><span class="menu-rotulo">Gráficos</span></a>
+    <a href="#relatorios" title="Relatórios"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h10l4 4v16H5V2Z"/><path d="M15 2v5h4M8 12h8M8 16h8"/><text x="7" y="10" style="font:700 4px Arial;fill:currentColor;stroke:none">PDF</text></svg></span><span class="menu-rotulo">Relatórios</span></a>
+    <a href="#documentosLinks" title="Documentos/Links"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg></span><span class="menu-rotulo">Documentos/Links</span></a>
+    <a href="#administracao" class="administracao-link" id="linkAdministracao" title="Administração"><span class="menu-icone"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg></span><span class="menu-rotulo">Administração</span></a>
   </nav>
 </div>
 
@@ -1218,14 +1373,14 @@
     <div class="resumo-geral-grid">
       <div class="resumo-geral-card"><span>Avanço geral</span><strong id="dashAvanco">0%</strong></div>
       <div class="resumo-geral-card"><span>Serviços pendentes</span><strong id="dashPendentes">0</strong></div>
-      <div class="resumo-geral-card"><span>Pavimentos concluídos</span><strong id="dashPavimentos">0</strong></div>
+      <div class="resumo-geral-card"><span>Andares concluídos</span><strong id="dashPavimentos">0</strong></div>
     </div>
     <div class="dashboard-graficos">
       <div class="dashboard-grafico"><h3>Status geral</h3><div class="dashboard-canvas"><canvas id="graficoStatusGeral"></canvas></div></div>
     </div>
     <div class="mapa-progresso">
       <div class="mapa-topo">
-        <h3>Evolução visual dos pavimentos</h3>
+        <h3>Evolução visual dos andares</h3>
         <div class="legenda-torres"><span><i style="background:#637582"></i>Não iniciado</span><span><i style="background:#e0a800"></i>Em andamento</span><span><i style="background:#d9483d"></i>Pendente</span><span><i style="background:#2e9e5b"></i>Concluído</span></div>
       </div>
       <div class="torres-progresso" id="torresProgresso"></div>
@@ -1235,11 +1390,13 @@
   <section id="apartamentos" class="painel-aba">
     <div class="apartamentos-cabecalho">
       <div>
-        <h2 id="tituloApartamentos">Análise do apartamento</h2>
-        <p id="subtituloApartamentos">Clique em um apartamento na planilha de acompanhamento.</p>
+        <h2 id="tituloApartamentos">Apartamentos · Torre Home</h2>
+        <p id="subtituloApartamentos"></p>
       </div>
       <div class="apartamento-acoes-relatorio">
-        <div class="campo-filtro"><label for="andarAbaApartamentos">Mudar pavimento</label><select id="andarAbaApartamentos"></select></div>
+        <div class="campo-filtro"><label for="andarAbaApartamentos">Andar</label><select id="andarAbaApartamentos"></select></div>
+        <div class="campo-filtro"><label for="filtroPlantaApartamentos">Opção de planta</label><select id="filtroPlantaApartamentos"><option value="todos">Todas as opções</option></select></div>
+        <div class="campo-filtro"><label for="filtroAcabamentoApartamentos">Opção de acabamento</label><select id="filtroAcabamentoApartamentos"><option value="todos">Todas as opções</option></select></div>
         <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>Gerar PDF</a>
       </div>
     </div>
@@ -1268,11 +1425,45 @@
     </div>
   </section>
 
+  <section id="personalizacao" class="painel-aba">
+    <div class="personalizacao-topo">
+      <div><img class="personalizacao-logo" src="dialogo%20personal.png?v=3" alt="Diálogo Personal" width="310" height="103"></div>
+      <div class="personalizacao-acoes"><div class="campo-filtro"><label for="filtroTorrePersonalizacao">Torre</label><select id="filtroTorrePersonalizacao"><option value="aurora">Torre Home</option><option value="horizonte">Torre Smart</option></select></div><div class="campo-filtro"><label for="filtroAndarPersonalizacao">Andar</label><select id="filtroAndarPersonalizacao"><option value="todos">Todos os andares</option></select></div><div class="campo-filtro"><label for="filtroPlantaPersonalizacao">Planta</label><select id="filtroPlantaPersonalizacao"><option value="todos">Todas</option><option value="padrao">Padrão</option><option value="alterado">Alterada</option></select></div><div class="campo-filtro"><label for="filtroAcabamentoPersonalizacao">Acabamento</label><select id="filtroAcabamentoPersonalizacao"><option value="todos">Todos</option><option value="padrao">Padrão</option><option value="alterado">Alterado</option></select></div></div>
+    </div>
+    <div class="personalizacao-grade" id="listaPersonalizacoes"></div>
+  </section>
+
+  <section id="cadastroPersonalizacao" class="painel-aba">
+    <div class="importacao-personalizacao">
+      <div class="importacao-personalizacao-topo"><h3>Importação de personalizações</h3></div>
+      <div class="importacao-personalizacao-grade">
+        <div class="campo-filtro"><label for="planilhaPlantasPersonalizacao">Relação de opções de planta</label><input id="planilhaPlantasPersonalizacao" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></div>
+        <div class="campo-filtro"><label for="planilhaAcabamentosPersonalizacao">Opções de acabamentos</label><input id="planilhaAcabamentosPersonalizacao" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></div>
+        <button class="importar-personalizacoes" id="importarPlanilhasPersonalizacao" type="button">Importar planilhas</button>
+      </div>
+      <div class="status-importacao-personalizacao" id="statusImportacaoPersonalizacao"></div>
+    </div>
+    <form class="personalizacao-form personalizacao-form-pagina" id="formNovaPersonalizacao">
+      <img class="personalizacao-logo-modal" src="dialogo%20personal.png?v=3" alt="Diálogo Personal" width="220" height="73">
+      <h3 id="tituloNovaPersonalizacao">Nova personalização</h3>
+      <div class="personalizacao-form-grade">
+        <div class="campo-filtro"><label for="andarNovaPersonalizacao">Andar</label><select id="andarNovaPersonalizacao" required></select></div>
+        <div class="campo-filtro"><label for="unidadeNovaPersonalizacao">Apartamento</label><select id="unidadeNovaPersonalizacao" required></select></div>
+        <div class="campo-filtro largo"><label for="tituloProjetoPersonalizacao">Opção de planta</label><select id="tituloProjetoPersonalizacao" required></select></div>
+        <div class="campo-filtro largo"><label for="acabamentoNovaPersonalizacao">Opção de acabamento</label><select id="acabamentoNovaPersonalizacao"><option value="padrao">Padrão (Opção 1)</option><option value="personalizado">Personalizado</option></select></div>
+        <div class="ambientes-personalizacao largo" id="ambientesNovaPersonalizacao" hidden></div>
+        <div class="campo-filtro largo" id="campoArquivoProjetoPersonalizacao" hidden><label for="arquivoProjetoPersonalizacao">Projeto alterado</label><input id="arquivoProjetoPersonalizacao" type="file" accept="image/png,image/jpeg,image/webp"></div>
+      </div>
+      <div class="administracao-acoes" style="justify-content:flex-end;margin-top:15px"><button class="cancelar" id="cancelarNovaPersonalizacao" type="button">Cancelar</button><button class="salvar" type="submit">Salvar personalização</button></div>
+      <div class="atividade-status" id="statusNovaPersonalizacao"></div>
+    </form>
+  </section>
+
   <section id="controleDetalhado" class="painel-aba">
     <div class="controle-obra">
       <div class="controle-cabecalho">
         <div>
-          <h2 id="tituloPlanilhaDetalhada">Planilha de acompanhamento do pavimento</h2>
+          <h2 id="tituloPlanilhaDetalhada">Planilha de acompanhamento do andar</h2>
           <p id="subtituloPlanilha">Controle por andar, apartamento e atividade</p>
         </div>
         <div class="salvamento" id="statusSalvamento">Conectando aos dados da obra…</div>
@@ -1322,12 +1513,37 @@
     <div class="apartamentos-cabecalho">
       <div><h2>Atividades</h2><p>Cadastre, edite ou exclua atividades e defina onde cada uma será acompanhada.</p></div>
     </div>
-    <div class="importacao-setores">
-      <div><h3>Cadastro massivo de setores</h3><p>Importe qualquer planilha em CSV, XLS ou XLSX com as colunas Torre, Pavimento, Atividade e Setor.</p><div class="importacao-setores-status" id="statusImportacaoSetores"></div></div>
-      <div class="importacao-setores-acoes"><button class="secundario" id="baixarModeloSetores" type="button">Baixar planilha padrão</button><button id="importarSetores" type="button">Importar planilha</button><input id="arquivoSetores" type="file" accept=".csv,.xlsx,.xls,.txt,text/csv,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div>
+    <div class="cadastro-massivo" id="cadastroMassivoContainer">
+      <div class="cadastro-massivo-header">
+        <h3>Cadastro de setores</h3>
+        <button class="cadastro-massivo-toggle" id="toggleCadastroMassivo" type="button" aria-label="Importar planilha" title="Importar planilha">＋ Importar planilha</button>
+      </div>
+      <div class="cadastro-massivo-body">
+        <div class="cadastro-massivo-filtros">
+          <div class="campo-filtro"><label for="cadastroMassivoTorre">Torre</label><select id="cadastroMassivoTorre"></select></div>
+          <div class="campo-filtro"><label id="rotuloCadastroMassivoAndares">Andares</label><details class="cadastro-andar-multiplo" id="cadastroMassivoAndares"><summary id="resumoCadastroMassivoAndares" aria-labelledby="rotuloCadastroMassivoAndares">Selecione os andares</summary><div class="cadastro-andar-opcoes" id="opcoesCadastroMassivoAndares"></div></details></div>
+          <div class="campo-filtro"><label for="cadastroMassivoAtividade">Atividade</label><select id="cadastroMassivoAtividade"></select></div>
+        </div>
+        <div class="cadastro-massivo-setores">
+          <label>Setores</label>
+          <div id="listaCadastroMassivo"></div>
+          <button class="cadastro-massivo-adicionar" id="adicionarLinhaCadastroMassivo" type="button">＋ Adicionar setor</button>
+        </div>
+        <div class="atividade-status cadastro-massivo-status" id="statusCadastroMassivo"></div>
+        <div class="cadastro-massivo-acoes">
+          <button class="secundario" id="cancelarCadastroMassivo" type="button">Cancelar</button>
+          <button class="primario" id="salvarCadastroMassivo" type="button">Salvar setores</button>
+        </div>
+      </div>
+      <div class="cadastro-importacao-apoio" aria-hidden="true">
+        <div id="statusImportacaoSetores"></div>
+        <button id="baixarModeloSetores" type="button" tabindex="-1">Baixar modelo</button>
+        <button id="importarSetores" type="button" tabindex="-1">Importar</button>
+        <input id="arquivoSetores" type="file" accept=".csv,.xlsx,.xls,.txt,text/csv,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+      </div>
     </div>
     <div class="atividades-admin">
-      <form class="atividade-editor" id="formAtividade">
+      <form class="atividade-editor oculto" id="formAtividade">
         <h3 id="tituloFormAtividade">Nova atividade</h3>
         <input id="atividadeNomeOriginal" type="hidden">
         <div class="atividade-campos">
@@ -1335,7 +1551,7 @@
           <div class="campo-filtro largo"><label for="atividadeEspecificacaoNova">Especificações do serviço</label><div class="especificacao-nova"><input id="atividadeEspecificacaoNova" placeholder="Ex.: Conferência e teste final"><button id="adicionarEspecificacaoAtividade" type="button">＋ Adicionar</button></div></div>
           <div class="escopos-selecionados largo" id="especificacoesAtividade"><span class="atividade-escopos-resumo">Nenhuma especificação adicionada.</span></div>
           <div class="campo-filtro"><label for="atividadeTorre">Torre</label><select id="atividadeTorre"><option value="aurora">Torre Home</option><option value="horizonte">Torre Smart</option></select></div>
-          <div class="campo-filtro"><label for="atividadeAndar">Pavimento</label><select id="atividadeAndar"></select></div>
+          <div class="campo-filtro"><label for="atividadeAndar">Andar</label><select id="atividadeAndar"></select></div>
           <div class="campo-filtro largo"><label for="atividadeUnidade">Apartamento / setor</label><select id="atividadeUnidade"></select></div>
           <div class="campo-filtro largo"><label for="atividadeSetorNovo">Novo setor (opcional)</label><input id="atividadeSetorNovo" placeholder="Ex.: Barrilete, Cobertura ou Área técnica"></div>
         </div>
@@ -1345,9 +1561,12 @@
         <div class="atividade-status" id="statusAtividadeAdmin"></div>
       </form>
       <div class="atividade-listagem">
-        <h3>Atividades cadastradas</h3>
+        <div class="atividade-listagem-header">
+          <h3>Atividades cadastradas</h3>
+          <button id="toggleFormularioAtividade" type="button" aria-label="Nova atividade" title="Nova atividade">＋</button>
+        </div>
         <div class="campo-filtro" style="margin-bottom:12px"><label for="buscarAtividadeAdmin">Buscar atividade</label><input id="buscarAtividadeAdmin" type="search" placeholder="Digite parte do nome" style="width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;padding:0 9px"></div>
-        <div class="tabela-scroll"><table class="atividades-tabela"><thead><tr><th>Atividade</th><th>Destinos</th><th>Ações</th></tr></thead><tbody id="listaAtividadesAdmin"></tbody></table></div>
+        <div class="tabela-scroll"><table class="atividades-tabela"><thead><tr><th>Atividade</th><th>Subserviços</th><th>Destinos</th><th>Ações</th></tr></thead><tbody id="listaAtividadesAdmin"></tbody></table></div>
       </div>
     </div>
   </section>
@@ -1400,12 +1619,13 @@
   </section>
 
   <section id="ocorrencias" class="painel-aba">
-    <h2>Ocorrências recentes</h2>
+    <div class="ocorrencias-titulo"><h2>Ocorrências</h2><button class="adicionar-ocorrencia" id="abrirNovaOcorrencia" type="button" aria-label="Adicionar nova ocorrência" title="Adicionar nova ocorrência">＋</button></div>
+    <div class="criterio-overlay oculto ocorrencia-overlay" id="ocorrenciaOverlay" role="dialog" aria-modal="true" aria-labelledby="tituloNovaOcorrencia">
     <form class="ocorrencia-form" id="formOcorrencia">
-      <h3>Adicionar nova ocorrência</h3>
+      <div class="ocorrencia-form-topo"><h3 id="tituloNovaOcorrencia">Adicionar nova ocorrência</h3><button class="fechar-ocorrencia" id="fecharNovaOcorrencia" type="button" aria-label="Fechar">×</button></div>
       <div class="ocorrencia-campos">
         <div class="campo-filtro"><label for="ocTorre">Torre</label><select id="ocTorre" required></select></div>
-        <div class="campo-filtro"><label for="ocAndar">Pavimento</label><select id="ocAndar" required></select></div>
+        <div class="campo-filtro"><label for="ocAndar">Andar</label><select id="ocAndar" required></select></div>
         <div class="campo-filtro"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
         <div class="campo-filtro"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
         <div class="campo-filtro" id="ocCampoSubatividade" hidden><label for="ocSubatividade">Subatividade</label><select id="ocSubatividade"></select></div>
@@ -1414,14 +1634,14 @@
         <div class="campo-filtro largo"><label for="ocDescricao">Descrição da ocorrência</label><textarea id="ocDescricao" required placeholder="Descreva a ocorrência, pendência ou problema encontrado"></textarea></div>
       </div>
       <div class="ocorrencia-acoes">
-        <label class="foto-botao">＋ Adicionar foto (obrigatória)<input id="ocFoto" type="file" accept="image/*" required></label>
+        <label class="foto-botao">＋ Alterar foto<input id="ocFoto" type="file" accept="image/*"></label>
         <button class="botao-primario" type="submit">Salvar ocorrência</button>
       </div>
       <div class="preview-ocorrencia" id="previewOcorrencia"><img id="previewOcorrenciaImg" alt="Pré-visualização da foto"><span id="previewOcorrenciaNome"></span></div>
       <div id="statusOcorrencia" style="margin-top:9px;font-size:.72rem"></div>
     </form>
+    </div>
     <div class="ocorrencias-toolbar">
-      <h3 style="margin:0;color:var(--azul-escuro);font-size:.9rem">Histórico de ocorrências</h3>
       <div class="campo-filtro"><label for="filtroTorreOcorrencias">Torre</label><select id="filtroTorreOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroAndarOcorrencias">Andar</label><select id="filtroAndarOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroApartamentoOcorrencias">Apartamento</label><select id="filtroApartamentoOcorrencias"><option value="todos">Todos os apartamentos</option></select></div>
@@ -1467,6 +1687,27 @@
 
 </main>
 
+<div class="criterio-overlay oculto" id="historicoNotificacoesOverlay" role="dialog" aria-modal="true" aria-labelledby="tituloHistoricoNotificacoes">
+  <div class="historico-notificacoes-caixa"><div class="ocorrencia-form-topo"><h3 id="tituloHistoricoNotificacoes">Notificações</h3><button class="fechar-ocorrencia" id="fecharHistoricoNotificacoes" type="button" aria-label="Fechar">×</button></div><p>Novas personalizações e ocorrências dos últimos 7 dias.</p><div class="historico-notificacoes-lista" id="historicoNotificacoesLista"></div></div>
+</div>
+
+<div class="criterio-overlay oculto" id="fotoOcorrenciaOverlay" role="dialog" aria-modal="true" aria-labelledby="tituloFotoOcorrencia">
+  <div class="foto-inicial-caixa">
+    <div class="ocorrencia-form-topo"><h3 id="tituloFotoOcorrencia">Adicionar imagem</h3><button class="fechar-ocorrencia" id="fecharFotoOcorrencia" type="button" aria-label="Fechar">×</button></div>
+    <p>Escolha como deseja adicionar a foto da ocorrência.</p>
+    <div class="foto-inicial-opcoes"><label>📷 Abrir câmera<input id="fotoOcorrenciaCamera" type="file" accept="image/*" capture="environment"></label><label>▧ Escolher dos arquivos<input id="fotoOcorrenciaArquivo" type="file" accept="image/*"></label></div>
+  </div>
+</div>
+
+<div class="criterio-overlay oculto" id="ambientePersonalizacaoOverlay" role="dialog" aria-modal="true" aria-labelledby="tituloAmbientePersonalizacao">
+  <div class="ambiente-personalizacao-modal">
+    <h3 id="tituloAmbientePersonalizacao">Personalizar ambiente</h3>
+    <p>Selecione uma opção para cada tipo de alteração.</p>
+    <div class="ambiente-itens-form" id="itensAmbientePersonalizacao"></div>
+    <div class="administracao-acoes" style="justify-content:flex-end;margin-top:16px"><button class="salvar" id="concluirAmbientePersonalizacao" type="button">Concluir</button></div>
+  </div>
+</div>
+
 <div class="criterio-overlay oculto" id="criterioOverlay" role="dialog" aria-modal="true" aria-labelledby="criterioTitulo">
   <div class="criterio-caixa">
     <div class="criterio-cabecalho"><h3 id="criterioTitulo">Critério da especificação</h3><button class="criterio-editar" id="editarCriterio" type="button" title="Editar critério" aria-label="Editar critério"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25Zm17.71-10.04a1.003 1.003 0 0 0 0-1.42l-2.5-2.5a1.003 1.003 0 0 0-1.42 0l-1.96 1.96 3.75 3.75 2.13-1.79Z"/></svg></button></div>
@@ -1494,8 +1735,7 @@
 </div>
 
 <footer>
-  Painel de acompanhamento de obra — uso interno da equipe técnica.<br>
-  <strong>Desenvolvido por Locchi Engenharia</strong>
+  <strong>Development by LOCCHI ENGENHARIA</strong>
 </footer>
 
 <script>
@@ -1761,6 +2001,14 @@ const DIVISOES_ALVENARIA={
   "Encunhamento":[
     "Condições para Início dos Serviços",
     "Encunhamento"
+  ],
+  "Muros Externos":[
+    "Condições para Início dos Serviços",
+    "Locação e Prumo",
+    "Dimensões e Nivelamento",
+    "Execução da Alvenaria",
+    "Ajuste de Vãos e Fechamentos",
+    "Aspecto Final"
   ]
 };
 const DIVISOES_REVESTIMENTO={
@@ -1771,6 +2019,20 @@ const DIVISOES_REVESTIMENTO={
     "Esquadro",
     "Cantos Riscados",
     "Tela Entre Alvenaria e Estrutura",
+    "Aspecto Final"
+  ],
+  "Pastilha":[
+    "Condições para Início do Serviço",
+    "Locação e Nivelamento",
+    "Colagem",
+    "Juntamento",
+    "Aspecto Final"
+  ],
+  "Piso Intertravado":[
+    "Condições para Início do Serviço",
+    "Locação e Nivelamento",
+    "Base e Compactação",
+    "Assentamento",
     "Aspecto Final"
   ],
   "Externo em Argamassa":[
@@ -1861,12 +2123,38 @@ const DIVISOES_IMPERMEABILIZACAO={
   ]
 };
 const DIVISOES_PRODUCAO_ARGAMASSA=Object.fromEntries([
+  "Colante",
   "Revestimento Externo",
+  "Revestimento Externo (Piscina)",
   "Contrapiso",
   "Contrapiso Acústico",
   "Revestimento Interno",
   "Assentamento de Alvenaria"
 ].map(divisao=>[divisao,["Equipamento","Balde Dosador","Traço"]]));
+const DIVISOES_FUNDACAO={
+  "Sapata Isolada":["Condições para Início dos Serviços","Locação","Execução da Sapata","Cura","Aspecto Final"],
+  "Tubulão e Broca":["Condições para Início dos Serviços","Locação","Execução do Tubulão","Cura","Aspecto Final"],
+  "Hélice Contínua":["Condições para Início dos Serviços","Locação","Execução da Hélice","Cura","Aspecto Final"],
+  "Estaca Strauss":["Condições para Início dos Serviços","Locação","Execução da Estaca","Cura","Aspecto Final"],
+  "Perfil Metálico":["Condições para Início dos Serviços","Locação","Montagem","Nivelamento","Aspecto Final"],
+  "Parede Diafragma":["Condições para Início dos Serviços","Locação","Execução da Parede","Nivelamento","Aspecto Final"],
+  "Compactação de Aterro":["Condições para Início dos Serviços","Locação","Execução da Compactação","Teste","Aspecto Final"],
+  "Tirantes":["Condições para Início dos Serviços","Locação","Execução","Nivelamento","Aspecto Final"]
+};
+const DIVISOES_PRELIMINARES={
+  "Locação de Obra (Gabarito)":["Condições para Início dos Serviços","Locação do Gabarito","Ajuste e Nivelamento","Liberação"],
+  "Escavação":["Condições para Início dos Serviços","Escavação","Nível","Controle de Largura","Aspecto Final"]
+};
+const DIVISOES_PINTURA={
+  "PVA e Acrílica":["Condições para Início dos Serviços","Preparação da Superfície","Aplicação da Primeira Demão","Acabamento","Aspecto Final"],
+  "Tinta Esmalte Verniz":["Condições para Início dos Serviços","Preparação da Superfície","Aplicação","Acabamento","Aspecto Final"]
+};
+const DIVISOES_ACABAMENTOS={
+  "Lareira e Churrasqueira":["Condições para Início dos Serviços","Locação","Execução","Acabamento","Aspecto Final"],
+  "Louças e Metais":["Condições para Início dos Serviços","Locação","Fixação","Ajuste Final","Aspecto Final"]
+};
+const DIVISOES_PISCINA={"Piscina":["Condições para Início dos Serviços","Execução","Revestimento","Testes","Aspecto Final"]};
+const DIVISOES_PAISAGISMO={"Paisagismo":["Condições para Início dos Serviços","Locação","Execução","Acabamento","Aspecto Final"]};
 const DIVISOES_CONTRAPISO={
   "Contrapiso":[
     "Condições para Início dos Serviços",
@@ -1914,7 +2202,14 @@ const DIVISOES_ESQUADRIAS={
     "Pintura ou Proteção de Gradis de Alumínio, Aço e suas Ligas",
     "Ensaios"
   ],
-  "Caixilho de Alumínio":["Execução do serviço"]
+  "Caixilho de Alumínio":["Execução do serviço"],
+  "Colocação Kit Porta Pronta":[
+    "Condições para Início do Serviço",
+    "Posicionamento do Kit",
+    "Nível e Prumo",
+    "Fixação",
+    "Acabamento e Ajuste Final"
+  ]
 };
 const divisaoServicoPorAndar={};
 function divisoesDoServico(atividade,andar){
@@ -1926,6 +2221,12 @@ function divisoesDoServico(atividade,andar){
   if(atividade==="Gesso")return Object.keys(DIVISOES_GESSO);
   if(atividade==="Impermeabilização")return Object.keys(DIVISOES_IMPERMEABILIZACAO);
   if(atividade==="Produção de Argamassa")return Object.keys(DIVISOES_PRODUCAO_ARGAMASSA);
+  if(atividade==="Pintura")return Object.keys(DIVISOES_PINTURA || {});
+  if(atividade==="Fundação")return Object.keys(DIVISOES_FUNDACAO || {});
+  if(atividade==="Serviços Preliminares")return Object.keys(DIVISOES_PRELIMINARES || {});
+  if(atividade==="Acabamentos")return Object.keys(DIVISOES_ACABAMENTOS || {});
+  if(atividade==="Piscina")return Object.keys(DIVISOES_PISCINA || {});
+  if(atividade==="Paisagismo")return Object.keys(DIVISOES_PAISAGISMO || {});
   return [];
 }
 function mapaDivisoesDoServico(atividade){
@@ -1937,6 +2238,12 @@ function mapaDivisoesDoServico(atividade){
     :atividade==="Gesso"?DIVISOES_GESSO
     :atividade==="Impermeabilização"?DIVISOES_IMPERMEABILIZACAO
     :atividade==="Produção de Argamassa"?DIVISOES_PRODUCAO_ARGAMASSA
+    :atividade==="Pintura"?DIVISOES_PINTURA
+    :atividade==="Fundação"?DIVISOES_FUNDACAO
+    :atividade==="Serviços Preliminares"?DIVISOES_PRELIMINARES
+    :atividade==="Acabamentos"?DIVISOES_ACABAMENTOS
+    :atividade==="Piscina"?DIVISOES_PISCINA
+    :atividade==="Paisagismo"?DIVISOES_PAISAGISMO
     :null;
 }
 function chaveDivisaoServico(atividade,andar){return `${atividade}|${andar}`;}
@@ -2025,7 +2332,10 @@ Object.values(TORRES).forEach(torre => {
   torre.etapas = torre.etapas.map(etapa => ({...etapa, realizado:0, status:"no-prazo"}));
 });
 let torreSelecionada = "aurora";
+let modoVisaoGeral = false;
 let pavimentoSelecionado = 1;
+let todosAndaresApartamentos = true;
+let apartamentosRecolhidos = false;
 let unidadeSelecionada = null;
 let registrosObra = {};
 let planejamentoObra = {torres:{aurora:{},horizonte:{}}};
@@ -2041,12 +2351,58 @@ let ocorrenciasBanco = [];
 const registrosSelecionados = new Set();
 const especificacoesSelecionadas = new Set();
 let servicoAguardandoOcorrencia = null;
+let arquivoOcorrenciaSelecionado=null;
+let alvoPersonalizacaoNotificacao=null;
+const ATUALIZACOES_PLANILHAS=[
+  {chave:"planilha-r21-planta-aurora-3002",aba:"personalizacao",texto:"Planta atualizada · Apartamento 3002 · Torre Home · Opção 03 → Padrão",data:"2026-08-13T18:21:00-03:00",alvo:{torre:"aurora",unidade:"Apto 3002",andar:30}},
+  {chave:"planilha-r10-acabamento-aurora-1006",aba:"personalizacao",texto:"Acabamento atualizado · Apartamento 1006 · Torre Home · Lavabo: Opção 06 → Opção 04",data:"2026-08-13T18:21:00-03:00",alvo:{torre:"aurora",unidade:"Apto 1006",andar:10}}
+];
 let graficoAtividades;
 let graficoAndares;
 let graficoPrazos;
 let graficoStatusGeral;
 let graficoApartamento;
 let graficoServico;
+function resumoNotificacoesAtual(){
+  const resumo=JSON.stringify({plantas:Object.entries(plantasUnidades).map(([chave,item])=>[chave,item.tipo,item.origem]),acabamentos:Object.entries(acabamentosUnidades).map(([chave,item])=>[chave,item.planta,(item.itens||[]).map(valor=>[valor.ambiente,valor.item,valor.opcao])]),projetos:projetosAdicionados.map(item=>[item.id,item.torre,item.unidade,item.titulo])});
+  let hash=2166136261;for(let i=0;i<resumo.length;i++){hash^=resumo.charCodeAt(i);hash=Math.imul(hash,16777619);}const personalizacoes=String(hash>>>0);
+  return {personalizacoes,ocorrencias:Math.max(0,...ocorrenciasBanco.map(item=>Number(item.id)||0))};
+}
+function atualizarNotificacoes(inicializar=false){
+  const atual=resumoNotificacoesAtual();
+  const chave="notificacoesObraV1";let vistos={};try{vistos=JSON.parse(localStorage.getItem(chave)||"{}")}catch(e){}
+  const chaveHistorico="historicoNotificacoesObraV1";let historico=[];try{historico=JSON.parse(localStorage.getItem(chaveHistorico)||"[]")}catch(e){}
+  let excluidas=[];try{excluidas=JSON.parse(localStorage.getItem("notificacoesExcluidasObraV1")||"[]")}catch(e){}
+  if(inicializar&&vistos.personalizacoes===undefined){vistos=atual;localStorage.setItem(chave,JSON.stringify(vistos));historico=ocorrenciasBanco.slice().sort((a,b)=>Number(b.id)-Number(a.id)).slice(0,5).map(item=>({chave:`oc-${item.id}`,aba:"ocorrencias",texto:`Ocorrência adicionada · ${item.unidade}`,data:item.dataOcorrencia||item.criadoEm||new Date().toISOString(),lida:true}));}
+  const novaPersonalizacao=vistos.personalizacoes!==undefined&&vistos.personalizacoes!==atual.personalizacoes;
+  const novasOcorrencias=Math.max(0,atual.ocorrencias-(Number(vistos.ocorrencias)||0));
+  const haAtualizacaoPlanilhaNova=ATUALIZACOES_PLANILHAS.some(item=>!excluidas.includes(item.chave)&&!historico.some(registro=>registro.chave===item.chave));
+  ATUALIZACOES_PLANILHAS.forEach(item=>{if(!excluidas.includes(item.chave)&&!historico.some(registro=>registro.chave===item.chave))historico.unshift({...item,lida:false});});
+  if(novaPersonalizacao&&!haAtualizacaoPlanilhaNova&&!excluidas.includes(`per-${atual.personalizacoes}`)&&!historico.some(item=>item.chave===`per-${atual.personalizacoes}`))historico.unshift({chave:`per-${atual.personalizacoes}`,aba:"personalizacao",texto:alvoPersonalizacaoNotificacao?`Personalização alterada · ${alvoPersonalizacaoNotificacao.unidade}`:"Personalização de unidade alterada",data:new Date().toISOString(),lida:false,alvo:alvoPersonalizacaoNotificacao});
+  ocorrenciasBanco.filter(item=>Number(item.id)>(Number(vistos.ocorrencias)||0)).sort((a,b)=>Number(b.id)-Number(a.id)).forEach(item=>{if(!excluidas.includes(`oc-${item.id}`)&&!historico.some(registro=>registro.chave===`oc-${item.id}`))historico.unshift({chave:`oc-${item.id}`,aba:"ocorrencias",texto:`Ocorrência adicionada · ${item.unidade}`,data:item.dataOcorrencia||item.criadoEm||new Date().toISOString(),lida:false,alvo:{id:item.id}});});
+  historico=historico.slice(0,20);localStorage.setItem(chaveHistorico,JSON.stringify(historico));
+  const naoLidas=historico.filter(item=>!item.lida);const total=naoLidas.length;
+  const contador=document.getElementById("contadorNotificacoes");contador.textContent=total>99?"99+":total;contador.hidden=!total;
+  document.getElementById("listaNotificacoes").innerHTML=naoLidas.length?naoLidas.map(item=>`<button class="notificacao-item" type="button" data-notificacao-chave="${escaparHtml(item.chave)}" data-notificacao-aba="${item.aba}">${escaparHtml(item.texto)}<small>${new Date(item.data).toLocaleString("pt-BR")}</small></button>`).join(""):`<div class="notificacao-vazia">Nenhuma notificação não lida.</div>`;
+}
+function marcarNotificacaoVista(aba){
+  const chave="notificacoesObraV1";let vistos={};try{vistos=JSON.parse(localStorage.getItem(chave)||"{}")}catch(e){}
+  const atual=resumoNotificacoesAtual();if(aba==="personalizacao")vistos.personalizacoes=atual.personalizacoes;if(aba==="ocorrencias")vistos.ocorrencias=atual.ocorrencias;localStorage.setItem(chave,JSON.stringify(vistos));atualizarNotificacoes();
+  const chaveHistorico="historicoNotificacoesObraV1";let historico=[];try{historico=JSON.parse(localStorage.getItem(chaveHistorico)||"[]")}catch(e){}historico.forEach(item=>{if(item.aba===aba)item.lida=true;});localStorage.setItem(chaveHistorico,JSON.stringify(historico));atualizarNotificacoes();
+}
+async function sincronizarPersonalizacoes(){
+  try{
+    const antes=resumoNotificacoesAtual().personalizacoes;
+    const [respostaPlantas,respostaAcabamentos,respostaProjetos]=await Promise.all([
+      fetch("/plantas_unidades.json",{cache:"no-store"}),fetch("/acabamentos_unidades.json",{cache:"no-store"}),fetch("/api/projetos",{cache:"no-store"})
+    ]);
+    if(!respostaPlantas.ok||!respostaAcabamentos.ok||!respostaProjetos.ok)return;
+    const [novasPlantas,novosAcabamentos,novosProjetos]=await Promise.all([respostaPlantas.json(),respostaAcabamentos.json(),respostaProjetos.json()]);
+    plantasUnidades=novasPlantas;acabamentosUnidades=novosAcabamentos;projetosAdicionados=novosProjetos;
+    const mudou=antes!==resumoNotificacoesAtual().personalizacoes;
+    if(mudou){renderizarPersonalizacoes();renderizarApartamentosDoPavimento();atualizarNotificacoes();}
+  }catch(e){}
+}
 
 function categoriaResumoAbertura(atividade,especificacao=""){
   const nome=(atividade||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
@@ -2113,6 +2469,7 @@ async function carregarRegistrosDoBanco(){
       buscarJsonComTentativas("/api/projetos-ocultos")
     ]);
     ATIVIDADES_UNIDADE = atividadesCadastro.map(item=>item.nome);
+    preencherFiltrosCadastroMassivo();
     Object.values(registrosObra).forEach(registro => {
       registro.status = registro.status || (registro.concluido?"concluido":"nao-iniciado");
       registro.concluido = registro.status === "concluido";
@@ -2125,6 +2482,7 @@ async function carregarRegistrosDoBanco(){
     const renderizacoes=[
       ["planilha",prepararPlanilha],
       ["apartamentos",renderizarApartamentosDoPavimento],
+      ["personalização",renderizarPersonalizacoes],
       ["dashboard",prepararDashboardGeral],
       ["gráficos",atualizarGraficosOperacionais],
       ["serviços",prepararAbaServicos],
@@ -2175,6 +2533,7 @@ async function carregarOcorrenciasDoBanco(){
     const resposta = await fetch("/api/ocorrencias",{cache:"no-store"});
     if(!resposta.ok) throw new Error("Falha ao carregar ocorrências");
     ocorrenciasBanco = await resposta.json();
+    atualizarNotificacoes(true);
     atualizarApartamentosFiltroOcorrencias();
     preencherOcorrencias();
     renderizarApartamentosDoPavimento();
@@ -2223,7 +2582,7 @@ function obterRegistro(andar, unidade, atividade, torre = torreSelecionada){
 function apartamentosDoAndar(torre, andar){
   if(PAVIMENTOS_TECNICOS.includes(Number(andar)))return [];
   if(torre === "horizonte"){
-    return andar >= 4
+    return andar >= 4 && andar <= 22
       ? Array.from({length:14},(_,i)=>`${andar}${String(i+1).padStart(2,"0")}`)
       : [];
   }
@@ -2243,6 +2602,77 @@ function unidadesDoAndar(torre,andar,atividadeNome=null){
   const unidadesEspecificas=escopos.filter(escopo=>escopo.unidade!=="*").map(escopo=>escopo.unidade);
   const base=[...apartamentos,"Área comum"];
   return [...new Set([...base,...unidadesEspecificas])];
+}
+function opcaoPlantaUnidade(planta){
+  const tipo=String(planta?.tipo||"").trim();
+  if(/^DISTRATO$/i.test(tipo))return "Opção 01";
+  return tipo.replace(/^\s*(?:LIVRE|DISTRATO)\s*-\s*/i,"").trim();
+}
+function opcaoPlantaFiltro(planta){
+  if(plantaEhPadrao(planta))return "Padrão";
+  const opcao=opcaoPlantaUnidade(planta);
+  const identificador=opcao.match(/^opção\s*\d+/i);
+  return identificador?identificador[0].replace(/^opção/i,"Opção"):opcao;
+}
+function condicaoComercialUnidade(planta){
+  const tipo=String(planta?.tipo||"");
+  if(/^\s*LIVRE(?:\s*-|$)/i.test(tipo))return "Livre";
+  if(/^\s*DISTRATO(?:\s*-|$)/i.test(tipo))return "Distrato";
+  return "Vendido";
+}
+function ehOpcaoUm(valor){
+  return /^opção\s*0*1(?:\b|\s*-)/i.test(String(valor||"").trim());
+}
+function plantaEhPadrao(planta){
+  const opcao=opcaoPlantaUnidade(planta);
+  return ehOpcaoUm(opcao)||/^unidade acessível\b/i.test(opcao);
+}
+function acabamentoEhPadrao(acabamento){
+  if(!acabamento)return true;
+  if(!ehOpcaoUm(acabamento.planta))return false;
+  const itens=Array.isArray(acabamento.itens)?acabamento.itens:[];
+  return itens.every(item=>ehOpcaoUm(item?.opcao));
+}
+function opcoesAcabamentoUnidade(acabamento){
+  if(!acabamento)return [];
+  const itens=Array.isArray(acabamento.itens)?acabamento.itens:[];
+  const opcoes=[...new Set(itens.map(item=>String(item?.opcao||"").trim()).filter(Boolean))];
+  if(!opcoes.length&&acabamento.planta)opcoes.push(String(acabamento.planta).trim());
+  return opcoes;
+}
+function apartamentoEhPadrao(chave){
+  const [torre,...partesUnidade]=chave.split("|");
+  const unidade=partesUnidade.join("|");
+  if(projetosAdicionados.some(projeto=>projeto.torre===torre&&projeto.unidade===unidade))return false;
+  return plantaEhPadrao(plantasUnidades[chave])&&acabamentoEhPadrao(acabamentosUnidades[chave]);
+}
+function renderizarPersonalizacoes(){
+  const filtroTorre=document.getElementById("filtroTorrePersonalizacao");
+  const filtro=document.getElementById("filtroAndarPersonalizacao");
+  const filtroPlanta=document.getElementById("filtroPlantaPersonalizacao");
+  const filtroAcabamento=document.getElementById("filtroAcabamentoPersonalizacao");
+  const lista=document.getElementById("listaPersonalizacoes");
+  if(!filtro||!lista)return;
+  if(filtroTorre)filtroTorre.value=torreSelecionada;
+  const unidades=[...new Set([...Object.keys(plantasUnidades),...Object.keys(acabamentosUnidades),...Object.keys(personalizacoesUnidades),...projetosAdicionados.map(projeto=>`${projeto.torre}|${projeto.unidade}`)])]
+    .filter(chave=>chave.startsWith(`${torreSelecionada}|`)&&!apartamentoEhPadrao(chave))
+    .map(chave=>{const unidade=chave.split("|").slice(1).join("|");const andar=Number(personalizacoesUnidades[chave]?.andar)||Number((unidade.match(/\d+/)||[0])[0].toString().slice(0,-2))||0;return {chave,unidade,andar};})
+    .filter(item=>item.andar&&unidadesDoAndar(torreSelecionada,item.andar).includes(item.unidade))
+    .sort((a,b)=>a.andar-b.andar||a.unidade.localeCompare(b.unidade,"pt-BR",{numeric:true}));
+  const valorAnterior=filtro.value||"todos";
+  const andares=[...new Set(unidades.map(item=>item.andar))];
+  filtro.innerHTML=`<option value="todos">Todos os andares</option>`+andares.map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`).join("");
+  filtro.value=andares.includes(Number(valorAnterior))?valorAnterior:"todos";
+  const exibidas=unidades.filter(item=>{
+    const andarOk=filtro.value==="todos"||item.andar===Number(filtro.value);
+    const plantaPadrao=plantaEhPadrao(plantasUnidades[item.chave]);
+    const acabamentoPadrao=acabamentoEhPadrao(acabamentosUnidades[item.chave]);
+    const plantaOk=filtroPlanta.value==="todos"||(filtroPlanta.value==="padrao"?plantaPadrao:!plantaPadrao);
+    const acabamentoOk=filtroAcabamento.value==="todos"||(filtroAcabamento.value==="padrao"?acabamentoPadrao:!acabamentoPadrao);
+    return andarOk&&plantaOk&&acabamentoOk;
+  });
+  const card=item=>{const planta=opcaoPlantaFiltro(plantasUnidades[item.chave])||"Sem opção de planta";const acabamento=acabamentosUnidades[item.chave];const situacaoAcabamento=acabamentoEhPadrao(acabamento)?"Padrão":"Alterado";return `<button class="personalizacao-unidade-card" type="button" data-personalizacao-unidade="${escaparHtml(item.unidade)}" data-personalizacao-andar="${item.andar}"><strong>${escaparHtml(item.unidade.replace("Apto ","Apartamento "))}</strong><span class="personalizacao-card-descricao"><span>${rotuloAndar(item.andar)}</span><span>Planta: ${escaparHtml(planta)}</span><span>Acabamento: ${situacaoAcabamento}</span></span></button>`;};
+  lista.innerHTML=exibidas.length?[...new Set(exibidas.map(item=>item.andar))].map(andar=>`<section class="personalizacao-grupo-andar"><h3>${rotuloAndar(andar)}</h3><div class="personalizacao-linha-andar">${exibidas.filter(item=>item.andar===andar).map(card).join("")}</div></section>`).join(""):`<div class="matriz-aviso">Nenhuma unidade personalizada encontrada.</div>`;
 }
 
 function listaRegistros(torre = torreSelecionada){
@@ -2264,10 +2694,12 @@ function listaRegistros(torre = torreSelecionada){
 
 function renderizarApartamentosDoPavimento(){
   const seletorAndar=document.getElementById("andarAbaApartamentos");
+  const filtroPlanta=document.getElementById("filtroPlantaApartamentos");
+  const filtroAcabamento=document.getElementById("filtroAcabamentoApartamentos");
   const pavimentosComApartamentos=pavimentosDaTorre(torreSelecionada).filter(andar=>
     unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade))
   );
-  seletorAndar.innerHTML=pavimentosComApartamentos
+  seletorAndar.innerHTML=`<option value="todos">Todos os andares</option>`+pavimentosComApartamentos
     .map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`)
     .join("");
   seletorAndar.dataset.torre=torreSelecionada;
@@ -2275,21 +2707,52 @@ function renderizarApartamentosDoPavimento(){
     pavimentoSelecionado=pavimentosComApartamentos[0]??1;
     unidadeSelecionada=null;
   }
-  seletorAndar.value=String(pavimentoSelecionado);
-  const unidades = unidadesDoAndar(torreSelecionada,pavimentoSelecionado).filter(unidade=>/^(apartamento|apto)\s/i.test(unidade));
-  document.getElementById("apartamentosGrid").innerHTML = unidades.map(unidade => {
-    const itens = listaRegistros().filter(item=>item.andar===pavimentoSelecionado && item.unidade===unidade);
+  seletorAndar.value=todosAndaresApartamentos?"todos":String(pavimentoSelecionado);
+  const unidadesDoPavimento=(todosAndaresApartamentos?pavimentosComApartamentos:[pavimentoSelecionado]).flatMap(andar=>
+    unidadesDoAndar(torreSelecionada,andar).filter(unidade=>/^(apartamento|apto)\s/i.test(unidade)).map(unidade=>({andar,unidade}))
+  );
+  const plantaAnterior=filtroPlanta.value||"todos";
+  const acabamentoAnterior=filtroAcabamento.value||"todos";
+  const opcoesPlanta=[...new Set(unidadesDoPavimento.map(item=>opcaoPlantaFiltro(plantasUnidades[`${torreSelecionada}|${item.unidade}`])).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+  const opcoesAcabamento=[...new Set(unidadesDoPavimento.flatMap(item=>opcoesAcabamentoUnidade(acabamentosUnidades[`${torreSelecionada}|${item.unidade}`])))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+  filtroPlanta.innerHTML=`<option value="todos">Todas as opções</option>`+opcoesPlanta.map(opcao=>`<option value="${escaparHtml(opcao)}">${escaparHtml(opcao)}</option>`).join("");
+  filtroAcabamento.innerHTML=`<option value="todos">Todas as opções</option>`+opcoesAcabamento.map(opcao=>`<option value="${escaparHtml(opcao)}">${escaparHtml(opcao)}</option>`).join("");
+  filtroPlanta.value=opcoesPlanta.includes(plantaAnterior)?plantaAnterior:"todos";
+  filtroAcabamento.value=opcoesAcabamento.includes(acabamentoAnterior)?acabamentoAnterior:"todos";
+  const unidades=unidadesDoPavimento.filter(item=>{
+    const chave=`${torreSelecionada}|${item.unidade}`;
+    const plantaOk=filtroPlanta.value==="todos"||opcaoPlantaFiltro(plantasUnidades[chave])===filtroPlanta.value;
+    const acabamentoOk=filtroAcabamento.value==="todos"||opcoesAcabamentoUnidade(acabamentosUnidades[chave]).includes(filtroAcabamento.value);
+    return plantaOk&&acabamentoOk;
+  });
+  const renderizarCartaoApartamento=itemUnidade=>{
+    const {andar,unidade}=itemUnidade;
+    const chaveUnidadeCartao=`${torreSelecionada}|${unidade}`;
+    const personalizado=!apartamentoEhPadrao(chaveUnidadeCartao);
+    const itens = listaRegistros().filter(item=>item.andar===andar && item.unidade===unidade);
     const feitos = itens.filter(item=>obterRegistro(item.andar,item.unidade,item.atividade).concluido).length;
     const percentual = itens.length?Math.round(feitos/itens.length*100):0;
     const nome = unidade === "Área comum" ? unidade : unidade.replace("Apto ","Apartamento ");
-    return `<button class="apartamento-seletor ${unidade===unidadeSelecionada?"ativo":""}" type="button" data-unidade="${escaparHtml(unidade)}">${escaparHtml(nome)}<span>${percentual}% concluído</span></button>`;
-  }).join("");
-  if(!unidadeSelecionada || !unidades.includes(unidadeSelecionada)){
+    return `<button class="apartamento-seletor ${personalizado?"personalizado":"padrao"} ${unidade===unidadeSelecionada&&andar===pavimentoSelecionado?"ativo":""}" type="button" data-unidade="${escaparHtml(unidade)}" data-andar="${andar}" ${personalizado?'title="Apartamento personalizado"':'title="Apartamento padrão"'}>${escaparHtml(nome)}<span>${percentual}% concluído</span></button>`;
+  };
+  const apartamentosGrid=document.getElementById("apartamentosGrid");
+  const unidadesExibidas=apartamentosRecolhidos&&unidadeSelecionada
+    ? unidades.filter(item=>item.andar===pavimentoSelecionado)
+    : unidades;
+  apartamentosGrid.classList.toggle("por-andar",todosAndaresApartamentos||apartamentosRecolhidos);
+  apartamentosGrid.innerHTML = unidadesExibidas.length
+    ? apartamentosRecolhidos
+      ? `<section class="apartamentos-grupo-andar"><div class="apartamentos-recolhidos-topo"><h3>Apartamentos · ${rotuloAndar(pavimentoSelecionado)}</h3><button class="expandir-apartamentos" id="expandirApartamentos" type="button">Ver todos os andares</button></div><div class="apartamentos-linha-andar">${unidadesExibidas.map(renderizarCartaoApartamento).join("")}</div></section>`
+      : todosAndaresApartamentos
+      ? [...new Set(unidades.map(item=>item.andar))].sort((a,b)=>a-b).map(andar=>`<section class="apartamentos-grupo-andar"><h3>${rotuloAndar(andar)}</h3><div class="apartamentos-linha-andar">${unidades.filter(item=>item.andar===andar).map(renderizarCartaoApartamento).join("")}</div></section>`).join("")
+      : unidades.map(renderizarCartaoApartamento).join("")
+    : `<div class="matriz-aviso">Nenhum apartamento corresponde aos filtros selecionados.</div>`;
+  if(!unidadeSelecionada || !unidades.some(item=>item.unidade===unidadeSelecionada&&item.andar===pavimentoSelecionado)){
     unidadeSelecionada = null;
     document.getElementById("baixarPdfApartamento").classList.add("desabilitado");
     document.getElementById("baixarPdfApartamento").href="#";
-    document.getElementById("tituloApartamentos").textContent = `Apartamentos · ${pavimentoSelecionado}º andar`;
-    document.getElementById("subtituloApartamentos").textContent = `${TORRES[torreSelecionada].nome} · clique em uma unidade para abrir o dashboard.`;
+    document.getElementById("tituloApartamentos").textContent = `Apartamentos · ${TORRES[torreSelecionada].nome}`;
+    document.getElementById("subtituloApartamentos").textContent = "";
     document.getElementById("dashboardApartamento").classList.remove("visivel");
     return;
   }
@@ -2303,7 +2766,7 @@ function renderizarApartamentosDoPavimento(){
   baixarPdf.href=urlPdf;
   baixarPdf.classList.remove("desabilitado");
   document.getElementById("tituloApartamentos").textContent = `${nome} · ${pavimentoSelecionado}º andar`;
-  document.getElementById("subtituloApartamentos").textContent = `${TORRES[torreSelecionada].nome} · dashboard individual da unidade`;
+  document.getElementById("subtituloApartamentos").textContent = TORRES[torreSelecionada].nome;
   document.getElementById("dashboardApartamento").classList.add("visivel");
   const chaveUnidade=`${torreSelecionada}|${unidadeSelecionada}`;
   const personalizacao=personalizacoesUnidades[chaveUnidade];
@@ -2311,7 +2774,7 @@ function renderizarApartamentosDoPavimento(){
   const acabamentos=acabamentosUnidades[chaveUnidade];
   const slidesProjetos=[];
   const projetoEstaOculto=imagem=>projetosOcultos.some(projeto=>projeto.torre===torreSelecionada&&Number(projeto.andar)===pavimentoSelecionado&&projeto.unidade===unidadeSelecionada&&projeto.imagem===imagem);
-  if(planta?.plantaMiniatura&&!projetoEstaOculto(planta.plantaMiniatura)) slidesProjetos.push({titulo:`Planta da opção · ${planta.tipo}`,imagem:planta.plantaMiniatura});
+  if(planta?.plantaMiniatura&&!projetoEstaOculto(planta.plantaMiniatura)) slidesProjetos.push({titulo:`Planta da opção · ${opcaoPlantaUnidade(planta)}`,imagem:planta.plantaMiniatura});
   (personalizacao?.projetos||[]).forEach(projeto=>{
     if(projeto.imagem&&!projetoEstaOculto(projeto.imagem)&&!slidesProjetos.some(slide=>slide.imagem===projeto.imagem)) slidesProjetos.push({titulo:projeto.titulo||projeto.arquivo||"Projeto",imagem:projeto.imagem});
   });
@@ -2319,9 +2782,9 @@ function renderizarApartamentosDoPavimento(){
     slidesProjetos.push({id:projeto.id,titulo:projeto.titulo||"Projeto adicionado",imagem:projeto.imagem});
   });
   const blocoPlanta=slidesProjetos.length
-    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}">${planta?.tipo?`<div class="tipo-planta"><small>Opção de planta</small><strong>${escaparHtml(planta.tipo)}</strong></div>`:""}<a class="planta-link ${slide.imagem.includes("/miniaturas_tipos_planta/")?"somente-planta-baixa":""}" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
+    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}">${planta?.tipo?`<div class="tipo-planta"><small>Opção de planta · ${condicaoComercialUnidade(planta)}</small><strong>${escaparHtml(opcaoPlantaUnidade(planta))}</strong></div>`:""}<a class="planta-link ${slide.imagem.includes("/miniaturas_tipos_planta/")?"somente-planta-baixa":""}" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
     :`<div class="personalizacao-secao"><div class="planta-indisponivel">Nenhum projeto identificado para esta unidade.</div></div>`;
-  const itensAcabamentos=(acabamentos?.itens||[]).filter(item=>!/^Opção\s*1(?:\s*\(padrão\))?$/i.test(item.opcao.trim()));
+  const itensAcabamentos=(acabamentos?.itens||[]).filter(item=>!/^Opção\s*0*1(?:\s*\(padrão\))?$/i.test(item.opcao.trim()));
   const gruposAcabamentos=itensAcabamentos.reduce((grupos,item)=>{
     (grupos[item.ambiente]??=[]).push(item);
     return grupos;
@@ -2330,7 +2793,7 @@ function renderizarApartamentosDoPavimento(){
     ?`<div class="personalizacao-resumo"><span>${itensAcabamentos.length} alteração(ões) de acabamento</span></div><div class="acabamentos-lista">${Object.entries(gruposAcabamentos).map(([ambiente,itens],indice)=>`<details class="acabamento-ambiente" ${indice===0?"open":""}><summary><span>${escaparHtml(ambiente)}</span><small>${itens.length} item(ns)</small></summary><div class="acabamento-itens">${itens.map(item=>`<div class="acabamento-item"><div class="acabamento-item-cabecalho"><strong>${escaparHtml(item.item)}</strong><span class="acabamento-opcao">${escaparHtml(item.opcao)}</span></div>${item.descricao?`<p class="acabamento-descricao">${escaparHtml(item.descricao)}</p>`:""}</div>`).join("")}</div></details>`).join("")}</div>`
     :acabamentos?.itens?.length
       ?`<div class="acabamentos-padrao"><i>✓</i><div><strong>Opção padrão</strong>Sem alteração de acabamento.</div></div>`
-      :`<div class="acabamentos-aguardando">Não há opções de acabamento cadastradas para esta unidade.</div>`;
+      :`<div class="acabamentos-padrao"><i>✓</i><div><strong>Padrão (Opção 01)</strong>Sem alteração de acabamento.</div></div>`;
   const blocoContratos=personalizacao?.documentos?.length
     ?`<div class="personalizacao-resumo" style="margin-top:11px"><span>${personalizacao.documentos.length} documento(s) técnico(s)</span><span>${personalizacao.quantidadeProjetos||0} projeto(s) vinculado(s)</span></div><div class="personalizacao-documentos">${personalizacao.documentos.map(documento=>`<article class="personalizacao-documento"><h4>${escaparHtml(documento.titulo)}</h4><p>${escaparHtml(documento.descricao).replaceAll(" • ","<br>• ")}</p></article>`).join("")}</div>`
     :"";
@@ -2567,8 +3030,8 @@ function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
   const hoje=new Date();
   document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
   ativarAba("ocorrencias");
+  document.getElementById("ocorrenciaOverlay").classList.remove("oculto");
   requestAnimationFrame(()=>{
-    document.getElementById("formOcorrencia").scrollIntoView({behavior:"smooth",block:"start"});
     document.getElementById("ocDescricao").focus();
   });
 }
@@ -2624,34 +3087,30 @@ async function extrairLinhasSetoresImportacao(arquivo){
   return linhas;
 }
 document.getElementById("baixarModeloSetores").addEventListener("click",()=>{
-  const conteudo="\uFEFFTorre;Pavimento;Atividade;Setor\r\nHome;1;Alvenaria;Área técnica\r\nSmart;Cobertura;Todas;Casa de máquinas\r\n";
+  const conteudo="\uFEFFTorre;Andar;Atividade;Setor\r\nHome;1;Alvenaria;Área técnica\r\nSmart;Cobertura;Todas;Casa de máquinas\r\n";
   const url=URL.createObjectURL(new Blob([conteudo],{type:"text/csv;charset=utf-8"}));
   const link=document.createElement("a");link.href=url;link.download="modelo_importacao_setores.csv";link.click();URL.revokeObjectURL(url);
 });
 document.getElementById("importarSetores").addEventListener("click",()=>document.getElementById("arquivoSetores").click());
 document.getElementById("arquivoSetores").addEventListener("change",async event=>{
   const arquivo=event.target.files[0];if(!arquivo)return;
-  const status=document.getElementById("statusImportacaoSetores");
+  const status=document.getElementById("statusCadastroMassivo");
   try{
     status.textContent="Lendo e validando a planilha…";status.style.color="var(--azul)";
     const linhas=await extrairLinhasSetoresImportacao(arquivo);
     if(!linhas.some(linha=>["torre","pavimento","atividade","setor"].every(campo=>String(linha[campo]||"").trim()))){
-      throw new Error("Use as colunas Torre, Pavimento, Atividade e Setor no formato do modelo padrão.");
+      throw new Error("Use as colunas Torre, Andar, Atividade e Setor no formato do modelo padrão.");
     }
     const linhasValidas=linhas.map(linha=>({
-      torre:String(linha.torre||"").trim(),
-      pavimento:String(linha.pavimento||"").trim(),
+      torre:normalizarTorreCadastroMassivo(linha.torre),
+      pavimento:normalizarAndarCadastroMassivo(linha.pavimento),
       atividade:String(linha.atividade||"").trim(),
       setor:String(linha.setor||"").trim(),
-    })).filter(linha=>linha.torre&&linha.pavimento&&linha.atividade&&linha.setor);
+    })).filter(linha=>linha.torre&&linha.pavimento!==""&&linha.atividade&&linha.setor);
     if(!linhasValidas.length)throw new Error("Nenhuma linha da planilha preenchida corretamente.");
-    const resposta=await fetch("/api/setores/importar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({linhas:linhasValidas})});
-    const resultado=await resposta.json().catch(()=>({}));
-    if(!resposta.ok)throw new Error(resultado.erro||"Não foi possível importar a planilha.");
-    status.textContent=`${resultado.criados} cadastro(s) criado(s)${resultado.ignorados?` · ${resultado.ignorados} duplicado(s) ignorado(s)`:""}${resultado.erros?.length?` · ${resultado.erros.length} linha(s) com erro`:""}.`;
-    status.style.color=resultado.erros?.length?"var(--laranja)":"var(--verde)";
-    if(resultado.erros?.length)alert(`Importação concluída com avisos:\n\n${resultado.erros.join("\n")}`);
-    await carregarRegistrosDoBanco();
+    preencherCadastroMassivoComImportacao(linhasValidas);
+    status.textContent=`Planilha carregada: ${linhasValidas.length} linha(s) pronta(s) para revisão. Clique em “Salvar setores” para confirmar.`;
+    status.style.color="var(--azul-escuro)";
   }catch(erro){status.textContent=erro.message;status.style.color="var(--vermelho)";}
   finally{event.target.value="";}
 });
@@ -2663,7 +3122,7 @@ function rotuloEscopoAtividade(escopo){
 }
 function atualizarAndaresAtividade(){
   const torre=document.getElementById("atividadeTorre").value;
-  document.getElementById("atividadeAndar").innerHTML=opcoesAndares(torre,true).replace("Todos os andares","Todos os pavimentos");
+  document.getElementById("atividadeAndar").innerHTML=opcoesAndares(torre,true);
   atualizarUnidadesAtividade();
 }
 function atualizarUnidadesAtividade(){
@@ -2697,23 +3156,162 @@ function limparFormularioAtividade(){
   renderizarEspecificacoesAtividade();
   document.getElementById("statusAtividadeAdmin").textContent="";
 }
+let linhasCadastroMassivo=[{setor:""}];
+let andaresCadastroMassivo=new Set();
+let linhasImportadasCadastroMassivo=null;
+function normalizarTorreCadastroMassivo(valor){
+  const texto=normalizarCabecalhoCsv(valor);
+  return {home:"aurora","torre home":"aurora",aurora:"aurora",smart:"horizonte","torre smart":"horizonte",horizonte:"horizonte"}[texto]||"";
+}
+function normalizarAndarCadastroMassivo(valor){
+  const texto=normalizarCabecalhoCsv(valor).replace("º andar","").replace(" andar","").trim();
+  const especiais={fundacao:-2,"1 subsolo":-1,"1º subsolo":-1,subsolo:-1,terreo:0,barrilete:101,reservatorio:102,cobertura:103};
+  if(Object.prototype.hasOwnProperty.call(especiais,texto))return especiais[texto];
+  const numero=Number(texto);
+  return Number.isInteger(numero)?numero:"";
+}
+function preencherCadastroMassivoComImportacao(linhas){
+  linhasImportadasCadastroMassivo=linhas.map(linha=>({...linha}));
+  const torres=[...new Set(linhas.map(linha=>linha.torre))];
+  const torreSelect=document.getElementById("cadastroMassivoTorre");
+  torreSelect.value=torres.length===1?torres[0]:"*";
+  andaresCadastroMassivo=new Set(linhas.map(linha=>Number(linha.pavimento)));
+  renderizarAndaresCadastroMassivo();
+  const atividades=[...new Set(linhas.map(linha=>linha.atividade))];
+  const atividadeSelect=document.getElementById("cadastroMassivoAtividade");
+  const atividadeUnica=atividades.length===1&&!/^(todas|todos|\*)$/i.test(atividades[0])?atividades[0]:"*";
+  if([...atividadeSelect.options].some(opcao=>opcao.value===atividadeUnica))atividadeSelect.value=atividadeUnica;
+  linhasCadastroMassivo=[...new Set(linhas.map(linha=>linha.setor))].map(setor=>({setor}));
+  renderizarCadastroMassivo();
+}
+function prepararCadastroMassivo(){
+  linhasCadastroMassivo=[{setor:""}];
+  andaresCadastroMassivo.clear();
+  linhasImportadasCadastroMassivo=null;
+  preencherFiltrosCadastroMassivo();
+  renderizarAndaresCadastroMassivo();
+  renderizarCadastroMassivo();
+}
+function andaresDisponiveisCadastroMassivo(){
+  const torre=document.getElementById("cadastroMassivoTorre")?.value;
+  const torres=torre==="*"?Object.keys(TORRES):[torre||torreSelecionada||"aurora"];
+  return [...new Set(torres.flatMap(pavimentosDaTorre))].sort((a,b)=>a-b);
+}
+function atividadesDisponiveisCadastroMassivo(){
+  const torre=document.getElementById("cadastroMassivoTorre")?.value;
+  const torres=torre==="*"?Object.keys(TORRES):[torre||torreSelecionada||"aurora"];
+  return atividadesCadastro.filter(item=>item?.nome&&item.escopos?.some(escopo=>
+    torres.includes(escopo.torre)&&andaresCadastroMassivo.has(Number(escopo.andar))
+  )).map(item=>item.nome);
+}
+function atividadePertinenteCadastroMassivo(nome,torre,andar){
+  return atividadesCadastro.some(item=>item?.nome===nome&&item.escopos?.some(escopo=>
+    escopo.torre===torre&&Number(escopo.andar)===Number(andar)
+  ));
+}
+function atualizarAtividadesCadastroMassivo(){
+  const atividadeSelect=document.getElementById("cadastroMassivoAtividade");
+  if(!atividadeSelect)return;
+  const atividadeAnterior=atividadeSelect.value;
+  const nomesAtividades=atividadesDisponiveisCadastroMassivo();
+  atividadeSelect.innerHTML=nomesAtividades.length
+    ? `<option value="*">Todas as atividades</option>`+nomesAtividades.map(nome=>`<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join("")
+    : `<option value="">${andaresCadastroMassivo.size?"Nenhuma atividade disponível":"Selecione os andares"}</option>`;
+  atividadeSelect.disabled=!nomesAtividades.length;
+  atividadeSelect.value=nomesAtividades.includes(atividadeAnterior)?atividadeAnterior:(nomesAtividades.length?"*":"");
+}
+function renderizarAndaresCadastroMassivo(){
+  const opcoes=document.getElementById("opcoesCadastroMassivoAndares");
+  const resumo=document.getElementById("resumoCadastroMassivoAndares");
+  if(!opcoes || !resumo)return;
+  const disponiveis=andaresDisponiveisCadastroMassivo();
+  andaresCadastroMassivo=new Set([...andaresCadastroMassivo].filter(andar=>disponiveis.includes(andar)));
+  const todosMarcados=disponiveis.length>0&&disponiveis.every(andar=>andaresCadastroMassivo.has(andar));
+  opcoes.innerHTML=`<label class="todos"><input type="checkbox" data-todos-andares ${todosMarcados?"checked":""}> Todos os andares</label>`+
+    disponiveis.map(andar=>`<label><input type="checkbox" data-andar-cadastro="${andar}" ${andaresCadastroMassivo.has(andar)?"checked":""}> ${rotuloAndar(andar)}</label>`).join("");
+  const selecionados=[...andaresCadastroMassivo].sort((a,b)=>a-b);
+  resumo.textContent=todosMarcados?"Todos os andares":selecionados.length===0?"Selecione os andares":selecionados.length<=2?selecionados.map(rotuloAndar).join(", "):`${selecionados.length} andares selecionados`;
+  atualizarAtividadesCadastroMassivo();
+}
+function preencherFiltrosCadastroMassivo(){
+  const torreSelect=document.getElementById("cadastroMassivoTorre");
+  const atividadeSelect=document.getElementById("cadastroMassivoAtividade");
+  if(!torreSelect || !atividadeSelect) return;
+  const torreAnterior=torreSelect.value;
+  const opcoesTorres=`<option value="*">Todas as torres</option>`+Object.entries(TORRES).map(([valor, dados])=>`<option value="${valor}">${dados.nome}</option>`).join("");
+  torreSelect.innerHTML=opcoesTorres;
+  torreSelect.value=[...torreSelect.options].some(opcao=>opcao.value===torreAnterior)?torreAnterior:(torreSelecionada || "aurora");
+  renderizarAndaresCadastroMassivo();
+}
+function normalizarNomeSetorCadastroMassivo(valor){
+  return String(valor||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLocaleLowerCase("pt-BR");
+}
+function setorJaExisteCadastroMassivo(setor){
+  const nome=normalizarNomeSetorCadastroMassivo(setor);
+  if(!nome)return false;
+  let combinacoes=[];
+  if(linhasImportadasCadastroMassivo){
+    combinacoes=linhasImportadasCadastroMassivo.filter(linha=>normalizarNomeSetorCadastroMassivo(linha.setor)===nome).flatMap(linha=>{
+      const atividades=/^(todas|todos|\*)$/i.test(linha.atividade)?atividadesCadastro.filter(item=>item.escopos.some(escopo=>escopo.torre===linha.torre&&Number(escopo.andar)===Number(linha.pavimento))).map(item=>item.nome):[linha.atividade];
+      return atividades.map(atividade=>({torre:linha.torre,andar:Number(linha.pavimento),atividade}));
+    });
+  }else{
+    const torreSelecionadaCadastro=document.getElementById("cadastroMassivoTorre")?.value;
+    const atividadeSelecionadaCadastro=document.getElementById("cadastroMassivoAtividade")?.value;
+    const torres=torreSelecionadaCadastro==="*"?Object.keys(TORRES):[torreSelecionadaCadastro];
+    const atividades=atividadeSelecionadaCadastro==="*"?atividadesDisponiveisCadastroMassivo():[atividadeSelecionadaCadastro];
+    combinacoes=torres.flatMap(torre=>[...andaresCadastroMassivo].flatMap(andar=>atividades.filter(atividade=>atividadePertinenteCadastroMassivo(atividade,torre,andar)).map(atividade=>({torre,andar,atividade}))));
+  }
+  return combinacoes.some(combinacao=>listaRegistros(combinacao.torre).some(item=>
+    Number(item.andar)===Number(combinacao.andar)&&item.atividade===combinacao.atividade&&normalizarNomeSetorCadastroMassivo(item.unidade)===nome
+  ));
+}
+function renderizarCadastroMassivo(){
+  const corpo=document.getElementById("listaCadastroMassivo");
+  if(!corpo) return;
+  corpo.innerHTML = linhasCadastroMassivo.length
+    ? linhasCadastroMassivo.map((linha, indice)=>{
+        const existente=setorJaExisteCadastroMassivo(linha.setor);
+        return `<div class="cadastro-massivo-linha ${existente?"setor-existente":""}">
+          <input type="text" data-index="${indice}" data-campo="setor" value="${escaparHtml(linha.setor)}" placeholder="Ex.: Apartamento 1101" aria-label="Setor ${indice+1}">
+          ${existente?`<span class="cadastro-setor-existente" title="Este setor já existe no acompanhamento">Já existente</span>`:""}
+          <button type="button" class="cadastro-massivo-remover" data-remover-linha="${indice}" aria-label="Remover setor">Remover</button>
+        </div>`}).join("")
+    : `<div class="cadastro-massivo-vazio">Nenhum setor adicionado.</div>`;
+}
+function alternarFormularioAtividade(visivel){
+  const formulario=document.getElementById("formAtividade");
+  formulario.classList.toggle("oculto", !visivel);
+  if(visivel){
+    formulario.scrollIntoView({behavior:"smooth",block:"start"});
+    document.getElementById("atividadeNome").focus();
+  }
+}
 function renderizarAtividadesAdmin(){
-  const busca=(document.getElementById("buscarAtividadeAdmin").value||"").toLocaleLowerCase("pt-BR");
-  const itens=atividadesCadastro.filter(item=>item.nome.toLocaleLowerCase("pt-BR").includes(busca));
-  document.getElementById("listaAtividadesAdmin").innerHTML=itens.map(item=>{
+  const tabela=document.getElementById("listaAtividadesAdmin");
+  if(!tabela) return;
+  const campoBusca=document.getElementById("buscarAtividadeAdmin");
+  const busca=(campoBusca ? campoBusca.value || "" : "").toLocaleLowerCase("pt-BR");
+  const itens=Array.isArray(atividadesCadastro)?atividadesCadastro.filter(item=>item && item.nome && item.nome.toLocaleLowerCase("pt-BR").includes(busca)):[];
+  tabela.innerHTML=itens.map(item=>{
     const torres=[...new Set(item.escopos.map(escopo=>nomeTorreAtividade(escopo.torre)))].join(" e ");
     const pavimentos=new Set(item.escopos.map(escopo=>`${escopo.torre}|${escopo.andar}`)).size;
     const especificos=item.escopos.filter(escopo=>escopo.unidade!=="*").length;
     const quantidadeEspecificacoes=especificacoesDoServico(item.nome).length;
-    const resumo=`${torres}<br>${pavimentos} pavimento(s)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}<br>${quantidadeEspecificacoes} especificação(ões)`;
-    return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes"><button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button><button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
-  }).join("")||`<tr><td colspan="3">Nenhuma atividade encontrada.</td></tr>`;
+    const resumo=`${torres}<br>${pavimentos} andar(es)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}<br>${quantidadeEspecificacoes} especificação(ões)`;
+    const mapaSubservicos=mapaDivisoesDoServico(item.nome);
+    const subservicos=mapaSubservicos?Object.keys(mapaSubservicos):[...new Set(especificacoesDoServico(item.nome).filter(valor=>valor.includes(" :: ")).map(valor=>valor.split(" :: ")[0]))];
+    const listaSubservicos=subservicos.length?subservicos.map(nome=>`<span>${escaparHtml(nome)}</span>`).join(""):"—";
+    return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-subservicos">${listaSubservicos}</td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes"><button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button><button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
+  }).join("")||`<tr><td colspan="4">Nenhuma atividade encontrada.</td></tr>`;
 }
 async function recarregarCadastroAtividades(){
   const resposta=await fetch("/api/atividades",{cache:"no-store"});
   if(!resposta.ok) throw new Error("Não foi possível atualizar a lista");
   atividadesCadastro=await resposta.json();
   ATIVIDADES_UNIDADE=atividadesCadastro.map(item=>item.nome);
+  preencherFiltrosCadastroMassivo();
+  prepararDashboardGeral();
   renderizarAtividadesAdmin();
   await carregarRegistrosDoBanco();
 }
@@ -2762,8 +3360,141 @@ document.getElementById("escoposAtividade").addEventListener("click",evento=>{
   escoposAtividadeTemporarios.splice(Number(botao.dataset.removerEscopo),1);
   renderizarEscoposAtividade();
 });
-document.getElementById("cancelarEdicaoAtividade").addEventListener("click",limparFormularioAtividade);
+document.getElementById("toggleFormularioAtividade").addEventListener("click",()=>alternarFormularioAtividade(true));
+document.getElementById("toggleCadastroMassivo").addEventListener("click",()=>{
+  const importar=document.getElementById("importarSetores");
+  if(importar) importar.click();
+});
+document.getElementById("cancelarEdicaoAtividade").addEventListener("click",()=>{
+  limparFormularioAtividade();
+  alternarFormularioAtividade(false);
+});
 document.getElementById("buscarAtividadeAdmin").addEventListener("input",renderizarAtividadesAdmin);
+document.getElementById("adicionarLinhaCadastroMassivo").addEventListener("click",()=>{
+  linhasImportadasCadastroMassivo=null;
+  linhasCadastroMassivo.push({setor:""});
+  renderizarCadastroMassivo();
+  const campos=document.querySelectorAll("#listaCadastroMassivo [data-index]");
+  campos[campos.length-1]?.focus();
+});
+document.getElementById("cadastroMassivoTorre").addEventListener("change",()=>{
+  linhasImportadasCadastroMassivo=null;
+  renderizarAndaresCadastroMassivo();
+  renderizarCadastroMassivo();
+});
+document.getElementById("cadastroMassivoAtividade").addEventListener("change",()=>{
+  linhasImportadasCadastroMassivo=null;
+  renderizarCadastroMassivo();
+});
+document.getElementById("opcoesCadastroMassivoAndares").addEventListener("change",evento=>{
+  const todos=evento.target.closest("[data-todos-andares]");
+  const opcao=evento.target.closest("[data-andar-cadastro]");
+  linhasImportadasCadastroMassivo=null;
+  if(todos){
+    andaresCadastroMassivo=todos.checked?new Set(andaresDisponiveisCadastroMassivo()):new Set();
+  }else if(opcao){
+    const andar=Number(opcao.dataset.andarCadastro);
+    opcao.checked?andaresCadastroMassivo.add(andar):andaresCadastroMassivo.delete(andar);
+  }else return;
+  renderizarAndaresCadastroMassivo();
+  renderizarCadastroMassivo();
+});
+document.getElementById("listaCadastroMassivo").addEventListener("input",evento=>{
+  const alvo=evento.target.closest("[data-index]");
+  if(!alvo) return;
+  const indice=Number(alvo.dataset.index);
+  const campo=alvo.dataset.campo;
+  if(Number.isNaN(indice) || !linhasCadastroMassivo[indice]) return;
+  linhasImportadasCadastroMassivo=null;
+  linhasCadastroMassivo[indice][campo]=alvo.value;
+  const linhaElemento=alvo.closest(".cadastro-massivo-linha");
+  const existente=setorJaExisteCadastroMassivo(alvo.value);
+  linhaElemento?.classList.toggle("setor-existente",existente);
+  const avisoAtual=linhaElemento?.querySelector(".cadastro-setor-existente");
+  if(existente&&!avisoAtual){
+    const aviso=document.createElement("span");
+    aviso.className="cadastro-setor-existente";
+    aviso.title="Este setor já existe no acompanhamento";
+    aviso.textContent="Já existente";
+    linhaElemento?.querySelector(".cadastro-massivo-remover")?.before(aviso);
+  }else if(!existente&&avisoAtual)avisoAtual.remove();
+});
+document.getElementById("listaCadastroMassivo").addEventListener("click",evento=>{
+  const botao=evento.target.closest("[data-remover-linha]");
+  if(!botao) return;
+  const indice=Number(botao.dataset.removerLinha);
+  if(Number.isNaN(indice)) return;
+  linhasImportadasCadastroMassivo=null;
+  linhasCadastroMassivo.splice(indice,1);
+  if(!linhasCadastroMassivo.length) linhasCadastroMassivo=[{setor:""}];
+  renderizarCadastroMassivo();
+});
+document.getElementById("cancelarCadastroMassivo").addEventListener("click",()=>{
+  prepararCadastroMassivo();
+  const status=document.getElementById("statusCadastroMassivo");
+  status.textContent="";
+  status.style.color="";
+});
+document.getElementById("salvarCadastroMassivo").addEventListener("click",async()=>{
+  const status=document.getElementById("statusCadastroMassivo");
+  const torre=document.getElementById("cadastroMassivoTorre").value;
+  const atividade=document.getElementById("cadastroMassivoAtividade").value;
+  const andares=[...andaresCadastroMassivo];
+  const setoresExistentes=new Set(linhasCadastroMassivo
+    .filter(linha=>setorJaExisteCadastroMassivo(linha.setor))
+    .map(linha=>normalizarNomeSetorCadastroMassivo(linha.setor)));
+  const quantidadeRemovida=setoresExistentes.size;
+  if(quantidadeRemovida){
+    linhasCadastroMassivo=linhasCadastroMassivo.filter(linha=>!setoresExistentes.has(normalizarNomeSetorCadastroMassivo(linha.setor)));
+    if(linhasImportadasCadastroMassivo){
+      linhasImportadasCadastroMassivo=linhasImportadasCadastroMassivo.filter(linha=>!setoresExistentes.has(normalizarNomeSetorCadastroMassivo(linha.setor)));
+    }
+    renderizarCadastroMassivo();
+  }
+  const linhas=linhasCadastroMassivo
+    .map(linha=>({setor:String(linha.setor).trim()}))
+    .filter(linha=>linha.setor);
+  if(!andares.length){status.textContent="Selecione ao menos um andar.";status.style.color="var(--vermelho)";document.getElementById("cadastroMassivoAndares").open=true;return;}
+  if(!linhas.length){status.textContent=quantidadeRemovida?`${quantidadeRemovida} setor(es) já existente(s) removido(s). Não há setores novos para salvar.`:"Adicione ao menos um setor para salvar.";status.style.color=quantidadeRemovida?"#795500":"var(--vermelho)";return;}
+  const torres=torre==="*"?Object.keys(TORRES):[torre];
+  const atividades=atividade==="*"
+    ? atividadesDisponiveisCadastroMassivo()
+    : [atividade];
+  if(!atividades.length){status.textContent="Nenhuma atividade disponível para cadastrar.";status.style.color="var(--vermelho)";return;}
+  const payload=linhasImportadasCadastroMassivo?linhasImportadasCadastroMassivo.map(linha=>({...linha})):torres.flatMap(torreSelecionadaCadastro=>andares
+    .filter(andarSelecionado=>pavimentosDaTorre(torreSelecionadaCadastro).includes(andarSelecionado))
+    .flatMap(andarSelecionado=>atividades
+      .filter(atividadeSelecionadaCadastro=>atividadePertinenteCadastroMassivo(atividadeSelecionadaCadastro,torreSelecionadaCadastro,andarSelecionado))
+      .flatMap(atividadeSelecionadaCadastro=>linhas.map(linha=>({
+      torre:torreSelecionadaCadastro,
+      pavimento:andarSelecionado,
+      atividade:atividadeSelecionadaCadastro,
+      setor:linha.setor,
+    })))));
+  if(!payload.length){status.textContent="Nenhuma atividade pertinente à seleção de torres e andares.";status.style.color="var(--vermelho)";return;}
+  if(payload.length>5000){status.textContent="A seleção gera mais de 5.000 cadastros. Reduza a quantidade de setores ou atividades.";status.style.color="var(--vermelho)";return;}
+  status.textContent="Salvando cadastro em massa…";status.style.color="";
+  try{
+    const resposta=await fetch("/api/setores/importar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({linhas:payload})});
+    const dados=await resposta.json();
+    if(!resposta.ok){throw new Error(dados.erro||"Não foi possível salvar o cadastro");}
+    if(!dados.criados&&dados.erros?.length)throw new Error(dados.erros[0]);
+    const mensagemSucesso=`Cadastro salvo: ${dados.criados || 0} setor(es) adicionado(s) à planilha de acompanhamento${quantidadeRemovida?` · ${quantidadeRemovida} já existente(s) removido(s)`:""}${dados.ignorados ? ` · ${dados.ignorados} ignorados` : ""}${dados.erros?.length?` · ${dados.erros.length} com erro`:""}.`;
+    status.textContent=mensagemSucesso;
+    status.style.color="var(--azul-escuro)";
+    linhasCadastroMassivo=[{setor:""}];
+    linhasImportadasCadastroMassivo=null;
+    andaresCadastroMassivo.clear();
+    renderizarAndaresCadastroMassivo();
+    renderizarCadastroMassivo();
+    await recarregarCadastroAtividades();
+    status.textContent=mensagemSucesso;
+    status.style.color=dados.erros?.length?"var(--laranja)":"var(--azul-escuro)";
+  }catch(erro){
+    status.textContent=erro.message || "Falha ao salvar cadastro";
+    status.style.color="var(--vermelho)";
+  }
+});
 document.getElementById("listaAtividadesAdmin").addEventListener("click",async evento=>{
   const editar=evento.target.closest("[data-editar-atividade]");
   const excluir=evento.target.closest("[data-excluir-atividade]");
@@ -2777,7 +3508,7 @@ document.getElementById("listaAtividadesAdmin").addEventListener("click",async e
     especificacoesAtividadeTemporarias=[...especificacoesDoServico(item.nome)];
     renderizarEscoposAtividade();
     renderizarEspecificacoesAtividade();
-    document.getElementById("formAtividade").scrollIntoView({behavior:"smooth",block:"start"});
+    alternarFormularioAtividade(true);
   }
   if(excluir){
     const nome=excluir.dataset.excluirAtividade;
@@ -2806,11 +3537,11 @@ document.getElementById("formAtividade").addEventListener("submit",async evento=
 
 function prepararDashboardGeral(){
   const filtro = document.getElementById("filtroServicoDashboard");
-  if(!filtro.options.length){
-    filtro.innerHTML = `<option value="todos">Todos os serviços</option>` +
-      `<optgroup label="Apartamentos">${ATIVIDADES_UNIDADE.map(a=>`<option>${a}</option>`).join("")}</optgroup>` +
-      `<optgroup label="Serviços gerais">${SERVICOS_GERAIS.map(a=>`<option>${a}</option>`).join("")}</optgroup>`;
-  }
+  const valorAtual=filtro.value||"todos";
+  const atividades=[...new Set(atividadesCadastro.map(item=>item?.nome).filter(Boolean))];
+  filtro.innerHTML=`<option value="todos">Todos os serviços</option>`+
+    atividades.map(nome=>`<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join("");
+  filtro.value=atividades.includes(valorAtual)?valorAtual:"todos";
   atualizarDashboardGeral();
 }
 
@@ -2843,7 +3574,7 @@ function renderizarAbaServicos(){
   });
   const andaresConcluidos=progressoAndares.filter(valor=>valor===100).length;
   const andaresIniciados=progressoAndares.filter(valor=>valor>0&&valor<100).length;
-  document.getElementById("resumoServico").innerHTML=`<strong style="color:var(--azul-escuro)">${percentual}% do serviço executado</strong><br>${andaresConcluidos} pavimento(s) totalmente concluído(s)<br>${andaresIniciados} pavimento(s) em andamento<br>${pendentes} unidade(s) ou setor(es) ainda pendentes`;
+  document.getElementById("resumoServico").innerHTML=`<strong style="color:var(--azul-escuro)">${percentual}% do serviço executado</strong><br>${andaresConcluidos} andar(es) totalmente concluído(s)<br>${andaresIniciados} andar(es) em andamento<br>${pendentes} unidade(s) ou setor(es) ainda pendentes`;
   document.getElementById("tabelaServicos").innerHTML=itens.map(item=>{
     const registro=obterRegistro(item.andar,item.unidade,item.atividade);
     return `<tr><td>${item.andar}º</td><td>${escaparHtml(item.unidade)}</td><td><span class="status-tag ${registro.concluido?"status-no-prazo":"status-atencao"}">${registro.concluido?"Realizado":"Pendente"}</span></td><td>${registro.data?registro.data.split("-").reverse().join("/"):"—"}</td><td>${escaparHtml(registro.observacao)||"—"}</td></tr>`;
@@ -2856,7 +3587,8 @@ function renderizarAbaServicos(){
 }
 
 function renderizarTorresProgresso(servico){
-  document.getElementById("torresProgresso").innerHTML = [torreSelecionada].map(torre => {
+  const torresExibidas=modoVisaoGeral?Object.keys(TORRES):[torreSelecionada];
+  document.getElementById("torresProgresso").innerHTML = torresExibidas.map(torre => {
     const dados = TORRES[torre];
     const pavimentos=pavimentosDaTorre(torre);
     const modoVertical=servico==="Estrutura";
@@ -2885,13 +3617,13 @@ function renderizarTorresProgresso(servico){
       return `<span class="andar-progresso" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${dados.nome} · ${rotulo} · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído" aria-label="Ver ${rotulo} da ${dados.nome}"></span>`;
     }).join("");
     const estiloVertical=modoVertical?`--fim-concluido-geral:${fimConcluidoGeral}%;--fim-andamento-geral:${fimAndamentoGeral}%;--fim-pendente-geral:${fimPendenteGeral}%`:"";
-    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${modoVertical?"modo-vertical":""}" style="${estiloVertical}">${andares}</div><strong>${dados.nome}</strong><small>${pavimentos.length} pavimentos</small></div>`;
+    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${modoVertical?"modo-vertical":""}" style="${estiloVertical}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
   }).join("");
 }
 
 function atualizarDashboardGeral(){
   const servico = document.getElementById("filtroServicoDashboard").value || "todos";
-  const torresDashboard = [torreSelecionada];
+  const torresDashboard = modoVisaoGeral ? Object.keys(TORRES) : [torreSelecionada];
   const dadosTorres = torresDashboard.map(torre => {
     const itens = listaRegistros(torre).filter(i => servico === "todos" || i.atividade === servico);
     const realizados = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido).length;
@@ -2917,11 +3649,12 @@ function atualizarDashboardGeral(){
   });
   document.getElementById("dashAvanco").textContent = `${total?Math.round(realizados/total*100):0}%`;
   document.getElementById("dashPendentes").textContent = pendentes.toLocaleString("pt-BR");
-  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${pavimentosDaTorre(torreSelecionada).length}`;
+  const totalPavimentos=torresDashboard.reduce((total,torre)=>total+pavimentosDaTorre(torre).length,0);
+  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${totalPavimentos}`;
   document.querySelector("#dashboardGeral .dashboard-topo h2").textContent =
-    `Visão geral — ${TORRES[torreSelecionada].nome}`;
+    modoVisaoGeral ? "Visão geral da obra" : `Visão geral — ${TORRES[torreSelecionada].nome}`;
   document.querySelector("#dashboardGeral .dashboard-topo p").textContent =
-    `Acompanhamento da ${TORRES[torreSelecionada].nome} com base nos serviços registrados.`;
+    modoVisaoGeral ? "Consolidado das torres Home e Smart com base nos serviços registrados." : `Acompanhamento da ${TORRES[torreSelecionada].nome} com base nos serviços registrados.`;
   renderizarTorresProgresso(servico);
   if(graficoStatusGeral) graficoStatusGeral.destroy();
   graficoStatusGeral = new Chart(document.getElementById("graficoStatusGeral"),{
@@ -3025,7 +3758,7 @@ function prepararPlanilha(){
   atualizarFiltroAtividadesPorAndar();
   document.getElementById("subtituloPlanilha").textContent = torreSelecionada === "horizonte"
     ? `${torre.nome} · 23 andares · 14 apartamentos do 4º ao 23º · 1º, 2º e 3º de áreas comuns`
-    : `${torre.nome} · 36 andares · unidades específicas por pavimento · 3º andar de área comum`;
+    : `${torre.nome} · 36 andares · unidades específicas por andar · 3º andar de área comum`;
   renderizarPlanilha();
   atualizarGraficosOperacionais();
   atualizarDashboardGeral();
@@ -3412,8 +4145,8 @@ document.getElementById("editarNomeSetor").addEventListener("click",async()=>{
 });
 document.getElementById("excluirSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
-  if(!confirm(`Excluir “${atual.unidade}” e todos os seus registros neste andar?`))return;
-  const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade});
+  if(!confirm(`Excluir “${atual.unidade}” da atividade “${atual.atividade}” neste andar?`))return;
+  const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,atividade:atual.atividade});
   const resposta=await fetch(`/api/setores?${consulta}`,{method:"DELETE"});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível excluir o setor.");return;}
   fecharMenuSetor();await carregarRegistrosDoBanco();
@@ -3531,6 +4264,8 @@ function preencherCabecalho(){
 
 function selecionarTorre(chave){
   const torre = TORRES[chave] || TORRES.aurora;
+  modoVisaoGeral = false;
+  document.body.classList.remove('modo-visao-geral');
   torreSelecionada = chave;
   pavimentoSelecionado = 1;
   unidadeSelecionada = null;
@@ -3542,13 +4277,14 @@ function selecionarTorre(chave){
   DADOS.obra.dataFim = torre.dataFim;
   DADOS.obra.diasCorridos = torre.diasCorridos;
   preencherCabecalho();
-  document.getElementById('torreAtual').textContent = `${torre.nome} · ${torre.andares} andares`;
+  document.getElementById('torreAtual').textContent = torre.nome;
   preencherKpis();
   preencherEtapas();
   preencherOcorrencias();
   desenharCurvaS();
   prepararPlanilha();
   renderizarApartamentosDoPavimento();
+  renderizarPersonalizacoes();
   prepararFormularioOcorrencia();
   atualizarPortalRelatorios();
   prepararAbaServicos();
@@ -3556,6 +4292,17 @@ function selecionarTorre(chave){
   document.getElementById('seletorTorres').classList.add('fechado');
   document.body.classList.remove('selecao-aberta');
   setTimeout(() => document.querySelector('main').scrollIntoView({block:'start'}), 250);
+}
+
+function selecionarVisaoGeral(){
+  modoVisaoGeral=true;
+  document.body.classList.add('modo-visao-geral');
+  document.getElementById('torreAtual').textContent='Geral';
+  atualizarDashboardGeral();
+  ativarAba('dashboardGeral',false);
+  document.getElementById('seletorTorres').classList.add('fechado');
+  document.body.classList.remove('selecao-aberta');
+  setTimeout(()=>document.querySelector('main').scrollIntoView({block:'start'}),80);
 }
 
 function abrirPlanilhaDoPavimento(chaveTorre, andar){
@@ -3579,6 +4326,7 @@ function abrirPlanilhaDoPavimento(chaveTorre, andar){
 
 function abrirPlanilhaDaUnidade(unidade){
   unidadeSelecionada = unidade;
+  apartamentosRecolhidos = true;
   renderizarApartamentosDoPavimento();
   ativarAba("apartamentos", false);
   setTimeout(() => {
@@ -3668,7 +4416,7 @@ function preencherOcorrencias(){
   lista.innerHTML = ocorrenciasFiltradas.map(oc => {
     const data = (oc.dataOcorrencia||oc.criadoEm.slice(0,10)).split("-").reverse().join("/");
     const foto = oc.foto ? `<img class="ocorrencia-foto" src="${oc.foto}" alt="Foto da ocorrência"><a class="download-foto" href="${oc.foto}" download="${escaparHtml(oc.fotoNome||`ocorrencia-${oc.id}.jpg`)}">↓ Baixar foto</a>` : "";
-    return `<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}">
+    return `<article class="ocorrencia-card ocorrencia-status-${oc.status||"pendente"}" data-ocorrencia-card-id="${oc.id}">
       <button class="excluir-ocorrencia" type="button" data-ocorrencia-id="${oc.id}" aria-label="Excluir ocorrência" title="Excluir ocorrência">×</button>
       <div class="meta">${escaparHtml(TORRES[oc.torre]?.nome || oc.torre)} · ${oc.andar}º andar · ${escaparHtml(oc.unidade)}</div>
       <div class="meta" style="color:var(--cinza-texto)">${escaparHtml([oc.atividade||"Não informada",oc.subatividade,oc.especificacao?rotuloEspecificacao(oc.especificacao):""].filter(Boolean).join(" · "))}</div>
@@ -3798,6 +4546,15 @@ document.querySelectorAll(".obra-seletor").forEach(obra=>{
 });
 document.getElementById('logoVoltarObras').addEventListener('click', abrirSelecaoDeObras);
 document.getElementById('logoHeaderTorres').addEventListener('click', abrirSelecaoDeTorres);
+document.getElementById('abrirVisaoGeralObra').addEventListener('click',selecionarVisaoGeral);
+document.getElementById('abrirVisaoGeralObra').addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();selecionarVisaoGeral();}});
+const botaoSeletorTorreCabecalho=document.getElementById('selecionarTorreCabecalho');
+const menuTorresCabecalho=document.getElementById('menuTorresCabecalho');
+function fecharMenuTorresCabecalho(){menuTorresCabecalho.hidden=true;botaoSeletorTorreCabecalho.setAttribute('aria-expanded','false');}
+function atualizarMenuTorresCabecalho(){menuTorresCabecalho.querySelectorAll('[data-selecionar-torre]').forEach(botao=>botao.classList.toggle('ativa',modoVisaoGeral?botao.dataset.selecionarTorre==='geral':botao.dataset.selecionarTorre===torreSelecionada));}
+botaoSeletorTorreCabecalho.addEventListener('click',event=>{event.stopPropagation();atualizarMenuTorresCabecalho();menuTorresCabecalho.hidden=!menuTorresCabecalho.hidden;botaoSeletorTorreCabecalho.setAttribute('aria-expanded',String(!menuTorresCabecalho.hidden));});
+menuTorresCabecalho.addEventListener('click',event=>{const botao=event.target.closest('[data-selecionar-torre]');if(!botao)return;fecharMenuTorresCabecalho();if(botao.dataset.selecionarTorre==='geral')selecionarVisaoGeral();else selecionarTorre(botao.dataset.selecionarTorre);});
+document.addEventListener('click',event=>{if(!event.target.closest('.torre-navegacao'))fecharMenuTorresCabecalho();});
 document.getElementById("ocTorre").addEventListener("change",atualizarAndaresOcorrencia);
 document.getElementById("ocAndar").addEventListener("change",atualizarUnidadesOcorrencia);
 document.getElementById("ocUnidade").addEventListener("change",atualizarAtividadesOcorrencia);
@@ -3816,9 +4573,191 @@ document.getElementById("filtroAndarOcorrencias").addEventListener("change",()=>
   preencherOcorrencias();
 });
 document.getElementById("andarAbaApartamentos").addEventListener("change",event=>{
-  pavimentoSelecionado=Number(event.target.value);
+  todosAndaresApartamentos=event.target.value==="todos";
+  if(!todosAndaresApartamentos)pavimentoSelecionado=Number(event.target.value);
   unidadeSelecionada=null;
+  apartamentosRecolhidos=false;
+  document.getElementById("filtroPlantaApartamentos").value="todos";
+  document.getElementById("filtroAcabamentoApartamentos").value="todos";
   renderizarApartamentosDoPavimento();
+});
+document.getElementById("filtroPlantaApartamentos").addEventListener("change",()=>{
+  unidadeSelecionada=null;
+  apartamentosRecolhidos=false;
+  renderizarApartamentosDoPavimento();
+});
+document.getElementById("filtroAcabamentoApartamentos").addEventListener("change",()=>{
+  unidadeSelecionada=null;
+  apartamentosRecolhidos=false;
+  renderizarApartamentosDoPavimento();
+});
+document.getElementById("filtroTorrePersonalizacao").addEventListener("change",event=>{
+  selecionarTorre(event.target.value);
+  ativarAba("personalizacao",false);
+  renderizarPersonalizacoes();
+});
+document.getElementById("filtroAndarPersonalizacao").addEventListener("change",renderizarPersonalizacoes);
+document.getElementById("filtroPlantaPersonalizacao").addEventListener("change",renderizarPersonalizacoes);
+document.getElementById("filtroAcabamentoPersonalizacao").addEventListener("change",renderizarPersonalizacoes);
+let escolhasAcabamentoPersonalizacao={};
+function carregarPersonalizacaoExistente(){
+  const unidade=document.getElementById("unidadeNovaPersonalizacao").value;
+  const chave=`${torreSelecionada}|${unidade}`;
+  const acabamento=acabamentosUnidades[chave];
+  const existente=Boolean(plantasUnidades[chave]||acabamento||personalizacoesUnidades[chave]||projetosAdicionados.some(projeto=>`${projeto.torre}|${projeto.unidade}`===chave));
+  escolhasAcabamentoPersonalizacao={};
+  (acabamento?.itens||[]).forEach(item=>{if(item.ambiente&&item.item&&item.opcao&&!ehOpcaoUm(item.opcao))escolhasAcabamentoPersonalizacao[`${item.ambiente}|||${item.item}`]=item.opcao;});
+  document.getElementById("acabamentoNovaPersonalizacao").value=acabamento&&!acabamentoEhPadrao(acabamento)?"personalizado":"padrao";
+  document.getElementById("tituloNovaPersonalizacao").textContent=existente?"Editar personalização":"Nova personalização";
+  atualizarAmbientesNovaPersonalizacao();
+  document.querySelectorAll("[data-resumo-ambiente]").forEach(resumo=>{const quantidade=Object.keys(escolhasAcabamentoPersonalizacao).filter(chaveEscolha=>chaveEscolha.startsWith(`${resumo.dataset.resumoAmbiente}|||`)).length;resumo.textContent=quantidade?`${quantidade} alteração(ões) selecionada(s)`:"Sem alteração";});
+}
+function atualizarUnidadesNovaPersonalizacao(){
+  const andar=Number(document.getElementById("andarNovaPersonalizacao").value);
+  const unidades=unidadesDoAndar(torreSelecionada,andar).filter(unidade=>/^(apartamento|apto)\s/i.test(unidade));
+  document.getElementById("unidadeNovaPersonalizacao").innerHTML=unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+  carregarPersonalizacaoExistente();
+  atualizarOpcoesPlantaNovaPersonalizacao();
+}
+async function atualizarOpcoesPlantaNovaPersonalizacao(){
+  const seletor=document.getElementById("tituloProjetoPersonalizacao");
+  const andar=document.getElementById("andarNovaPersonalizacao").value;
+  const unidade=document.getElementById("unidadeNovaPersonalizacao").value;
+  seletor.innerHTML=`<option value="">Carregando opções…</option>`;seletor.disabled=true;
+  try{
+    const consulta=new URLSearchParams({torre:torreSelecionada,andar,unidade});
+    const resposta=await fetch(`/api/opcoes-plantas?${consulta}`,{cache:"no-store"});
+    const opcoes=await resposta.json();if(!resposta.ok)throw new Error(opcoes.erro||"Não foi possível carregar as plantas");
+    const lista=opcoes.filter((opcao,indice)=>opcao?.titulo&&opcoes.findIndex(item=>item?.titulo===opcao.titulo)===indice);
+    seletor.innerHTML=lista.map(opcao=>`<option value="${escaparHtml(opcao.titulo)}" data-imagem="${escaparHtml(opcao.imagem||"")}" data-pagina="${Number(opcao.pagina)||""}">${escaparHtml(opcao.titulo)}</option>`).join("")+`<option value="Projeto alterado">Projeto alterado</option>`;
+    const plantaAtual=opcaoPlantaUnidade(plantasUnidades[`${torreSelecionada}|${unidade}`]);
+    const opcaoAtual=[...seletor.options].find(opcao=>opcao.value===plantaAtual||(plantaAtual.toLowerCase().includes("projeto alterado")&&opcao.value==="Projeto alterado"));
+    if(opcaoAtual)seletor.value=opcaoAtual.value;
+  }catch(erro){seletor.innerHTML=`<option value="Projeto alterado">Projeto alterado</option>`;}
+  seletor.disabled=false;
+  atualizarCampoProjetoAlterado();
+}
+function atualizarCampoProjetoAlterado(){
+  const alterado=document.getElementById("tituloProjetoPersonalizacao").value==="Projeto alterado";
+  const campo=document.getElementById("campoArquivoProjetoPersonalizacao");
+  const arquivo=document.getElementById("arquivoProjetoPersonalizacao");
+  campo.hidden=!alterado;
+  arquivo.required=alterado;
+  if(!alterado)arquivo.value="";
+}
+function atualizarAmbientesNovaPersonalizacao(){
+  const area=document.getElementById("ambientesNovaPersonalizacao");
+  const personalizado=document.getElementById("acabamentoNovaPersonalizacao").value==="personalizado";
+  area.hidden=!personalizado;
+  if(!personalizado)return;
+  const chave=`${torreSelecionada}|${document.getElementById("unidadeNovaPersonalizacao").value}`;
+  const ambientes=[...new Set((acabamentosUnidades[chave]?.itens||[]).map(item=>item.ambiente).filter(Boolean))];
+  area.innerHTML=ambientes.length?ambientes.map(ambiente=>{const quantidade=Object.keys(escolhasAcabamentoPersonalizacao).filter(chave=>chave.startsWith(`${ambiente}|||`)).length;return `<div class="ambiente-personalizacao-campo"><label>${escaparHtml(ambiente)}</label><button class="abrir-ambiente-personalizacao" type="button" data-abrir-ambiente="${escaparHtml(ambiente)}"><span>Escolher alterações</span></button><small class="ambiente-personalizacao-resumo" data-resumo-ambiente="${escaparHtml(ambiente)}">${quantidade?`${quantidade} alteração(ões) selecionada(s)`:"Sem alteração"}</small></div>`;}).join(""):`<span class="atividade-status">Nenhum ambiente de acabamento cadastrado para esta unidade.</span>`;
+}
+function abrirAmbientePersonalizacao(ambiente){
+  const chave=`${torreSelecionada}|${document.getElementById("unidadeNovaPersonalizacao").value}`;
+  const itens=[...new Set((acabamentosUnidades[chave]?.itens||[]).filter(item=>item.ambiente===ambiente&&!( /^Banho/i.test(ambiente)&&item.item==="Rodapé")).map(item=>item.item).filter(Boolean))];
+  document.getElementById("tituloAmbientePersonalizacao").textContent=ambiente;
+  document.getElementById("itensAmbientePersonalizacao").innerHTML=itens.map(item=>{
+    const opcoes=[...new Set(Object.values(acabamentosUnidades).flatMap(acabamento=>(acabamento?.itens||[]).filter(registro=>registro.ambiente===ambiente&&registro.item===item).map(registro=>registro.opcao)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+    const escolhaAtual=escolhasAcabamentoPersonalizacao[`${ambiente}|||${item}`]||"";
+    const rotuloItem=item==="Paredes Fora do Box"?"Parede Fora do Box":item;
+    return `<div class="ambiente-item-campo"><label>${escaparHtml(rotuloItem)}</label><select data-escolha-ambiente="${escaparHtml(ambiente)}" data-escolha-item="${escaparHtml(item)}"><option value="">Sem alteração</option>${opcoes.map(opcao=>`<option value="${escaparHtml(opcao)}" ${opcao===escolhaAtual?"selected":""}>${escaparHtml(opcao)}</option>`).join("")}</select></div>`;
+  }).join("");
+  document.getElementById("ambientePersonalizacaoOverlay").classList.remove("oculto");
+}
+document.getElementById("ambientesNovaPersonalizacao").addEventListener("click",event=>{const botao=event.target.closest("[data-abrir-ambiente]");if(botao)abrirAmbientePersonalizacao(botao.dataset.abrirAmbiente);});
+document.getElementById("concluirAmbientePersonalizacao").addEventListener("click",()=>{
+  const seletores=[...document.querySelectorAll("#itensAmbientePersonalizacao [data-escolha-ambiente]")];
+  const ambiente=seletores[0]?.dataset.escolhaAmbiente;
+  seletores.forEach(item=>{const chave=`${item.dataset.escolhaAmbiente}|||${item.dataset.escolhaItem}`;if(item.value)escolhasAcabamentoPersonalizacao[chave]=item.value;else delete escolhasAcabamentoPersonalizacao[chave];});
+  const quantidade=seletores.filter(item=>item.value).length;
+  const resumo=[...document.querySelectorAll("[data-resumo-ambiente]")].find(item=>item.dataset.resumoAmbiente===ambiente);
+  if(resumo)resumo.textContent=quantidade?`${quantidade} alteração(ões) selecionada(s)`:"Sem alteração";
+  document.getElementById("ambientePersonalizacaoOverlay").classList.add("oculto");
+});
+document.getElementById("ambientePersonalizacaoOverlay").addEventListener("click",event=>{if(event.target.id==="ambientePersonalizacaoOverlay")event.currentTarget.classList.add("oculto");});
+document.getElementById("adicionarPersonalizacao").addEventListener("click",()=>{
+  document.getElementById("acabamentoNovaPersonalizacao").value="padrao";
+  const andares=pavimentosDaTorre(torreSelecionada).filter(andar=>unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade)));
+  document.getElementById("andarNovaPersonalizacao").innerHTML=andares.map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`).join("");
+  atualizarUnidadesNovaPersonalizacao();
+  document.getElementById("statusNovaPersonalizacao").textContent="";
+  ativarAba("cadastroPersonalizacao");
+});
+function arquivoComoDataUrl(arquivo){return new Promise((resolve,reject)=>{const leitor=new FileReader();leitor.onload=()=>resolve(leitor.result);leitor.onerror=()=>reject(new Error(`Não foi possível ler ${arquivo.name}`));leitor.readAsDataURL(arquivo);});}
+document.getElementById("importarPlanilhasPersonalizacao").addEventListener("click",async event=>{
+  const plantas=document.getElementById("planilhaPlantasPersonalizacao").files[0];
+  const acabamentos=document.getElementById("planilhaAcabamentosPersonalizacao").files[0];
+  const status=document.getElementById("statusImportacaoPersonalizacao");
+  if(!plantas&&!acabamentos){status.textContent="Selecione ao menos uma planilha para importar.";status.style.color="var(--vermelho)";return;}
+  event.currentTarget.disabled=true;status.textContent="Processando e comparando as planilhas…";status.style.color="";
+  try{
+    const [conteudoPlantas,conteudoAcabamentos]=await Promise.all([plantas?arquivoComoDataUrl(plantas):null,acabamentos?arquivoComoDataUrl(acabamentos):null]);
+    const resposta=await fetch("/api/personalizacoes/importar-planilhas",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({plantas:plantas?{nome:plantas.name,conteudo:conteudoPlantas}:null,acabamentos:acabamentos?{nome:acabamentos.name,conteudo:conteudoAcabamentos}:null})});
+    const dados=await resposta.json();if(!resposta.ok)throw new Error(dados.erro||"Não foi possível importar as planilhas.");
+    const [respostaPlantas,respostaAcabamentos]=await Promise.all([fetch("/plantas_unidades.json",{cache:"no-store"}),fetch("/acabamentos_unidades.json",{cache:"no-store"})]);
+    plantasUnidades=await respostaPlantas.json();acabamentosUnidades=await respostaAcabamentos.json();
+    let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}
+    (dados.alteracoes||[]).forEach(item=>{if(!historico.some(registro=>registro.chave===item.chave))historico.unshift({...item,lida:false});});
+    localStorage.setItem("historicoNotificacoesObraV1",JSON.stringify(historico.slice(0,20)));
+    let vistos={};try{vistos=JSON.parse(localStorage.getItem("notificacoesObraV1")||"{}")}catch(e){}vistos.personalizacoes=resumoNotificacoesAtual().personalizacoes;localStorage.setItem("notificacoesObraV1",JSON.stringify(vistos));
+    renderizarPersonalizacoes();renderizarApartamentosDoPavimento();atualizarNotificacoes();
+    status.textContent=dados.quantidade?`${dados.quantidade} unidade(s) atualizada(s). As alterações foram adicionadas às notificações.`:"Importação concluída. Nenhuma alteração foi encontrada.";status.style.color="var(--verde)";
+  }catch(erro){status.textContent=erro.message;status.style.color="var(--vermelho)";}finally{event.currentTarget.disabled=false;}
+});
+document.getElementById("andarNovaPersonalizacao").addEventListener("change",atualizarUnidadesNovaPersonalizacao);
+document.getElementById("unidadeNovaPersonalizacao").addEventListener("change",carregarPersonalizacaoExistente);
+document.getElementById("unidadeNovaPersonalizacao").addEventListener("change",atualizarOpcoesPlantaNovaPersonalizacao);
+document.getElementById("tituloProjetoPersonalizacao").addEventListener("change",atualizarCampoProjetoAlterado);
+document.getElementById("acabamentoNovaPersonalizacao").addEventListener("change",atualizarAmbientesNovaPersonalizacao);
+document.getElementById("cancelarNovaPersonalizacao").addEventListener("click",()=>ativarAba("personalizacao"));
+document.getElementById("formNovaPersonalizacao").addEventListener("submit",async event=>{
+  event.preventDefault();
+  const status=document.getElementById("statusNovaPersonalizacao");
+  status.textContent="Salvando personalização…";status.style.color="";
+  try{
+    const seletorPlanta=document.getElementById("tituloProjetoPersonalizacao");
+    const opcaoSelecionada=seletorPlanta.selectedOptions[0];
+    const opcaoPlanta=seletorPlanta.value;
+    const projetoAlterado=opcaoPlanta==="Projeto alterado";
+    const arquivo=document.getElementById("arquivoProjetoPersonalizacao").files[0];
+    if(projetoAlterado&&!arquivo)throw new Error("Adicione a imagem do projeto alterado.");
+    const imagem=projetoAlterado?await new Promise((resolve,reject)=>{const leitor=new FileReader();leitor.onload=()=>resolve(leitor.result);leitor.onerror=()=>reject(new Error("Não foi possível ler a imagem"));leitor.readAsDataURL(arquivo);}):opcaoSelecionada?.dataset.imagem;
+    if(!projetoAlterado&&!imagem)throw new Error("A planta selecionada não foi encontrada nos arquivos do empreendimento.");
+    const projeto={torre:torreSelecionada,andar:Number(document.getElementById("andarNovaPersonalizacao").value),unidade:document.getElementById("unidadeNovaPersonalizacao").value,titulo:`Planta personalizada · ${opcaoPlanta}`,imagem,arquivoNome:arquivo?.name||""};
+    const acabamento=document.getElementById("acabamentoNovaPersonalizacao").value;
+    const escolhas={...escolhasAcabamentoPersonalizacao};
+    if(acabamento==="personalizado"&&!Object.keys(escolhas).length)throw new Error("Selecione uma opção em ao menos um ambiente.");
+    const respostaAcabamento=await fetch("/api/personalizacoes/acabamentos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,unidade:projeto.unidade,opcao:acabamento,escolhas})});
+    const dadosAcabamento=await respostaAcabamento.json();if(!respostaAcabamento.ok)throw new Error(dadosAcabamento.erro||"Não foi possível salvar os acabamentos");
+    acabamentosUnidades[`${torreSelecionada}|${projeto.unidade}`]=dadosAcabamento.acabamento;
+    let novoProjetoId=null;
+    if(projetoAlterado){
+      const respostaProjeto=await fetch("/api/projetos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(projeto)});
+      const dadosProjeto=await respostaProjeto.json();if(!respostaProjeto.ok)throw new Error(dadosProjeto.erro||"Não foi possível salvar o projeto alterado");
+      novoProjetoId=dadosProjeto.id;projetosAdicionados.push({...projeto,id:novoProjetoId});
+    }
+    const origem=projetoAlterado?arquivo.name:`${torreSelecionada==="horizonte"?"T1-R00.pdf":"T2-R00.pdf"} · página ${opcaoSelecionada?.dataset.pagina||""}`;
+    const respostaPlanta=await fetch("/api/personalizacoes/planta",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,unidade:projeto.unidade,titulo:opcaoPlanta,imagem:projetoAlterado?"":imagem,origem})});
+    const dadosPlanta=await respostaPlanta.json();if(!respostaPlanta.ok)throw new Error(dadosPlanta.erro||"Não foi possível vincular a planta à unidade");
+    plantasUnidades[`${torreSelecionada}|${projeto.unidade}`]=dadosPlanta.planta;
+    const anteriores=projetosAdicionados.filter(item=>item.torre===torreSelecionada&&item.unidade===projeto.unidade&&item.id!==novoProjetoId&&/^Planta personalizada ·/i.test(item.titulo||""));
+    for(const anterior of anteriores){const respostaExcluir=await fetch(`/api/projetos/${anterior.id}`,{method:"DELETE"});if(!respostaExcluir.ok)throw new Error("Não foi possível substituir o projeto anterior.");}
+    if(anteriores.length)projetosAdicionados=projetosAdicionados.filter(item=>!anteriores.some(anterior=>anterior.id===item.id));
+    alvoPersonalizacaoNotificacao={unidade:projeto.unidade,andar:projeto.andar};await sincronizarPersonalizacoes();
+    event.target.reset();renderizarPersonalizacoes();renderizarApartamentosDoPavimento();atualizarNotificacoes();ativarAba("personalizacao");
+  }catch(erro){status.textContent=erro.message;status.style.color="var(--vermelho)";}
+});
+document.getElementById("listaPersonalizacoes").addEventListener("click",event=>{
+  const card=event.target.closest("[data-personalizacao-unidade]");
+  if(!card)return;
+  pavimentoSelecionado=Number(card.dataset.personalizacaoAndar);
+  todosAndaresApartamentos=false;
+  apartamentosRecolhidos=true;
+  unidadeSelecionada=card.dataset.personalizacaoUnidade;
+  renderizarApartamentosDoPavimento();
+  ativarAba("apartamentos");
 });
 document.getElementById("filtroStatusOcorrencias").addEventListener("change",preencherOcorrencias);
 async function alterarStatusOcorrencia(event){
@@ -3863,8 +4802,8 @@ document.getElementById("listaOcorrencias").addEventListener("change",alterarSta
 document.getElementById("ocorrenciasApartamento").addEventListener("change",alterarStatusOcorrencia);
 document.getElementById("listaOcorrencias").addEventListener("click",excluirOcorrencia);
 document.getElementById("ocorrenciasApartamento").addEventListener("click",excluirOcorrencia);
-document.getElementById("ocFoto").addEventListener("change",event=>{
-  const arquivo=event.target.files[0];
+function definirFotoOcorrencia(arquivo){
+  arquivoOcorrenciaSelecionado=arquivo||null;
   const preview=document.getElementById("previewOcorrencia");
   if(!arquivo){
     preview.classList.remove("visivel");
@@ -3873,6 +4812,9 @@ document.getElementById("ocFoto").addEventListener("change",event=>{
   document.getElementById("previewOcorrenciaImg").src=URL.createObjectURL(arquivo);
   document.getElementById("previewOcorrenciaNome").textContent=`Foto selecionada: ${arquivo.name}`;
   preview.classList.add("visivel");
+}
+document.getElementById("ocFoto").addEventListener("change",event=>{
+  definirFotoOcorrencia(event.target.files[0]);
 });
 document.getElementById("formOcorrencia").addEventListener("invalid",event=>{
   const status=document.getElementById("statusOcorrencia");
@@ -3896,7 +4838,8 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
   status.textContent="Salvando ocorrência no SQLite…";
   status.style.color="var(--azul)";
   try{
-    const arquivo=document.getElementById("ocFoto").files[0];
+    const arquivo=arquivoOcorrenciaSelecionado||document.getElementById("ocFoto").files[0];
+    if(!arquivo)throw new Error("Adicione uma foto da ocorrência.");
     const foto=await compactarImagem(arquivo);
     const dados={
       torre:document.getElementById("ocTorre").value,
@@ -3922,16 +4865,27 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
     servicoAguardandoOcorrencia=null;
     document.getElementById("ocDescricao").value="";
     document.getElementById("ocFoto").value="";
+    arquivoOcorrenciaSelecionado=null;
     document.getElementById("previewOcorrencia").classList.remove("visivel");
     status.textContent="Ocorrência salva e vinculada à unidade.";
     status.style.color="var(--verde)";
     await carregarOcorrenciasDoBanco();
     renderizarPlanilha();
+    document.getElementById("ocorrenciaOverlay").classList.add("oculto");
   }catch(e){
     status.textContent="Não foi possível salvar a ocorrência.";
     status.style.color="var(--vermelho)";
   }
 });
+function abrirSelecaoFotoOcorrencia(){arquivoOcorrenciaSelecionado=null;document.getElementById("fotoOcorrenciaCamera").value="";document.getElementById("fotoOcorrenciaArquivo").value="";document.getElementById("fotoOcorrenciaOverlay").classList.remove("oculto");}
+function continuarCadastroOcorrencia(arquivo){if(!arquivo)return;definirFotoOcorrencia(arquivo);document.getElementById("fotoOcorrenciaOverlay").classList.add("oculto");prepararFormularioOcorrencia();document.getElementById("statusOcorrencia").textContent="";document.getElementById("ocorrenciaOverlay").classList.remove("oculto");}
+document.getElementById("abrirNovaOcorrencia").addEventListener("click",abrirSelecaoFotoOcorrencia);
+document.getElementById("fotoOcorrenciaCamera").addEventListener("change",event=>continuarCadastroOcorrencia(event.target.files[0]));
+document.getElementById("fotoOcorrenciaArquivo").addEventListener("change",event=>continuarCadastroOcorrencia(event.target.files[0]));
+document.getElementById("fecharFotoOcorrencia").addEventListener("click",()=>document.getElementById("fotoOcorrenciaOverlay").classList.add("oculto"));
+document.getElementById("fotoOcorrenciaOverlay").addEventListener("click",event=>{if(event.target.id==="fotoOcorrenciaOverlay")event.currentTarget.classList.add("oculto");});
+document.getElementById("fecharNovaOcorrencia").addEventListener("click",()=>document.getElementById("ocorrenciaOverlay").classList.add("oculto"));
+document.getElementById("ocorrenciaOverlay").addEventListener("click",event=>{if(event.target.id==="ocorrenciaOverlay")event.currentTarget.classList.add("oculto");});
 document.getElementById("filtroAndar").addEventListener("change", () => {
   const valor = document.getElementById("filtroAndar").value;
   if(valor !== "todos") pavimentoSelecionado = Number(valor);
@@ -3956,9 +4910,11 @@ function ativarAba(id, rolar = true){
   });
   document.querySelectorAll(".menu-principal a").forEach(link => {
     const destino=link.getAttribute("href");
-    link.classList.toggle("ativo", destino === `#${id}` || (destino === "#controleDetalhado" && id === "atividadesAdmin"));
+    link.classList.toggle("ativo", destino === `#${id}` || (destino === "#controleDetalhado" && id === "atividadesAdmin") || (destino==="#personalizacao"&&id==="cadastroPersonalizacao"));
   });
   document.querySelector(".menu-planilha").classList.toggle("ativo", id === "controleDetalhado" || id === "atividadesAdmin");
+  document.querySelector(".menu-personalizacao").classList.toggle("ativo",id==="personalizacao"||id==="cadastroPersonalizacao");
+  if(id==="personalizacao"||id==="ocorrencias")marcarNotificacaoVista(id);
   if(id === "graficos"){
     requestAnimationFrame(() => {
       if(graficoAtividades) graficoAtividades.resize();
@@ -3978,10 +4934,27 @@ function ativarAba(id, rolar = true){
 document.querySelectorAll(".menu-principal a").forEach(link => {
   link.addEventListener("click", event => {
     event.preventDefault();
-    ativarAba(link.getAttribute("href").slice(1));
+    const destino=link.getAttribute("href").slice(1);
+    if(destino==="apartamentos"){
+      todosAndaresApartamentos=true;
+      apartamentosRecolhidos=false;
+      unidadeSelecionada=null;
+      document.getElementById("filtroPlantaApartamentos").value="todos";
+      document.getElementById("filtroAcabamentoApartamentos").value="todos";
+      renderizarApartamentosDoPavimento();
+    }
+    ativarAba(destino);
   });
 });
 document.getElementById("abrirAtividadesAdmin").addEventListener("click",()=>ativarAba("atividadesAdmin"));
+document.getElementById("abrirNotificacoes").addEventListener("click",()=>{const painel=document.getElementById("painelNotificacoes");painel.hidden=!painel.hidden;});
+function abrirItemNotificacao(botao){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}const item=historico.find(registro=>registro.chave===botao.dataset.notificacaoChave)||{aba:botao.dataset.notificacaoAba};if(item.aba==="personalizacao"){if(item.alvo?.torre&&item.alvo.torre!==torreSelecionada)selecionarTorre(item.alvo.torre);document.getElementById("filtroTorrePersonalizacao").value=torreSelecionada;document.getElementById("filtroAndarPersonalizacao").value="todos";document.getElementById("filtroPlantaPersonalizacao").value="todos";document.getElementById("filtroAcabamentoPersonalizacao").value="todos";renderizarPersonalizacoes();}else{document.getElementById("filtroTorreOcorrencias").value="todos";document.getElementById("filtroAndarOcorrencias").value="todos";document.getElementById("filtroApartamentoOcorrencias").value="todos";document.getElementById("filtroStatusOcorrencias").value="todos";preencherOcorrencias();}ativarAba(item.aba);marcarNotificacaoVista(item.aba);requestAnimationFrame(()=>setTimeout(()=>{const alvo=item.aba==="personalizacao"&&item.alvo?.unidade?document.querySelector(`[data-personalizacao-unidade="${CSS.escape(item.alvo.unidade)}"]`):item.alvo?.id?document.querySelector(`[data-ocorrencia-card-id="${item.alvo.id}"]`):null;if(alvo){alvo.scrollIntoView({behavior:"smooth",block:"center"});alvo.classList.add("destaque-notificacao");setTimeout(()=>alvo.classList.remove("destaque-notificacao"),4500);}},100));}
+document.getElementById("painelNotificacoes").addEventListener("click",event=>{const botao=event.target.closest("[data-notificacao-aba]");if(!botao)return;document.getElementById("painelNotificacoes").hidden=true;abrirItemNotificacao(botao);});
+function renderizarHistoricoNotificacoes(){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}const limite=Date.now()-7*24*60*60*1000;const recentes=historico.filter(item=>new Date(item.data).getTime()>=limite);document.getElementById("historicoNotificacoesLista").innerHTML=recentes.length?recentes.map(item=>`<div class="historico-notificacao-item"><button class="abrir-historico-notificacao" type="button" data-notificacao-chave="${escaparHtml(item.chave)}" data-notificacao-aba="${item.aba}">${escaparHtml(item.texto)}<small>${new Date(item.data).toLocaleString("pt-BR")}${item.lida?" · Lida":" · Não lida"}</small></button><button class="excluir-notificacao" type="button" data-excluir-notificacao="${escaparHtml(item.chave)}" aria-label="Excluir notificação" title="Excluir notificação">×</button></div>`).join(""):`<div class="notificacao-vazia">Nenhuma alteração registrada nos últimos 7 dias.</div>`;}
+document.getElementById("verTodasNotificacoes").addEventListener("click",()=>{renderizarHistoricoNotificacoes();document.getElementById("painelNotificacoes").hidden=true;document.getElementById("historicoNotificacoesOverlay").classList.remove("oculto");});
+document.getElementById("historicoNotificacoesLista").addEventListener("click",event=>{const excluir=event.target.closest("[data-excluir-notificacao]");if(excluir){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}historico=historico.filter(item=>item.chave!==excluir.dataset.excluirNotificacao);localStorage.setItem("historicoNotificacoesObraV1",JSON.stringify(historico));let excluidas=[];try{excluidas=JSON.parse(localStorage.getItem("notificacoesExcluidasObraV1")||"[]")}catch(e){}excluidas.push(excluir.dataset.excluirNotificacao);localStorage.setItem("notificacoesExcluidasObraV1",JSON.stringify([...new Set(excluidas)].slice(-100)));renderizarHistoricoNotificacoes();atualizarNotificacoes();return;}const botao=event.target.closest("[data-notificacao-aba]");if(!botao)return;document.getElementById("historicoNotificacoesOverlay").classList.add("oculto");abrirItemNotificacao(botao);});
+document.getElementById("fecharHistoricoNotificacoes").addEventListener("click",()=>document.getElementById("historicoNotificacoesOverlay").classList.add("oculto"));
+document.getElementById("historicoNotificacoesOverlay").addEventListener("click",event=>{if(event.target.id==="historicoNotificacoesOverlay")event.currentTarget.classList.add("oculto");});
 document.getElementById("torresProgresso").addEventListener("click", event => {
   const pavimento = event.target.closest(".andar-progresso");
   if(pavimento) abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
@@ -3994,8 +4967,16 @@ document.getElementById("torresProgresso").addEventListener("keydown", event => 
   abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
 });
 document.getElementById("apartamentosGrid").addEventListener("click", event => {
+  if(event.target.closest("#expandirApartamentos")){
+    apartamentosRecolhidos=false;
+    renderizarApartamentosDoPavimento();
+    return;
+  }
   const unidade = event.target.closest(".apartamento-seletor");
-  if(unidade) abrirPlanilhaDaUnidade(unidade.dataset.unidade);
+  if(unidade){
+    pavimentoSelecionado=Number(unidade.dataset.andar);
+    abrirPlanilhaDaUnidade(unidade.dataset.unidade);
+  }
 });
 function alternarSelecaoControles(controles){
   const validos=[...controles].filter(Boolean);
@@ -4161,7 +5142,8 @@ let acoesAdministracao={};
 let permissoesAdministracao={};
 function configurarAcessoAdministracao(dados){
   const permitido=Boolean(dados?.podeAdministrar);
-  document.getElementById("linkAdministracao").hidden=!permitido;
+  document.getElementById("linkAdministracao").hidden=false;
+  document.getElementById("linkAdministracao").dataset.permitido=String(permitido);
   if(!permitido&&document.getElementById("administracao").classList.contains("ativo"))ativarAba("dashboardGeral",false);
 }
 function limparFormularioUsuario(){
@@ -4244,17 +5226,15 @@ async function verificarSessaoEngenheiro(){
   }catch(e){}
 }
 let cargosCadastroPublico=[];
-function atualizarPerfilCadastro(){const item=cargosCadastroPublico.find(cargo=>cargo.cargo===document.getElementById("cadastroCargo").value);document.getElementById("cadastroPerfil").textContent=item?.perfilNome||"—";}
 async function carregarCargosCadastro(){
   const resposta=await fetch("/api/cargos-publicos",{cache:"no-store"});if(!resposta.ok)return;
-  cargosCadastroPublico=await resposta.json();document.getElementById("cadastroCargo").innerHTML=cargosCadastroPublico.map(item=>`<option value="${escaparHtml(item.cargo)}">${escaparHtml(item.cargo)}</option>`).join("");atualizarPerfilCadastro();
+  cargosCadastroPublico=await resposta.json();document.getElementById("cadastroCargo").innerHTML=cargosCadastroPublico.map(item=>`<option value="${escaparHtml(item.cargo)}">${escaparHtml(item.cargo)}</option>`).join("");
 }
-document.getElementById("cadastroCargo").addEventListener("change",atualizarPerfilCadastro);
 document.querySelector(".login-modos").addEventListener("click",event=>{const botao=event.target.closest("[data-login-modo]");if(!botao)return;const cadastrar=botao.dataset.loginModo==="cadastrar";document.querySelectorAll("[data-login-modo]").forEach(item=>item.classList.toggle("ativo",item===botao));document.getElementById("painelLoginAcesso").hidden=cadastrar;document.getElementById("formCadastroAcesso").hidden=!cadastrar;if(cadastrar){carregarCargosCadastro();setTimeout(()=>document.getElementById("cadastroNome").focus(),0);}});
 document.getElementById("formCadastroAcesso").addEventListener("submit",async event=>{
   event.preventDefault();const status=document.getElementById("cadastroErro");status.textContent="Enviando cadastro…";status.style.color="";
   const resposta=await fetch("/api/cadastro",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:document.getElementById("cadastroNome").value.trim(),email:document.getElementById("cadastroEmail").value.trim(),cargo:document.getElementById("cadastroCargo").value,senha:document.getElementById("cadastroSenha").value})});
-  const dados=await resposta.json();if(!resposta.ok){status.textContent=dados.erro||"Não foi possível solicitar o cadastro.";return;}status.textContent="Cadastro enviado. Aguarde a aprovação da equipe responsável.";status.style.color="var(--verde)";document.getElementById("formCadastroAcesso").reset();atualizarPerfilCadastro();
+  const dados=await resposta.json();if(!resposta.ok){status.textContent=dados.erro||"Não foi possível solicitar o cadastro.";return;}status.textContent="Cadastro enviado. Aguarde a aprovação da equipe responsável.";status.style.color="var(--verde)";document.getElementById("formCadastroAcesso").reset();
 });
 document.getElementById("formLoginEngenheiro").addEventListener("submit",async event=>{
   event.preventDefault();
@@ -4280,13 +5260,15 @@ document.getElementById("formLoginEngenheiro").addEventListener("submit",async e
   abrirSelecaoDeObras();
   document.getElementById("loginOverlay").classList.add("oculto");
 });
-document.getElementById("sairSistema").addEventListener("click",async()=>{
+async function sairDoSistema(){
   await fetch("/api/logout",{method:"POST"});
   document.getElementById("usuarioAcesso").textContent="—";
   configurarAcessoAdministracao(null);
   document.getElementById("loginOverlay").classList.remove("oculto");
   document.getElementById("loginUsuario").focus();
-});
+}
+document.getElementById("sairSistema").addEventListener("click",sairDoSistema);
+document.getElementById("sairSeletorObras").addEventListener("click",sairDoSistema);
 document.body.classList.add('selecao-aberta');
 verificarSessaoEngenheiro();
 preencherKpis();
@@ -4299,10 +5281,12 @@ renderizarApartamentosDoPavimento();
 prepararFormularioOcorrencia();
 atualizarPortalRelatorios();
 prepararAbaServicos();
+prepararCadastroMassivo();
 atualizarAndaresAtividade();
 renderizarEscoposAtividade();
 carregarRegistrosDoBanco();
 carregarOcorrenciasDoBanco();
+setInterval(sincronizarPersonalizacoes,10000);
 </script>
 
 </body>

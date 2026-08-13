@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -7,7 +8,7 @@ from zipfile import ZipFile
 
 
 PASTA = Path(__file__).resolve().parent
-PLANILHA_OPCOES = next(PASTA.glob("OPC*ACABAMENTOS*.xlsx"))
+PLANILHA_OPCOES = Path(os.environ["PLANILHA_ACABAMENTOS"]) if os.environ.get("PLANILHA_ACABAMENTOS") else next(PASTA.glob("OPC*ACABAMENTOS*.xlsx"))
 PLANILHA_CATALOGO = next(PASTA.glob("PLANILHA_DE_ACABAMENTOS*.xlsx"))
 ARQUIVO_SAIDA = PASTA / "acabamentos_unidades.json"
 NS = {

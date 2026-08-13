@@ -1,4 +1,5 @@
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,7 +14,7 @@ from pypdf import PdfReader, PdfWriter
 
 
 PASTA = Path(__file__).resolve().parent
-PLANILHA = next(PASTA.glob("RELA*PLANTA*.xlsx"))
+PLANILHA = Path(os.environ["PLANILHA_PLANTAS"]) if os.environ.get("PLANILHA_PLANTAS") else next(PASTA.glob("RELA*PLANTA*.xlsx"))
 PASTA_SAIDA = PASTA / "miniaturas_tipos_planta"
 ARQUIVO_SAIDA = PASTA / "plantas_unidades.json"
 NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main", "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships"}

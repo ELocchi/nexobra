@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import base64
+import binascii
 import hashlib
 import hmac
 import json
@@ -28,15 +29,52 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from pypdf import PdfReader
 
 PASTA = Path(__file__).resolve().parent
 ARQUIVO_PLANEJAMENTO = PASTA / "dados_planilha_atual.json"
 ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
+ARQUIVO_PLANTAS = PASTA / "plantas_unidades.json"
 ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
+_OPCOES_PLANTAS_PDF = {}
+
+
+def opcoes_plantas_pdf(torre, andar, unidade):
+    chave_cache = (torre, int(andar), unidade)
+    if chave_cache in _OPCOES_PLANTAS_PDF:
+        return _OPCOES_PLANTAS_PDF[chave_cache]
+    pdf = PASTA / ("T1-R00.pdf" if torre == "horizonte" else "T2-R00.pdf")
+    numero = re.search(r"(\d+)", unidade or "")
+    final = int(numero.group(1)[-2:]) if numero else 0
+    opcoes = []
+    for indice_pagina, pagina in enumerate(PdfReader(pdf).pages):
+        texto_original = " ".join((pagina.extract_text() or "").split())
+        texto = unicodedata.normalize("NFD", texto_original).encode("ascii", "ignore").decode("ascii").upper()
+        final_encontrado = re.search(r"APTO FINAL\s*0?(\d+)", texto)
+        if not final_encontrado or int(final_encontrado.group(1)) != final:
+            continue
+        trecho = texto[final_encontrado.end():final_encontrado.end() + 100]
+        intervalo = re.search(r"(\d+)\s*AO\s*(\d+)", trecho)
+        conjunto = re.search(r"(\d+)\s*E\s*(\d+)", trecho)
+        unico = re.search(r"(\d+)\s*PAV", trecho)
+        andares = set(range(int(intervalo.group(1)), int(intervalo.group(2)) + 1)) if intervalo else {int(conjunto.group(1)), int(conjunto.group(2))} if conjunto else {int(unico.group(1))} if unico else set()
+        if andares and int(andar) not in andares:
+            continue
+        inicio = texto.find("OPCAO")
+        fim = texto.find("APTO FINAL")
+        titulo = texto[inicio:fim].strip() if inicio >= 0 and fim > inicio else ""
+        titulo = re.sub(r"\s+", " ", titulo).title().replace("Opcao", "Opção")
+        for sem_acento, com_acento in (("Dormitorios", "Dormitórios"), ("Dormitorio", "Dormitório"), ("Suites", "Suítes"), ("Suite", "Suíte"), ("Acessivel", "Acessível")):
+            titulo = titulo.replace(sem_acento, com_acento)
+        if titulo and not any(item["titulo"] == titulo for item in opcoes):
+            torre_numero = 1 if torre == "horizonte" else 2
+            opcoes.append({"titulo": titulo, "imagem": f"/miniaturas_tipos_planta/{torre}-t{torre_numero}-p{indice_pagina + 1:02d}.png", "pagina": indice_pagina + 1})
+    _OPCOES_PLANTAS_PDF[chave_cache] = opcoes
+    return opcoes
 SERVICOS_MANUAIS_BASE = [
     "Alvenaria",
     "Bancada de Pedra Natural",
@@ -1005,23 +1043,10 @@ def servico_fvs_ja_representado_no_modelo(nome, nomes_existentes):
 
 
 def limpar_servicos_fvs_duplicados(conexao):
-    nomes = [
-        linha["nome"]
-        for linha in conexao.execute("SELECT DISTINCT nome FROM atividades_config ORDER BY nome").fetchall()
-    ]
-    para_remover = set()
-    for nome in nomes:
-        if nome not in SERVICOS_MANUAIS_BASE:
-            para_remover.add(nome)
-    if not para_remover:
-        return 0
-    for nome in sorted(para_remover):
-        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome,))
-        conexao.execute("DELETE FROM registros WHERE atividade = ?", (nome,))
-        conexao.execute("DELETE FROM ocorrencias WHERE atividade = ?", (nome,))
-        conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome,))
-    conexao.commit()
-    return len(para_remover)
+    # Atividades cadastradas pelo usuário são parte da configuração permanente da
+    # obra. A rotina antiga removia tudo que não constasse numa lista fixa ao
+    # reiniciar o servidor, apagando também registros e ocorrências relacionados.
+    return 0
 
 
 def sincronizar_atividades_fvs(conexao):
@@ -1072,7 +1097,6 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_config_inicial', '1')"
         )
-    limpar_servicos_fvs_duplicados(conexao)
     sincronizar_atividades_fvs(conexao)
     marcador_registros = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'atividades_registros_config_v1'"
@@ -2136,6 +2160,51 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('remover_servicos_acabamentos_legados_v1', '1')"
         )
+    marcador_classificacao_servicos = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'classificacao_servicos_usuario_v1'"
+    ).fetchone()
+    if not marcador_classificacao_servicos:
+        classificacao = {
+            "Produção de Argamassa": ["Colante", "Revestimento Externo (Piscina)"],
+            "Serviços Preliminares": ["Locação de Obra (Gabarito)", "Escavação"],
+            "Revestimento": ["Pastilha", "Piso Intertravado"],
+            "Esquadrias": ["Caixilho de Alumínio", "Portas Shafts"],
+            "Gesso": ["Forro de Gesso"],
+            "Pintura": ["PVA e Acrílica", "Tinta Esmalte Verniz"],
+            "Fundação": ["Sapata Isolada", "Tubulão e Broca", "Hélice Contínua", "Estaca Strauss", "Perfil Metálico", "Parede Diafragma", "Compactação de Aterro", "Tirantes"],
+            "Alvenaria": ["Muros Externos"],
+            "Acabamentos": ["Lareira e Churrasqueira", "Louças e Metais"],
+            "Piscina": [],
+            "Paisagismo": [],
+        }
+        escopos_modelo = [
+            (linha["torre"], linha["andar"], linha["unidade"])
+            for linha in conexao.execute(
+                "SELECT torre, andar, unidade FROM atividades_config WHERE nome='Contrapiso'"
+            ).fetchall()
+        ]
+        for atividade, subservicos in classificacao.items():
+            existe = conexao.execute(
+                "SELECT 1 FROM atividades_config WHERE nome=? LIMIT 1", (atividade,)
+            ).fetchone()
+            if not existe:
+                for torre, andar, unidade in escopos_modelo:
+                    conexao.execute(
+                        "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                        (atividade, torre, andar, unidade),
+                    )
+                garantir_registros_atividade(conexao, atividade, escopos_modelo)
+            conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade=?", (atividade,))
+            especificacoes = [f"{subservico} :: Execução do serviço" for subservico in subservicos] or ["Execução do serviço"]
+            for ordem, especificacao in enumerate(especificacoes):
+                conexao.execute(
+                    "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES (?, ?, ?)",
+                    (atividade, especificacao, ordem),
+                )
+        conexao.execute("UPDATE ocorrencias SET atividade='Esquadrias', subatividade='Portas Shafts' WHERE atividade='Portas Shafts'")
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('classificacao_servicos_usuario_v1', '1')"
+        )
     marcador_pavimentos_tecnicos = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'pavimentos_tecnicos_todos_servicos_v1'"
     ).fetchone()
@@ -2175,7 +2244,7 @@ def preparar_atividades_config(conexao):
 def listar_atividades_config():
     with conectar() as conexao:
         linhas = conexao.execute(
-            "SELECT id, nome, torre, andar, unidade FROM atividades_config ORDER BY nome, torre, andar, unidade"
+            "SELECT id, nome, torre, andar, unidade FROM atividades_config WHERE nome != 'Portas Shafts' ORDER BY nome, torre, andar, unidade"
         ).fetchall()
         linhas_especificacoes = conexao.execute(
             "SELECT atividade, especificacao FROM atividades_especificacoes ORDER BY atividade, ordem, id"
@@ -2531,6 +2600,17 @@ class ServidorObra(SimpleHTTPRequestHandler):
         if caminho == "/api/atividades":
             self.enviar_json(listar_atividades_config())
             return
+        if caminho == "/api/opcoes-plantas":
+            try:
+                torre = parametros.get("torre", [""])[0]
+                andar = int(parametros.get("andar", ["0"])[0])
+                unidade = parametros.get("unidade", [""])[0]
+                if torre not in TORRES_NOMES or not unidade:
+                    raise ValueError("Unidade inválida")
+                self.enviar_json(opcoes_plantas_pdf(torre, andar, unidade))
+            except ValueError as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
         if caminho == "/api/ocorrencias":
             with conectar() as conexao:
                 linhas = conexao.execute(
@@ -2885,12 +2965,194 @@ class ServidorObra(SimpleHTTPRequestHandler):
         permissao_rota = {
             "/api/setores": "gerenciar_setores",
             "/api/setores/importar": "gerenciar_setores",
+            "/api/personalizacoes/acabamentos": "gerenciar_projetos",
+            "/api/personalizacoes/planta": "gerenciar_projetos",
+            "/api/personalizacoes/importar-planilhas": "gerenciar_projetos",
             "/api/atividades": "gerenciar_atividades",
             "/api/projetos": "gerenciar_projetos",
             "/api/projetos-ocultos": "gerenciar_projetos",
             "/api/ocorrencias": "gerenciar_ocorrencias",
         }.get(caminho)
         if permissao_rota and not self.exigir_permissao(permissao_rota):
+            return
+        if caminho == "/api/personalizacoes/importar-planilhas":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                arquivos = {}
+                for campo, padrao in (("plantas", "RELACAO_OPCOES_DE_PLANTA_IMPORTADA.xlsx"), ("acabamentos", "OPCOES_DE_ACABAMENTOS_IMPORTADA.xlsx")):
+                    item = dados.get(campo) or {}
+                    conteudo = str(item.get("conteudo", ""))
+                    if not conteudo:
+                        continue
+                    nome = Path(str(item.get("nome") or padrao)).name
+                    if not nome.lower().endswith(".xlsx"):
+                        raise ValueError(f"O arquivo {nome} deve estar no formato XLSX.")
+                    destino = PASTA / nome
+                    destino.write_bytes(base64.b64decode(conteudo.split(",", 1)[-1], validate=True))
+                    arquivos[campo] = destino
+                if not arquivos:
+                    raise ValueError("Selecione ao menos uma planilha para importar.")
+                plantas_antes = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+                acabamentos_antes = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+                ambiente = os.environ.copy()
+                if "plantas" in arquivos:
+                    ambiente["PLANILHA_PLANTAS"] = str(arquivos["plantas"])
+                if "acabamentos" in arquivos:
+                    ambiente["PLANILHA_ACABAMENTOS"] = str(arquivos["acabamentos"])
+                scripts = (["gerar_plantas_tipos.py"] if "plantas" in arquivos else []) + (["gerar_acabamentos_unidades.py"] if "acabamentos" in arquivos else [])
+                for script in scripts:
+                    processo = subprocess.run(["python3", str(PASTA / script)], cwd=PASTA, env=ambiente, capture_output=True, text=True)
+                    if processo.returncode:
+                        raise RuntimeError(processo.stderr.strip() or f"Falha ao processar {script}")
+                plantas_depois = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8"))
+                acabamentos_depois = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8"))
+                alteracoes = []
+                agora = datetime.now().astimezone().isoformat()
+                for chave in (sorted(set(plantas_antes) | set(plantas_depois)) if "plantas" in arquivos else []):
+                    if plantas_antes.get(chave) == plantas_depois.get(chave):
+                        continue
+                    torre, unidade = chave.split("|", 1)
+                    anterior = plantas_antes.get(chave, {}).get("tipo", "Não cadastrada")
+                    atual = plantas_depois.get(chave, {}).get("tipo", "Removida")
+                    alteracoes.append({"chave": f"importacao-planta-{int(datetime.now().timestamp())}-{chave}", "aba": "personalizacao", "texto": f"Planta atualizada · {unidade.replace('Apto ', 'Apartamento ')} · {TORRES_NOMES.get(torre, torre)} · {anterior} → {atual}", "data": agora, "alvo": {"torre": torre, "unidade": unidade}})
+                for chave in (sorted(set(acabamentos_antes) | set(acabamentos_depois)) if "acabamentos" in arquivos else []):
+                    if acabamentos_antes.get(chave) == acabamentos_depois.get(chave):
+                        continue
+                    torre, unidade = chave.split("|", 1)
+                    alteracoes.append({"chave": f"importacao-acabamento-{int(datetime.now().timestamp())}-{chave}", "aba": "personalizacao", "texto": f"Acabamento atualizado · {unidade.replace('Apto ', 'Apartamento ')} · {TORRES_NOMES.get(torre, torre)}", "data": agora, "alvo": {"torre": torre, "unidade": unidade}})
+                self.enviar_json({"ok": True, "alteracoes": alteracoes, "quantidade": len(alteracoes)})
+            except (ValueError, json.JSONDecodeError, binascii.Error) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao importar planilhas: {erro}"}, 500)
+            return
+        if caminho == "/api/personalizacoes/acabamentos":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                torre = str(dados.get("torre", ""))
+                unidade = str(dados.get("unidade", "")).strip()
+                opcao = str(dados.get("opcao", "padrao"))
+                escolhas = {str(ambiente).strip(): str(escolha).strip() for ambiente, escolha in dados.get("escolhas", {}).items() if str(ambiente).strip() and str(escolha).strip()}
+                if torre not in TORRES_NOMES or not unidade or opcao not in {"padrao", "personalizado"}:
+                    raise ValueError("Personalização de acabamento inválida")
+                acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+                chave = f"{torre}|{unidade}"
+                acabamento = acabamentos.get(chave, {"planta": "Opção 1", "itens": []})
+                acabamento["planta"] = "Opção 1" if opcao == "padrao" else "Opção Personalizada"
+                catalogo = {}
+                for acabamento_catalogo in acabamentos.values():
+                    for item_catalogo in acabamento_catalogo.get("itens", []):
+                        chave_catalogo = (item_catalogo.get("ambiente"), item_catalogo.get("item"), item_catalogo.get("opcao"))
+                        if item_catalogo.get("descricao"):
+                            catalogo[chave_catalogo] = item_catalogo["descricao"]
+                for item in acabamento.get("itens", []):
+                    chave_item = f'{item.get("ambiente", "")}|||{item.get("item", "")}'
+                    escolha = (escolhas.get(chave_item) or escolhas.get(item.get("ambiente"))) if opcao == "personalizado" else "Opção 1"
+                    if escolha:
+                        item["opcao"] = escolha
+                        descricao = catalogo.get((item.get("ambiente"), item.get("item"), escolha))
+                        if descricao is not None:
+                            item["descricao"] = descricao
+                acabamentos[chave] = acabamento
+                temporario = ARQUIVO_ACABAMENTOS.with_suffix(".json.tmp")
+                temporario.write_text(json.dumps(acabamentos, ensure_ascii=False, indent=2), encoding="utf-8")
+                temporario.replace(ARQUIVO_ACABAMENTOS)
+                self.enviar_json({"ok": True, "acabamento": acabamento}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if caminho == "/api/personalizacoes/planta":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                torre = str(dados.get("torre", "")); unidade = str(dados.get("unidade", "")).strip()
+                titulo = str(dados.get("titulo", "")).strip(); imagem = str(dados.get("imagem", "")).strip()
+                if torre not in TORRES_NOMES or not unidade or not titulo:
+                    raise ValueError("Opção de planta inválida")
+                plantas = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+                planta = {"tipo": titulo, "plantaMiniatura": imagem, "origem": dados.get("origem", "Personalização cadastrada")}
+                plantas[f"{torre}|{unidade}"] = planta
+                temporario = ARQUIVO_PLANTAS.with_suffix(".json.tmp")
+                temporario.write_text(json.dumps(plantas, ensure_ascii=False, indent=2), encoding="utf-8")
+                temporario.replace(ARQUIVO_PLANTAS)
+                self.enviar_json({"ok": True, "planta": planta}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if caminho == "/api/setores/importar":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                linhas = dados.get("linhas", [])
+                if not isinstance(linhas, list) or not linhas or len(linhas) > 5000:
+                    raise ValueError("O cadastro deve conter entre 1 e 5.000 linhas")
+                mapa_torres = {
+                    "home": "aurora", "torre home": "aurora", "aurora": "aurora",
+                    "smart": "horizonte", "torre smart": "horizonte", "horizonte": "horizonte",
+                }
+                mapa_andares = {
+                    "fundacao": -2, "fundação": -2, "1 subsolo": -1, "1º subsolo": -1,
+                    "subsolo": -1, "terreo": 0, "térreo": 0, "barrilete": 101,
+                    "reservatorio": 102, "reservatório": 102, "cobertura": 103,
+                }
+                criados = 0
+                ignorados = 0
+                erros = []
+                with conectar() as conexao:
+                    for indice, linha in enumerate(linhas, start=1):
+                        try:
+                            torre_texto = str(linha.get("torre", "")).strip().lower()
+                            torre = mapa_torres.get(torre_texto)
+                            andar_texto = str(linha.get("pavimento", linha.get("andar", ""))).strip().lower()
+                            andar_normalizado = andar_texto.replace("º andar", "").replace(" andar", "").strip()
+                            andar = mapa_andares.get(andar_texto)
+                            if andar is None:
+                                andar = int(andar_normalizado)
+                            setor = str(linha.get("setor", "")).strip()
+                            atividade_texto = str(linha.get("atividade", "")).strip()
+                            validar_escopos([{"torre": torre or "", "andar": andar, "unidade": setor}])
+                            if not setor:
+                                raise ValueError("setor não informado")
+                            if atividade_texto.lower() in {"todas", "todos", "*"}:
+                                atividades = [
+                                    item["nome"] for item in conexao.execute(
+                                        "SELECT DISTINCT nome FROM atividades_config WHERE torre=? AND andar=? ORDER BY nome",
+                                        (torre, andar),
+                                    ).fetchall()
+                                ]
+                            else:
+                                atividades = [atividade_texto]
+                            if not atividades:
+                                raise ValueError("nenhuma atividade disponível no andar")
+                            for atividade in atividades:
+                                existe = conexao.execute(
+                                    "SELECT 1 FROM atividades_config WHERE nome=? AND torre=? AND andar=? LIMIT 1",
+                                    (atividade, torre, andar),
+                                ).fetchone()
+                                if not existe:
+                                    raise ValueError(f"atividade '{atividade}' não disponível no andar")
+                                conflito = conexao.execute(
+                                    "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
+                                    (torre, andar, setor, atividade),
+                                ).fetchone()
+                                if conflito:
+                                    ignorados += 1
+                                    continue
+                                conexao.execute(
+                                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                                    (atividade, torre, andar, setor),
+                                )
+                                garantir_registros_atividade(conexao, atividade, [(torre, andar, setor)])
+                                criados += 1
+                        except (ValueError, TypeError) as erro:
+                            erros.append(f"Linha {indice}: {erro}")
+                self.enviar_json({"ok": True, "criados": criados, "ignorados": ignorados, "erros": erros[:30]}, 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao salvar setores: {erro}"}, 500)
             return
         if caminho == "/api/cadastro":
             try:
@@ -3262,14 +3524,62 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 torre = parametros.get("torre", [""])[0]
                 andar = int(parametros.get("andar", ["0"])[0])
                 unidade = parametros.get("unidade", [""])[0].strip()
+                atividade = parametros.get("atividade", [""])[0].strip()
                 if torre not in TORRES_NOMES or not unidade or andar < -2:
                     raise ValueError("Setor inválido")
                 with conectar() as conexao:
-                    cursor = conexao.execute("DELETE FROM registros WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
-                    for tabela in ("ocorrencias", "projetos_unidade", "projetos_ocultos"):
-                        conexao.execute(f"DELETE FROM {tabela} WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
-                    conexao.execute("DELETE FROM atividades_config WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
-                if not cursor.rowcount:
+                    if atividade:
+                        destinos_registrados = [
+                            linha["unidade"] for linha in conexao.execute(
+                                "SELECT DISTINCT unidade FROM registros WHERE torre=? AND andar=? AND atividade=? AND unidade!=? ORDER BY unidade",
+                                (torre, andar, atividade, unidade),
+                            ).fetchall()
+                        ]
+                        possui_escopo_geral = conexao.execute(
+                            "SELECT 1 FROM atividades_config WHERE torre=? AND andar=? AND nome=? AND unidade='*' LIMIT 1",
+                            (torre, andar, atividade),
+                        ).fetchone()
+                        if possui_escopo_geral:
+                            destinos_automaticos = apartamentos_do_andar(torre, andar) + ["Área comum"]
+                            destinos_explicitos = [
+                                linha["unidade"] for linha in conexao.execute(
+                                    "SELECT DISTINCT unidade FROM atividades_config WHERE torre=? AND andar=? AND nome=? AND unidade!='*'",
+                                    (torre, andar, atividade),
+                                ).fetchall()
+                            ]
+                            destinos_restantes = list(dict.fromkeys(
+                                destino for destino in destinos_automaticos + destinos_explicitos + destinos_registrados
+                                if destino != unidade
+                            ))
+                            conexao.execute(
+                                "DELETE FROM atividades_config WHERE torre=? AND andar=? AND nome=?",
+                                (torre, andar, atividade),
+                            )
+                            conexao.executemany(
+                                "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                                [(atividade, torre, andar, destino) for destino in destinos_restantes],
+                            )
+                        else:
+                            cursor_config = conexao.execute(
+                                "DELETE FROM atividades_config WHERE torre=? AND andar=? AND nome=? AND unidade=?",
+                                (torre, andar, atividade, unidade),
+                            )
+                        cursor = conexao.execute(
+                            "DELETE FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=?",
+                            (torre, andar, unidade, atividade),
+                        )
+                        conexao.execute(
+                            "DELETE FROM ocorrencias WHERE torre=? AND andar=? AND unidade=? AND atividade=?",
+                            (torre, andar, unidade, atividade),
+                        )
+                        setor_encontrado = bool(cursor.rowcount or possui_escopo_geral or (not possui_escopo_geral and cursor_config.rowcount))
+                    else:
+                        cursor = conexao.execute("DELETE FROM registros WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                        for tabela in ("ocorrencias", "projetos_unidade", "projetos_ocultos"):
+                            conexao.execute(f"DELETE FROM {tabela} WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                        conexao.execute("DELETE FROM atividades_config WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade))
+                        setor_encontrado = bool(cursor.rowcount)
+                if not setor_encontrado:
                     self.enviar_json({"erro": "Setor não encontrado"}, 404)
                     return
                 self.enviar_json({"ok": True})
