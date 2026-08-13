@@ -3204,7 +3204,7 @@ if __name__ == "__main__":
         print(f"Painel no celular: http://{ip_rede}:{PORTA}")
     print("Para encerrar, pressione Control + C.")
     if not os.environ.get("RENDER"):
-        threading.Timer(0.7, lambda: webbrowser.open(endereco)).start()
+        threading.Timer(0.7, lambda: subprocess.run(["open", "-a", "Safari", endereco], check=False)).start()
     try:
         servidor.serve_forever()
     except KeyboardInterrupt:

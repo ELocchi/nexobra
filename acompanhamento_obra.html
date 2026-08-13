@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acompanhamento de Obra</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{
     --azul-escuro:#0f2a4a;
@@ -1322,8 +1323,8 @@
       <div><h2>Atividades</h2><p>Cadastre, edite ou exclua atividades e defina onde cada uma será acompanhada.</p></div>
     </div>
     <div class="importacao-setores">
-      <div><h3>Cadastro massivo de setores</h3><p>Importe uma planilha CSV no padrão Torre, Pavimento, Atividade e Setor.</p><div class="importacao-setores-status" id="statusImportacaoSetores"></div></div>
-      <div class="importacao-setores-acoes"><button class="secundario" id="baixarModeloSetores" type="button">Baixar planilha padrão</button><button id="importarSetores" type="button">Importar planilha</button><input id="arquivoSetores" type="file" accept=".csv,text/csv" hidden></div>
+      <div><h3>Cadastro massivo de setores</h3><p>Importe qualquer planilha em CSV, XLS ou XLSX com as colunas Torre, Pavimento, Atividade e Setor.</p><div class="importacao-setores-status" id="statusImportacaoSetores"></div></div>
+      <div class="importacao-setores-acoes"><button class="secundario" id="baixarModeloSetores" type="button">Baixar planilha padrão</button><button id="importarSetores" type="button">Importar planilha</button><input id="arquivoSetores" type="file" accept=".csv,.xlsx,.xls,.txt,text/csv,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div>
     </div>
     <div class="atividades-admin">
       <form class="atividade-editor" id="formAtividade">
@@ -2593,7 +2594,35 @@ function analisarLinhaCsvSetores(linha,delimitador){
   }
   campos.push(atual.trim());return campos;
 }
-function normalizarCabecalhoCsv(valor){return valor.normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();}
+function normalizarCabecalhoCsv(valor){return String(valor ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();}
+function normalizarLinhaSetorImportada(linha){
+  const mapa={};
+  for(const [chave,valor] of Object.entries(linha||{})){
+    mapa[normalizarCabecalhoCsv(chave)]=valor ?? "";
+  }
+  return {
+    torre:String(mapa.torre ?? mapa["nome da torre"] ?? "").trim(),
+    pavimento:String(mapa.pavimento ?? mapa.andar ?? mapa["pavimento/andar"] ?? "").trim(),
+    atividade:String(mapa.atividade ?? mapa["nome da atividade"] ?? "").trim(),
+    setor:String(mapa.setor ?? mapa.unidade ?? mapa.apartamento ?? mapa["setor/unidade"] ?? "").trim(),
+  };
+}
+async function extrairLinhasSetoresImportacao(arquivo){
+  const extensao=(arquivo.name||"").split(".").pop()?.toLowerCase() || "";
+  const tipo=arquivo.type || "";
+  let dadosPlanilha=[];
+  if(["csv","txt"].includes(extensao) || tipo.includes("csv") || tipo.startsWith("text/")){
+    const texto=(await arquivo.text()).replace(/^\uFEFF/,"");
+    const workbook=XLSX.read(texto,{type:"string",raw:false});
+    dadosPlanilha=workbook.SheetNames.flatMap(nome=>XLSX.utils.sheet_to_json(workbook.Sheets[nome],{defval:"",raw:false,blankrows:false}));
+  }else{
+    const workbook=XLSX.read(await arquivo.arrayBuffer(),{type:"array",raw:false,cellDates:true});
+    dadosPlanilha=workbook.SheetNames.flatMap(nome=>XLSX.utils.sheet_to_json(workbook.Sheets[nome],{defval:"",raw:false,blankrows:false}));
+  }
+  const linhas=dadosPlanilha.map(normalizarLinhaSetorImportada).filter(linha=>Object.values(linha).some(valor=>String(valor).trim()));
+  if(!linhas.length) throw new Error("A planilha não contém linhas com dados para importar.");
+  return linhas;
+}
 document.getElementById("baixarModeloSetores").addEventListener("click",()=>{
   const conteudo="\uFEFFTorre;Pavimento;Atividade;Setor\r\nHome;1;Alvenaria;Área técnica\r\nSmart;Cobertura;Todas;Casa de máquinas\r\n";
   const url=URL.createObjectURL(new Blob([conteudo],{type:"text/csv;charset=utf-8"}));
@@ -2605,15 +2634,18 @@ document.getElementById("arquivoSetores").addEventListener("change",async event=
   const status=document.getElementById("statusImportacaoSetores");
   try{
     status.textContent="Lendo e validando a planilha…";status.style.color="var(--azul)";
-    const texto=(await arquivo.text()).replace(/^\uFEFF/,"");
-    const linhasTexto=texto.split(/\r?\n/).filter(linha=>linha.trim());
-    if(linhasTexto.length<2)throw new Error("A planilha não possui linhas para importar.");
-    const delimitador=(linhasTexto[0].match(/;/g)||[]).length>=(linhasTexto[0].match(/,/g)||[]).length?";":",";
-    const cabecalhos=analisarLinhaCsvSetores(linhasTexto.shift(),delimitador).map(normalizarCabecalhoCsv);
-    const indices={torre:cabecalhos.indexOf("torre"),pavimento:cabecalhos.indexOf("pavimento"),atividade:cabecalhos.indexOf("atividade"),setor:cabecalhos.indexOf("setor")};
-    if(Object.values(indices).some(indice=>indice<0))throw new Error("Use as colunas Torre, Pavimento, Atividade e Setor do modelo padrão.");
-    const linhas=linhasTexto.map(linha=>{const campos=analisarLinhaCsvSetores(linha,delimitador);return {torre:campos[indices.torre]||"",pavimento:campos[indices.pavimento]||"",atividade:campos[indices.atividade]||"",setor:campos[indices.setor]||""};});
-    const resposta=await fetch("/api/setores/importar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({linhas})});
+    const linhas=await extrairLinhasSetoresImportacao(arquivo);
+    if(!linhas.some(linha=>["torre","pavimento","atividade","setor"].every(campo=>String(linha[campo]||"").trim()))){
+      throw new Error("Use as colunas Torre, Pavimento, Atividade e Setor no formato do modelo padrão.");
+    }
+    const linhasValidas=linhas.map(linha=>({
+      torre:String(linha.torre||"").trim(),
+      pavimento:String(linha.pavimento||"").trim(),
+      atividade:String(linha.atividade||"").trim(),
+      setor:String(linha.setor||"").trim(),
+    })).filter(linha=>linha.torre&&linha.pavimento&&linha.atividade&&linha.setor);
+    if(!linhasValidas.length)throw new Error("Nenhuma linha da planilha preenchida corretamente.");
+    const resposta=await fetch("/api/setores/importar",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({linhas:linhasValidas})});
     const resultado=await resposta.json().catch(()=>({}));
     if(!resposta.ok)throw new Error(resultado.erro||"Não foi possível importar a planilha.");
     status.textContent=`${resultado.criados} cadastro(s) criado(s)${resultado.ignorados?` · ${resultado.ignorados} duplicado(s) ignorado(s)`:""}${resultado.erros?.length?` · ${resultado.erros.length} linha(s) com erro`:""}.`;
