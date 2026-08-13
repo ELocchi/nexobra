@@ -967,6 +967,47 @@ def extrair_servicos_fvs_da_planilha(caminho):
     return servicos
 
 
+def servico_fvs_ja_representado_no_modelo(nome, nomes_existentes):
+    nome_norm = normalizar_texto_fvs(nome)
+    if not nome_norm:
+        return True
+    for existente in sorted(nomes_existentes, key=lambda item: (-len(item.split()), item)):
+        if existente == nome_norm:
+            return True
+        if nome_norm.startswith(existente + " ") or nome_norm.endswith(" " + existente):
+            return True
+        if len(existente.split()) == 1 and existente in nome_norm.split():
+            return True
+    return False
+
+
+def limpar_servicos_fvs_duplicados(conexao):
+    nomes = [
+        linha["nome"]
+        for linha in conexao.execute("SELECT DISTINCT nome FROM atividades_config ORDER BY nome").fetchall()
+    ]
+    nomes_norm = {normalizar_texto_fvs(nome): nome for nome in nomes}
+    para_remover = set()
+    for nome in nomes:
+        nome_norm = normalizar_texto_fvs(nome)
+        for outro in nomes:
+            if nome == outro:
+                continue
+            outro_norm = normalizar_texto_fvs(outro)
+            if nome_norm == outro_norm:
+                continue
+            if nome_norm.startswith(outro_norm + " ") or nome_norm.endswith(" " + outro_norm):
+                para_remover.add(nome)
+                break
+    if not para_remover:
+        return 0
+    for nome in sorted(para_remover):
+        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome,))
+        conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome,))
+    conexao.commit()
+    return len(para_remover)
+
+
 def sincronizar_atividades_fvs(conexao):
     if not ARQUIVO_LISTA_MESTRA_FVS.exists():
         return 0
@@ -980,7 +1021,7 @@ def sincronizar_atividades_fvs(conexao):
     adicionados = 0
     for nome_servico, criterios in servicos.items():
         chave = normalizar_texto_fvs(nome_servico)
-        if chave in existentes:
+        if chave in existentes or servico_fvs_ja_representado_no_modelo(nome_servico, existentes):
             continue
         for torre in ("aurora", "horizonte"):
             max_andar = 36 if torre == "aurora" else 23
@@ -1044,6 +1085,7 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_config_inicial', '1')"
         )
+    limpar_servicos_fvs_duplicados(conexao)
     sincronizar_atividades_fvs(conexao)
     marcador_registros = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'atividades_registros_config_v1'"
