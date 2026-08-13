@@ -4,17 +4,21 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 import sqlite3
 import subprocess
 import threading
+import unicodedata
 import webbrowser
 from datetime import date, datetime, timedelta
 from io import BytesIO
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse
+from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
+from zipfile import ZipFile
 
 from reportlab.graphics import renderSVG
 from reportlab.graphics.barcode import qr
@@ -28,10 +32,15 @@ from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleD
 PASTA = Path(__file__).resolve().parent
 ARQUIVO_PLANEJAMENTO = PASTA / "dados_planilha_atual.json"
 ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
+ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 HOST = "0.0.0.0"
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
+NS_FVS = {
+    "a": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+    "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+}
 PAVIMENTOS_TECNICOS = {101: "Barrilete", 102: "Reservatório", 103: "Cobertura"}
 STATUS_NOMES = {
     "nao-iniciado": "Não iniciado",
@@ -884,6 +893,113 @@ def importar_planejamento_inicial(conexao):
     )
 
 
+def normalizar_texto_fvs(valor):
+    texto = unicodedata.normalize("NFD", str(valor or "")).encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"\s+", " ", texto).strip().lower()
+
+
+def ler_shared_strings_fvs(z):
+    if "xl/sharedStrings.xml" not in z.namelist():
+        return []
+    raiz = ET.fromstring(z.read("xl/sharedStrings.xml"))
+    itens = []
+    for si in raiz.findall("a:si", NS_FVS):
+        texto = "".join(el.text or "" for el in si.iter(f"{{{NS_FVS['a']}}}t"))
+        itens.append(texto)
+    return itens
+
+
+def ler_planilha_fvs_em_rows(caminho):
+    with ZipFile(caminho) as z:
+        shared_strings = ler_shared_strings_fvs(z)
+        rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
+        target_map = {item.attrib["Id"]: item.attrib["Target"] for item in rels}
+        workbook = ET.fromstring(z.read("xl/workbook.xml"))
+        for sheet in workbook.findall("a:sheets/a:sheet", NS_FVS):
+            nome = sheet.attrib["name"]
+            rel_id = sheet.attrib[f"{{{NS_FVS['r']}}}id"]
+            target = target_map[rel_id]
+            if not target.startswith("xl/"):
+                target = "xl/" + target
+            planilha = ET.fromstring(z.read(target))
+            linhas = []
+            for linha in planilha.findall(".//a:sheetData/a:row", NS_FVS):
+                valores = []
+                for celula in linha.findall("a:c", NS_FVS):
+                    tipo = celula.attrib.get("t")
+                    valor_celula = celula.find("a:v", NS_FVS)
+                    valor = "" if valor_celula is None else (valor_celula.text or "")
+                    if tipo == "s" and valor:
+                        indice = int(valor)
+                        valor = shared_strings[indice] if 0 <= indice < len(shared_strings) else ""
+                    valores.append(str(valor).strip())
+                if any(v for v in valores):
+                    linhas.append(valores)
+            yield nome, linhas
+
+
+def extrair_servicos_fvs_da_planilha(caminho):
+    servicos = {}
+    for _, linhas in ler_planilha_fvs_em_rows(caminho):
+        if not linhas:
+            continue
+        if not any("FVS" in str(v).upper() for v in linhas[0]):
+            continue
+        titulo = next((valor for valor in linhas[0] if valor.strip()), "")
+        if " - " not in titulo:
+            continue
+        nome_servico = titulo.split(" - ", 1)[1].strip().title()
+        criterios = []
+        for linha in linhas[1:]:
+            if not linha:
+                continue
+            primeiro = linha[0].strip()
+            if not primeiro or primeiro.lower().startswith("item / critério"):
+                continue
+            if primeiro.lower().startswith("fvs ") or primeiro.lower().startswith("código fvs"):
+                continue
+            criterios.append(primeiro)
+        if nome_servico and criterios:
+            servicos.setdefault(nome_servico, [])
+            for criterio in criterios:
+                if criterio not in servicos[nome_servico]:
+                    servicos[nome_servico].append(criterio)
+    return servicos
+
+
+def sincronizar_atividades_fvs(conexao):
+    if not ARQUIVO_LISTA_MESTRA_FVS.exists():
+        return 0
+    servicos = extrair_servicos_fvs_da_planilha(ARQUIVO_LISTA_MESTRA_FVS)
+    if not servicos:
+        return 0
+    existentes = {
+        normalizar_texto_fvs(nome[0])
+        for nome in conexao.execute("SELECT DISTINCT nome FROM atividades_config").fetchall()
+    }
+    adicionados = 0
+    for nome_servico, criterios in servicos.items():
+        chave = normalizar_texto_fvs(nome_servico)
+        if chave in existentes:
+            continue
+        for torre in ("aurora", "horizonte"):
+            max_andar = 36 if torre == "aurora" else 23
+            andares = [-2, -1, 0] + list(range(1, max_andar + 1)) + [101, 102, 103]
+            for andar in andares:
+                conexao.execute(
+                    "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, '*')",
+                    (nome_servico, torre, andar),
+                )
+        for ordem, criterio in enumerate(criterios):
+            conexao.execute(
+                "INSERT OR IGNORE INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES (?, ?, ?)",
+                (nome_servico, criterio, ordem),
+            )
+        existentes.add(chave)
+        adicionados += 1
+    return adicionados
+
+
 def preparar_atividades_config(conexao):
     conexao.execute(
         """
@@ -928,6 +1044,7 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('atividades_config_inicial', '1')"
         )
+    sincronizar_atividades_fvs(conexao)
     marcador_registros = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'atividades_registros_config_v1'"
     ).fetchone()
