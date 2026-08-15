@@ -37,7 +37,7 @@ ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
 ARQUIVO_PLANTAS = PASTA / "plantas_unidades.json"
 ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
-HOST = "0.0.0.0"
+HOST = os.environ.get("HOST", "0.0.0.0")
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
 _OPCOES_PLANTAS_PDF = {}
@@ -77,7 +77,7 @@ def opcoes_plantas_pdf(torre, andar, unidade):
     return opcoes
 SERVICOS_MANUAIS_BASE = [
     "Alvenaria",
-    "Bancada de Pedra Natural",
+    "Pedra Natural",
     "Check List",
     "Coifa de Churrasqueira",
     "Contrapiso",
@@ -266,8 +266,10 @@ def somente_registros_planejados(registros, torre):
 
 def conectar():
     BANCO.parent.mkdir(parents=True, exist_ok=True)
-    conexao = sqlite3.connect(BANCO)
+    conexao = sqlite3.connect(BANCO, timeout=15.0)
     conexao.row_factory = sqlite3.Row
+    conexao.execute("PRAGMA busy_timeout = 15000")
+    conexao.execute("PRAGMA synchronous = NORMAL")
     return conexao
 
 
@@ -697,6 +699,7 @@ def gerar_inicio_visitante():
 
 def preparar_banco():
     with conectar() as conexao:
+        conexao.execute("PRAGMA journal_mode = WAL")
         conexao.execute(
             """
             CREATE TABLE IF NOT EXISTS registros (
@@ -737,6 +740,9 @@ def preparar_banco():
         )
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_registros_local ON registros(torre, andar, unidade)"
+        )
+        conexao.execute(
+            "CREATE INDEX IF NOT EXISTS idx_registros_atividade_local ON registros(atividade, torre, andar)"
         )
         conexao.execute(
             """
@@ -1871,6 +1877,56 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_bancada_pedra_natural_v1', '1')"
         )
+    marcador_pedra_natural_subservicos = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'pedra_natural_subservicos_v1'"
+    ).fetchone()
+    if not marcador_pedra_natural_subservicos:
+        nome_antigo = "Bancada de Pedra Natural"
+        nome_novo = "Pedra Natural"
+        conexao.execute(
+            "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) "
+            "SELECT ?, torre, andar, unidade FROM atividades_config WHERE nome = ?",
+            (nome_novo, nome_antigo),
+        )
+        conexao.execute("DELETE FROM atividades_config WHERE nome = ?", (nome_antigo,))
+        for linha in conexao.execute(
+            "SELECT chave, torre, andar, unidade, especificacoes FROM registros WHERE atividade = ?", (nome_antigo,)
+        ).fetchall():
+            try:
+                estados_anteriores = json.loads(linha["especificacoes"] or "{}")
+            except (TypeError, json.JSONDecodeError):
+                estados_anteriores = {}
+            estados_novos = {
+                (chave if " :: " in chave else f"Bancadas :: {chave}"): valor
+                for chave, valor in estados_anteriores.items()
+            }
+            chave_nova = f'{linha["torre"]}|{linha["andar"]}|{linha["unidade"]}|{nome_novo}'
+            conexao.execute(
+                "UPDATE registros SET chave = ?, atividade = ?, especificacoes = ? WHERE chave = ?",
+                (chave_nova, nome_novo, json.dumps(estados_novos, ensure_ascii=False), linha["chave"]),
+            )
+        conexao.execute(
+            "UPDATE ocorrencias SET atividade = ?, subatividade = CASE "
+            "WHEN subatividade IS NULL OR TRIM(subatividade) = '' THEN 'Bancadas' ELSE subatividade END, "
+            "especificacao = CASE WHEN especificacao IS NOT NULL AND especificacao != '' "
+            "AND instr(especificacao, ' :: ') = 0 THEN 'Bancadas :: ' || especificacao ELSE especificacao END "
+            "WHERE atividade = ?",
+            (nome_novo, nome_antigo),
+        )
+        salvar_especificacoes_atividade(
+            conexao,
+            nome_novo,
+            [
+                "Bancadas :: Condição de Início de Serviço",
+                "Bancadas :: Nível da Bancada",
+                "Bancadas :: Aspecto Final da Bancada",
+                "Piso :: Execução do serviço",
+            ],
+        )
+        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (nome_antigo,))
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('pedra_natural_subservicos_v1', '1')"
+        )
     marcador_servico_gesso = conexao.execute(
         "SELECT valor FROM configuracoes WHERE chave = 'servico_gesso_subservicos_v1'"
     ).fetchone()
@@ -2250,6 +2306,239 @@ def preparar_atividades_config(conexao):
         )
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('corrigir_unidades_pavimentos_tecnicos_v1', '1')"
+        )
+    marcador_servicos_pdf = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_servicos_pdf_v1'"
+    ).fetchone()
+    if not marcador_servicos_pdf:
+        especificacoes_pdf = {
+            "Instalações Hidráulicas": [
+                "Condição para início dos serviços", "Posicionamento dos Ralos",
+                "Posicionamento dos Pontos (Consumo de Água, Registros, Válvulas, Sistema de Esgoto e Gás)",
+                "Prumadas", "Chumbamento das Tubulações e Ralos",
+                "Posicionamento dos Drenos na Marcação da Alvenaria",
+                "Posicionamento e Distribuição dos Esgotos (Aranha)", "Kit Hidráulico",
+                "Tubos para Exaustão dos banhos com Ventilação Forçada", "Chumbamento de Passantes Fachada",
+                "Encamisamento/Ventilação do Gás", "Cavaletes de Água e Redutoras de Pressão",
+                "Pressurização de Tubulações de Água Fria e Quente",
+                "Pressurização da Tubulação de Gás (Antes do Fechamento)",
+                "Pressurização da Tubulação de Gás (Depois da Conclusão dos Revestimentos Cerâmicos)",
+                "Funcionamento do Sistema de Esgoto", "Funcionamento do Sistema de Combate a Incêndio",
+                "Proteção dos Registros", "Medidor de Água Fria", "Limpeza e Proteção dos Ralos",
+                "Instalação de Louças (Bacias)", "Acabamento de Registros", "Metais", "Sifão e Acessórios",
+            ],
+            "Esquadrias": [
+                "Taliscas e Contramarco :: Condições para Início do Serviço",
+                "Taliscas e Contramarco :: Personalização", "Taliscas e Contramarco :: Prumo das Taliscas",
+                "Taliscas e Contramarco :: Esquadro das Taliscas",
+                "Taliscas e Contramarco :: Esquadro do Contramarco em Relação à Fachada",
+                "Taliscas e Contramarco :: Altura do Vão em Relação ao Piso Acabado",
+                "Taliscas e Contramarco :: Grapas", "Taliscas e Contramarco :: Nivelamento das Travessas",
+                "Taliscas e Contramarco :: Checar Prumo e Esquadro do Contramarco",
+                "Taliscas e Contramarco :: Checar o Chumbamento com o Gabarito e Remoção das Fitas Hellerman",
+                "Colocação de Batente Metálico :: Sentido de Abertura da Porta",
+                "Colocação de Batente Metálico :: Preenchimento da Argamassa",
+                "Colocação de Batente Metálico :: Prumo e Nível", "Colocação de Batente Metálico :: Fixação",
+                "Colocação de Gradil :: Verificar o Prumo da Fachada e Locação",
+                "Colocação de Gradil :: Verificar Alinhamento do Gradil",
+                "Colocação de Gradil :: Nivelamento do Gradil", "Colocação de Gradil :: Prumo do Gradil",
+                "Colocação de Gradil :: Verificar o Chumbamento/Firmeza (Fixação no Concreto/Alvenaria)",
+                "Colocação de Gradil :: Distância e Medidas",
+                "Colocação de Gradil :: Pintura ou Proteção de Gradis de Alumínio, Aço e suas Ligas",
+                "Colocação de Gradil :: Ensaios",
+            ],
+            "Estrutura": [
+                "Piso Armado :: Condições para Início do Serviço", "Piso Armado :: Espessura da Camada de Brita",
+                "Piso Armado :: Lona Plástica Preta Reforçada", "Piso Armado :: Isopor", "Piso Armado :: Armadura",
+                "Piso Armado :: Lançamento do concreto", "Piso Armado :: Cura Química",
+                "Piso Armado :: Dreno nas Cortinas", "Piso Armado :: Aplicação do Selante (1,0cm)",
+                "Piso Armado :: Juntas de Dilatação (Juntas de Construção)",
+                "Lajes :: Cabo de Aço para Atrelar o Cinto de Segurança – Linha de Vida",
+                "Lajes :: Transferência dos Eixos Principais (Para Assoalho)",
+                "Lajes :: Posicionamento do Assoalho em Relação aos Eixos Principais", "Lajes :: Escoramento",
+                "Lajes :: Armação", "Lajes :: Arranques", "Lajes :: Itens de Segurança",
+                "Lajes :: Passagens em Lajes", "Lajes :: Travamento e Encaixe dos Painéis e Nivelamento das Lajes",
+                "Lajes :: Limpeza do Assoalho", "Lajes :: Componentes Embutidos", "Lajes :: Lançamento do Concreto",
+                "Lajes :: Cura Química", "Lajes :: Reescoramento",
+                "Lajes :: Falhas de Concretagem e Aspecto Geral da Laje", "Lajes :: Limpeza dos Painéis",
+            ],
+        }
+        for atividade, especificacoes in especificacoes_pdf.items():
+            conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = ?", (atividade,))
+            conexao.executemany(
+                "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES (?, ?, ?)",
+                [(atividade, especificacao, ordem) for ordem, especificacao in enumerate(especificacoes)],
+            )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_servicos_pdf_v1', '1')"
+        )
+    marcador_loucas_metais = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_loucas_metais_v1'"
+    ).fetchone()
+    if not marcador_loucas_metais:
+        especificacoes = [
+            "Lareira e Churrasqueira :: Execução do serviço",
+            "Louças e Metais :: Condição de Início de Serviço",
+            "Louças e Metais :: Posicionamento da Tubulação de Esgoto da Bacia",
+            "Louças e Metais :: Fixação dos Metais e Louças Sanitários",
+            "Louças e Metais :: Teste de Funcionamento e Vazamento",
+            "Louças e Metais :: Aparência do Conjunto Após Instalação: Metais, Louças e Acabamento dos Rejuntes das Louças",
+            "Louças e Metais :: Distância entre a Caixa Acoplada e Parede",
+            "Louças e Metais :: Nivelamento das Louças (Bacia c/ Caixa Acoplada, Lavatório e Tanque)",
+            "Louças e Metais :: Altura do Lavatório e Tanque (Conforme Medidas de Projeto)",
+            "Louças e Metais :: Proteção dos Metais (Torneiras e Misturadores)",
+        ]
+        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = 'Acabamentos'")
+        conexao.executemany(
+            "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES ('Acabamentos', ?, ?)",
+            [(especificacao, ordem) for ordem, especificacao in enumerate(especificacoes)],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_loucas_metais_v1', '1')"
+        )
+    marcador_sapata_isolada = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_sapata_isolada_v1'"
+    ).fetchone()
+    if not marcador_sapata_isolada:
+        especificacoes_sapata = [
+            "Sapata Isolada :: Checar a Locação da Sapata",
+            "Sapata Isolada :: Cota do Fundo da Vala",
+            "Sapata Isolada :: Forma da Sapata",
+            "Sapata Isolada :: Armação da Sapata",
+            "Sapata Isolada :: Gastalho",
+            "Sapata Isolada :: Arranque do Pilar (ou Vigas Saindo das Sapatas)",
+            "Sapata Isolada :: Concretagem",
+            "Sapata Isolada :: Mapeamento",
+        ]
+        outras_especificacoes = [
+            "Tubulão e Broca :: Execução do serviço", "Hélice Contínua :: Execução do serviço",
+            "Estaca Strauss :: Execução do serviço", "Perfil Metálico :: Execução do serviço",
+            "Parede Diafragma :: Execução do serviço", "Compactação de Aterro :: Execução do serviço",
+            "Tirantes :: Execução do serviço",
+        ]
+        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = 'Fundação'")
+        conexao.executemany(
+            "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES ('Fundação', ?, ?)",
+            [(especificacao, ordem) for ordem, especificacao in enumerate(especificacoes_sapata + outras_especificacoes)],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_sapata_isolada_v1', '1')"
+        )
+    marcador_tubulao_broca = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'especificacoes_tubulao_broca_v1'"
+    ).fetchone()
+    if not marcador_tubulao_broca:
+        especificacoes_tubulao_broca = [
+            "Tubulão e Broca :: Condições de Início",
+            "Tubulão e Broca :: Diâmetro",
+            "Tubulão e Broca :: Cota de Apoio",
+            "Tubulão e Broca :: Dimensões da Base (Apenas para Tubulão)",
+            "Tubulão e Broca :: Checagem da armadura",
+            "Tubulão e Broca :: Cota de Arrasamento",
+        ]
+        linhas_fundacao = conexao.execute(
+            "SELECT especificacao FROM atividades_especificacoes WHERE atividade = 'Fundação' ORDER BY ordem, id"
+        ).fetchall()
+        especificacoes_fundacao = [
+            linha["especificacao"] for linha in linhas_fundacao
+            if not linha["especificacao"].startswith("Tubulão e Broca ::")
+        ]
+        indice_tubulao = next(
+            (indice + 1 for indice, especificacao in enumerate(especificacoes_fundacao)
+             if especificacao.startswith("Sapata Isolada ::")),
+            len(especificacoes_fundacao),
+        )
+        while (
+            indice_tubulao < len(especificacoes_fundacao)
+            and especificacoes_fundacao[indice_tubulao].startswith("Sapata Isolada ::")
+        ):
+            indice_tubulao += 1
+        especificacoes_fundacao[indice_tubulao:indice_tubulao] = especificacoes_tubulao_broca
+        conexao.execute("DELETE FROM atividades_especificacoes WHERE atividade = 'Fundação'")
+        conexao.executemany(
+            "INSERT INTO atividades_especificacoes (atividade, especificacao, ordem) VALUES ('Fundação', ?, ?)",
+            [(especificacao, ordem) for ordem, especificacao in enumerate(especificacoes_fundacao)],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('especificacoes_tubulao_broca_v1', '1')"
+        )
+    marcador_lista_mestra_fvs = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'lista_mestra_fvs_completa_v1'"
+    ).fetchone()
+    catalogo_fvs = PASTA / "catalogo_fvs.json"
+    if not marcador_lista_mestra_fvs and catalogo_fvs.exists():
+        dados_fvs = json.loads(catalogo_fvs.read_text(encoding="utf-8"))
+        for atividade, subservicos in dados_fvs.get("catalogo", {}).items():
+            especificacoes = []
+            for subservico, itens in subservicos.items():
+                especificacoes.extend(
+                    f"{subservico} :: {item}" if subservico else item
+                    for item in itens
+                )
+            if especificacoes:
+                salvar_especificacoes_atividade(conexao, atividade, especificacoes)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('lista_mestra_fvs_completa_v1', '1')"
+        )
+    marcador_fundacao_somente_pavimento = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'fundacao_somente_pavimento_fundacao_v1'"
+    ).fetchone()
+    if not marcador_fundacao_somente_pavimento:
+        atividade = "Fundação"
+        escopos = []
+        for torre in TORRES_NOMES:
+            conexao.execute(
+                "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, -2, '*')",
+                (atividade, torre),
+            )
+            escopos.append((torre, -2, "*"))
+        conexao.execute(
+            "DELETE FROM atividades_config WHERE nome = ? AND andar != -2", (atividade,)
+        )
+        conexao.execute(
+            "DELETE FROM registros WHERE atividade = ? AND andar != -2", (atividade,)
+        )
+        garantir_registros_atividade(conexao, atividade, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('fundacao_somente_pavimento_fundacao_v1', '1')"
+        )
+    marcador_preliminares_somente_fundacao = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'preliminares_somente_pavimento_fundacao_v1'"
+    ).fetchone()
+    if not marcador_preliminares_somente_fundacao:
+        atividade = "Serviços Preliminares"
+        escopos = []
+        for torre in TORRES_NOMES:
+            conexao.execute(
+                "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, -2, '*')",
+                (atividade, torre),
+            )
+            escopos.append((torre, -2, "*"))
+        conexao.execute(
+            "DELETE FROM atividades_config WHERE nome = ? AND andar != -2", (atividade,)
+        )
+        conexao.execute(
+            "DELETE FROM registros WHERE atividade = ? AND andar != -2", (atividade,)
+        )
+        garantir_registros_atividade(conexao, atividade, escopos)
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('preliminares_somente_pavimento_fundacao_v1', '1')"
+        )
+    marcador_pavimento_fundacao_exclusivo = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'pavimento_fundacao_exclusivo_v1'"
+    ).fetchone()
+    if not marcador_pavimento_fundacao_exclusivo:
+        atividades_permitidas = ("Fundação", "Serviços Preliminares")
+        conexao.execute(
+            "DELETE FROM atividades_config WHERE andar = -2 AND nome NOT IN (?, ?)",
+            atividades_permitidas,
+        )
+        conexao.execute(
+            "DELETE FROM registros WHERE andar = -2 AND atividade NOT IN (?, ?)",
+            atividades_permitidas,
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('pavimento_fundacao_exclusivo_v1', '1')"
         )
 
 
@@ -2875,6 +3164,33 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     linhas = conexao.execute("SELECT chave, atividade FROM registros WHERE torre=? AND andar=? AND unidade=?", (torre, andar, unidade)).fetchall()
                     if not linhas:
                         raise ValueError("Setor não encontrado")
+                    atividades_afetadas = list(dict.fromkeys(linha["atividade"] for linha in linhas))
+                    for atividade in atividades_afetadas:
+                        possui_escopo_geral = conexao.execute(
+                            "SELECT 1 FROM atividades_config WHERE torre=? AND andar=? AND nome=? AND unidade='*' LIMIT 1",
+                            (torre, andar, atividade),
+                        ).fetchone()
+                        if not possui_escopo_geral:
+                            continue
+                        destinos_automaticos = apartamentos_do_andar(torre, andar) + ["Área comum"]
+                        destinos_explicitos = [
+                            linha_escopo["unidade"] for linha_escopo in conexao.execute(
+                                "SELECT DISTINCT unidade FROM atividades_config WHERE torre=? AND andar=? AND nome=? AND unidade!='*'",
+                                (torre, andar, atividade),
+                            ).fetchall()
+                        ]
+                        destinos = list(dict.fromkeys(
+                            nova_unidade if destino == unidade else destino
+                            for destino in destinos_automaticos + destinos_explicitos
+                        ))
+                        conexao.execute(
+                            "DELETE FROM atividades_config WHERE torre=? AND andar=? AND nome=?",
+                            (torre, andar, atividade),
+                        )
+                        conexao.executemany(
+                            "INSERT OR IGNORE INTO atividades_config (nome, torre, andar, unidade) VALUES (?, ?, ?, ?)",
+                            [(atividade, torre, andar, destino) for destino in destinos],
+                        )
                     for linha in linhas:
                         nova_chave = f"{torre}|{andar}|{nova_unidade}|{linha['atividade']}"
                         conexao.execute("UPDATE registros SET chave=?, unidade=? WHERE chave=?", (nova_chave, nova_unidade, linha["chave"]))
