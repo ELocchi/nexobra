@@ -2460,9 +2460,9 @@ function divisoesDoServico(atividade,andar){
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   const subservicosFvs=catalogoFvs?Object.keys(catalogoFvs).filter(Boolean):[];
   if(subservicosFvs.length){
-    return atividade==="Fundação"
-      ?subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico))
-      :subservicosFvs;
+    if(atividade==="Fundação")return subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico));
+    if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar).filter(subservico=>subservicosFvs.includes(subservico));
+    return subservicosFvs;
   }
   if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar);
   if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA);
@@ -2505,9 +2505,12 @@ function mapaDivisoesDoServico(atividade){
 function chaveDivisaoServico(atividade,andar){return `${atividade}|${andar}`;}
 function divisoesEstruturaDoAndar(andar){
   const todas=Object.keys(DIVISOES_ESTRUTURA);
-  if(Number(andar)===-2)return ["Blocos, Vigas e Cortinas de Fundação"];
-  const semFundacao=todas.filter(divisao=>divisao!=="Blocos, Vigas e Cortinas de Fundação");
-  return Number(andar)===-1?semFundacao:semFundacao.filter(divisao=>divisao!=="Piso Armado");
+  const pavimento=Number(andar);
+  const fundacao="Blocos, Vigas e Cortinas de Fundação";
+  if(pavimento===-2)return [];
+  const disponiveis=todas.filter(divisao=>divisao!==fundacao&&(pavimento===-1||divisao!=="Piso Armado"));
+  if(pavimento===-1||pavimento===0)disponiveis.unshift(fundacao);
+  return disponiveis;
 }
 function especificacoesDoServico(atividade){
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
