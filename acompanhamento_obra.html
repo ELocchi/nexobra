@@ -5177,10 +5177,17 @@ function abrirAmbientePersonalizacao(ambiente){
   const itens=[...new Set((acabamentosUnidades[chave]?.itens||[]).filter(item=>item.ambiente===ambiente&&!( /^Banho/i.test(ambiente)&&item.item==="Rodapé")).map(item=>item.item).filter(Boolean))];
   document.getElementById("tituloAmbientePersonalizacao").textContent=ambiente;
   document.getElementById("itensAmbientePersonalizacao").innerHTML=itens.map(item=>{
-    const opcoes=[...new Set(Object.values(acabamentosUnidades).flatMap(acabamento=>(acabamento?.itens||[]).filter(registro=>registro.ambiente===ambiente&&registro.item===item).map(registro=>registro.opcao)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
+    const opcoesPorCodigo=new Map();
+    Object.values(acabamentosUnidades).flatMap(acabamento=>acabamento?.itens||[])
+      .filter(registro=>registro.ambiente===ambiente&&registro.item===item&&registro.opcao)
+      .forEach(registro=>{
+        const atual=opcoesPorCodigo.get(registro.opcao);
+        if(!atual||(!atual.descricao&&registro.descricao))opcoesPorCodigo.set(registro.opcao,registro);
+      });
+    const opcoes=[...opcoesPorCodigo.values()].sort((a,b)=>a.opcao.localeCompare(b.opcao,"pt-BR",{numeric:true}));
     const escolhaAtual=escolhasAcabamentoPersonalizacao[`${ambiente}|||${item}`]||"";
     const rotuloItem=item==="Paredes Fora do Box"?"Parede Fora do Box":item;
-    return `<div class="ambiente-item-campo"><label>${escaparHtml(rotuloItem)}</label><select data-escolha-ambiente="${escaparHtml(ambiente)}" data-escolha-item="${escaparHtml(item)}"><option value="">Sem alteração</option>${opcoes.map(opcao=>`<option value="${escaparHtml(opcao)}" ${opcao===escolhaAtual?"selected":""}>${escaparHtml(opcao)}</option>`).join("")}</select></div>`;
+    return `<div class="ambiente-item-campo"><label>${escaparHtml(rotuloItem)}</label><select data-escolha-ambiente="${escaparHtml(ambiente)}" data-escolha-item="${escaparHtml(item)}"><option value="">Sem alteração</option>${opcoes.map(registro=>`<option value="${escaparHtml(registro.opcao)}" ${registro.opcao===escolhaAtual?"selected":""} title="${escaparHtml(registro.descricao||registro.opcao)}">${escaparHtml(registro.descricao||registro.opcao)}</option>`).join("")}</select></div>`;
   }).join("");
   document.getElementById("ambientePersonalizacaoOverlay").classList.remove("oculto");
 }
