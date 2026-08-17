@@ -2623,7 +2623,7 @@ async function sincronizarPersonalizacoes(){
   try{
     const antes=resumoNotificacoesAtual().personalizacoes;
     const [respostaPlantas,respostaAcabamentos,respostaProjetos]=await Promise.all([
-      fetch("/plantas_unidades.json",{cache:"no-store"}),fetch("/acabamentos_unidades.json",{cache:"no-store"}),fetch("/api/projetos",{cache:"no-store"})
+      fetch("/plantas_unidades.json",{cache:"no-cache"}),fetch("/acabamentos_unidades.json",{cache:"no-cache"}),fetch("/api/projetos",{cache:"no-store"})
     ]);
     if(!respostaPlantas.ok||!respostaAcabamentos.ok||!respostaProjetos.ok)return;
     const [novasPlantas,novosAcabamentos,novosProjetos]=await Promise.all([respostaPlantas.json(),respostaAcabamentos.json(),respostaProjetos.json()]);
@@ -2674,7 +2674,8 @@ async function buscarJsonComTentativas(url){
   let ultimoErro;
   for(let tentativa=1;tentativa<=3;tentativa++){
     try{
-      const resposta=await fetch(url,{cache:"no-store"});
+      const cache=url.startsWith("/api/registros?formato=compacto")||!url.startsWith("/api/")?"no-cache":"no-store";
+      const resposta=await fetch(url,{cache});
       if(!resposta.ok)throw new Error(`${url}: HTTP ${resposta.status}`);
       try{return await resposta.json();}
       catch(erro){throw new Error(`${url}: resposta JSON incompleta ou inválida`);}
@@ -5100,7 +5101,7 @@ document.getElementById("importarPlanilhasPersonalizacao").addEventListener("cli
     const [conteudoPlantas,conteudoAcabamentos]=await Promise.all([plantas?arquivoComoDataUrl(plantas):null,acabamentos?arquivoComoDataUrl(acabamentos):null]);
     const resposta=await fetch("/api/personalizacoes/importar-planilhas",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({plantas:plantas?{nome:plantas.name,conteudo:conteudoPlantas}:null,acabamentos:acabamentos?{nome:acabamentos.name,conteudo:conteudoAcabamentos}:null})});
     const dados=await resposta.json();if(!resposta.ok)throw new Error(dados.erro||"Não foi possível importar as planilhas.");
-    const [respostaPlantas,respostaAcabamentos]=await Promise.all([fetch("/plantas_unidades.json",{cache:"no-store"}),fetch("/acabamentos_unidades.json",{cache:"no-store"})]);
+    const [respostaPlantas,respostaAcabamentos]=await Promise.all([fetch("/plantas_unidades.json",{cache:"no-cache"}),fetch("/acabamentos_unidades.json",{cache:"no-cache"})]);
     plantasUnidades=await respostaPlantas.json();acabamentosUnidades=await respostaAcabamentos.json();
     let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}
     (dados.alteracoes||[]).forEach(item=>{if(!historico.some(registro=>registro.chave===item.chave))historico.unshift({...item,lida:false});});

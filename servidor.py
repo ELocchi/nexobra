@@ -38,6 +38,8 @@ ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
 ARQUIVO_PLANTAS = PASTA / "plantas_unidades.json"
 ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
+CACHE_REGISTROS_COMPACTOS = {"assinatura": None, "corpo": b"", "gzip": b"", "etag": ""}
+LOCK_CACHE_REGISTROS = threading.Lock()
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
@@ -2710,6 +2712,26 @@ class ServidorObra(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(corpo)
 
+    def enviar_json_cacheado(self, corpo, corpo_gzip, etag):
+        if self.headers.get("If-None-Match", "").strip() == etag:
+            self.send_response(304)
+            self.send_header("ETag", etag)
+            self.send_header("Cache-Control", "private, no-cache")
+            self.end_headers()
+            return
+        aceita_gzip = "gzip" in self.headers.get("Accept-Encoding", "").lower()
+        resposta = corpo_gzip if aceita_gzip else corpo
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("ETag", etag)
+        self.send_header("Cache-Control", "private, no-cache")
+        if aceita_gzip:
+            self.send_header("Content-Encoding", "gzip")
+            self.send_header("Vary", "Accept-Encoding")
+        self.send_header("Content-Length", str(len(resposta)))
+        self.end_headers()
+        self.wfile.write(resposta)
+
     def sessao_usuario(self):
         cookies = self.headers.get("Cookie", "")
         token = next(
@@ -2930,27 +2952,47 @@ class ServidorObra(SimpleHTTPRequestHandler):
         if caminho == "/api/registros":
             parametros = parse_qs(urlparse(self.path).query)
             formato_compacto = parametros.get("formato", [""])[0] == "compacto"
+            if formato_compacto:
+                caminhos_banco = [BANCO, Path(f"{BANCO}-wal")]
+                def assinatura_banco():
+                    return tuple(
+                        (arquivo.stat().st_mtime_ns, arquivo.stat().st_size) if arquivo.exists() else (0, 0)
+                        for arquivo in caminhos_banco
+                    )
+                assinatura = assinatura_banco()
+                with LOCK_CACHE_REGISTROS:
+                    if CACHE_REGISTROS_COMPACTOS["assinatura"] != assinatura:
+                        with conectar() as conexao:
+                            linhas = conexao.execute(
+                                "SELECT chave, concluido, status, data_conclusao, observacao, foto, foto_nome, especificacoes FROM registros"
+                            ).fetchall()
+                        assinatura = assinatura_banco()
+                        registros_compactos = []
+                        for linha in linhas:
+                            try:
+                                especificacoes = json.loads(linha["especificacoes"] or "{}")
+                            except (json.JSONDecodeError, TypeError):
+                                especificacoes = {}
+                            item = [
+                                linha["chave"], linha["status"] or ("concluido" if linha["concluido"] else "nao-iniciado"),
+                                linha["data_conclusao"] or "", linha["observacao"] or "", linha["foto"] or "",
+                                linha["foto_nome"] or "", especificacoes if isinstance(especificacoes, dict) else {},
+                            ]
+                            while len(item) > 2 and item[-1] in ("", {}, None):
+                                item.pop()
+                            registros_compactos.append(item)
+                        corpo = json.dumps({"formato": "compacto-v1", "registros": registros_compactos}, ensure_ascii=False).encode("utf-8")
+                        CACHE_REGISTROS_COMPACTOS.update({
+                            "assinatura": assinatura, "corpo": corpo, "gzip": gzip.compress(corpo, compresslevel=5),
+                            "etag": f'"{hashlib.sha256(corpo).hexdigest()[:24]}"',
+                        })
+                    cache = dict(CACHE_REGISTROS_COMPACTOS)
+                self.enviar_json_cacheado(cache["corpo"], cache["gzip"], cache["etag"])
+                return
             with conectar() as conexao:
                 linhas = conexao.execute(
                     "SELECT chave, concluido, status, data_conclusao, observacao, foto, foto_nome, especificacoes FROM registros"
                 ).fetchall()
-            if formato_compacto:
-                registros_compactos = []
-                for linha in linhas:
-                    try:
-                        especificacoes = json.loads(linha["especificacoes"] or "{}")
-                    except (json.JSONDecodeError, TypeError):
-                        especificacoes = {}
-                    item = [
-                        linha["chave"], linha["status"] or ("concluido" if linha["concluido"] else "nao-iniciado"),
-                        linha["data_conclusao"] or "", linha["observacao"] or "", linha["foto"] or "",
-                        linha["foto_nome"] or "", especificacoes if isinstance(especificacoes, dict) else {},
-                    ]
-                    while len(item) > 2 and item[-1] in ("", {}, None):
-                        item.pop()
-                    registros_compactos.append(item)
-                self.enviar_json({"formato": "compacto-v1", "registros": registros_compactos})
-                return
             registros = {}
             for linha in linhas:
                 try:
