@@ -940,7 +940,7 @@
   .cadastro-massivo-acoes button{border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;}
   .cadastro-massivo-acoes .primario{background:var(--azul-escuro);color:#fff;}
   .cadastro-massivo-acoes .secundario{background:#e9eef2;color:var(--azul-escuro);}
-  .cadastro-massivo-filtros{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:12px;}
+  .cadastro-massivo-filtros{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:12px;}
   .cadastro-massivo-filtros .campo-filtro{display:flex;flex-direction:column;gap:5px;}
   .cadastro-massivo-filtros label{font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--cinza-texto);}
   .cadastro-massivo-filtros select,.cadastro-massivo-filtros input{width:100%;height:39px;border:1px solid #ccd4dc;border-radius:7px;background:#fff;padding:0 9px;font:inherit;font-size:.8rem;}
@@ -1601,6 +1601,7 @@
           <div class="campo-filtro"><label for="cadastroMassivoTorre">Torre</label><select id="cadastroMassivoTorre"></select></div>
           <div class="campo-filtro"><label id="rotuloCadastroMassivoAndares">Andares</label><details class="cadastro-andar-multiplo" id="cadastroMassivoAndares"><summary id="resumoCadastroMassivoAndares" aria-labelledby="rotuloCadastroMassivoAndares">Selecione os andares</summary><div class="cadastro-andar-opcoes" id="opcoesCadastroMassivoAndares"></div></details></div>
           <div class="campo-filtro"><label for="cadastroMassivoAtividade">Atividade</label><select id="cadastroMassivoAtividade"></select></div>
+          <div class="campo-filtro"><label for="cadastroMassivoSubservico">Subserviço</label><select id="cadastroMassivoSubservico"></select></div>
         </div>
         <div class="cadastro-massivo-setores">
           <label>Setores</label>
@@ -3489,6 +3490,25 @@ function atualizarAtividadesCadastroMassivo(){
     : `<option value="">${andaresCadastroMassivo.size?"Nenhuma atividade disponível":"Selecione os andares"}</option>`;
   atividadeSelect.disabled=!nomesAtividades.length;
   atividadeSelect.value=nomesAtividades.includes(atividadeAnterior)?atividadeAnterior:(nomesAtividades.length?"*":"");
+  atualizarSubservicosCadastroMassivo();
+}
+function atualizarSubservicosCadastroMassivo(){
+  const seletor=document.getElementById("cadastroMassivoSubservico");
+  const atividade=document.getElementById("cadastroMassivoAtividade")?.value;
+  if(!seletor)return;
+  const anterior=seletor.value;
+  if(!atividade||atividade==="*"){
+    seletor.innerHTML=`<option value="*">Todos os subserviços</option>`;
+    seletor.disabled=!atividade;
+    return;
+  }
+  const andares=[...andaresCadastroMassivo];
+  const subservicos=[...new Set(andares.flatMap(andar=>divisoesDoServico(atividade,andar)))];
+  seletor.innerHTML=subservicos.length
+    ?`<option value="*">Todos os subserviços</option>`+subservicos.map(nome=>`<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join("")
+    :`<option value="">Atividade sem subserviços</option>`;
+  seletor.disabled=!subservicos.length;
+  seletor.value=subservicos.includes(anterior)?anterior:(subservicos.length?"*":"");
 }
 function renderizarAndaresCadastroMassivo(){
   const opcoes=document.getElementById("opcoesCadastroMassivoAndares");
@@ -3528,13 +3548,20 @@ function setorJaExisteCadastroMassivo(setor){
   }else{
     const torreSelecionadaCadastro=document.getElementById("cadastroMassivoTorre")?.value;
     const atividadeSelecionadaCadastro=document.getElementById("cadastroMassivoAtividade")?.value;
+    const subservicoSelecionadoCadastro=document.getElementById("cadastroMassivoSubservico")?.value||"";
     const torres=torreSelecionadaCadastro==="*"?Object.keys(TORRES):[torreSelecionadaCadastro];
     const atividades=atividadeSelecionadaCadastro==="*"?atividadesDisponiveisCadastroMassivo():[atividadeSelecionadaCadastro];
-    combinacoes=torres.flatMap(torre=>[...andaresCadastroMassivo].flatMap(andar=>atividades.filter(atividade=>atividadePertinenteCadastroMassivo(atividade,torre,andar)).map(atividade=>({torre,andar,atividade}))));
+    combinacoes=torres.flatMap(torre=>[...andaresCadastroMassivo].flatMap(andar=>atividades.filter(atividade=>atividadePertinenteCadastroMassivo(atividade,torre,andar)).flatMap(atividade=>{
+      const disponiveis=divisoesDoServico(atividade,andar);
+      const subservicos=subservicoSelecionadoCadastro==="*"?(disponiveis.length?disponiveis:[""]):[subservicoSelecionadoCadastro];
+      return subservicos.filter(subservico=>!subservico||disponiveis.includes(subservico)).map(subservico=>({torre,andar,atividade,subservico}));
+    })));
   }
-  return combinacoes.some(combinacao=>listaRegistros(combinacao.torre).some(item=>
-    Number(item.andar)===Number(combinacao.andar)&&item.atividade===combinacao.atividade&&normalizarNomeSetorCadastroMassivo(item.unidade)===nome
-  ));
+  return combinacoes.some(combinacao=>{
+    const unidadesBase=listaRegistros(combinacao.torre).filter(item=>Number(item.andar)===Number(combinacao.andar)&&item.atividade===combinacao.atividade).map(item=>item.unidade);
+    const unidades=combinacao.subservico?unidadesDoSubservico(combinacao.atividade,combinacao.subservico,combinacao.torre,combinacao.andar,unidadesBase):unidadesBase;
+    return unidades.some(unidade=>normalizarNomeSetorCadastroMassivo(unidade)===nome);
+  });
 }
 function renderizarCadastroMassivo(){
   const corpo=document.getElementById("listaCadastroMassivo");
@@ -3654,6 +3681,11 @@ document.getElementById("cadastroMassivoTorre").addEventListener("change",()=>{
 });
 document.getElementById("cadastroMassivoAtividade").addEventListener("change",()=>{
   linhasImportadasCadastroMassivo=null;
+  atualizarSubservicosCadastroMassivo();
+  renderizarCadastroMassivo();
+});
+document.getElementById("cadastroMassivoSubservico").addEventListener("change",()=>{
+  linhasImportadasCadastroMassivo=null;
   renderizarCadastroMassivo();
 });
 document.getElementById("opcoesCadastroMassivoAndares").addEventListener("change",evento=>{
@@ -3709,6 +3741,7 @@ document.getElementById("salvarCadastroMassivo").addEventListener("click",async(
   const status=document.getElementById("statusCadastroMassivo");
   const torre=document.getElementById("cadastroMassivoTorre").value;
   const atividade=document.getElementById("cadastroMassivoAtividade").value;
+  const subservico=document.getElementById("cadastroMassivoSubservico").value;
   const andares=[...andaresCadastroMassivo];
   const setoresExistentes=new Set(linhasCadastroMassivo
     .filter(linha=>setorJaExisteCadastroMassivo(linha.setor))
@@ -3735,12 +3768,17 @@ document.getElementById("salvarCadastroMassivo").addEventListener("click",async(
     .filter(andarSelecionado=>pavimentosDaTorre(torreSelecionadaCadastro).includes(andarSelecionado))
     .flatMap(andarSelecionado=>atividades
       .filter(atividadeSelecionadaCadastro=>atividadePertinenteCadastroMassivo(atividadeSelecionadaCadastro,torreSelecionadaCadastro,andarSelecionado))
-      .flatMap(atividadeSelecionadaCadastro=>linhas.map(linha=>({
-      torre:torreSelecionadaCadastro,
-      pavimento:andarSelecionado,
-      atividade:atividadeSelecionadaCadastro,
-      setor:linha.setor,
-    })))));
+      .flatMap(atividadeSelecionadaCadastro=>{
+        const disponiveis=divisoesDoServico(atividadeSelecionadaCadastro,andarSelecionado);
+        const subservicos=subservico==="*"?(disponiveis.length?disponiveis:[""]):[subservico];
+        return subservicos.filter(item=>!item||disponiveis.includes(item)).flatMap(item=>linhas.map(linha=>({
+          torre:torreSelecionadaCadastro,
+          pavimento:andarSelecionado,
+          atividade:atividadeSelecionadaCadastro,
+          subservico:item,
+          setor:linha.setor,
+        })));
+      })));
   if(!payload.length){status.textContent="Nenhuma atividade pertinente à seleção de torres e andares.";status.style.color="var(--vermelho)";return;}
   if(payload.length>5000){status.textContent="A seleção gera mais de 5.000 cadastros. Reduza a quantidade de setores ou atividades.";status.style.color="var(--vermelho)";return;}
   status.textContent="Salvando cadastro em massa…";status.style.color="";

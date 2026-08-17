@@ -3018,6 +3018,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                                 andar = int(pavimento_normalizado)
                             setor = str(linha.get("setor", "")).strip()
                             atividade_texto = str(linha.get("atividade", "")).strip()
+                            subservico = str(linha.get("subservico", "")).strip()
                             validar_escopos([{"torre": torre or "", "andar": andar, "unidade": setor}])
                             if not setor:
                                 raise ValueError("setor não informado")
@@ -3503,6 +3504,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                                 andar = int(andar_normalizado)
                             setor = str(linha.get("setor", "")).strip()
                             atividade_texto = str(linha.get("atividade", "")).strip()
+                            subservico = str(linha.get("subservico", "")).strip()
                             validar_escopos([{"torre": torre or "", "andar": andar, "unidade": setor}])
                             if not setor:
                                 raise ValueError("setor não informado")
@@ -3524,6 +3526,15 @@ class ServidorObra(SimpleHTTPRequestHandler):
                                 ).fetchone()
                                 if not existe:
                                     raise ValueError(f"atividade '{atividade}' não disponível no andar")
+                                if subservico:
+                                    unidades = setores_efetivos_subservico(conexao, atividade, subservico, torre, andar)
+                                    if setor in unidades:
+                                        ignorados += 1
+                                        continue
+                                    salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unidades + [setor])
+                                    garantir_registros_atividade(conexao, atividade, [(torre, andar, setor)])
+                                    criados += 1
+                                    continue
                                 conflito = conexao.execute(
                                     "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
                                     (torre, andar, setor, atividade),
