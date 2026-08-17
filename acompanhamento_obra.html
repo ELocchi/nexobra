@@ -2685,10 +2685,26 @@ function categoriaResumoAbertura(atividade,especificacao=""){
     if(divisao==="Blocos, Vigas e Cortinas de Fundação")return "fundacao";
     if(["Lajes","Vigas","Pilares","Piso Armado"].includes(divisao))return "estrutura";
   }
+  if(atividade==="Fundação")return "fundacao";
   if(atividade==="Alvenaria")return "alvenaria";
   if(atividade==="Revestimento"&&divisao==="Externo em Argamassa")return "fachada";
   if(/pintura/.test(nome))return "pintura";
   return "acabamento";
+}
+const ETAPAS_DASHBOARD=[
+  ["fundacao","Fundação"],
+  ["estrutura","Estrutura"],
+  ["alvenaria","Alvenaria"],
+  ["acabamento","Acabamentos internos"],
+  ["fachada","Fachada"],
+  ["pintura","Pintura"]
+];
+function itemPertenceEtapaDashboard(item,etapa){
+  if(etapa==="todos")return true;
+  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar);
+  return especificacoes.length
+    ?especificacoes.some(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa)
+    :categoriaResumoAbertura(item.atividade)===etapa;
 }
 function atualizarGraficoAbertura(){
   const grupos={fundacao:[],estrutura:[],alvenaria:[],acabamento:[],fachada:[],pintura:[]};
@@ -4002,10 +4018,9 @@ document.getElementById("formAtividade").addEventListener("submit",async evento=
 function prepararDashboardGeral(){
   const filtro = document.getElementById("filtroServicoDashboard");
   const valorAtual=filtro.value||"todos";
-  const atividades=[...new Set(atividadesCadastro.map(item=>item?.nome).filter(Boolean))];
   filtro.innerHTML=`<option value="todos">Todos os serviços</option>`+
-    atividades.map(nome=>`<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join("");
-  filtro.value=atividades.includes(valorAtual)?valorAtual:"todos";
+    ETAPAS_DASHBOARD.map(([valor,rotulo])=>`<option value="${valor}">${rotulo}</option>`).join("");
+  filtro.value=valorAtual==="todos"||ETAPAS_DASHBOARD.some(([valor])=>valor===valorAtual)?valorAtual:"todos";
   atualizarDashboardGeral();
 }
 
@@ -4055,8 +4070,8 @@ function renderizarTorresProgresso(servico){
   document.getElementById("torresProgresso").innerHTML = torresExibidas.map(torre => {
     const dados = TORRES[torre];
     const pavimentos=pavimentosDaTorre(torre);
-    const modoVertical=servico==="Estrutura";
-    const itensEstrutura=modoVertical?listaRegistros(torre).filter(item=>item.atividade==="Estrutura"&&pavimentos.includes(item.andar)):[];
+    const modoVertical=servico==="estrutura";
+    const itensEstrutura=modoVertical?listaRegistros(torre).filter(item=>pavimentos.includes(item.andar)&&itemPertenceEtapaDashboard(item,servico)):[];
     const totalEstrutura=itensEstrutura.length||1;
     const quantidadeEstrutura=status=>itensEstrutura.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
     const concluidosEstrutura=quantidadeEstrutura("concluido");
@@ -4066,7 +4081,7 @@ function renderizarTorresProgresso(servico){
     const fimAndamentoGeral=fimConcluidoGeral+andamentoEstrutura/totalEstrutura*100;
     const fimPendenteGeral=fimAndamentoGeral+pendentesEstrutura/totalEstrutura*100;
     const andares = pavimentos.map(andar=>{
-      const itens = listaRegistros(torre).filter(item => item.andar === andar && (servico === "todos" || item.atividade === servico));
+      const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
       const total=itens.length||1;
       const quantidade=status=>itens.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
       const concluidos=quantidade("concluido");
@@ -4089,7 +4104,7 @@ function atualizarDashboardGeral(){
   const servico = document.getElementById("filtroServicoDashboard").value || "todos";
   const torresDashboard = modoVisaoGeral ? Object.keys(TORRES) : [torreSelecionada];
   const dadosTorres = torresDashboard.map(torre => {
-    const itens = listaRegistros(torre).filter(i => servico === "todos" || i.atividade === servico);
+    const itens = listaRegistros(torre).filter(item=>itemPertenceEtapaDashboard(item,servico));
     const realizados = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido).length;
     return {torre,itens,realizados,pendentes:itens.length-realizados,percentual:itens.length?Math.round(realizados/itens.length*100):0};
   });
