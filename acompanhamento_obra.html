@@ -706,16 +706,24 @@
     filter:drop-shadow(18px 20px 14px rgba(0,0,0,.35));
     overflow:visible;
   }
-  .predio-progresso.modo-vertical::before{
-    content:"";position:absolute;inset:5px 7px 8px;z-index:0;pointer-events:none;
-    background:linear-gradient(to top,
-      #2e9e5b 0 var(--fim-concluido-geral),
-      #e0a800 var(--fim-concluido-geral) var(--fim-andamento-geral),
-      #d9483d var(--fim-andamento-geral) var(--fim-pendente-geral),
-      #637582 var(--fim-pendente-geral) 100%);
-    transition:background .35s ease;
+  .predio-progresso.modo-estrutura{
+    padding:5px 7px 8px;border:0;background:transparent;box-shadow:none;
+    filter:drop-shadow(12px 16px 10px rgba(0,0,0,.32));
   }
-  .predio-progresso.modo-vertical .andar-progresso{z-index:1;background:transparent;}
+  .predio-progresso.modo-estrutura .andar-progresso{
+    z-index:1;border:0;background:transparent;filter:none;
+  }
+  .predio-progresso.modo-estrutura .andar-progresso::after{opacity:0;}
+  .predio-progresso.modo-estrutura .andar-progresso.estrutura-concluida{
+    background:
+      linear-gradient(90deg,#71838b,#d4dcdd 14%,#a5b5b9 86%,#61747d) top/100% 2px no-repeat,
+      linear-gradient(90deg,#60737c,#becacc 14%,#91a3a8 86%,#536871) bottom/100% 2px no-repeat;
+  }
+  .predio-progresso.modo-estrutura .andar-progresso.estrutura-concluida::after{
+    left:7%;right:7%;top:2px;bottom:2px;height:auto;
+    background:repeating-linear-gradient(90deg,#9baaad 0 4px,transparent 4px 24px);
+    opacity:1;
+  }
   .predio-progresso.aurora{height:455px;}
   .predio-progresso.horizonte{height:325px;}
   .andar-progresso{
@@ -4070,16 +4078,7 @@ function renderizarTorresProgresso(servico){
   document.getElementById("torresProgresso").innerHTML = torresExibidas.map(torre => {
     const dados = TORRES[torre];
     const pavimentos=pavimentosDaTorre(torre);
-    const modoVertical=servico==="estrutura";
-    const itensEstrutura=modoVertical?listaRegistros(torre).filter(item=>pavimentos.includes(item.andar)&&itemPertenceEtapaDashboard(item,servico)):[];
-    const totalEstrutura=itensEstrutura.length||1;
-    const quantidadeEstrutura=status=>itensEstrutura.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
-    const concluidosEstrutura=quantidadeEstrutura("concluido");
-    const andamentoEstrutura=quantidadeEstrutura("em-andamento");
-    const pendentesEstrutura=quantidadeEstrutura("pendente");
-    const fimConcluidoGeral=concluidosEstrutura/totalEstrutura*100;
-    const fimAndamentoGeral=fimConcluidoGeral+andamentoEstrutura/totalEstrutura*100;
-    const fimPendenteGeral=fimAndamentoGeral+pendentesEstrutura/totalEstrutura*100;
+    const modoEstrutura=servico==="estrutura";
     const andares = pavimentos.map(andar=>{
       const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
       const total=itens.length||1;
@@ -4093,10 +4092,25 @@ function renderizarTorresProgresso(servico){
       const fimPendente=fimAndamento+pendentes/total*100;
       const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
       const rotulo=rotuloAndar(andar);
-      return `<span class="andar-progresso" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${dados.nome} · ${rotulo} · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído" aria-label="Ver ${rotulo} da ${dados.nome}"></span>`;
+      const estadosEstrutura=modoEstrutura?itens.flatMap(item=>{
+        const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
+        const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar)
+          .filter(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)==="estrutura");
+        return especificacoes.length
+          ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
+          :[registro.status||"nao-iniciado"];
+      }):[];
+      const estruturaConcluida=estadosEstrutura.length>0&&estadosEstrutura.every(estado=>estado==="concluido");
+      const classeEstrutura=estruturaConcluida?" estrutura-concluida":"";
+      const percentualExibido=modoEstrutura&&estadosEstrutura.length
+        ?Math.round(estadosEstrutura.filter(estado=>estado==="concluido").length/estadosEstrutura.length*100)
+        :percentual;
+      const titulo=modoEstrutura
+        ?`${dados.nome} · ${rotulo} · ${percentualExibido}% da estrutura concluída`
+        :`${dados.nome} · ${rotulo} · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído`;
+      return `<span class="andar-progresso${classeEstrutura}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%" data-marco="${marco}" title="${titulo}" aria-label="Ver ${rotulo} da ${dados.nome}"></span>`;
     }).join("");
-    const estiloVertical=modoVertical?`--fim-concluido-geral:${fimConcluidoGeral}%;--fim-andamento-geral:${fimAndamentoGeral}%;--fim-pendente-geral:${fimPendenteGeral}%`:"";
-    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${modoVertical?"modo-vertical":""}" style="${estiloVertical}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
+    return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${modoEstrutura?"modo-estrutura":""}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
   }).join("");
 }
 
