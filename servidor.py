@@ -152,7 +152,7 @@ PERFIS_ACESSO = {
     "consulta": "Consulta",
     "visitante": "Visitante",
 }
-PERFIS_ADMINISTRACAO = {"administrador", "engenheiro-responsavel"}
+PERFIS_ADMINISTRACAO = {"administrador"}
 ACOES_PERFIL = {
     "visualizar": "Visualizar dados da obra",
     "atualizar_acompanhamento": "Atualizar planilha de acompanhamento",
@@ -166,7 +166,7 @@ ACOES_PERFIL = {
 }
 PERMISSOES_PADRAO = {
     "administrador": list(ACOES_PERFIL),
-    "engenheiro-responsavel": list(ACOES_PERFIL),
+    "engenheiro-responsavel": [acao for acao in ACOES_PERFIL if acao != "administrar_acessos"],
     "operacional": ["visualizar", "atualizar_acompanhamento", "gerenciar_ocorrencias", "gerar_pdf"],
     "consulta": ["visualizar", "gerar_pdf"],
     "visitante": ["visualizar"],
@@ -1088,6 +1088,14 @@ def preparar_atividades_config(conexao):
     conexao.execute(
         "CREATE INDEX IF NOT EXISTS idx_atividades_config_escopo ON atividades_config(torre, andar, unidade)"
     )
+    conexao.execute(
+        """CREATE TABLE IF NOT EXISTS subservicos_setores (
+            atividade TEXT NOT NULL, subservico TEXT NOT NULL, torre TEXT NOT NULL,
+            andar INTEGER NOT NULL, unidade TEXT NOT NULL,
+            UNIQUE(atividade, subservico, torre, andar, unidade)
+        )"""
+    )
+    conexao.execute("CREATE INDEX IF NOT EXISTS idx_subservicos_setores_local ON subservicos_setores(atividade, subservico, torre, andar)")
     conexao.execute(
         """
         CREATE TABLE IF NOT EXISTS atividades_especificacoes (
@@ -2552,16 +2560,53 @@ def listar_atividades_config():
         linhas_especificacoes = conexao.execute(
             "SELECT atividade, especificacao FROM atividades_especificacoes ORDER BY atividade, ordem, id"
         ).fetchall()
+        linhas_setores_subservicos = conexao.execute(
+            "SELECT atividade, subservico, torre, andar, unidade FROM subservicos_setores ORDER BY atividade, subservico, torre, andar, unidade"
+        ).fetchall()
     agrupadas = {}
     for linha in linhas:
-        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": [], "especificacoes": []})
+        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": [], "especificacoes": [], "setoresSubservicos": []})
         item["escopos"].append(
             {"id": linha["id"], "torre": linha["torre"], "andar": linha["andar"], "unidade": linha["unidade"]}
         )
     for linha in linhas_especificacoes:
         if linha["atividade"] in agrupadas:
             agrupadas[linha["atividade"]]["especificacoes"].append(linha["especificacao"])
+    for linha in linhas_setores_subservicos:
+        if linha["atividade"] in agrupadas:
+            agrupadas[linha["atividade"]]["setoresSubservicos"].append(dict(linha))
     return list(agrupadas.values())
+
+
+def setores_efetivos_subservico(conexao, atividade, subservico, torre, andar):
+    personalizados = conexao.execute(
+        "SELECT unidade FROM subservicos_setores WHERE atividade=? AND subservico=? AND torre=? AND andar=? ORDER BY unidade",
+        (atividade, subservico, torre, andar),
+    ).fetchall()
+    if personalizados:
+        return [linha["unidade"] for linha in personalizados]
+    escopos = conexao.execute(
+        "SELECT unidade FROM atividades_config WHERE nome=? AND torre=? AND andar=? ORDER BY unidade",
+        (atividade, torre, andar),
+    ).fetchall()
+    unidades = []
+    for linha in escopos:
+        if linha["unidade"] == "*":
+            unidades.extend(apartamentos_do_andar(torre, andar) + ["Área comum"])
+        else:
+            unidades.append(linha["unidade"])
+    return list(dict.fromkeys(unidades))
+
+
+def salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unidades):
+    conexao.execute(
+        "DELETE FROM subservicos_setores WHERE atividade=? AND subservico=? AND torre=? AND andar=?",
+        (atividade, subservico, torre, andar),
+    )
+    conexao.executemany(
+        "INSERT INTO subservicos_setores (atividade,subservico,torre,andar,unidade) VALUES (?,?,?,?,?)",
+        [(atividade, subservico, torre, andar, unidade) for unidade in dict.fromkeys(unidades)],
+    )
 
 
 def validar_escopos(escopos):
@@ -3153,11 +3198,27 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
                 torre = str(dados.get("torre", ""))
                 andar = int(dados.get("andar", 0))
+                atividade = str(dados.get("atividade", "")).strip()
                 unidade = str(dados.get("unidade", "")).strip()
                 nova_unidade = str(dados.get("novaUnidade", "")).strip()
+                subservico = str(dados.get("subservico", "")).strip()
                 if torre not in TORRES_NOMES or not unidade or not nova_unidade or andar < -2:
                     raise ValueError("Setor inválido")
                 with conectar() as conexao:
+                    if subservico:
+                        if not atividade:
+                            raise ValueError("Informe a atividade do subserviço")
+                        unidades = setores_efetivos_subservico(conexao, atividade, subservico, torre, andar)
+                        if unidade not in unidades:
+                            raise ValueError("Setor não encontrado neste subserviço")
+                        if nova_unidade in unidades:
+                            raise ValueError("Já existe um setor com esse nome neste subserviço")
+                        unidades = [nova_unidade if item == unidade else item for item in unidades]
+                        salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unidades)
+                        garantir_registros_atividade(conexao, atividade, [(torre, andar, nova_unidade)])
+                        conexao.execute("UPDATE ocorrencias SET unidade=? WHERE torre=? AND andar=? AND unidade=? AND atividade=? AND subatividade=?", (nova_unidade, torre, andar, unidade, atividade, subservico))
+                        self.enviar_json({"ok": True, "unidade": nova_unidade})
+                        return
                     conflito = conexao.execute("SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? LIMIT 1", (torre, andar, nova_unidade)).fetchone()
                     if conflito:
                         raise ValueError("Já existe um setor com esse nome neste andar")
@@ -3623,6 +3684,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 andar = int(dados.get("andar", 0))
                 atividade = str(dados.get("atividade", "")).strip()
                 unidade = str(dados.get("unidade", "")).strip()
+                subservico = str(dados.get("subservico", "")).strip()
                 validar_escopos([{"torre": torre, "andar": andar, "unidade": unidade}])
                 if not atividade or not unidade:
                     raise ValueError("Informe o serviço e o nome do setor")
@@ -3633,6 +3695,14 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     ).fetchone()
                     if not atividade_no_andar:
                         raise ValueError("O serviço não está disponível neste pavimento")
+                    if subservico:
+                        unidades = setores_efetivos_subservico(conexao, atividade, subservico, torre, andar)
+                        if unidade in unidades:
+                            raise ValueError("Este setor já existe para o subserviço neste pavimento")
+                        salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unidades + [unidade])
+                        garantir_registros_atividade(conexao, atividade, [(torre, andar, unidade)])
+                        self.enviar_json({"ok": True, "unidade": unidade}, 201)
+                        return
                     conflito = conexao.execute(
                         "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
                         (torre, andar, unidade, atividade),
@@ -3855,9 +3925,18 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 andar = int(parametros.get("andar", ["0"])[0])
                 unidade = parametros.get("unidade", [""])[0].strip()
                 atividade = parametros.get("atividade", [""])[0].strip()
+                subservico = parametros.get("subservico", [""])[0].strip()
                 if torre not in TORRES_NOMES or not unidade or andar < -2:
                     raise ValueError("Setor inválido")
                 with conectar() as conexao:
+                    if atividade and subservico:
+                        unidades = setores_efetivos_subservico(conexao, atividade, subservico, torre, andar)
+                        if unidade not in unidades:
+                            raise ValueError("Setor não encontrado neste subserviço")
+                        salvar_setores_subservico(conexao, atividade, subservico, torre, andar, [item for item in unidades if item != unidade])
+                        conexao.execute("DELETE FROM ocorrencias WHERE torre=? AND andar=? AND unidade=? AND atividade=? AND subatividade=?", (torre, andar, unidade, atividade, subservico))
+                        self.enviar_json({"ok": True})
+                        return
                     if atividade:
                         destinos_registrados = [
                             linha["unidade"] for linha in conexao.execute(

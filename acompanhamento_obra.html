@@ -2944,8 +2944,22 @@ function listaRegistros(torre = torreSelecionada){
         atividade:atividade.nome
       }));
     });
+    (atividade.setoresSubservicos||[]).filter(escopo=>escopo.torre===torre).forEach(escopo=>itens.push({
+      andar:Number(escopo.andar),unidade:escopo.unidade,
+      numeroApto:escopo.unidade.startsWith("Apto ")?Number(escopo.unidade.replace(/\D/g,""))||null:null,
+      atividade:atividade.nome
+    }));
   });
   return [...new Map(itens.map(item=>[chaveRegistro(torre,item.andar,item.unidade,item.atividade),item])).values()];
+}
+
+function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadrao){
+  if(!subservico)return unidadesPadrao;
+  const atividade=atividadesCadastro.find(item=>item.nome===atividadeNome);
+  const personalizadas=(atividade?.setoresSubservicos||[])
+    .filter(item=>item.subservico===subservico&&item.torre===torre&&Number(item.andar)===Number(andar))
+    .map(item=>item.unidade);
+  return personalizadas.length?[...new Set(personalizadas)]:unidadesPadrao;
 }
 
 function renderizarApartamentosDoPavimento(){
@@ -4096,14 +4110,16 @@ function renderizarPlanilha(){
     corpo.innerHTML=[...grupos.values()].map(grupo=>{
       const chaveRecolhimento=chaveMatrizServico(grupo.atividade,grupo.andar);
       const recolhida=matrizesRecolhidas.has(chaveRecolhimento);
-      const unidades=[...new Set(grupo.itens.map(item=>item.unidade))].sort((a,b)=>comparadorPlanilha.compare(a,b));
       const especificacoes=especificacoesExibidasServico(grupo.atividade,grupo.andar);
       const divisoesDisponiveis=divisoesDoServico(grupo.atividade,grupo.andar);
       const chaveDivisao=chaveDivisaoServico(grupo.atividade,grupo.andar);
       const divisaoAtual=divisoesDisponiveis.includes(divisaoServicoPorAndar[chaveDivisao])?divisaoServicoPorAndar[chaveDivisao]:divisoesDisponiveis[0];
+      const unidadesBase=[...new Set(grupo.itens.map(item=>item.unidade))];
+      const unidadesPermitidas=unidadesDoSubservico(grupo.atividade,divisaoAtual,torreSelecionada,grupo.andar,unidadesBase);
+      const unidades=unidadesBase.filter(unidade=>unidadesPermitidas.includes(unidade)).sort((a,b)=>comparadorPlanilha.compare(a,b));
       const larguraDivisao=Math.min(48,Math.max(16,(divisaoAtual||"").length+8));
       const filtroDivisao=divisoesDisponiveis.length?`<select class="filtro-subservico" style="width:${larguraDivisao}ch" data-atividade-subservico="${escaparHtml(grupo.atividade)}" data-andar-subservico="${grupo.andar}" aria-label="Subserviço de ${escaparHtml(grupo.atividade)}">${divisoesDisponiveis.map(divisao=>`<option value="${escaparHtml(divisao)}" ${divisao===divisaoAtual?"selected":""}>${escaparHtml(divisao)}</option>`).join("")}</select>`:"";
-      const cabecalho=unidades.map(unidade=>`<th class="cabecalho-setor" data-unidade="${escaparHtml(unidade)}" data-andar="${grupo.andar}" data-atividade="${escaparHtml(grupo.atividade)}" title="Clique com o botão direito para adicionar, editar ou excluir setores">${escaparHtml(unidade)}</th>`).join("");
+      const cabecalho=unidades.map(unidade=>`<th class="cabecalho-setor" data-unidade="${escaparHtml(unidade)}" data-andar="${grupo.andar}" data-atividade="${escaparHtml(grupo.atividade)}" data-subservico="${escaparHtml(divisaoAtual||"")}" title="Clique com o botão direito para adicionar, editar ou excluir setores deste subserviço">${escaparHtml(unidade)}</th>`).join("");
       const linhas=especificacoes.map(especificacao=>{
         const celulas=unidades.map(unidade=>{
           const item=grupo.itens.find(registro=>registro.unidade===unidade);
@@ -4461,7 +4477,7 @@ const menuContextoSetor=document.getElementById("menuContextoSetor");
 function fecharMenuSetor(){menuContextoSetor.classList.add("oculto");setorContexto=null;}
 document.getElementById("corpoPlanilha").addEventListener("contextmenu",event=>{
   const cabecalho=event.target.closest(".cabecalho-setor");if(!cabecalho)return;
-  event.preventDefault();setorContexto={unidade:cabecalho.dataset.unidade,andar:Number(cabecalho.dataset.andar),atividade:cabecalho.dataset.atividade};
+  event.preventDefault();setorContexto={unidade:cabecalho.dataset.unidade,andar:Number(cabecalho.dataset.andar),atividade:cabecalho.dataset.atividade,subservico:cabecalho.dataset.subservico||""};
   menuContextoSetor.style.left=`${Math.min(event.clientX,window.innerWidth-195)}px`;
   menuContextoSetor.style.top=`${Math.min(event.clientY,window.innerHeight-135)}px`;
   menuContextoSetor.classList.remove("oculto");
@@ -4485,23 +4501,23 @@ document.getElementById("corpoPlanilha").addEventListener("change",event=>{
 document.addEventListener("click",event=>{if(!event.target.closest("#menuContextoSetor"))fecharMenuSetor();});
 document.getElementById("adicionarSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
-  const nome=prompt(`Nome do novo setor para ${atual.atividade} em ${rotuloAndar(atual.andar)}:`);
+  const nome=prompt(`Nome do novo setor para ${atual.atividade}${atual.subservico?` - ${atual.subservico}`:""} em ${rotuloAndar(atual.andar)}:`);
   if(!nome?.trim()){fecharMenuSetor();return;}
-  const resposta=await fetch("/api/setores",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,unidade:nome.trim()})});
+  const resposta=await fetch("/api/setores",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,subservico:atual.subservico,unidade:nome.trim()})});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível adicionar o setor.");return;}
   fecharMenuSetor();await carregarRegistrosDoBanco();
 });
 document.getElementById("editarNomeSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
   const novo=prompt("Novo nome do setor ou apartamento:",atual.unidade);if(!novo?.trim()||novo.trim()===atual.unidade){fecharMenuSetor();return;}
-  const resposta=await fetch("/api/setores",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,novaUnidade:novo.trim()})});
+  const resposta=await fetch("/api/setores",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,subservico:atual.subservico,unidade:atual.unidade,novaUnidade:novo.trim()})});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível alterar o nome.");return;}
   fecharMenuSetor();await carregarRegistrosDoBanco();
 });
 document.getElementById("excluirSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
-  if(!confirm(`Excluir “${atual.unidade}” da atividade “${atual.atividade}” neste andar?`))return;
-  const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,atividade:atual.atividade});
+  if(!confirm(`Excluir “${atual.unidade}” de “${atual.atividade}${atual.subservico?` - ${atual.subservico}`:""}” neste andar?`))return;
+  const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,atividade:atual.atividade,subservico:atual.subservico});
   const resposta=await fetch(`/api/setores?${consulta}`,{method:"DELETE"});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível excluir o setor.");return;}
   fecharMenuSetor();await carregarRegistrosDoBanco();
@@ -5517,8 +5533,8 @@ let perfisAdministracao={};
 let acoesAdministracao={};
 let permissoesAdministracao={};
 function configurarAcessoAdministracao(dados){
-  const permitido=Boolean(dados?.podeAdministrar);
-  document.getElementById("linkAdministracao").hidden=false;
+  const permitido=Boolean(dados?.perfil==="administrador"&&dados?.podeAdministrar);
+  document.getElementById("linkAdministracao").hidden=!permitido;
   document.getElementById("linkAdministracao").dataset.permitido=String(permitido);
   if(!permitido&&document.getElementById("administracao").classList.contains("ativo"))ativarAba("dashboardGeral",false);
 }
@@ -5554,7 +5570,7 @@ function renderizarUsuariosAdmin(){
   if(perfisAdministracao[perfilAtual])seletorPerfil.value=perfilAtual;renderizarPermissoesPerfil();
 }
 function atualizarPerfilCargoUsuario(){const cargo=cargosAdministracao.find(item=>item.cargo===document.getElementById("usuarioAdminCargo").value);if(cargo)document.getElementById("usuarioAdminPerfil").value=cargo.perfil;}
-function renderizarPermissoesPerfil(){const perfil=document.getElementById("perfilPermissaoSelecionado").value;const atuais=permissoesAdministracao[perfil]||[];document.getElementById("permissoesPerfilAdmin").innerHTML=Object.entries(acoesAdministracao).map(([acao,nome])=>{const obrigatoria=acao==="visualizar"||(acao==="administrar_acessos"&&["administrador","engenheiro-responsavel"].includes(perfil));return `<label><input type="checkbox" value="${escaparHtml(acao)}" ${atuais.includes(acao)?"checked":""} ${obrigatoria?"disabled":""}> ${escaparHtml(nome)}${obrigatoria?" (obrigatória)":""}</label>`}).join("");}
+function renderizarPermissoesPerfil(){const perfil=document.getElementById("perfilPermissaoSelecionado").value;const atuais=permissoesAdministracao[perfil]||[];document.getElementById("permissoesPerfilAdmin").innerHTML=Object.entries(acoesAdministracao).map(([acao,nome])=>{const exclusivaAdministrador=acao==="administrar_acessos"&&perfil!=="administrador";const obrigatoria=acao==="visualizar"||(acao==="administrar_acessos"&&perfil==="administrador");return `<label><input type="checkbox" value="${escaparHtml(acao)}" ${atuais.includes(acao)&&!exclusivaAdministrador?"checked":""} ${obrigatoria||exclusivaAdministrador?"disabled":""}> ${escaparHtml(nome)}${obrigatoria?" (obrigatória)":exclusivaAdministrador?" (somente administrador)":""}</label>`}).join("");}
 async function carregarAdministracao(){
   const [respostaUsuarios,respostaCargos,respostaPerfis,respostaHistorico]=await Promise.all([fetch("/api/admin/usuarios",{cache:"no-store"}),fetch("/api/admin/cargos",{cache:"no-store"}),fetch("/api/admin/perfis",{cache:"no-store"}),fetch("/api/admin/historico",{cache:"no-store"})]);
   if(!respostaUsuarios.ok)return;
