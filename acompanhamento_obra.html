@@ -795,6 +795,15 @@
   }
   .fachada-3d-palco.horizonte .fachada-3d-cena{--altura-torre:320px;--largura-torre:245px;--profundidade-torre:125px;--meia-largura:122.5px;--meia-profundidade:62.5px;}
   .fachada-3d-palco.arrastando .fachada-3d-cena{transition:none;}
+  .fachada-3d-andares{
+    position:absolute;left:8px;top:50%;z-index:4;display:flex;flex-direction:column-reverse;
+    width:38px;height:430px;transform:translateY(-50%);pointer-events:none;
+  }
+  .fachada-3d-palco.horizonte .fachada-3d-andares{height:320px;}
+  .fachada-3d-andar-rotulo{
+    display:flex;flex:1;min-height:4px;align-items:center;justify-content:flex-end;padding-right:4px;
+    color:#fff;font-size:.5rem;line-height:1;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.95);
+  }
   .fachada-3d-face{
     position:absolute;left:50%;top:50%;display:flex;flex-direction:column-reverse;
     height:var(--altura-torre);overflow:hidden;border:1px solid rgba(224,238,242,.82);
@@ -4227,7 +4236,11 @@ function renderizarTorresProgresso(servico){
         }).join("");
         return `<div class="fachada-3d-face ${nomesFaces[indiceFace]}">${linhas}</div>`;
       }).join("");
-      return `<div class="torre-progresso-wrap torre-fachada-3d-wrap"><div class="fachada-3d-instrucao">Arraste para girar · clique em um setor para abrir o andar</div><div class="fachada-3d-palco ${torre}" data-fachada-3d><div class="fachada-3d-cena" style="--rotacao-y:-28deg">${htmlFaces}<span class="fachada-3d-laje"></span></div></div><strong>${dados.nome}</strong><small>${setores.length} setores de fachada</small></div>`;
+      const rotulosAndares=pavimentos.map(andar=>{
+        const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
+        return `<span class="fachada-3d-andar-rotulo">${marco}</span>`;
+      }).join("");
+      return `<div class="torre-progresso-wrap torre-fachada-3d-wrap"><div class="fachada-3d-instrucao">Arraste para girar · clique em um setor para abrir o andar</div><div class="fachada-3d-palco ${torre}" data-fachada-3d><div class="fachada-3d-andares" aria-hidden="true">${rotulosAndares}</div><div class="fachada-3d-cena" style="--rotacao-y:-28deg">${htmlFaces}<span class="fachada-3d-laje"></span></div></div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
     }
     const andares = pavimentos.map(andar=>{
       const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
