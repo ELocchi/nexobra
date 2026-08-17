@@ -798,7 +798,7 @@
   .planilha input[type="text"]{min-width:180px;}
   .matrizes-servicos{padding:16px;display:grid;gap:18px;}
   .controle-obra>.matrizes-servicos{max-height:none;overflow:visible;}
-  .matriz-servico{border:1px solid var(--cinza-borda);border-radius:10px;overflow:hidden;background:#fff;}
+  .matriz-servico{border:1px solid var(--cinza-borda);border-radius:10px;overflow:hidden;background:#fff;content-visibility:auto;contain-intrinsic-size:auto 420px;}
   .matriz-servico>.tabela-scroll{max-height:none;overflow-x:auto;overflow-y:visible;}
   .matriz-servico-titulo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;background:var(--azul-escuro);color:#fff;}
   .matriz-servico-titulo h3{margin:0;font-size:.92rem;}
@@ -2553,12 +2553,16 @@ let registrosObra = {};
 let registrosPendentes = new Set();
 let versoesRegistros = new Map();
 let filaSalvamentoRegistros = Promise.resolve();
+let ultimaSincronizacaoRegistros="";
+let sincronizandoRegistros=false;
 function observarRegistros(registros){
   return new Proxy(registros||{}, {
     set(alvo,chave,valor){
       alvo[chave]=valor;
-      registrosPendentes.add(String(chave));
-      versoesRegistros.set(String(chave),(versoesRegistros.get(String(chave))||0)+1);
+      if(!sincronizandoRegistros){
+        registrosPendentes.add(String(chave));
+        versoesRegistros.set(String(chave),(versoesRegistros.get(String(chave))||0)+1);
+      }
       return true;
     },
     deleteProperty(alvo,chave){
@@ -2735,7 +2739,7 @@ function executarWorkerRegistros(){
     try{
       const dados=JSON.parse(evento.data);
       if(dados?.formato!=="compacto-v1"||!Array.isArray(dados.registros)){
-        self.postMessage({ok:true,dados:dados||{}});
+        self.postMessage({ok:true,dados:dados||{},sincronizadoEm:"",parcial:false});
         return;
       }
       const registros={};
@@ -2748,27 +2752,32 @@ function executarWorkerRegistros(){
           especificacoes:item[6]||{}
         };
       });
-      self.postMessage({ok:true,dados:registros});
+      self.postMessage({ok:true,dados:registros,sincronizadoEm:dados.sincronizadoEm||"",parcial:Boolean(dados.parcial)});
     }catch(erro){self.postMessage({ok:false,erro:erro.message||"Falha ao processar registros"});}
   };
 }
 function decodificarRegistrosAssincrono(texto){
-  if(typeof Worker==="undefined"||typeof Blob==="undefined")return Promise.resolve(decodificarRegistros(JSON.parse(texto)));
+  if(typeof Worker==="undefined"||typeof Blob==="undefined"){
+    const dados=JSON.parse(texto);
+    return Promise.resolve({dados:decodificarRegistros(dados),sincronizadoEm:dados.sincronizadoEm||"",parcial:Boolean(dados.parcial)});
+  }
   return new Promise((resolve,reject)=>{
     const codigo=`(${executarWorkerRegistros.toString()})()`;
     const url=URL.createObjectURL(new Blob([codigo],{type:"text/javascript"}));
     const worker=new Worker(url);
     const finalizar=()=>{worker.terminate();URL.revokeObjectURL(url);};
-    worker.onmessage=evento=>{finalizar();evento.data?.ok?resolve(evento.data.dados):reject(new Error(evento.data?.erro||"Falha ao processar registros"));};
+    worker.onmessage=evento=>{finalizar();evento.data?.ok?resolve({dados:evento.data.dados,sincronizadoEm:evento.data.sincronizadoEm||"",parcial:Boolean(evento.data.parcial)}):reject(new Error(evento.data?.erro||"Falha ao processar registros"));};
     worker.onerror=erro=>{finalizar();reject(new Error(erro.message||"Falha no processamento dos registros"));};
     worker.postMessage(texto);
   });
 }
-async function buscarRegistrosCompactos(){
+async function buscarRegistrosCompactos(desde=""){
   let ultimoErro;
   for(let tentativa=1;tentativa<=3;tentativa++){
     try{
-      const resposta=await fetch("/api/registros?formato=compacto",{cache:"no-cache"});
+      const consulta=new URLSearchParams({formato:"compacto"});
+      if(desde)consulta.set("desde",desde);
+      const resposta=await fetch(`/api/registros?${consulta}`,{cache:desde?"no-store":"no-cache"});
       if(!resposta.ok)throw new Error(`Registros: HTTP ${resposta.status}`);
       return await decodificarRegistrosAssincrono(await resposta.text());
     }catch(erro){
@@ -2779,9 +2788,28 @@ async function buscarRegistrosCompactos(){
   throw ultimoErro||new Error("Registros indisponíveis");
 }
 function aplicarRegistrosCarregados(dados){
-  registrosObra=observarRegistros(decodificarRegistros(dados));
+  const pacote=dados?.dados?dados:{dados,sincronizadoEm:""};
+  registrosObra=observarRegistros(decodificarRegistros(pacote.dados));
+  ultimaSincronizacaoRegistros=pacote.sincronizadoEm||ultimaSincronizacaoRegistros;
   registrosPendentes.clear();
   versoesRegistros.clear();
+}
+async function sincronizarRegistrosIncrementais(){
+  if(!dadosPrincipaisCarregados||!ultimaSincronizacaoRegistros||registrosPendentes.size)return;
+  try{
+    const pacote=await buscarRegistrosCompactos(ultimaSincronizacaoRegistros);
+    ultimaSincronizacaoRegistros=pacote.sincronizadoEm||ultimaSincronizacaoRegistros;
+    const alterados=Object.entries(pacote.dados||{});
+    if(!alterados.length)return;
+    sincronizandoRegistros=true;
+    alterados.forEach(([chave,registro])=>{registrosObra[chave]=registro;});
+    sincronizandoRegistros=false;
+    atualizarInterfaceAposAlteracao();
+    document.getElementById("statusSalvamento").textContent=`${alterados.length} atualização(ões) sincronizada(s)`;
+  }catch(erro){
+    sincronizandoRegistros=false;
+    console.warn("Sincronização incremental indisponível:",erro);
+  }
 }
 function agendarAtualizacaoGraficoAbertura(){
   if(atualizacaoGraficoAberturaPendente)return;
@@ -5876,6 +5904,7 @@ renderizarEscoposAtividade();
 carregarRegistrosDoBanco();
 carregarOcorrenciasDoBanco();
 setInterval(()=>{if(!document.hidden&&dadosPersonalizacaoCarregados)sincronizarPersonalizacoes();},30000);
+setInterval(()=>{if(!document.hidden)sincronizarRegistrosIncrementais();},20000);
 </script>
 
 </body>

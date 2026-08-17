@@ -748,6 +748,9 @@ def preparar_banco():
             "CREATE INDEX IF NOT EXISTS idx_registros_atividade_local ON registros(atividade, torre, andar)"
         )
         conexao.execute(
+            "CREATE INDEX IF NOT EXISTS idx_registros_atualizado ON registros(atualizado_em)"
+        )
+        conexao.execute(
             """
             CREATE TABLE IF NOT EXISTS ocorrencias (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2953,6 +2956,35 @@ class ServidorObra(SimpleHTTPRequestHandler):
             parametros = parse_qs(urlparse(self.path).query)
             formato_compacto = parametros.get("formato", [""])[0] == "compacto"
             if formato_compacto:
+                def compactar_linhas(linhas):
+                    registros_compactos = []
+                    for linha in linhas:
+                        try:
+                            especificacoes = json.loads(linha["especificacoes"] or "{}")
+                        except (json.JSONDecodeError, TypeError):
+                            especificacoes = {}
+                        item = [
+                            linha["chave"], linha["status"] or ("concluido" if linha["concluido"] else "nao-iniciado"),
+                            linha["data_conclusao"] or "", linha["observacao"] or "", linha["foto"] or "",
+                            linha["foto_nome"] or "", especificacoes if isinstance(especificacoes, dict) else {},
+                        ]
+                        while len(item) > 2 and item[-1] in ("", {}, None):
+                            item.pop()
+                        registros_compactos.append(item)
+                    return registros_compactos
+                desde = parametros.get("desde", [""])[0].strip()
+                if desde:
+                    with conectar() as conexao:
+                        linhas = conexao.execute(
+                            "SELECT chave, concluido, status, data_conclusao, observacao, foto, foto_nome, especificacoes FROM registros WHERE atualizado_em >= datetime(?, '-2 seconds')",
+                            (desde,),
+                        ).fetchall()
+                    self.enviar_json({
+                        "formato": "compacto-v1", "parcial": True,
+                        "sincronizadoEm": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                        "registros": compactar_linhas(linhas),
+                    })
+                    return
                 caminhos_banco = [BANCO, Path(f"{BANCO}-wal")]
                 def assinatura_banco():
                     return tuple(
@@ -2967,21 +2999,11 @@ class ServidorObra(SimpleHTTPRequestHandler):
                                 "SELECT chave, concluido, status, data_conclusao, observacao, foto, foto_nome, especificacoes FROM registros"
                             ).fetchall()
                         assinatura = assinatura_banco()
-                        registros_compactos = []
-                        for linha in linhas:
-                            try:
-                                especificacoes = json.loads(linha["especificacoes"] or "{}")
-                            except (json.JSONDecodeError, TypeError):
-                                especificacoes = {}
-                            item = [
-                                linha["chave"], linha["status"] or ("concluido" if linha["concluido"] else "nao-iniciado"),
-                                linha["data_conclusao"] or "", linha["observacao"] or "", linha["foto"] or "",
-                                linha["foto_nome"] or "", especificacoes if isinstance(especificacoes, dict) else {},
-                            ]
-                            while len(item) > 2 and item[-1] in ("", {}, None):
-                                item.pop()
-                            registros_compactos.append(item)
-                        corpo = json.dumps({"formato": "compacto-v1", "registros": registros_compactos}, ensure_ascii=False).encode("utf-8")
+                        corpo = json.dumps({
+                            "formato": "compacto-v1",
+                            "sincronizadoEm": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                            "registros": compactar_linhas(linhas),
+                        }, ensure_ascii=False).encode("utf-8")
                         CACHE_REGISTROS_COMPACTOS.update({
                             "assinatura": assinatura, "corpo": corpo, "gzip": gzip.compress(corpo, compresslevel=5),
                             "etag": f'"{hashlib.sha256(corpo).hexdigest()[:24]}"',
