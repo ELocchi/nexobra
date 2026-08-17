@@ -3906,6 +3906,11 @@ class ServidorObra(SimpleHTTPRequestHandler):
             if any(not dados.get(campo) for campo in campos):
                 self.enviar_json({"erro": "Preencha torre, andar, unidade e descrição"}, 400)
                 return
+            ocorrencia_seguranca = str(dados.get("atividade", "")).strip().casefold() == "segurança".casefold()
+            if ocorrencia_seguranca:
+                dados["atividade"] = "Segurança"
+                dados["subatividade"] = ""
+                dados["especificacao"] = "Ocorrência de segurança"
             with conectar() as conexao:
                 cursor = conexao.execute(
                     """
@@ -3928,27 +3933,28 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     ),
                 )
                 identificador = cursor.lastrowid
-                chave_registro = f"{dados['torre']}|{int(dados['andar'])}|{dados['unidade']}|{dados['atividade']}"
-                linha_registro = conexao.execute(
-                    "SELECT especificacoes FROM registros WHERE chave = ?",
-                    (chave_registro,),
-                ).fetchone()
-                if not linha_registro:
-                    raise ValueError("O serviço selecionado não existe para este apartamento ou setor")
-                try:
-                    estados_especificacoes = json.loads(linha_registro["especificacoes"] or "{}")
-                except (json.JSONDecodeError, TypeError):
-                    estados_especificacoes = {}
-                estados_especificacoes[dados["especificacao"]] = "pendente"
-                conexao.execute(
-                    """
-                    UPDATE registros
-                    SET especificacoes=?, status='pendente', concluido=0,
-                        data_conclusao=?, atualizado_em=CURRENT_TIMESTAMP
-                    WHERE chave=?
-                    """,
-                    (json.dumps(estados_especificacoes, ensure_ascii=False), dados["dataOcorrencia"], chave_registro),
-                )
+                if not ocorrencia_seguranca:
+                    chave_registro = f"{dados['torre']}|{int(dados['andar'])}|{dados['unidade']}|{dados['atividade']}"
+                    linha_registro = conexao.execute(
+                        "SELECT especificacoes FROM registros WHERE chave = ?",
+                        (chave_registro,),
+                    ).fetchone()
+                    if not linha_registro:
+                        raise ValueError("O serviço selecionado não existe para este apartamento ou setor")
+                    try:
+                        estados_especificacoes = json.loads(linha_registro["especificacoes"] or "{}")
+                    except (json.JSONDecodeError, TypeError):
+                        estados_especificacoes = {}
+                    estados_especificacoes[dados["especificacao"]] = "pendente"
+                    conexao.execute(
+                        """
+                        UPDATE registros
+                        SET especificacoes=?, status='pendente', concluido=0,
+                            data_conclusao=?, atualizado_em=CURRENT_TIMESTAMP
+                        WHERE chave=?
+                        """,
+                        (json.dumps(estados_especificacoes, ensure_ascii=False), dados["dataOcorrencia"], chave_registro),
+                    )
             self.enviar_json({"ok": True, "id": identificador}, 201)
         except (ValueError, json.JSONDecodeError) as erro:
             self.enviar_json({"erro": str(erro)}, 400)

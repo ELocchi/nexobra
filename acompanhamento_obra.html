@@ -2586,6 +2586,8 @@ let atividadesCadastro = [];
 let escoposAtividadeTemporarios = [];
 let especificacoesAtividadeTemporarias = [];
 let ocorrenciasBanco = [];
+const ATIVIDADE_SEGURANCA_OCORRENCIAS="Segurança";
+const ESPECIFICACAO_SEGURANCA_OCORRENCIAS="Ocorrência de segurança";
 const registrosSelecionados = new Set();
 const especificacoesSelecionadas = new Set();
 let servicoAguardandoOcorrencia = null;
@@ -3293,13 +3295,11 @@ function atualizarAtividadesOcorrencia(){
   const unidade=document.getElementById("ocUnidade").value;
   const seletor=document.getElementById("ocAtividade");
   const valorAtual=seletor.value;
-  const atividades=[...new Set(listaRegistros(torre)
+  const atividades=[...new Set([...listaRegistros(torre)
     .filter(item=>item.andar===andar&&item.unidade===unidade)
-    .map(item=>item.atividade))]
+    .map(item=>item.atividade),ATIVIDADE_SEGURANCA_OCORRENCIAS])]
     .sort((a,b)=>a.localeCompare(b,"pt-BR"));
-  seletor.innerHTML=atividades.length
-    ?atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("")
-    :`<option value="">Nenhuma atividade disponível</option>`;
+  seletor.innerHTML=atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("");
   if(atividades.includes(valorAtual))seletor.value=valorAtual;
   atualizarSubatividadesOcorrencia();
 }
@@ -3310,6 +3310,13 @@ function atualizarSubatividadesOcorrencia(){
   const campo=document.getElementById("ocCampoSubatividade");
   const seletor=document.getElementById("ocSubatividade");
   const valorAtual=seletor.value;
+  if(atividade===ATIVIDADE_SEGURANCA_OCORRENCIAS){
+    campo.hidden=true;
+    seletor.required=false;
+    seletor.innerHTML="";
+    atualizarEspecificacoesOcorrencia();
+    return;
+  }
   const subatividades=divisoesDoServico(atividade,andar);
   campo.hidden=subatividades.length===0;
   seletor.required=subatividades.length>0;
@@ -3322,7 +3329,9 @@ function atualizarEspecificacoesOcorrencia(){
   const atividade=document.getElementById("ocAtividade").value;
   const subatividade=document.getElementById("ocSubatividade").value;
   const mapa=mapaDivisoesDoServico(atividade);
-  const especificacoes=mapa&&subatividade
+  const especificacoes=atividade===ATIVIDADE_SEGURANCA_OCORRENCIAS
+    ?[ESPECIFICACAO_SEGURANCA_OCORRENCIAS]
+    :mapa&&subatividade
     ?(mapa[subatividade]||[]).map(item=>`${subatividade} :: ${item}`)
     :atividade?especificacoesDoServico(atividade):[];
   const seletor=document.getElementById("ocEspecificacao");
@@ -3384,7 +3393,8 @@ function atualizarFiltrosRelatorio(){
   andar.innerHTML=opcoesAndares(torre,true);
   andar.value=[...andar.options].some(opcao=>opcao.value===atual)?atual:"todos";
   const atividade=document.getElementById("relatorioAtividade");
-  atividade.innerHTML=`<option value="todos">Todas as atividades</option>`+atividadesCadastro.map(item=>`<option value="${escaparHtml(item.nome)}">${escaparHtml(item.nome)}</option>`).join("");
+  const atividadesRelatorio=[...new Set([...atividadesCadastro.map(item=>item.nome),ATIVIDADE_SEGURANCA_OCORRENCIAS])].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  atividade.innerHTML=`<option value="todos">Todas as atividades</option>`+atividadesRelatorio.map(nome=>`<option value="${escaparHtml(nome)}">${escaparHtml(nome)}</option>`).join("");
   atualizarUnidadesRelatorio();
 }
 
@@ -5364,18 +5374,22 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
     };
     const resposta=await fetch("/api/ocorrencias",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(dados)});
     if(!resposta.ok) throw new Error("Falha ao salvar");
-    const chaveVinculada=chaveRegistro(dados.torre,dados.andar,dados.unidade,dados.atividade);
-    const registro=obterRegistro(dados.andar,dados.unidade,dados.atividade,dados.torre);
-    registro.especificacoes={...(registro.especificacoes||{}),[dados.especificacao]:"pendente"};
-    recalcularStatusPelasEspecificacoes(registro,dados.atividade,dados.andar);
-    registro.data=dados.dataOcorrencia;
-    registrosObra[chaveVinculada]=registro;
+    if(dados.atividade!==ATIVIDADE_SEGURANCA_OCORRENCIAS){
+      const chaveVinculada=chaveRegistro(dados.torre,dados.andar,dados.unidade,dados.atividade);
+      const registro=obterRegistro(dados.andar,dados.unidade,dados.atividade,dados.torre);
+      registro.especificacoes={...(registro.especificacoes||{}),[dados.especificacao]:"pendente"};
+      recalcularStatusPelasEspecificacoes(registro,dados.atividade,dados.andar);
+      registro.data=dados.dataOcorrencia;
+      registrosObra[chaveVinculada]=registro;
+    }
     servicoAguardandoOcorrencia=null;
     document.getElementById("ocDescricao").value="";
     document.getElementById("ocFoto").value="";
     arquivoOcorrenciaSelecionado=null;
     document.getElementById("previewOcorrencia").classList.remove("visivel");
-    status.textContent="Ocorrência salva e vinculada à unidade.";
+    status.textContent=dados.atividade===ATIVIDADE_SEGURANCA_OCORRENCIAS
+      ?"Ocorrência de segurança salva."
+      :"Ocorrência salva e vinculada à unidade.";
     status.style.color="var(--verde)";
     await carregarOcorrenciasDoBanco();
     renderizarPlanilha();
