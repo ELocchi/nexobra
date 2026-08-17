@@ -2730,15 +2730,58 @@ function decodificarRegistros(dados){
     return [chave,{concluido:status==="concluido",status,data,observacao,foto,fotoNome,especificacoes:especificacoes||{}}];
   }));
 }
+function executarWorkerRegistros(){
+  self.onmessage=evento=>{
+    try{
+      const dados=JSON.parse(evento.data);
+      if(dados?.formato!=="compacto-v1"||!Array.isArray(dados.registros)){
+        self.postMessage({ok:true,dados:dados||{}});
+        return;
+      }
+      const registros={};
+      dados.registros.forEach(item=>{
+        const chave=item[0];
+        const status=item[1]||"nao-iniciado";
+        registros[chave]={
+          concluido:status==="concluido",status,
+          data:item[2]||"",observacao:item[3]||"",foto:item[4]||"",fotoNome:item[5]||"",
+          especificacoes:item[6]||{}
+        };
+      });
+      self.postMessage({ok:true,dados:registros});
+    }catch(erro){self.postMessage({ok:false,erro:erro.message||"Falha ao processar registros"});}
+  };
+}
+function decodificarRegistrosAssincrono(texto){
+  if(typeof Worker==="undefined"||typeof Blob==="undefined")return Promise.resolve(decodificarRegistros(JSON.parse(texto)));
+  return new Promise((resolve,reject)=>{
+    const codigo=`(${executarWorkerRegistros.toString()})()`;
+    const url=URL.createObjectURL(new Blob([codigo],{type:"text/javascript"}));
+    const worker=new Worker(url);
+    const finalizar=()=>{worker.terminate();URL.revokeObjectURL(url);};
+    worker.onmessage=evento=>{finalizar();evento.data?.ok?resolve(evento.data.dados):reject(new Error(evento.data?.erro||"Falha ao processar registros"));};
+    worker.onerror=erro=>{finalizar();reject(new Error(erro.message||"Falha no processamento dos registros"));};
+    worker.postMessage(texto);
+  });
+}
+async function buscarRegistrosCompactos(){
+  let ultimoErro;
+  for(let tentativa=1;tentativa<=3;tentativa++){
+    try{
+      const resposta=await fetch("/api/registros?formato=compacto",{cache:"no-cache"});
+      if(!resposta.ok)throw new Error(`Registros: HTTP ${resposta.status}`);
+      return await decodificarRegistrosAssincrono(await resposta.text());
+    }catch(erro){
+      ultimoErro=erro;
+      if(tentativa<3)await new Promise(resolve=>setTimeout(resolve,1000*tentativa));
+    }
+  }
+  throw ultimoErro||new Error("Registros indisponíveis");
+}
 function aplicarRegistrosCarregados(dados){
   registrosObra=observarRegistros(decodificarRegistros(dados));
   registrosPendentes.clear();
   versoesRegistros.clear();
-  Object.values(registrosObra).forEach(registro=>{
-    registro.status=registro.status||(registro.concluido?"concluido":"nao-iniciado");
-    registro.concluido=registro.status==="concluido";
-    if(registro.status==="nao-iniciado")registro.data="";
-  });
 }
 function agendarAtualizacaoGraficoAbertura(){
   if(atualizacaoGraficoAberturaPendente)return;
@@ -2757,7 +2800,7 @@ async function carregarRegistrosDoBanco(){
   try{
     let dadosRegistros;
     [dadosRegistros,planejamentoObra,atividadesCadastro] = await Promise.all([
-      buscarJsonComTentativas("/api/registros?formato=compacto"),
+      buscarRegistrosCompactos(),
       buscarJsonComTentativas("/api/planejamento"),
       buscarJsonComTentativas("/api/atividades")
     ]);
@@ -2791,7 +2834,7 @@ async function carregarRegistrosDoBanco(){
 async function recarregarRegistrosEAtividades(){
   const estadoFiltrosAntes=capturarFiltrosPlanilha();
   const [dadosRegistros,novasAtividades]=await Promise.all([
-    buscarJsonComTentativas("/api/registros?formato=compacto"),
+    buscarRegistrosCompactos(),
     buscarJsonComTentativas("/api/atividades")
   ]);
   atividadesCadastro=novasAtividades;
