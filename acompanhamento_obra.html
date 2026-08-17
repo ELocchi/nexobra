@@ -680,10 +680,6 @@
   .dashboard-filtro{min-width:min(100%,280px);}
   .dashboard-filtro label{display:block;margin-bottom:5px;color:rgba(255,255,255,.6);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
   .dashboard-filtro select{width:100%;height:39px;border:1px solid rgba(255,255,255,.24);border-radius:8px;background:#fff;color:#17334d;padding:0 10px;font:inherit;font-size:.8rem;}
-  .resumo-geral-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px;}
-  .resumo-geral-card{padding:14px 15px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:rgba(255,255,255,.07);}
-  .resumo-geral-card span{display:block;color:rgba(255,255,255,.6);font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;}
-  .resumo-geral-card strong{font-size:1.55rem;}
   .dashboard-graficos{display:grid;grid-template-columns:1fr;gap:12px;}
   .dashboard-grafico{height:260px;padding:14px;border-radius:10px;background:#fff;}
   .dashboard-grafico h3{margin:0 0 6px;color:#17334d;font-size:.78rem;}
@@ -1121,7 +1117,6 @@
     .relatorios-grid{grid-template-columns:1fr;}
     .documentos-grid{grid-template-columns:1fr;}
     .servicos-corpo{grid-template-columns:1fr;}
-    .resumo-geral-grid{grid-template-columns:1fr 1fr;}
     .ocorrencia-campos{grid-template-columns:1fr;}
     .servicos-topo{align-items:stretch;flex-direction:column;}
     .servicos-filtro{min-width:0;}
@@ -1153,7 +1148,6 @@
     .apartamentos-cabecalho{align-items:stretch;flex-direction:column;}
     .apartamento-acoes-relatorio{grid-template-columns:1fr;min-width:0;}
     .apartamento-acoes-relatorio .acao-relatorio{grid-column:auto;justify-self:stretch;}
-    .resumo-geral-grid{grid-template-columns:1fr 1fr;}
     .torres-progresso{gap:38px;padding-inline:5px;min-height:445px;}
     .predio-progresso{width:92px;}
     .predio-progresso.aurora{height:397px;}
@@ -1260,8 +1254,6 @@
   .dashboard-topo p{color:#687587;}
   .dashboard-filtro label{color:#667385;}
   .dashboard-filtro select{border-color:#cbd3dc;}
-  .resumo-geral-card{background:#f5f6f7;border-color:#e0e4e8;border-radius:5px;border-top:3px solid var(--vermelho);}
-  .resumo-geral-card span{color:#687587;}
   .dashboard-grafico{border:1px solid #e0e4e8;border-radius:5px;}
   .mapa-progresso{background:linear-gradient(145deg,#123b6d,#0d2948);border-radius:5px;}
   .mapa-topo h3{color:#fff;}
@@ -1461,11 +1453,6 @@
         <label for="filtroServicoDashboard">Visualizar por serviço</label>
         <select id="filtroServicoDashboard"></select>
       </div>
-    </div>
-    <div class="resumo-geral-grid">
-      <div class="resumo-geral-card"><span>Avanço geral</span><strong id="dashAvanco">0%</strong></div>
-      <div class="resumo-geral-card"><span>Serviços pendentes</span><strong id="dashPendentes">0</strong></div>
-      <div class="resumo-geral-card"><span>Andares concluídos</span><strong id="dashPavimentos">0</strong></div>
     </div>
     <div class="dashboard-graficos">
       <div class="dashboard-grafico"><h3>Status geral</h3><div class="dashboard-canvas"><canvas id="graficoStatusGeral"></canvas></div></div>
@@ -4108,8 +4095,6 @@ function atualizarDashboardGeral(){
   });
   const total = dadosTorres.reduce((s,t)=>s+t.itens.length,0);
   const realizados = dadosTorres.reduce((s,t)=>s+t.realizados,0);
-  const chavesVisiveis=new Set(dadosTorres.flatMap(grupo=>grupo.itens.map(item=>chaveRegistro(grupo.torre,item.andar,item.unidade,item.atividade))));
-  const pendentes=new Set(ocorrenciasBanco.filter(oc=>chavesVisiveis.has(chaveRegistro(oc.torre,Number(oc.andar),oc.unidade,oc.atividade))).map(oc=>chaveRegistro(oc.torre,Number(oc.andar),oc.unidade,oc.atividade))).size;
   const contagemStatus = {"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
   dadosTorres.forEach(grupo => {
     grupo.itens.forEach(item => {
@@ -4117,18 +4102,7 @@ function atualizarDashboardGeral(){
       contagemStatus[status] = (contagemStatus[status] || 0) + 1;
     });
   });
-  let pavimentosConcluidos = 0;
-  torresDashboard.forEach(torre => {
-    pavimentosDaTorre(torre).forEach(andar=>{
-      const itens = listaRegistros(torre).filter(i=>i.andar===andar && (servico==="todos" || i.atividade===servico));
-      if(itens.length && itens.every(i=>obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido)) pavimentosConcluidos++;
-    });
-  });
   const percentualGeral=total?Math.round(realizados/total*100):0;
-  document.getElementById("dashAvanco").textContent = `${percentualGeral}%`;
-  document.getElementById("dashPendentes").textContent = pendentes.toLocaleString("pt-BR");
-  const totalPavimentos=torresDashboard.reduce((total,torre)=>total+pavimentosDaTorre(torre).length,0);
-  document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${totalPavimentos}`;
   document.querySelector("#dashboardGeral .dashboard-topo h2").textContent =
     modoVisaoGeral ? "Visão geral da obra" : `Visão geral — ${TORRES[torreSelecionada].nome}`;
   document.querySelector("#dashboardGeral .dashboard-topo p").textContent =
