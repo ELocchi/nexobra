@@ -1310,6 +1310,18 @@
     .info-obra{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:16px;}
     .info-obra div{padding:9px 12px;}
   }
+  #seletorTorres .seletor-torres-botoes>.botao-torre-direto{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:54px;padding:9px 14px;border:2px solid #fff;border-radius:9px;
+    background:rgba(13,55,96,.78);color:#fff!important;text-align:center;
+    cursor:pointer;box-shadow:0 5px 14px rgba(0,0,0,.22);filter:none;
+  }
+  #seletorTorres .seletor-torres-botoes>.botao-torre-direto strong,
+  #seletorTorres .seletor-torres-botoes>.botao-torre-direto span{color:#fff!important;}
+  #seletorTorres .seletor-torres-botoes>.botao-torre-direto:hover,
+  #seletorTorres .seletor-torres-botoes>.botao-torre-direto:focus-visible{
+    border-color:#fff;background:#245f99;color:#fff!important;outline:3px solid rgba(255,255,255,.4);outline-offset:2px;
+  }
 </style>
 </head>
 <body>
@@ -1382,8 +1394,8 @@
       <aside class="seletor-torres-caixa" aria-labelledby="tituloSelecionarTorre">
         <h2 id="tituloSelecionarTorre">Selecione a torre</h2>
         <div class="seletor-torres-botoes">
-          <button class="torre seletor-modelo" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares"><strong>Torre Home</strong><span>36 andares</span></button>
-          <button class="torre seletor-modelo" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares"><strong>Torre Smart</strong><span>23 andares</span></button>
+          <button class="torre seletor-modelo botao-torre-direto" type="button" data-torre="aurora" aria-label="Abrir acompanhamento da Torre Home, 36 andares"><strong>Torre Home</strong><span>36 andares</span></button>
+          <button class="torre seletor-modelo botao-torre-direto" type="button" data-torre="horizonte" aria-label="Abrir acompanhamento da Torre Smart, 23 andares"><strong>Torre Smart</strong><span>23 andares</span></button>
         </div>
       </aside>
     </div>
