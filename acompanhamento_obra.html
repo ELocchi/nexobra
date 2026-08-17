@@ -2670,12 +2670,44 @@ function atualizarGraficoAbertura(){
 }
 let atualizacaoGraficoAberturaPendente=false;
 let dadosPrincipaisCarregados=false;
+async function buscarJsonComTentativas(url){
+  let ultimoErro;
+  for(let tentativa=1;tentativa<=3;tentativa++){
+    try{
+      const resposta=await fetch(url,{cache:"no-store"});
+      if(!resposta.ok)throw new Error(`${url}: HTTP ${resposta.status}`);
+      try{return await resposta.json();}
+      catch(erro){throw new Error(`${url}: resposta JSON incompleta ou inválida`);}
+    }catch(erro){
+      ultimoErro=erro;
+      if(tentativa<3)await new Promise(resolve=>setTimeout(resolve,1000*tentativa));
+    }
+  }
+  throw ultimoErro||new Error("Resposta indisponível");
+}
+function decodificarRegistros(dados){
+  if(dados?.formato!=="compacto-v1"||!Array.isArray(dados.registros))return dados||{};
+  return Object.fromEntries(dados.registros.map(item=>{
+    const [chave,status="nao-iniciado",data="",observacao="",foto="",fotoNome="",especificacoes={}] = item;
+    return [chave,{concluido:status==="concluido",status,data,observacao,foto,fotoNome,especificacoes:especificacoes||{}}];
+  }));
+}
+function aplicarRegistrosCarregados(dados){
+  registrosObra=observarRegistros(decodificarRegistros(dados));
+  registrosPendentes.clear();
+  versoesRegistros.clear();
+  Object.values(registrosObra).forEach(registro=>{
+    registro.status=registro.status||(registro.concluido?"concluido":"nao-iniciado");
+    registro.concluido=registro.status==="concluido";
+    if(registro.status==="nao-iniciado")registro.data="";
+  });
+}
 function agendarAtualizacaoGraficoAbertura(){
   if(atualizacaoGraficoAberturaPendente)return;
   atualizacaoGraficoAberturaPendente=true;
   const executar=()=>{
     atualizacaoGraficoAberturaPendente=false;
-    agendarAtualizacaoGraficoAbertura();
+    atualizarGraficoAbertura();
   };
   if("requestIdleCallback" in window)requestIdleCallback(executar,{timeout:1200});
   else setTimeout(executar,120);
@@ -2685,23 +2717,9 @@ async function carregarRegistrosDoBanco(){
   const status = document.getElementById("statusSalvamento");
   const estadoFiltrosAntes=capturarFiltrosPlanilha();
   try{
-    async function buscarJsonComTentativas(url){
-      let ultimoErro;
-      for(let tentativa=1;tentativa<=3;tentativa++){
-        try{
-          const resposta=await fetch(url,{cache:"no-store"});
-          if(!resposta.ok) throw new Error(`${url}: HTTP ${resposta.status}`);
-          try{return await resposta.json();}
-          catch(erro){throw new Error(`${url}: resposta JSON incompleta ou inválida`);}
-        }catch(erro){
-          ultimoErro=erro;
-          if(tentativa<3) await new Promise(resolve=>setTimeout(resolve,1000*tentativa));
-        }
-      }
-      throw ultimoErro||new Error("Resposta indisponível");
-    }
-    [registrosObra,planejamentoObra,atividadesCadastro,personalizacoesUnidades,plantasUnidades,acabamentosUnidades,projetosAdicionados,projetosOcultos] = await Promise.all([
-      buscarJsonComTentativas("/api/registros"),
+    let dadosRegistros;
+    [dadosRegistros,planejamentoObra,atividadesCadastro,personalizacoesUnidades,plantasUnidades,acabamentosUnidades,projetosAdicionados,projetosOcultos] = await Promise.all([
+      buscarJsonComTentativas("/api/registros?formato=compacto"),
       buscarJsonComTentativas("/api/planejamento"),
       buscarJsonComTentativas("/api/atividades"),
       buscarJsonComTentativas("/personalizacoes_unidades.json"),
@@ -2711,16 +2729,9 @@ async function carregarRegistrosDoBanco(){
       buscarJsonComTentativas("/api/projetos-ocultos")
     ]);
     ATIVIDADES_UNIDADE = atividadesCadastro.map(item=>item.nome);
-    registrosObra=observarRegistros(registrosObra);
-    registrosPendentes.clear();
-    versoesRegistros.clear();
+    aplicarRegistrosCarregados(dadosRegistros);
     preencherFiltrosCadastroMassivo();
-    Object.values(registrosObra).forEach(registro => {
-      registro.status = registro.status || (registro.concluido?"concluido":"nao-iniciado");
-      registro.concluido = registro.status === "concluido";
-      if(registro.status === "nao-iniciado") registro.data = "";
-    });
-    atualizarGraficoAbertura();
+    agendarAtualizacaoGraficoAbertura();
     status.textContent = "Dados da obra atualizados";
     status.style.color = "";
     document.getElementById("filtroServicoDashboard").innerHTML="";
@@ -2741,6 +2752,21 @@ async function carregarRegistrosDoBanco(){
     status.textContent = `Não foi possível carregar os dados (${e.message||"erro desconhecido"}). Atualize a página.`;
     status.style.color = "var(--vermelho)";
   }
+}
+
+async function recarregarRegistrosEAtividades(){
+  const estadoFiltrosAntes=capturarFiltrosPlanilha();
+  const [dadosRegistros,novasAtividades]=await Promise.all([
+    buscarJsonComTentativas("/api/registros?formato=compacto"),
+    buscarJsonComTentativas("/api/atividades")
+  ]);
+  atividadesCadastro=novasAtividades;
+  ATIVIDADES_UNIDADE=atividadesCadastro.map(item=>item.nome);
+  aplicarRegistrosCarregados(dadosRegistros);
+  preencherFiltrosCadastroMassivo();
+  prepararPlanilha(false);
+  restaurarFiltrosPlanilha(estadoFiltrosAntes);
+  atualizarInterfaceAposAlteracao();
 }
 
 async function salvarRegistros(){
@@ -3592,14 +3618,7 @@ function renderizarAtividadesAdmin(){
   }).join("")||`<tr><td colspan="4">Nenhuma atividade encontrada.</td></tr>`;
 }
 async function recarregarCadastroAtividades(){
-  const resposta=await fetch("/api/atividades",{cache:"no-store"});
-  if(!resposta.ok) throw new Error("Não foi possível atualizar a lista");
-  atividadesCadastro=await resposta.json();
-  ATIVIDADES_UNIDADE=atividadesCadastro.map(item=>item.nome);
-  preencherFiltrosCadastroMassivo();
-  prepararDashboardGeral();
-  renderizarAtividadesAdmin();
-  await carregarRegistrosDoBanco();
+  await recarregarRegistrosEAtividades();
 }
 
 document.getElementById("atividadeTorre").addEventListener("change",atualizarAndaresAtividade);
@@ -4531,14 +4550,14 @@ document.getElementById("adicionarSetor").addEventListener("click",async()=>{
   if(!nome?.trim()){fecharMenuSetor();return;}
   const resposta=await fetch("/api/setores",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,subservico:atual.subservico,unidade:nome.trim()})});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível adicionar o setor.");return;}
-  fecharMenuSetor();await carregarRegistrosDoBanco();
+  fecharMenuSetor();await recarregarRegistrosEAtividades();
 });
 document.getElementById("editarNomeSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
   const novo=prompt("Novo nome do setor ou apartamento:",atual.unidade);if(!novo?.trim()||novo.trim()===atual.unidade){fecharMenuSetor();return;}
   const resposta=await fetch("/api/setores",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:atual.andar,atividade:atual.atividade,subservico:atual.subservico,unidade:atual.unidade,novaUnidade:novo.trim()})});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível alterar o nome.");return;}
-  fecharMenuSetor();await carregarRegistrosDoBanco();
+  fecharMenuSetor();await recarregarRegistrosEAtividades();
 });
 document.getElementById("excluirSetor").addEventListener("click",async()=>{
   if(!setorContexto)return;const atual={...setorContexto};
@@ -4546,7 +4565,7 @@ document.getElementById("excluirSetor").addEventListener("click",async()=>{
   const consulta=new URLSearchParams({torre:torreSelecionada,andar:atual.andar,unidade:atual.unidade,atividade:atual.atividade,subservico:atual.subservico});
   const resposta=await fetch(`/api/setores?${consulta}`,{method:"DELETE"});
   if(!resposta.ok){const erro=await resposta.json().catch(()=>({}));alert(erro.erro||"Não foi possível excluir o setor.");return;}
-  fecharMenuSetor();await carregarRegistrosDoBanco();
+  fecharMenuSetor();await recarregarRegistrosEAtividades();
 });
 
 function atualizarRegistro(elemento){
@@ -5302,6 +5321,35 @@ function atualizarInterfaceAposAlteracao(){
   renderizarConteudoAba(abaAtiva);
   agendarAtualizacaoGraficoAbertura();
 }
+function atualizarCelulasEspecificacoesNoDom(chavesSelecao){
+  if(document.getElementById("filtroSituacao").value!=="todas"||chavesSelecao.length>60)return false;
+  const controles=new Map([...document.querySelectorAll("#corpoPlanilha .controle-especificacao")].map(controle=>[
+    chaveSelecaoEspecificacao(controle.dataset.chave,controle.dataset.especificacao),controle
+  ]));
+  if(chavesSelecao.some(chave=>!controles.has(chave)))return false;
+  chavesSelecao.forEach(chaveSelecao=>{
+    const controle=controles.get(chaveSelecao);
+    const [chave,especificacao]=JSON.parse(chaveSelecao);
+    const partes=chave.split("|");
+    const atividade=partes.slice(3).join("|");
+    const registro=obterRegistro(Number(partes[1]),partes[2],atividade,partes[0]);
+    const estado=normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro);
+    controle.dataset.estado=estado;
+    controle.textContent=simboloEstadoEspecificacao(estado);
+    controle.title=`${STATUS_ATIVIDADE[estado]} — clique para selecionar`;
+    controle.classList.remove("selecionado");
+    controle.setAttribute("aria-pressed","false");
+  });
+  const chavesVisiveis=[...new Set([...controles.values()].map(controle=>controle.dataset.chave))];
+  const concluidos=chavesVisiveis.filter(chave=>{
+    const partes=chave.split("|");
+    return obterRegistro(Number(partes[1]),partes[2],partes.slice(3).join("|"),partes[0]).concluido;
+  }).length;
+  document.getElementById("percentualFiltro").textContent=`${chavesVisiveis.length?Math.round(concluidos/chavesVisiveis.length*100):0}%`;
+  atualizarControlesSelecao();
+  agendarAtualizacaoGraficoAbertura();
+  return true;
+}
 function ativarAba(id, rolar = true){
   document.querySelectorAll(".painel-aba").forEach(painel => {
     painel.classList.toggle("ativo", painel.id === id);
@@ -5488,7 +5536,8 @@ document.getElementById("selecionarTodosRegistros").addEventListener("change", e
 document.getElementById("aplicarStatusEmLote").addEventListener("click", async () => {
   if(especificacoesSelecionadas.size){
     const novoStatus=document.getElementById("statusEmLote").value;
-    especificacoesSelecionadas.forEach(chaveSelecao=>{
+    const chavesAlteradas=[...especificacoesSelecionadas];
+    chavesAlteradas.forEach(chaveSelecao=>{
       const [chave,especificacao]=JSON.parse(chaveSelecao);
       const partes=chave.split("|");
       const atividade=partes.slice(3).join("|");
@@ -5504,7 +5553,7 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
     });
     await salvarRegistros();
     especificacoesSelecionadas.clear();
-    atualizarInterfaceAposAlteracao();
+    if(!atualizarCelulasEspecificacoesNoDom(chavesAlteradas))atualizarInterfaceAposAlteracao();
     return;
   }
   if(!registrosSelecionados.size) return;

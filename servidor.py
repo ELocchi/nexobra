@@ -2928,8 +2928,29 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.wfile.write(corpo)
             return
         if caminho == "/api/registros":
+            parametros = parse_qs(urlparse(self.path).query)
+            formato_compacto = parametros.get("formato", [""])[0] == "compacto"
             with conectar() as conexao:
-                linhas = conexao.execute("SELECT * FROM registros").fetchall()
+                linhas = conexao.execute(
+                    "SELECT chave, concluido, status, data_conclusao, observacao, foto, foto_nome, especificacoes FROM registros"
+                ).fetchall()
+            if formato_compacto:
+                registros_compactos = []
+                for linha in linhas:
+                    try:
+                        especificacoes = json.loads(linha["especificacoes"] or "{}")
+                    except (json.JSONDecodeError, TypeError):
+                        especificacoes = {}
+                    item = [
+                        linha["chave"], linha["status"] or ("concluido" if linha["concluido"] else "nao-iniciado"),
+                        linha["data_conclusao"] or "", linha["observacao"] or "", linha["foto"] or "",
+                        linha["foto_nome"] or "", especificacoes if isinstance(especificacoes, dict) else {},
+                    ]
+                    while len(item) > 2 and item[-1] in ("", {}, None):
+                        item.pop()
+                    registros_compactos.append(item)
+                self.enviar_json({"formato": "compacto-v1", "registros": registros_compactos})
+                return
             registros = {}
             for linha in linhas:
                 try:
