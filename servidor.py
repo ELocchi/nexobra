@@ -2554,6 +2554,35 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('pavimento_fundacao_exclusivo_v1', '1')"
         )
+    marcador_setores_revestimento_externo = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'setores_revestimento_externo_blocos_v1'"
+    ).fetchone()
+    if not marcador_setores_revestimento_externo:
+        atividade = "Revestimento"
+        subservico = "Externo em Argamassa"
+        setores_por_torre = {
+            "horizonte": [f"B{numero:02d}" for numero in range(1, 16)],
+            "aurora": [f"B{numero:02d}" for numero in range(1, 20)],
+        }
+        conexao.execute(
+            "DELETE FROM subservicos_setores WHERE atividade=? AND subservico=?",
+            (atividade, subservico),
+        )
+        pavimentos = conexao.execute(
+            "SELECT DISTINCT torre, andar FROM atividades_config WHERE nome=? ORDER BY torre, andar",
+            (atividade,),
+        ).fetchall()
+        conexao.executemany(
+            "INSERT INTO subservicos_setores (atividade, subservico, torre, andar, unidade) VALUES (?, ?, ?, ?, ?)",
+            [
+                (atividade, subservico, linha["torre"], linha["andar"], setor)
+                for linha in pavimentos
+                for setor in setores_por_torre.get(linha["torre"], [])
+            ],
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('setores_revestimento_externo_blocos_v1', '1')"
+        )
 
 
 def listar_atividades_config():
