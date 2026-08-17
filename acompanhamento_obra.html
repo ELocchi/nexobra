@@ -2383,7 +2383,9 @@ function ordemExecutivaAtividade(nome){
   return indice<0?ORDEM_EXECUTIVA_ATIVIDADES.length:indice;
 }
 function subservicoAplicavelNestaObra(atividade,subservico){
-  return atividade!=="Fundação"||!SUBSERVICOS_FUNDACAO_NAO_APLICAVEIS_NESTA_OBRA.has(subservico);
+  if(atividade==="Fundação"&&SUBSERVICOS_FUNDACAO_NAO_APLICAVEIS_NESTA_OBRA.has(subservico))return false;
+  if(atividade==="Gesso"&&subservico==="Forro de Gesso")return false;
+  return true;
 }
 const DIVISOES_PRELIMINARES={
   "Locação de Obra (Gabarito)":["Condições para Início dos Serviços","Locação do Gabarito","Ajuste e Nivelamento","Liberação"],
@@ -2489,16 +2491,16 @@ function divisoesDoServico(atividade,andar){
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   const subservicosFvs=catalogoFvs?Object.keys(catalogoFvs).filter(Boolean):[];
   if(subservicosFvs.length){
-    if(atividade==="Fundação")return subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico));
-    if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar).filter(subservico=>subservicosFvs.includes(subservico));
-    return subservicosFvs;
+    const aplicaveis=subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico));
+    if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar).filter(subservico=>aplicaveis.includes(subservico));
+    return aplicaveis;
   }
   if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar);
   if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA);
   if(atividade==="Revestimento")return Object.keys(DIVISOES_REVESTIMENTO);
   if(atividade==="Contrapiso")return Object.keys(DIVISOES_CONTRAPISO);
   if(atividade==="Esquadrias")return Object.keys(DIVISOES_ESQUADRIAS);
-  if(atividade==="Gesso")return Object.keys(DIVISOES_GESSO);
+  if(atividade==="Gesso")return Object.keys(DIVISOES_GESSO).filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico));
   if(atividade==="Impermeabilização")return Object.keys(DIVISOES_IMPERMEABILIZACAO);
   if(atividade==="Produção de Argamassa")return Object.keys(DIVISOES_PRODUCAO_ARGAMASSA);
   if(atividade==="Pintura")return Object.keys(DIVISOES_PINTURA || {});

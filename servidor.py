@@ -2583,6 +2583,16 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('setores_revestimento_externo_blocos_v1', '1')"
         )
+    marcador_ocultar_forro_gesso = conexao.execute(
+        "SELECT valor FROM configuracoes WHERE chave = 'ocultar_forro_gesso_obra_v1'"
+    ).fetchone()
+    if not marcador_ocultar_forro_gesso:
+        conexao.execute(
+            "DELETE FROM subservicos_setores WHERE atividade='Gesso' AND subservico='Forro de Gesso'"
+        )
+        conexao.execute(
+            "INSERT INTO configuracoes (chave, valor) VALUES ('ocultar_forro_gesso_obra_v1', '1')"
+        )
 
 
 def listar_atividades_config():
