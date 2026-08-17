@@ -1695,10 +1695,11 @@
     <form class="ocorrencia-form" id="formOcorrencia">
       <div class="ocorrencia-form-topo"><h3 id="tituloNovaOcorrencia">Adicionar nova ocorrência</h3><button class="fechar-ocorrencia" id="fecharNovaOcorrencia" type="button" aria-label="Fechar">×</button></div>
       <div class="ocorrencia-campos">
+        <div class="campo-filtro"><label for="ocTipo">Tipo de ocorrência</label><select id="ocTipo" required><option value="atividade">Ocorrência de atividade</option><option value="seguranca">Ocorrência de segurança</option></select></div>
         <div class="campo-filtro"><label for="ocTorre">Torre</label><select id="ocTorre" required></select></div>
         <div class="campo-filtro"><label for="ocAndar">Andar</label><select id="ocAndar" required></select></div>
         <div class="campo-filtro"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
-        <div class="campo-filtro"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
+        <div class="campo-filtro" id="ocCampoAtividade"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
         <div class="campo-filtro" id="ocCampoSubatividade" hidden><label for="ocSubatividade">Subatividade</label><select id="ocSubatividade"></select></div>
         <div class="campo-filtro" id="ocCampoEspecificacao"><label for="ocEspecificacao">Especificação do serviço</label><select id="ocEspecificacao" required></select></div>
         <div class="campo-filtro"><label for="ocData">Data da ocorrência</label><input id="ocData" type="date" required></div>
@@ -3290,16 +3291,22 @@ function atualizarUnidadesOcorrencia(){
 }
 
 function atualizarAtividadesOcorrencia(){
+  if(document.getElementById("ocTipo").value==="seguranca"){
+    atualizarTipoOcorrencia();
+    return;
+  }
   const torre=document.getElementById("ocTorre").value||torreSelecionada;
   const andar=Number(document.getElementById("ocAndar").value);
   const unidade=document.getElementById("ocUnidade").value;
   const seletor=document.getElementById("ocAtividade");
   const valorAtual=seletor.value;
-  const atividades=[...new Set([...listaRegistros(torre)
+  const atividades=[...new Set(listaRegistros(torre)
     .filter(item=>item.andar===andar&&item.unidade===unidade)
-    .map(item=>item.atividade),ATIVIDADE_SEGURANCA_OCORRENCIAS])]
+    .map(item=>item.atividade))]
     .sort((a,b)=>a.localeCompare(b,"pt-BR"));
-  seletor.innerHTML=atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("");
+  seletor.innerHTML=atividades.length
+    ?atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("")
+    :`<option value="">Nenhuma atividade disponível</option>`;
   if(atividades.includes(valorAtual))seletor.value=valorAtual;
   atualizarSubatividadesOcorrencia();
 }
@@ -3342,10 +3349,34 @@ function atualizarEspecificacoesOcorrencia(){
   if(especificacoes.includes(valorAtual))seletor.value=valorAtual;
 }
 
+function atualizarTipoOcorrencia(){
+  const seguranca=document.getElementById("ocTipo").value==="seguranca";
+  const campoAtividade=document.getElementById("ocCampoAtividade");
+  const campoSubatividade=document.getElementById("ocCampoSubatividade");
+  const campoEspecificacao=document.getElementById("ocCampoEspecificacao");
+  const atividade=document.getElementById("ocAtividade");
+  const subatividade=document.getElementById("ocSubatividade");
+  const especificacao=document.getElementById("ocEspecificacao");
+  campoAtividade.hidden=seguranca;
+  campoEspecificacao.hidden=seguranca;
+  atividade.required=!seguranca;
+  especificacao.required=!seguranca;
+  if(seguranca){
+    campoSubatividade.hidden=true;
+    subatividade.required=false;
+    subatividade.innerHTML="";
+    atividade.innerHTML=`<option value="${ATIVIDADE_SEGURANCA_OCORRENCIAS}">${ATIVIDADE_SEGURANCA_OCORRENCIAS}</option>`;
+    especificacao.innerHTML=`<option value="${ESPECIFICACAO_SEGURANCA_OCORRENCIAS}">${ESPECIFICACAO_SEGURANCA_OCORRENCIAS}</option>`;
+  }else{
+    atualizarAtividadesOcorrencia();
+  }
+}
+
 function prepararFormularioOcorrencia(){
   document.getElementById("ocTorre").innerHTML=Object.keys(TORRES).map(chave=>`<option value="${chave}">${TORRES[chave].nome}</option>`).join("");
   document.getElementById("ocTorre").value=torreSelecionada;
   atualizarAndaresOcorrencia();
+  atualizarTipoOcorrencia();
   if(!document.getElementById("ocData").value){
     const hoje=new Date();
     document.getElementById("ocData").value=`${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,"0")}-${String(hoje.getDate()).padStart(2,"0")}`;
@@ -3419,6 +3450,8 @@ function gerarPdfRelatorio(){
 }
 
 function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
+  document.getElementById("ocTipo").value="atividade";
+  atualizarTipoOcorrencia();
   document.getElementById("ocTorre").value=torre;
   atualizarAndaresOcorrencia();
   document.getElementById("ocAndar").value=String(andar);
@@ -5076,6 +5109,7 @@ document.addEventListener('click',event=>{if(!event.target.closest('.menu-visao-
 document.getElementById("ocTorre").addEventListener("change",atualizarAndaresOcorrencia);
 document.getElementById("ocAndar").addEventListener("change",atualizarUnidadesOcorrencia);
 document.getElementById("ocUnidade").addEventListener("change",atualizarAtividadesOcorrencia);
+document.getElementById("ocTipo").addEventListener("change",atualizarTipoOcorrencia);
 document.getElementById("ocAtividade").addEventListener("change",atualizarSubatividadesOcorrencia);
 document.getElementById("ocSubatividade").addEventListener("change",atualizarEspecificacoesOcorrencia);
 document.getElementById("filtroTorreOcorrencias").addEventListener("change",event=>{
