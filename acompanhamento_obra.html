@@ -699,6 +699,32 @@
     border-radius:8px;overflow:hidden;
   }
   .torre-progresso-wrap{text-align:center;}
+  .fundacao-progresso{
+    position:relative;width:clamp(220px,27vw,320px);height:250px;padding:20px 18px 36px;
+    border:0;background:transparent;color:#fff;cursor:pointer;
+  }
+  .fundacao-progresso::before{
+    content:"";position:absolute;left:0;right:0;bottom:27px;height:34px;border-radius:5px;
+    background:linear-gradient(#866b50,#594432);box-shadow:0 8px 18px rgba(0,0,0,.34);
+  }
+  .fundacao-elementos{
+    position:absolute;left:8%;right:8%;bottom:43px;display:grid;grid-template-columns:repeat(6,1fr);gap:25px 8px;
+  }
+  .fundacao-elemento{position:relative;display:block;height:55px;color:#637582;}
+  .fundacao-elemento.em-andamento{color:#e0a800;}
+  .fundacao-elemento.pendente{color:#d9483d;}
+  .fundacao-elemento.concluido{color:#2e9e5b;}
+  .fundacao-bloco{
+    position:absolute;left:50%;top:0;width:30px;height:17px;transform:translateX(-50%) skewX(-12deg);
+    border:2px solid rgba(255,255,255,.48);background:currentColor;box-shadow:3px 4px 5px rgba(0,0,0,.28);
+  }
+  .fundacao-estaca{
+    position:absolute;left:50%;top:15px;width:8px;height:40px;transform:translateX(-50%);
+    border:1px solid rgba(255,255,255,.35);background:currentColor;box-shadow:2px 2px 4px rgba(0,0,0,.25);
+  }
+  .fundacao-percentual{position:absolute;left:0;right:0;top:4px;color:#fff;font-size:1.3rem;font-weight:800;text-align:center;}
+  .fundacao-percentual small{display:block;margin-top:3px;color:rgba(255,255,255,.66);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;}
+  .fundacao-progresso:hover,.fundacao-progresso:focus-visible{filter:brightness(1.18);outline:2px solid #fff;outline-offset:2px;}
   .predio-progresso{
     width:clamp(110px,14vw,170px);display:flex;flex-direction:column-reverse;position:relative;
     padding:5px 7px 8px;background:linear-gradient(90deg,#738591,#d7dfe0 12%,#a7b6ba 88%,#596e79);
@@ -2714,6 +2740,14 @@ function itemPertenceEtapaDashboard(item,etapa){
     ?especificacoes.some(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa)
     :categoriaResumoAbertura(item.atividade)===etapa;
 }
+function estadosItemEtapaDashboard(item,etapa,torre){
+  const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
+  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar)
+    .filter(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa);
+  return especificacoes.length
+    ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
+    :[registro.status||"nao-iniciado"];
+}
 function atualizarGraficoAbertura(){
   const grupos={fundacao:[],estrutura:[],alvenaria:[],acabamento:[],fachada:[],pintura:[]};
   Object.entries(registrosObra).forEach(([chave,registro])=>{
@@ -4078,6 +4112,20 @@ function renderizarTorresProgresso(servico){
   document.getElementById("torresProgresso").innerHTML = torresExibidas.map(torre => {
     const dados = TORRES[torre];
     const pavimentos=pavimentosDaTorre(torre);
+    if(servico==="fundacao"){
+      const itensFundacao=listaRegistros(torre).filter(item=>itemPertenceEtapaDashboard(item,"fundacao"));
+      const ordemEstado={concluido:0,"em-andamento":1,pendente:2,"nao-iniciado":3};
+      const estados=itensFundacao.flatMap(item=>estadosItemEtapaDashboard(item,"fundacao",torre))
+        .filter(estado=>estado!=="nao-aplicavel")
+        .sort((a,b)=>(ordemEstado[a]??4)-(ordemEstado[b]??4));
+      const percentual=estados.length?Math.round(estados.filter(estado=>estado==="concluido").length/estados.length*100):0;
+      const quantidadeVisual=12;
+      const elementos=Array.from({length:quantidadeVisual},(_,indice)=>{
+        const estado=estados.length?estados[Math.min(estados.length-1,Math.floor(indice*estados.length/quantidadeVisual))]:"nao-iniciado";
+        return `<span class="fundacao-elemento ${estado}"><i class="fundacao-bloco"></i><i class="fundacao-estaca"></i></span>`;
+      }).join("");
+      return `<div class="torre-progresso-wrap"><button class="fundacao-progresso" type="button" data-torre="${torre}" data-andar="-2" title="${dados.nome} · Fundação · ${percentual}% concluído" aria-label="Abrir fundação da ${dados.nome}"><span class="fundacao-percentual">${percentual}%<small>Blocos e estacas</small></span><span class="fundacao-elementos">${elementos}</span></button><strong>${dados.nome}</strong><small>Fundação</small></div>`;
+    }
     const modoEstrutura=servico==="estrutura";
     const andares = pavimentos.map(andar=>{
       const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
@@ -4092,14 +4140,7 @@ function renderizarTorresProgresso(servico){
       const fimPendente=fimAndamento+pendentes/total*100;
       const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
       const rotulo=rotuloAndar(andar);
-      const estadosEstrutura=modoEstrutura?itens.flatMap(item=>{
-        const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
-        const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar)
-          .filter(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)==="estrutura");
-        return especificacoes.length
-          ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
-          :[registro.status||"nao-iniciado"];
-      }):[];
+      const estadosEstrutura=modoEstrutura?itens.flatMap(item=>estadosItemEtapaDashboard(item,"estrutura",torre)):[];
       const estruturaConcluida=estadosEstrutura.length>0&&estadosEstrutura.every(estado=>estado==="concluido");
       const classeEstrutura=estruturaConcluida?" estrutura-concluida":"";
       const percentualExibido=modoEstrutura&&estadosEstrutura.length
@@ -5597,12 +5638,12 @@ document.getElementById("historicoNotificacoesLista").addEventListener("click",e
 document.getElementById("fecharHistoricoNotificacoes").addEventListener("click",()=>document.getElementById("historicoNotificacoesOverlay").classList.add("oculto"));
 document.getElementById("historicoNotificacoesOverlay").addEventListener("click",event=>{if(event.target.id==="historicoNotificacoesOverlay")event.currentTarget.classList.add("oculto");});
 document.getElementById("torresProgresso").addEventListener("click", event => {
-  const pavimento = event.target.closest(".andar-progresso");
+  const pavimento = event.target.closest(".andar-progresso,.fundacao-progresso");
   if(pavimento) abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
 });
 document.getElementById("torresProgresso").addEventListener("keydown", event => {
   if(event.key !== "Enter" && event.key !== " ") return;
-  const pavimento = event.target.closest(".andar-progresso");
+  const pavimento = event.target.closest(".andar-progresso,.fundacao-progresso");
   if(!pavimento) return;
   event.preventDefault();
   abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
