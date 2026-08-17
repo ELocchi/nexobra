@@ -4124,7 +4124,8 @@ function atualizarDashboardGeral(){
       if(itens.length && itens.every(i=>obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido)) pavimentosConcluidos++;
     });
   });
-  document.getElementById("dashAvanco").textContent = `${total?Math.round(realizados/total*100):0}%`;
+  const percentualGeral=total?Math.round(realizados/total*100):0;
+  document.getElementById("dashAvanco").textContent = `${percentualGeral}%`;
   document.getElementById("dashPendentes").textContent = pendentes.toLocaleString("pt-BR");
   const totalPavimentos=torresDashboard.reduce((total,torre)=>total+pavimentosDaTorre(torre).length,0);
   document.getElementById("dashPavimentos").textContent = `${pavimentosConcluidos} / ${totalPavimentos}`;
@@ -4148,7 +4149,23 @@ function atualizarDashboardGeral(){
         borderWidth:0
       }]
     },
-    options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw.toLocaleString("pt-BR")}`}}}}
+    options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{boxWidth:11,font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw.toLocaleString("pt-BR")}`}}}},
+    plugins:[{
+      id:"percentualCentroStatusGeral",
+      afterDraw(chart){
+        const {ctx,chartArea}=chart;
+        if(!chartArea)return;
+        const x=(chartArea.left+chartArea.right)/2;
+        const y=(chartArea.top+chartArea.bottom)/2;
+        ctx.save();
+        ctx.textAlign="center";
+        ctx.textBaseline="middle";
+        ctx.fillStyle="#123b6d";
+        ctx.font="700 28px Segoe UI, Arial, sans-serif";
+        ctx.fillText(`${percentualGeral}%`,x,y);
+        ctx.restore();
+      }
+    }]
   });
 }
 
