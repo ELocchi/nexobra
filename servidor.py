@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import base64
 import binascii
+import gzip
 import hashlib
 import hmac
 import json
@@ -2695,8 +2696,15 @@ class ServidorObra(SimpleHTTPRequestHandler):
 
     def enviar_json(self, dados, status=200):
         corpo = json.dumps(dados, ensure_ascii=False).encode("utf-8")
+        aceita_gzip = "gzip" in self.headers.get("Accept-Encoding", "").lower()
+        compactado = aceita_gzip and len(corpo) >= 1024
+        if compactado:
+            corpo = gzip.compress(corpo, compresslevel=5)
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        if compactado:
+            self.send_header("Content-Encoding", "gzip")
+            self.send_header("Vary", "Accept-Encoding")
         self.send_header("Content-Length", str(len(corpo)))
         self.send_header("Cache-Control", "no-store")
         self.end_headers()

@@ -2669,12 +2669,13 @@ function atualizarGraficoAbertura(){
   });
 }
 let atualizacaoGraficoAberturaPendente=false;
+let dadosPrincipaisCarregados=false;
 function agendarAtualizacaoGraficoAbertura(){
   if(atualizacaoGraficoAberturaPendente)return;
   atualizacaoGraficoAberturaPendente=true;
   const executar=()=>{
     atualizacaoGraficoAberturaPendente=false;
-    atualizarGraficoAbertura();
+    agendarAtualizacaoGraficoAbertura();
   };
   if("requestIdleCallback" in window)requestIdleCallback(executar,{timeout:1200});
   else setTimeout(executar,120);
@@ -2723,24 +2724,12 @@ async function carregarRegistrosDoBanco(){
     status.textContent = "Dados da obra atualizados";
     status.style.color = "";
     document.getElementById("filtroServicoDashboard").innerHTML="";
-    const renderizacoes=[
-      ["planilha",prepararPlanilha],
-      ["apartamentos",renderizarApartamentosDoPavimento],
-      ["personalização",renderizarPersonalizacoes],
-      ["dashboard",prepararDashboardGeral],
-      ["gráficos",atualizarGraficosOperacionais],
-      ["serviços",prepararAbaServicos],
-      ["ocorrências",atualizarAtividadesOcorrencia],
-      ["cadastro de atividades",renderizarAtividadesAdmin]
-    ];
     const avisos=[];
-    renderizacoes.forEach(([nome,tarefa])=>{
-      try{tarefa();}
-      catch(erro){
-        console.error(`Falha ao atualizar ${nome}:`,erro);
-        avisos.push(nome);
-      }
-    });
+    try{prepararPlanilha(false);}catch(erro){console.error("Falha ao preparar filtros:",erro);avisos.push("filtros");}
+    try{prepararFormularioOcorrencia();}catch(erro){console.error("Falha ao preparar ocorrências:",erro);avisos.push("ocorrências");}
+    dadosPrincipaisCarregados=true;
+    const abaAtiva=document.querySelector(".painel-aba.ativo")?.id||"dashboardGeral";
+    try{renderizarConteudoAba(abaAtiva);}catch(erro){console.error(`Falha ao atualizar ${abaAtiva}:`,erro);avisos.push(abaAtiva);}
     restaurarFiltrosPlanilha(estadoFiltrosAntes);
     if(avisos.length){
       status.textContent=`Dados carregados; atualize a página para recarregar: ${avisos.join(", ")}.`;
@@ -4053,7 +4042,7 @@ function escaparHtml(valor){
   return String(valor || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
-function prepararPlanilha(){
+function prepararPlanilha(renderizarConteudo=true){
   const torre = TORRES[torreSelecionada];
   const filtroAndar = document.getElementById("filtroAndar");
   const andarAtual = filtroAndar.value || "todos";
@@ -4069,9 +4058,11 @@ function prepararPlanilha(){
   document.getElementById("subtituloPlanilha").textContent = torreSelecionada === "horizonte"
     ? `${torre.nome} · 23 andares · 14 apartamentos do 4º ao 23º · 1º, 2º e 3º de áreas comuns`
     : `${torre.nome} · 36 andares · unidades específicas por andar · 3º andar de área comum`;
-  renderizarPlanilha();
-  atualizarGraficosOperacionais();
-  atualizarDashboardGeral();
+  if(renderizarConteudo){
+    renderizarPlanilha();
+    atualizarGraficosOperacionais();
+    atualizarDashboardGeral();
+  }
 }
 
 function capturarFiltrosPlanilha(){
@@ -4484,10 +4475,7 @@ menuContextoPendencia.addEventListener("click",async event=>{
   fecharMenuPendencia();
   pendenciaContexto=null;
   await salvarRegistros();
-  renderizarPlanilha();
-  renderizarApartamentosDoPavimento();
-  atualizarGraficosOperacionais();
-  atualizarDashboardGeral();
+  atualizarInterfaceAposAlteracao();
 });
 document.getElementById("verPendencia").addEventListener("click",()=>{
   if(!pendenciaContexto)return;
@@ -4585,11 +4573,7 @@ function atualizarRegistro(elemento){
   }
   registrosObra[chave] = atual;
   salvarRegistros();
-  renderizarPlanilha();
-  renderizarApartamentosDoPavimento();
-  atualizarGraficosOperacionais();
-  atualizarDashboardGeral();
-  renderizarAbaServicos();
+  atualizarInterfaceAposAlteracao();
 }
 
 function atualizarGraficosOperacionais(){
@@ -4681,12 +4665,9 @@ function selecionarTorre(chave){
   preencherEtapas();
   preencherOcorrencias();
   desenharCurvaS();
-  prepararPlanilha();
-  renderizarApartamentosDoPavimento();
-  renderizarPersonalizacoes();
+  prepararPlanilha(false);
   prepararFormularioOcorrencia();
   atualizarPortalRelatorios();
-  prepararAbaServicos();
   ativarAba("dashboardGeral", false);
   document.getElementById('seletorTorres').classList.add('fechado');
   document.body.classList.remove('selecao-aberta');
@@ -5305,6 +5286,22 @@ document.getElementById("filtroAndar").addEventListener("change", () => {
   });
 });
 document.getElementById("filtroServicoDashboard").addEventListener("change", atualizarDashboardGeral);
+function renderizarConteudoAba(id){
+  if(!dadosPrincipaisCarregados)return;
+  if(id==="dashboardGeral")prepararDashboardGeral();
+  else if(id==="controleDetalhado")renderizarPlanilha();
+  else if(id==="apartamentos")renderizarApartamentosDoPavimento();
+  else if(id==="personalizacao")renderizarPersonalizacoes();
+  else if(id==="graficos")atualizarGraficosOperacionais();
+  else if(id==="servicos")prepararAbaServicos();
+  else if(id==="atividadesAdmin")renderizarAtividadesAdmin();
+  else if(id==="ocorrencias")atualizarAtividadesOcorrencia();
+}
+function atualizarInterfaceAposAlteracao(){
+  const abaAtiva=document.querySelector(".painel-aba.ativo")?.id||"dashboardGeral";
+  renderizarConteudoAba(abaAtiva);
+  agendarAtualizacaoGraficoAbertura();
+}
 function ativarAba(id, rolar = true){
   document.querySelectorAll(".painel-aba").forEach(painel => {
     painel.classList.toggle("ativo", painel.id === id);
@@ -5315,6 +5312,7 @@ function ativarAba(id, rolar = true){
   });
   document.querySelector(".menu-planilha").classList.toggle("ativo", id === "controleDetalhado" || id === "atividadesAdmin");
   document.querySelector(".menu-personalizacao").classList.toggle("ativo",id==="personalizacao"||id==="cadastroPersonalizacao");
+  renderizarConteudoAba(id);
   if(id==="personalizacao"||id==="ocorrencias")marcarNotificacaoVista(id);
   if(id === "graficos"){
     requestAnimationFrame(() => {
@@ -5340,7 +5338,6 @@ document.querySelectorAll(".menu-principal a").forEach(link => {
       unidadeSelecionada=null;
       document.getElementById("filtroPlantaApartamentos").value="todos";
       document.getElementById("filtroAcabamentoApartamentos").value="todos";
-      renderizarApartamentosDoPavimento();
     }
     ativarAba(destino);
   });
@@ -5507,10 +5504,7 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
     });
     await salvarRegistros();
     especificacoesSelecionadas.clear();
-    renderizarPlanilha();
-    renderizarApartamentosDoPavimento();
-    atualizarGraficosOperacionais();
-    atualizarDashboardGeral();
+    atualizarInterfaceAposAlteracao();
     return;
   }
   if(!registrosSelecionados.size) return;
@@ -5541,10 +5535,7 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
   });
   await salvarRegistros();
   registrosSelecionados.clear();
-  renderizarPlanilha();
-  renderizarApartamentosDoPavimento();
-  atualizarGraficosOperacionais();
-  atualizarDashboardGeral();
+  atualizarInterfaceAposAlteracao();
 });
 const menuContextoRecolhimento=document.getElementById("menuContextoRecolhimento");
 function fecharMenuRecolhimento(){menuContextoRecolhimento.classList.add("oculto");}
@@ -5748,12 +5739,8 @@ preencherKpis();
 preencherEtapas();
 preencherOcorrencias();
 desenharCurvaS();
-prepararDashboardGeral();
-prepararPlanilha();
-renderizarApartamentosDoPavimento();
 prepararFormularioOcorrencia();
 atualizarPortalRelatorios();
-prepararAbaServicos();
 prepararCadastroMassivo();
 atualizarAndaresAtividade();
 renderizarEscoposAtividade();
