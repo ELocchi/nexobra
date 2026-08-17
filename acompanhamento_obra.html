@@ -766,6 +766,19 @@
     background:repeating-linear-gradient(90deg,#9baaad 0 4px,transparent 4px 24px);
     opacity:1;
   }
+  .predio-progresso.modo-fachada .andar-progresso{
+    display:grid;grid-template-columns:repeat(var(--quantidade-setores),minmax(0,1fr));
+    padding:0;overflow:hidden;background:#637582;
+  }
+  .predio-progresso.modo-fachada .fachada-setor{
+    position:relative;z-index:1;display:block;min-width:0;border-right:1px solid rgba(255,255,255,.48);
+    background:#637582;
+  }
+  .predio-progresso.modo-fachada .fachada-setor:last-child{border-right:0;}
+  .predio-progresso.modo-fachada .fachada-setor.em-andamento{background:#e0a800;}
+  .predio-progresso.modo-fachada .fachada-setor.pendente{background:#d9483d;}
+  .predio-progresso.modo-fachada .fachada-setor.concluido{background:#2e9e5b;}
+  .predio-progresso.modo-fachada .andar-progresso::after{z-index:2;pointer-events:none;}
   .predio-progresso.aurora{height:455px;}
   .predio-progresso.horizonte{height:325px;}
   .andar-progresso{
@@ -2767,6 +2780,14 @@ function estadosItemEtapaDashboard(item,etapa,torre){
     ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
     :[registro.status||"nao-iniciado"];
 }
+function estadoConsolidadoEtapaDashboard(estados){
+  const validos=estados.filter(estado=>estado!=="nao-aplicavel");
+  if(!validos.length)return "nao-iniciado";
+  if(validos.every(estado=>estado==="concluido"))return "concluido";
+  if(validos.some(estado=>estado==="pendente"))return "pendente";
+  if(validos.some(estado=>estado==="em-andamento"||estado==="concluido"))return "em-andamento";
+  return "nao-iniciado";
+}
 function atualizarGraficoAbertura(){
   const grupos={fundacao:[],estrutura:[],alvenaria:[],acabamento:[],fachada:[],pintura:[]};
   Object.entries(registrosObra).forEach(([chave,registro])=>{
@@ -4147,6 +4168,7 @@ function renderizarTorresProgresso(servico){
     }
     const modoEstrutura=servico==="estrutura";
     const modoAlvenaria=servico==="alvenaria";
+    const modoFachada=servico==="fachada";
     const andares = pavimentos.map(andar=>{
       const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
       const total=itens.length||1;
@@ -4173,9 +4195,14 @@ function renderizarTorresProgresso(servico){
         :modoAlvenaria
           ?`${dados.nome} · ${rotulo} · ${percentualExibido}% do fechamento em alvenaria concluído`
         :`${dados.nome} · ${rotulo} · ${concluidos} concluídas · ${andamento} em andamento · ${pendentes} pendentes · ${percentual}% concluído`;
-      return `<span class="andar-progresso${classeEstrutura}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%;--percentual-alvenaria:${percentualAlvenaria}%" data-marco="${marco}" title="${titulo}" aria-label="Ver ${rotulo} da ${dados.nome}"></span>`;
+      const setoresFachada=modoFachada?itens.map(item=>{
+        const estado=estadoConsolidadoEtapaDashboard(estadosItemEtapaDashboard(item,"fachada",torre));
+        return `<span class="fachada-setor ${estado}" title="${escaparHtml(item.unidade)} · ${estado.replaceAll("-"," ")}"></span>`;
+      }).join(""):"";
+      const quantidadeSetores=modoFachada?Math.max(1,itens.length):1;
+      return `<span class="andar-progresso${classeEstrutura}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%;--percentual-alvenaria:${percentualAlvenaria}%;--quantidade-setores:${quantidadeSetores}" data-marco="${marco}" title="${titulo}" aria-label="Ver ${rotulo} da ${dados.nome}">${setoresFachada}</span>`;
     }).join("");
-    const classeModo=modoEstrutura?"modo-estrutura":modoAlvenaria?"modo-alvenaria":"";
+    const classeModo=modoEstrutura?"modo-estrutura":modoAlvenaria?"modo-alvenaria":modoFachada?"modo-fachada":"";
     return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${classeModo}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
   }).join("");
 }
