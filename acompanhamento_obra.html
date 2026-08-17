@@ -2575,6 +2575,9 @@ let plantasUnidades = {};
 let acabamentosUnidades = {};
 let projetosAdicionados = [];
 let projetosOcultos = [];
+let dadosPersonalizacaoCarregados=false;
+let ocorrenciasCarregadas=false;
+let promessaDadosPersonalizacao=null;
 let atividadesCadastro = [];
 let escoposAtividadeTemporarios = [];
 let especificacoesAtividadeTemporarias = [];
@@ -2592,6 +2595,39 @@ let graficoPrazos;
 let graficoStatusGeral;
 let graficoApartamento;
 let graficoServico;
+async function carregarDadosPersonalizacao(){
+  if(dadosPersonalizacaoCarregados)return;
+  if(promessaDadosPersonalizacao)return promessaDadosPersonalizacao;
+  promessaDadosPersonalizacao=(async()=>{
+    const [personalizacoes,plantas,acabamentos,projetos,ocultos]=await Promise.all([
+      buscarJsonComTentativas("/personalizacoes_unidades.json"),
+      buscarJsonComTentativas("/plantas_unidades.json"),
+      buscarJsonComTentativas("/acabamentos_unidades.json"),
+      buscarJsonComTentativas("/api/projetos"),
+      buscarJsonComTentativas("/api/projetos-ocultos")
+    ]);
+    personalizacoesUnidades=personalizacoes;
+    plantasUnidades=plantas;
+    acabamentosUnidades=acabamentos;
+    projetosAdicionados=projetos;
+    projetosOcultos=ocultos;
+    dadosPersonalizacaoCarregados=true;
+    if(ocorrenciasCarregadas)atualizarNotificacoes(true);
+    const abaAtiva=document.querySelector(".painel-aba.ativo")?.id;
+    if(abaAtiva==="apartamentos")renderizarApartamentosDoPavimento();
+    else if(abaAtiva==="personalizacao")renderizarPersonalizacoes();
+  })().catch(erro=>{
+    promessaDadosPersonalizacao=null;
+    console.error("Falha ao carregar dados de personalização:",erro);
+    throw erro;
+  });
+  return promessaDadosPersonalizacao;
+}
+function agendarDadosPersonalizacao(){
+  const carregar=()=>carregarDadosPersonalizacao().catch(()=>{});
+  if("requestIdleCallback" in window)requestIdleCallback(carregar,{timeout:5000});
+  else setTimeout(carregar,1500);
+}
 function resumoNotificacoesAtual(){
   const resumo=JSON.stringify({plantas:Object.entries(plantasUnidades).map(([chave,item])=>[chave,item.tipo,item.origem]),acabamentos:Object.entries(acabamentosUnidades).map(([chave,item])=>[chave,item.planta,(item.itens||[]).map(valor=>[valor.ambiente,valor.item,valor.opcao])]),projetos:projetosAdicionados.map(item=>[item.id,item.torre,item.unidade,item.titulo])});
   let hash=2166136261;for(let i=0;i<resumo.length;i++){hash^=resumo.charCodeAt(i);hash=Math.imul(hash,16777619);}const personalizacoes=String(hash>>>0);
@@ -2621,6 +2657,7 @@ function marcarNotificacaoVista(aba){
 }
 async function sincronizarPersonalizacoes(){
   try{
+    if(!dadosPersonalizacaoCarregados){await carregarDadosPersonalizacao();return;}
     const antes=resumoNotificacoesAtual().personalizacoes;
     const [respostaPlantas,respostaAcabamentos,respostaProjetos]=await Promise.all([
       fetch("/plantas_unidades.json",{cache:"no-cache"}),fetch("/acabamentos_unidades.json",{cache:"no-cache"}),fetch("/api/projetos",{cache:"no-store"})
@@ -2719,15 +2756,10 @@ async function carregarRegistrosDoBanco(){
   const estadoFiltrosAntes=capturarFiltrosPlanilha();
   try{
     let dadosRegistros;
-    [dadosRegistros,planejamentoObra,atividadesCadastro,personalizacoesUnidades,plantasUnidades,acabamentosUnidades,projetosAdicionados,projetosOcultos] = await Promise.all([
+    [dadosRegistros,planejamentoObra,atividadesCadastro] = await Promise.all([
       buscarJsonComTentativas("/api/registros?formato=compacto"),
       buscarJsonComTentativas("/api/planejamento"),
-      buscarJsonComTentativas("/api/atividades"),
-      buscarJsonComTentativas("/personalizacoes_unidades.json"),
-      buscarJsonComTentativas("/plantas_unidades.json"),
-      buscarJsonComTentativas("/acabamentos_unidades.json"),
-      buscarJsonComTentativas("/api/projetos"),
-      buscarJsonComTentativas("/api/projetos-ocultos")
+      buscarJsonComTentativas("/api/atividades")
     ]);
     ATIVIDADES_UNIDADE = atividadesCadastro.map(item=>item.nome);
     aplicarRegistrosCarregados(dadosRegistros);
@@ -2742,6 +2774,7 @@ async function carregarRegistrosDoBanco(){
     dadosPrincipaisCarregados=true;
     const abaAtiva=document.querySelector(".painel-aba.ativo")?.id||"dashboardGeral";
     try{renderizarConteudoAba(abaAtiva);}catch(erro){console.error(`Falha ao atualizar ${abaAtiva}:`,erro);avisos.push(abaAtiva);}
+    agendarDadosPersonalizacao();
     restaurarFiltrosPlanilha(estadoFiltrosAntes);
     if(avisos.length){
       status.textContent=`Dados carregados; atualize a página para recarregar: ${avisos.join(", ")}.`;
@@ -2805,12 +2838,11 @@ async function carregarOcorrenciasDoBanco(){
     const resposta = await fetch("/api/ocorrencias",{cache:"no-store"});
     if(!resposta.ok) throw new Error("Falha ao carregar ocorrências");
     ocorrenciasBanco = await resposta.json();
-    atualizarNotificacoes(true);
+    ocorrenciasCarregadas=true;
+    if(dadosPersonalizacaoCarregados)atualizarNotificacoes(true);
     atualizarApartamentosFiltroOcorrencias();
     preencherOcorrencias();
-    renderizarApartamentosDoPavimento();
-    atualizarDashboardGeral();
-    atualizarGraficosOperacionais();
+    atualizarInterfaceAposAlteracao();
   }catch(e){
     document.getElementById("statusOcorrencia").textContent = "Não foi possível acessar as ocorrências no banco.";
   }
@@ -5308,6 +5340,10 @@ document.getElementById("filtroAndar").addEventListener("change", () => {
 document.getElementById("filtroServicoDashboard").addEventListener("change", atualizarDashboardGeral);
 function renderizarConteudoAba(id){
   if(!dadosPrincipaisCarregados)return;
+  if((id==="apartamentos"||id==="personalizacao"||id==="cadastroPersonalizacao")&&!dadosPersonalizacaoCarregados){
+    carregarDadosPersonalizacao().catch(()=>{});
+    return;
+  }
   if(id==="dashboardGeral")prepararDashboardGeral();
   else if(id==="controleDetalhado")renderizarPlanilha();
   else if(id==="apartamentos")renderizarApartamentosDoPavimento();
@@ -5796,7 +5832,7 @@ atualizarAndaresAtividade();
 renderizarEscoposAtividade();
 carregarRegistrosDoBanco();
 carregarOcorrenciasDoBanco();
-setInterval(()=>{if(!document.hidden)sincronizarPersonalizacoes();},30000);
+setInterval(()=>{if(!document.hidden&&dadosPersonalizacaoCarregados)sincronizarPersonalizacoes();},30000);
 </script>
 
 </body>
