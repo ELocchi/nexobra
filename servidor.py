@@ -558,10 +558,6 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
             (torre, andar, unidade),
         ).fetchall()
         registros = somente_registros_planejados(registros, torre)
-        ocorrencias = conexao.execute(
-            "SELECT atividade, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? AND status != 'pendente' ORDER BY data_ocorrencia DESC, id DESC",
-            (torre, andar, unidade),
-        ).fetchall()
         projetos_banco = conexao.execute(
             "SELECT titulo, imagem FROM projetos_unidade WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY id",
             (torre, andar, unidade),
@@ -606,15 +602,6 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
             f'<tr><td>{escape(item["atividade"])}</td><td><span class="status {escape(item["status"])}">{escape(STATUS_NOMES.get(item["status"], item["status"]))}</span></td>'
             f'<td>{data}</td><td>{escape(item["observacao"] or "—")}</td><td>{foto}</td></tr>'
         )
-    cards = []
-    for item in ocorrencias:
-        data = "/".join(reversed(item["data_ocorrencia"].split("-"))) if item["data_ocorrencia"] else "—"
-        imagem = f'<img src="{item["foto"]}" alt="Foto da ocorrência">' if item["foto"] else ""
-        cards.append(
-            f'<article class="ocorrencia {escape(item["status"])}"><strong>{escape(item["atividade"])}</strong>'
-            f'<span class="status {escape(item["status"])}">{escape(STATUS_NOMES.get(item["status"], item["status"]))}</span>'
-            f'<p>{escape(item["descricao"])}</p><small>{data}</small>{imagem}</article>'
-        )
     escapar_atributo = lambda valor: escape(str(valor), {'"': "&quot;"})
     projetos_html = "".join(
         f'<article class="projeto"><a href="{escapar_atributo(item["imagem"])}" target="_blank" rel="noopener">'
@@ -645,8 +632,7 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
 <main><section class="avanco"><strong>{percentual}% concluído</strong><div class="barra"><i></i></div><p>{concluidos} de {total} serviços concluídos</p><a class="botao" href="/relatorio.pdf?{consulta}">Abrir relatório em PDF</a><div class="aviso">Página somente para consulta. Nenhuma informação pode ser alterada neste acesso.</div></section>
 <section class="painel"><h2>Projetos da unidade</h2>{f'<p class="planta-info">Opção de planta: <b>{escape(str(planta.get("tipo")))}</b></p>' if planta.get("tipo") else ''}<div class="projetos">{projetos_html if projetos_html else '<p>Nenhuma imagem de projeto disponível.</p>'}</div></section>
 <section class="painel"><h2>Acabamentos</h2>{f'<p class="planta-info">Condição: <b>{escape(str(acabamento.get("planta")))}</b></p>' if acabamento.get("planta") else ''}<div class="ambientes">{acabamentos_html if acabamentos_html else '<p>Acabamentos padrão da unidade.</p>'}</div></section>
-<section class="painel"><h2>Atividades da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhuma atividade registrada.</td></tr>'}</tbody></table></div></section>
-<section class="painel"><h2>Ocorrências concluídas</h2><div class="ocorrencias">{''.join(cards) if cards else '<p>Nenhuma ocorrência concluída vinculada.</p>'}</div></section></main></body></html>""".encode("utf-8")
+<section class="painel"><h2>Atividades da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhuma atividade registrada.</td></tr>'}</tbody></table></div></section></main></body></html>""".encode("utf-8")
 
 
 def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos", status="todos"):
