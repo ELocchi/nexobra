@@ -394,7 +394,7 @@ def gerar_relatorio_pdf(torre, andar, unidade):
     return memoria.getvalue()
 
 
-def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", status="todos"):
+def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", status="todos", tipo="todos"):
     with conectar() as conexao:
         consulta = "SELECT id, torre, andar, unidade, atividade, subatividade, especificacao, status, data_ocorrencia, descricao, foto, foto_nome, criado_em FROM ocorrencias"
         parametros = ()
@@ -409,6 +409,8 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
         ocorrencias = [item for item in ocorrencias if item["unidade"] == unidade]
     if status != "todos":
         ocorrencias = [item for item in ocorrencias if item["status"] == status]
+    if tipo != "todos":
+        ocorrencias = [item for item in ocorrencias if ("seguranca" if item["atividade"] == "Segurança" else "atividade") == tipo]
     memoria = BytesIO()
     documento = SimpleDocTemplate(
         memoria, pagesize=A4, rightMargin=18*mm, leftMargin=18*mm,
@@ -3009,15 +3011,16 @@ class ServidorObra(SimpleHTTPRequestHandler):
             andar = parametros.get("andar", ["todos"])[0]
             unidade = parametros.get("unidade", ["todos"])[0]
             status = parametros.get("status", ["todos"])[0]
+            tipo = parametros.get("tipo", ["todos"])[0]
             try:
                 converter_filtro_andar(andar)
             except ValueError:
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
                 return
-            if torre not in {*TORRES_NOMES, "todos"} or status not in {*STATUS_NOMES.keys(), "todos"}:
+            if torre not in {*TORRES_NOMES, "todos"} or status not in {*STATUS_NOMES.keys(), "todos"} or tipo not in {"todos", "atividade", "seguranca"}:
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
                 return
-            corpo = gerar_historico_ocorrencias_pdf(torre, andar, unidade, status)
+            corpo = gerar_historico_ocorrencias_pdf(torre, andar, unidade, status, tipo)
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
             self.send_header("Content-Disposition", 'attachment; filename="historico-ocorrencias.pdf"')
