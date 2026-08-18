@@ -837,6 +837,21 @@ def gerar_placas_pdf(torre, unidades, base_publica):
     return memoria.getvalue()
 
 
+def gerar_pasta_placas_zip(torre, unidades, base_publica, escopo):
+    memoria = BytesIO()
+    nome_escopo = re.sub(
+        r"[^a-z0-9]+", "-",
+        unicodedata.normalize("NFD", escopo).encode("ascii", "ignore").decode().lower(),
+    ).strip("-")
+    pasta_raiz = f"placas-{nome_escopo}"
+    with ZipFile(memoria, "w") as arquivo_zip:
+        for andar, unidade in unidades:
+            numero = re.sub(r"[^0-9a-z]+", "-", unidade.lower()).strip("-").replace("apto-", "")
+            caminho = f"{pasta_raiz}/placa-{numero}.pdf"
+            arquivo_zip.writestr(caminho, gerar_placas_pdf(torre, [(andar, unidade)], base_publica))
+    return memoria.getvalue(), f"{pasta_raiz}.zip"
+
+
 def endereco_rede():
     try:
         return subprocess.check_output(["ipconfig", "getifaddr", "en0"], text=True).strip()
@@ -3137,12 +3152,19 @@ class ServidorObra(SimpleHTTPRequestHandler):
             if not unidades:
                 self.enviar_json({"erro": "Nenhuma unidade encontrada para as placas"}, 404)
                 return
-            corpo = gerar_placas_pdf(torre, unidades, self.url_publica("").rstrip("/"))
             escopo = unidade if unidade != "todos" else f"andar-{andar}" if andar != "todos" else TORRES_NOMES[torre]
-            nome = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFD", escopo).encode("ascii", "ignore").decode().lower()).strip("-")
+            base_publica = self.url_publica("").rstrip("/")
+            if unidade == "todos":
+                corpo, nome_arquivo = gerar_pasta_placas_zip(torre, unidades, base_publica, escopo)
+                tipo_resposta = "application/zip"
+            else:
+                corpo = gerar_placas_pdf(torre, unidades, base_publica)
+                nome = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFD", escopo).encode("ascii", "ignore").decode().lower()).strip("-")
+                nome_arquivo = f"placa-{nome}.pdf"
+                tipo_resposta = "application/pdf"
             self.send_response(200)
-            self.send_header("Content-Type", "application/pdf")
-            self.send_header("Content-Disposition", f'attachment; filename="placas-{nome}.pdf"')
+            self.send_header("Content-Type", tipo_resposta)
+            self.send_header("Content-Disposition", f'attachment; filename="{nome_arquivo}"')
             self.send_header("Content-Length", str(len(corpo)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()

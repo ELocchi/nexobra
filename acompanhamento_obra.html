@@ -3666,7 +3666,9 @@ function atualizarUnidadesRelatorio(){
   const torre=document.getElementById("relatorioTorre").value;
   const andar=document.getElementById("relatorioAndar").value;
   const unidades=[...new Set(listaRegistros(torre).filter(item=>andar==="todos"||item.andar===Number(andar)).map(item=>item.unidade))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
-  document.getElementById("relatorioUnidade").innerHTML=`<option value="todos">Todos os apartamentos e setores</option>`+unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+  const seletorUnidade=document.getElementById("relatorioUnidade");
+  seletorUnidade.innerHTML=`<option value="todos">Todos os apartamentos e setores</option>`+unidades.map(unidade=>`<option value="${escaparHtml(unidade)}">${escaparHtml(unidade.replace("Apto ","Apartamento "))}</option>`).join("");
+  seletorUnidade.value="todos";
 }
 
 function gerarPdfRelatorio(){
@@ -3683,14 +3685,15 @@ function gerarPdfRelatorio(){
 }
 
 function baixarPlacasRelatorio(){
+  const unidade=document.getElementById("relatorioUnidade").value;
   const consulta=new URLSearchParams({
     torre:document.getElementById("relatorioTorre").value,
     andar:document.getElementById("relatorioAndar").value,
-    unidade:document.getElementById("relatorioUnidade").value
+    unidade
   });
   const link=document.createElement("a");
   link.href=`/placas-unidades.pdf?${consulta}`;
-  link.download="placas-unidades.pdf";
+  link.download=unidade==="todos"?"placas-unidades.zip":"placa-unidade.pdf";
   document.body.appendChild(link);
   link.click();
   link.remove();
