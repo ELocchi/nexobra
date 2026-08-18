@@ -562,6 +562,35 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
             "SELECT atividade, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? AND status != 'pendente' ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
         ).fetchall()
+        projetos_banco = conexao.execute(
+            "SELECT titulo, imagem FROM projetos_unidade WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY id",
+            (torre, andar, unidade),
+        ).fetchall()
+        projetos_ocultos = {
+            item["imagem"] for item in conexao.execute(
+                "SELECT imagem FROM projetos_ocultos WHERE torre = ? AND andar = ? AND unidade = ?",
+                (torre, andar, unidade),
+            ).fetchall()
+        }
+    chave_unidade = f"{torre}|{unidade}"
+    plantas = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+    personalizacoes = json.loads(ARQUIVO_PERSONALIZACOES.read_text(encoding="utf-8")) if ARQUIVO_PERSONALIZACOES.exists() else {}
+    acabamentos_dados = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+    planta = plantas.get(chave_unidade, {})
+    personalizacao = personalizacoes.get(chave_unidade, {})
+    acabamento = acabamentos_dados.get(chave_unidade, {})
+    projetos = []
+    imagens_incluidas = set()
+    candidatos_projetos = []
+    if planta.get("plantaMiniatura"):
+        candidatos_projetos.append({"titulo": planta.get("tipo") or "Planta da unidade", "imagem": planta["plantaMiniatura"]})
+    candidatos_projetos.extend(personalizacao.get("projetos", []))
+    candidatos_projetos.extend(dict(item) for item in projetos_banco)
+    for projeto in candidatos_projetos:
+        imagem = projeto.get("imagem", "")
+        if imagem and imagem not in imagens_incluidas and imagem not in projetos_ocultos:
+            imagens_incluidas.add(imagem)
+            projetos.append({"titulo": projeto.get("titulo") or "Projeto", "imagem": imagem})
     total = len(registros)
     concluidos = sum(1 for item in registros if item["status"] == "concluido")
     percentual = round(concluidos / total * 100) if total else 0
@@ -586,14 +615,38 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
             f'<span class="status {escape(item["status"])}">{escape(STATUS_NOMES.get(item["status"], item["status"]))}</span>'
             f'<p>{escape(item["descricao"])}</p><small>{data}</small>{imagem}</article>'
         )
+    escapar_atributo = lambda valor: escape(str(valor), {'"': "&quot;"})
+    projetos_html = "".join(
+        f'<article class="projeto"><a href="{escapar_atributo(item["imagem"])}" target="_blank" rel="noopener">'
+        f'<img src="{escapar_atributo(item["imagem"])}" alt="{escapar_atributo(item["titulo"])}"></a>'
+        f'<strong>{escape(str(item["titulo"]))}</strong></article>'
+        for item in projetos
+    )
+    grupos_acabamentos = {}
+    for item in acabamento.get("itens", []):
+        grupos_acabamentos.setdefault(item.get("ambiente") or "Geral", []).append(item)
+    def renderizar_item_acabamento(item):
+        descricao = f'<p>{escape(str(item["descricao"]))}</p>' if item.get("descricao") else ""
+        return (
+            f'<div class="acabamento"><div><strong>{escape(str(item.get("item") or "Item"))}</strong>'
+            f'{descricao}</div><span>{escape(str(item.get("opcao") or "Padrão"))}</span></div>'
+        )
+    acabamentos_html = "".join(
+        f'<section class="ambiente"><h3>{escape(str(ambiente))}</h3><div class="acabamento-itens">' + "".join(
+            renderizar_item_acabamento(item) for item in itens
+        ) + '</div></section>'
+        for ambiente, itens in grupos_acabamentos.items()
+    )
     nome_unidade = unidade.replace("Apto ", "Apartamento ")
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{escape(nome_unidade)} — acompanhamento</title><style>
-*{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1050px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.35rem;margin:15px 0 4px}}header p{{margin:0;color:#d9e3eb}}main{{padding:18px}}.avanco,.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}.avanco strong{{font-size:1.8rem;color:#173a5e}}.barra{{height:10px;background:#e5e9ec;border-radius:8px;overflow:hidden;margin-top:8px}}.barra i{{display:block;height:100%;width:{percentual}%;background:#2e9e5b}}h2{{font-size:1rem;color:#173a5e}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left;vertical-align:top}}th{{background:#eef3f6}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.status.nao-iniciado{{background:#e8ecef;color:#637582}}.status.em-andamento{{background:#fff1bd;color:#8a6a00}}.status.pendente{{background:#fbe0dd;color:#d9483d}}.status.concluido{{background:#def2e5;color:#2e9e5b}}.ocorrencias{{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}}.ocorrencia{{background:#fff;border-left:4px solid #637582;border-radius:8px;padding:12px}}.ocorrencia.em-andamento{{border-color:#e0a800}}.ocorrencia.pendente{{border-color:#d9483d}}.ocorrencia.concluido{{border-color:#2e9e5b}}.ocorrencia strong{{display:block;margin:0 0 7px}}.ocorrencia p{{font-size:.8rem;line-height:1.45}}.ocorrencia img{{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:7px;margin-top:9px}}.botao,.foto{{display:inline-block;color:#fff;background:#17608f;border-radius:7px;padding:9px 12px;text-decoration:none;font-size:.76rem;font-weight:bold}}.foto{{padding:5px 7px}}.aviso{{font-size:.72rem;color:#687887;margin-top:10px}}@media(max-width:700px){{main{{padding:10px}}.tabela{{overflow:auto}}table{{min-width:720px}}}}
+*{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1050px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.35rem;margin:15px 0 4px}}header p{{margin:0;color:#d9e3eb}}main{{padding:18px}}.avanco,.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}.avanco strong{{font-size:1.8rem;color:#173a5e}}.barra{{height:10px;background:#e5e9ec;border-radius:8px;overflow:hidden;margin-top:8px}}.barra i{{display:block;height:100%;width:{percentual}%;background:#2e9e5b}}h2{{font-size:1rem;color:#173a5e;margin:0 0 14px}}.projetos{{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}}.projeto{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden;background:#f8fafb}}.projeto a{{display:block;background:#fff}}.projeto img{{display:block;width:100%;height:260px;object-fit:contain}}.projeto strong{{display:block;padding:10px;font-size:.78rem;color:#173a5e}}.planta-info{{margin:-5px 0 14px;color:#687887;font-size:.76rem}}.ambientes{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}}.ambiente{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden}}.ambiente h3{{margin:0;padding:10px 12px;background:#eef3f6;color:#173a5e;font-size:.8rem}}.acabamento{{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-top:1px solid #edf0f2;font-size:.75rem}}.acabamento:first-child{{border-top:0}}.acabamento strong{{display:block}}.acabamento p{{margin:4px 0 0;color:#687887;font-size:.7rem}}.acabamento span{{flex:none;align-self:flex-start;border-radius:12px;background:#e9f1f7;color:#17608f;padding:4px 7px;font-size:.66rem;font-weight:bold}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left;vertical-align:top}}th{{background:#eef3f6}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.status.nao-iniciado{{background:#e8ecef;color:#637582}}.status.em-andamento{{background:#fff1bd;color:#8a6a00}}.status.pendente{{background:#fbe0dd;color:#d9483d}}.status.concluido{{background:#def2e5;color:#2e9e5b}}.ocorrencias{{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}}.ocorrencia{{background:#f8fafb;border-left:4px solid #2e9e5b;border-radius:8px;padding:12px}}.ocorrencia strong{{display:block;margin:0 0 7px}}.ocorrencia p{{font-size:.8rem;line-height:1.45}}.ocorrencia img{{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:7px;margin-top:9px}}.botao,.foto{{display:inline-block;color:#fff;background:#17608f;border-radius:7px;padding:9px 12px;text-decoration:none;font-size:.76rem;font-weight:bold}}.foto{{padding:5px 7px}}.aviso{{font-size:.72rem;color:#687887;margin-top:10px}}@media(max-width:700px){{main{{padding:10px}}.tabela{{overflow:auto}}table{{min-width:720px}}.projeto img{{height:220px}}}}
 </style></head><body><header><div><img src="/logo%20dialogo.png" alt="Diálogo Engenharia"><h1>{escape(nome_unidade)} · {andar}º andar</h1><p>{escape(TORRES_NOMES.get(torre, torre))} · visualização para visitantes</p></div></header>
 <main><section class="avanco"><strong>{percentual}% concluído</strong><div class="barra"><i></i></div><p>{concluidos} de {total} serviços concluídos</p><a class="botao" href="/relatorio.pdf?{consulta}">Abrir relatório em PDF</a><div class="aviso">Página somente para consulta. Nenhuma informação pode ser alterada neste acesso.</div></section>
-<section class="painel"><h2>Serviços da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhum serviço registrado.</td></tr>'}</tbody></table></div></section>
-<section class="painel"><h2>Ocorrências</h2><div class="ocorrencias">{''.join(cards) if cards else '<p>Nenhuma ocorrência vinculada.</p>'}</div></section></main></body></html>""".encode("utf-8")
+<section class="painel"><h2>Projetos da unidade</h2>{f'<p class="planta-info">Opção de planta: <b>{escape(str(planta.get("tipo")))}</b></p>' if planta.get("tipo") else ''}<div class="projetos">{projetos_html if projetos_html else '<p>Nenhuma imagem de projeto disponível.</p>'}</div></section>
+<section class="painel"><h2>Acabamentos</h2>{f'<p class="planta-info">Condição: <b>{escape(str(acabamento.get("planta")))}</b></p>' if acabamento.get("planta") else ''}<div class="ambientes">{acabamentos_html if acabamentos_html else '<p>Acabamentos padrão da unidade.</p>'}</div></section>
+<section class="painel"><h2>Atividades da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhuma atividade registrada.</td></tr>'}</tbody></table></div></section>
+<section class="painel"><h2>Ocorrências concluídas</h2><div class="ocorrencias">{''.join(cards) if cards else '<p>Nenhuma ocorrência concluída vinculada.</p>'}</div></section></main></body></html>""".encode("utf-8")
 
 
 def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos", status="todos"):
