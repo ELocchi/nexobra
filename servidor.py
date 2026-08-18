@@ -203,6 +203,27 @@ def acesso_visitante_valido(torre, andar, unidade, assinatura):
     )
 
 
+def caminho_visitante_curto(torre, andar, unidade):
+    codigo_torre = "a" if torre == "aurora" else "h"
+    numero = re.sub(r"\D", "", unidade)
+    assinatura = assinatura_visitante(torre, andar, unidade)[:16]
+    return f"/v/{codigo_torre}-{int(andar)}-{numero}-{assinatura}"
+
+
+def dados_caminho_visitante_curto(caminho):
+    encontrado = re.fullmatch(r"/v/([ah])-(-?\d+)-(\d+)-([0-9a-f]{16})", caminho)
+    if not encontrado:
+        return None
+    torre = "aurora" if encontrado.group(1) == "a" else "horizonte"
+    andar = int(encontrado.group(2))
+    unidade = f"Apto {encontrado.group(3)}"
+    assinatura = encontrado.group(4)
+    esperada = assinatura_visitante(torre, andar, unidade)[:16]
+    if not hmac.compare_digest(esperada, assinatura):
+        return None
+    return torre, andar, unidade, assinatura_visitante(torre, andar, unidade)
+
+
 def nome_exibicao_usuario(usuario):
     texto = str(usuario or "").strip()
     nomes_conhecidos = {"LOCCHI": "Emanuel Locchi"}
@@ -533,7 +554,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
 def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
     with conectar() as conexao:
         registros = conexao.execute(
-            "SELECT atividade, status, data_conclusao, observacao, foto, foto_nome FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
+            "SELECT andar, atividade, status, data_conclusao, observacao, foto, foto_nome FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
             (torre, andar, unidade),
         ).fetchall()
         registros = somente_registros_planejados(registros, torre)
@@ -826,9 +847,7 @@ def gerar_placas_pdf(torre, unidades, base_publica):
         pdf.setFont("Helvetica-Bold", tamanho_fonte)
         pdf.drawCentredString(largura/2, altura - 70*mm, nome_unidade)
 
-        assinatura = assinatura_visitante(torre, andar, unidade)
-        consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "acesso": assinatura})
-        url = f"{base_publica}/visitante?{consulta}"
+        url = f"{base_publica}{caminho_visitante_curto(torre, andar, unidade)}"
         tamanho_qr = 34*mm
         renderPDF.draw(desenho_qr(url, tamanho_qr), pdf, (largura-tamanho_qr)/2, 29*mm)
         desenhar_imagem_contida(pdf, PASTA / "logo dialogo.png", 7*mm, 17*mm, 29*mm, 11*mm)
@@ -3031,6 +3050,20 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 {"cargo": linha["cargo"], "perfil": linha["perfil"], "perfilNome": PERFIS_ACESSO.get(linha["perfil"], linha["perfil"])}
                 for linha in linhas
             ])
+            return
+        if caminho.startswith("/v/"):
+            dados_acesso = dados_caminho_visitante_curto(caminho)
+            if not dados_acesso:
+                self.enviar_json({"erro": "QR Code inválido ou expirado"}, 403)
+                return
+            torre, andar, unidade, assinatura = dados_acesso
+            corpo = gerar_pagina_visitante(torre, andar, unidade, assinatura)
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(corpo)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(corpo)
             return
         if caminho == "/api/admin/usuarios":
             if not self.exigir_administracao():
