@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta
 from io import BytesIO
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlencode, urlparse
+from urllib.parse import parse_qs, urlencode, urlparse, unquote
 from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 from zipfile import ZipFile
@@ -30,12 +30,15 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 from pypdf import PdfReader
 
 PASTA = Path(__file__).resolve().parent
 ARQUIVO_PLANEJAMENTO = PASTA / "dados_planilha_atual.json"
 ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
 ARQUIVO_PLANTAS = PASTA / "plantas_unidades.json"
+ARQUIVO_PERSONALIZACOES = PASTA / "personalizacoes_unidades.json"
 ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 CACHE_REGISTROS_COMPACTOS = {"assinatura": None, "corpo": b"", "gzip": b"", "etag": ""}
@@ -79,6 +82,55 @@ def opcoes_plantas_pdf(torre, andar, unidade):
             opcoes.append({"titulo": titulo, "imagem": f"/miniaturas_tipos_planta/{torre}-t{torre_numero}-p{indice_pagina + 1:02d}.png", "pagina": indice_pagina + 1})
     _OPCOES_PLANTAS_PDF[chave_cache] = opcoes
     return opcoes
+
+
+def gerar_pdf_planta_unidade(torre, unidade, tipo="planta", indice=0, projeto_id=0):
+    imagem = ""
+    titulo = f"Planta {unidade}"
+    if projeto_id:
+        with conectar() as conexao:
+            linha = conexao.execute(
+                "SELECT titulo, imagem FROM projetos_unidade WHERE id=? AND torre=? AND unidade=?",
+                (projeto_id, torre, unidade),
+            ).fetchone()
+        if not linha:
+            raise ValueError("Projeto não encontrado")
+        titulo, imagem = linha["titulo"], linha["imagem"]
+    elif tipo == "personalizacao":
+        dados = json.loads(ARQUIVO_PERSONALIZACOES.read_text(encoding="utf-8")) if ARQUIVO_PERSONALIZACOES.exists() else {}
+        projetos = dados.get(f"{torre}|{unidade}", {}).get("projetos", [])
+        if indice < 0 or indice >= len(projetos):
+            raise ValueError("Projeto não encontrado")
+        projeto = projetos[indice]
+        titulo = projeto.get("titulo") or projeto.get("arquivo") or titulo
+        imagem = projeto.get("imagem", "")
+    else:
+        dados = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+        planta = dados.get(f"{torre}|{unidade}", {})
+        titulo = planta.get("tipo") or titulo
+        imagem = planta.get("plantaMiniatura", "")
+    if not imagem:
+        raise ValueError("Imagem da planta não encontrada")
+    if imagem.startswith("data:image/"):
+        conteudo = base64.b64decode(imagem.split(",", 1)[-1])
+    else:
+        caminho_imagem = (PASTA / unquote(urlparse(imagem).path).lstrip("/")).resolve()
+        if PASTA.resolve() not in caminho_imagem.parents or not caminho_imagem.is_file():
+            raise ValueError("Arquivo da planta não encontrado")
+        conteudo = caminho_imagem.read_bytes()
+    leitor = ImageReader(BytesIO(conteudo))
+    largura_imagem, altura_imagem = leitor.getSize()
+    pagina = landscape(A4) if largura_imagem > altura_imagem else A4
+    margem = 12 * mm
+    escala = min((pagina[0] - 2 * margem) / largura_imagem, (pagina[1] - 2 * margem) / altura_imagem)
+    largura, altura = largura_imagem * escala, altura_imagem * escala
+    saida = BytesIO()
+    pdf = canvas.Canvas(saida, pagesize=pagina, pageCompression=1)
+    pdf.setTitle(str(titulo))
+    pdf.drawImage(leitor, (pagina[0] - largura) / 2, (pagina[1] - altura) / 2, largura, altura, preserveAspectRatio=True)
+    pdf.showPage()
+    pdf.save()
+    return saida.getvalue()
 SERVICOS_MANUAIS_BASE = [
     "Alvenaria",
     "Pedra Natural",
@@ -280,7 +332,7 @@ def conectar():
 def gerar_relatorio_pdf(torre, andar, unidade):
     with conectar() as conexao:
         registros = conexao.execute(
-            "SELECT atividade, status, data_conclusao, observacao FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
+            "SELECT andar, atividade, status, data_conclusao, observacao FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
             (torre, andar, unidade),
         ).fetchall()
         registros = somente_registros_planejados(registros, torre)
@@ -814,6 +866,22 @@ def preparar_banco():
         )
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_projetos_unidade ON projetos_unidade(torre, andar, unidade)"
+        )
+        conexao.execute(
+            """
+            CREATE TABLE IF NOT EXISTS comentarios_unidade (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                torre TEXT NOT NULL,
+                andar INTEGER NOT NULL,
+                unidade TEXT NOT NULL,
+                comentario TEXT NOT NULL,
+                autor TEXT NOT NULL DEFAULT '',
+                criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+        conexao.execute(
+            "CREATE INDEX IF NOT EXISTS idx_comentarios_unidade ON comentarios_unidade(torre, andar, unidade, criado_em)"
         )
         conexao.execute(
             """
@@ -2982,7 +3050,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 nome = unidade.replace("Apto ", "apartamento-").replace(" ", "-").lower()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/pdf")
-                self.send_header("Content-Disposition", f'inline; filename="relatorio-{nome}.pdf"')
+                self.send_header("Content-Disposition", f'attachment; filename="relatorio-{nome}.pdf"')
                 self.send_header("Content-Length", str(len(corpo)))
                 self.send_header("Cache-Control", "no-store")
                 self.end_headers()
@@ -2998,6 +3066,27 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(corpo)
+            return
+        if caminho == "/planta-unidade.pdf":
+            torre = parametros.get("torre", [""])[0]
+            unidade = parametros.get("unidade", [""])[0]
+            tipo = parametros.get("tipo", ["planta"])[0]
+            try:
+                indice = int(parametros.get("indice", ["0"])[0])
+                projeto_id = int(parametros.get("projeto", ["0"])[0])
+                if torre not in TORRES_NOMES or not unidade or tipo not in {"planta", "personalizacao"}:
+                    raise ValueError("Planta inválida")
+                corpo = gerar_pdf_planta_unidade(torre, unidade, tipo, indice, projeto_id)
+                nome = re.sub(r"[^a-z0-9-]+", "-", unicodedata.normalize("NFD", unidade).encode("ascii", "ignore").decode("ascii").lower()).strip("-")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/pdf")
+                self.send_header("Content-Disposition", f'attachment; filename="planta-{nome}.pdf"')
+                self.send_header("Content-Length", str(len(corpo)))
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(corpo)
+            except (ValueError, OSError, json.JSONDecodeError, binascii.Error) as erro:
+                self.enviar_json({"erro": str(erro)}, 404)
             return
         if caminho == "/api/registros":
             parametros = parse_qs(urlparse(self.path).query)
@@ -3210,6 +3299,13 @@ class ServidorObra(SimpleHTTPRequestHandler):
                  "imagem": linha["imagem"], "arquivoNome": linha["arquivo_nome"]}
                 for linha in linhas
             ])
+            return
+        if caminho == "/api/comentarios-unidade":
+            with conectar() as conexao:
+                linhas = conexao.execute(
+                    "SELECT id, torre, andar, unidade, comentario, autor, criado_em FROM comentarios_unidade ORDER BY criado_em, id"
+                ).fetchall()
+            self.enviar_json([dict(linha) for linha in linhas])
             return
         if caminho == "/api/projetos-ocultos":
             with conectar() as conexao:
@@ -3502,6 +3598,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
             "/api/personalizacoes/importar-planilhas": "gerenciar_projetos",
             "/api/atividades": "gerenciar_atividades",
             "/api/projetos": "gerenciar_projetos",
+            "/api/comentarios-unidade": "gerenciar_projetos",
             "/api/projetos-ocultos": "gerenciar_projetos",
             "/api/ocorrencias": "gerenciar_ocorrencias",
         }.get(caminho)
@@ -3919,6 +4016,35 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.enviar_json({"erro": str(erro)}, 400)
             except Exception as erro:
                 self.enviar_json({"erro": f"Falha ao salvar projeto: {erro}"}, 500)
+            return
+        if caminho == "/api/comentarios-unidade":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                torre = str(dados.get("torre", "")).strip()
+                andar = int(dados.get("andar", 0))
+                unidade = str(dados.get("unidade", "")).strip()
+                comentario = str(dados.get("comentario", "")).strip()
+                if torre not in TORRES_NOMES or not unidade or not comentario:
+                    raise ValueError("Informe a unidade e o comentário")
+                if len(comentario) > 2000:
+                    raise ValueError("O comentário deve ter no máximo 2.000 caracteres")
+                usuario = self.sessao_usuario() or {}
+                autor = str(usuario.get("nome", "")).strip()
+                with conectar() as conexao:
+                    cursor = conexao.execute(
+                        "INSERT INTO comentarios_unidade (torre, andar, unidade, comentario, autor) VALUES (?, ?, ?, ?, ?)",
+                        (torre, andar, unidade, comentario, autor),
+                    )
+                    linha = conexao.execute(
+                        "SELECT id, torre, andar, unidade, comentario, autor, criado_em FROM comentarios_unidade WHERE id=?",
+                        (cursor.lastrowid,),
+                    ).fetchone()
+                self.enviar_json(dict(linha), 201)
+            except (ValueError, json.JSONDecodeError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao salvar comentário: {erro}"}, 500)
             return
         if caminho == "/api/projetos-ocultos":
             if not self.exigir_engenheiro():

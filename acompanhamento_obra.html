@@ -509,6 +509,17 @@
   .acabamento-ambiente summary::-webkit-details-marker{display:none;}
   .acabamento-ambiente summary::after{content:"+";color:var(--azul);font-size:.9rem;}
   .acabamento-ambiente[open] summary::after{content:"−";}
+  .acabamentos-geral{border:1px solid #dce4ea;border-radius:8px;background:#fff;overflow:hidden;}
+  .acabamentos-geral>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;cursor:pointer;list-style:none;color:var(--azul-escuro);font-size:.72rem;font-weight:800;}
+  .acabamentos-geral>summary::-webkit-details-marker{display:none;}
+  .acabamentos-geral>summary::after{content:"+";margin-left:auto;color:var(--azul);font-size:1rem;}
+  .acabamentos-geral[open]>summary::after{content:"−";}
+  .acabamentos-geral>.acabamentos-lista{margin:0 7px 7px;}
+  .comentarios-unidade{display:grid;gap:7px;margin-top:10px;}
+  .comentario-unidade{padding:9px 10px;border-left:2px solid var(--azul);border-radius:0 7px 7px 0;background:#f4f7f9;color:#425465;font-size:.69rem;line-height:1.4;}
+  .comentario-unidade small{display:block;margin-top:4px;color:#71808d;font-size:.6rem;}
+  .adicionar-comentario-unidade{display:inline-flex;align-items:center;gap:6px;width:max-content;margin-top:9px;border:1px solid #c9d5df;border-radius:7px;background:#fff;padding:7px 10px;color:var(--azul-escuro);font-size:.68rem;font-weight:800;cursor:pointer;}
+  .adicionar-comentario-unidade:hover{border-color:var(--azul);background:#f2f7fb;}
   .acabamento-itens{display:grid;gap:0;border-top:1px solid #e1e7eb;background:#fff;}
   .acabamento-item{padding:8px 10px;border-bottom:1px solid #edf1f3;}
   .acabamento-item:last-child{border-bottom:0;}
@@ -548,6 +559,7 @@
   .remover-projeto{border-color:#dfaaa5;color:#c33d34;}
   .remover-projeto:hover{background:#c33d34;color:#fff;border-color:#c33d34;}
   .painel-acabamentos{min-height:120px;}
+  .painel-acabamentos.com-alteracao{border-top:3px solid #f5a035;}
   .painel-acabamentos .personalizacao-secao{margin-bottom:0;}
   .foto-tabela{width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--cinza-borda);}
   .ocorrencia-form{background:#fff;border:1px solid var(--cinza-borda);border-radius:12px;padding:18px;margin-bottom:16px;}
@@ -1615,8 +1627,6 @@
       </div>
       <div class="apartamento-acoes-relatorio">
         <div class="campo-filtro"><label for="andarAbaApartamentos">Andar</label><select id="andarAbaApartamentos"></select></div>
-        <div class="campo-filtro"><label for="filtroPlantaApartamentos">Opção de planta</label><select id="filtroPlantaApartamentos"><option value="todos">Todas as opções</option></select></div>
-        <div class="campo-filtro"><label for="filtroAcabamentoApartamentos">Opção de acabamento</label><select id="filtroAcabamentoApartamentos"><option value="todos">Todas as opções</option></select></div>
         <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>Gerar PDF</a>
       </div>
     </div>
@@ -1840,7 +1850,7 @@
         <div class="campo-filtro"><label for="ocTipo">Tipo de ocorrência</label><select id="ocTipo" required><option value="atividade">Ocorrência de atividade</option><option value="seguranca">Ocorrência de segurança</option></select></div>
         <div class="campo-filtro"><label for="ocTorre">Torre</label><select id="ocTorre" required></select></div>
         <div class="campo-filtro"><label for="ocAndar">Andar</label><select id="ocAndar" required></select></div>
-        <div class="campo-filtro"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
+        <div class="campo-filtro" id="ocCampoUnidade"><label for="ocUnidade">Apartamento / setor</label><select id="ocUnidade" required></select></div>
         <div class="campo-filtro" id="ocCampoAtividade"><label for="ocAtividade">Atividade</label><select id="ocAtividade" required></select></div>
         <div class="campo-filtro" id="ocCampoSubatividade" hidden><label for="ocSubatividade">Subatividade</label><select id="ocSubatividade"></select></div>
         <div class="campo-filtro" id="ocCampoEspecificacao"><label for="ocEspecificacao">Especificação do serviço</label><select id="ocEspecificacao" required></select></div>
@@ -2750,6 +2760,7 @@ let plantasUnidades = {};
 let acabamentosUnidades = {};
 let projetosAdicionados = [];
 let projetosOcultos = [];
+let comentariosUnidades = [];
 let dadosPersonalizacaoCarregados=false;
 let ocorrenciasCarregadas=false;
 let promessaDadosPersonalizacao=null;
@@ -2776,18 +2787,20 @@ async function carregarDadosPersonalizacao(){
   if(dadosPersonalizacaoCarregados)return;
   if(promessaDadosPersonalizacao)return promessaDadosPersonalizacao;
   promessaDadosPersonalizacao=(async()=>{
-    const [personalizacoes,plantas,acabamentos,projetos,ocultos]=await Promise.all([
+    const [personalizacoes,plantas,acabamentos,projetos,ocultos,comentarios]=await Promise.all([
       buscarJsonComTentativas("/personalizacoes_unidades.json"),
       buscarJsonComTentativas("/plantas_unidades.json"),
       buscarJsonComTentativas("/acabamentos_unidades.json"),
       buscarJsonComTentativas("/api/projetos"),
-      buscarJsonComTentativas("/api/projetos-ocultos")
+      buscarJsonComTentativas("/api/projetos-ocultos"),
+      buscarJsonComTentativas("/api/comentarios-unidade")
     ]);
     personalizacoesUnidades=personalizacoes;
     plantasUnidades=plantas;
     acabamentosUnidades=acabamentos;
     projetosAdicionados=projetos;
     projetosOcultos=ocultos;
+    comentariosUnidades=comentarios;
     dadosPersonalizacaoCarregados=true;
     if(ocorrenciasCarregadas)atualizarNotificacoes(true);
     const abaAtiva=document.querySelector(".painel-aba.ativo")?.id;
@@ -3290,8 +3303,7 @@ function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadra
 
 function renderizarApartamentosDoPavimento(){
   const seletorAndar=document.getElementById("andarAbaApartamentos");
-  const filtroPlanta=document.getElementById("filtroPlantaApartamentos");
-  const filtroAcabamento=document.getElementById("filtroAcabamentoApartamentos");
+  document.querySelector(".painel-acabamentos")?.classList.remove("com-alteracao");
   const pavimentosComApartamentos=pavimentosDaTorre(torreSelecionada).filter(andar=>
     unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade))
   );
@@ -3307,20 +3319,7 @@ function renderizarApartamentosDoPavimento(){
   const unidadesDoPavimento=(todosAndaresApartamentos?pavimentosComApartamentos:[pavimentoSelecionado]).flatMap(andar=>
     unidadesDoAndar(torreSelecionada,andar).filter(unidade=>/^(apartamento|apto)\s/i.test(unidade)).map(unidade=>({andar,unidade}))
   );
-  const plantaAnterior=filtroPlanta.value||"todos";
-  const acabamentoAnterior=filtroAcabamento.value||"todos";
-  const opcoesPlanta=[...new Set(unidadesDoPavimento.map(item=>opcaoPlantaFiltro(plantasUnidades[`${torreSelecionada}|${item.unidade}`])).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
-  const opcoesAcabamento=[...new Set(unidadesDoPavimento.flatMap(item=>opcoesAcabamentoUnidade(acabamentosUnidades[`${torreSelecionada}|${item.unidade}`])))].sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true}));
-  filtroPlanta.innerHTML=`<option value="todos">Todas as opções</option>`+opcoesPlanta.map(opcao=>`<option value="${escaparHtml(opcao)}">${escaparHtml(opcao)}</option>`).join("");
-  filtroAcabamento.innerHTML=`<option value="todos">Todas as opções</option>`+opcoesAcabamento.map(opcao=>`<option value="${escaparHtml(opcao)}">${escaparHtml(opcao)}</option>`).join("");
-  filtroPlanta.value=opcoesPlanta.includes(plantaAnterior)?plantaAnterior:"todos";
-  filtroAcabamento.value=opcoesAcabamento.includes(acabamentoAnterior)?acabamentoAnterior:"todos";
-  const unidades=unidadesDoPavimento.filter(item=>{
-    const chave=`${torreSelecionada}|${item.unidade}`;
-    const plantaOk=filtroPlanta.value==="todos"||opcaoPlantaFiltro(plantasUnidades[chave])===filtroPlanta.value;
-    const acabamentoOk=filtroAcabamento.value==="todos"||opcoesAcabamentoUnidade(acabamentosUnidades[chave]).includes(filtroAcabamento.value);
-    return plantaOk&&acabamentoOk;
-  });
+  const unidades=unidadesDoPavimento;
   const renderizarCartaoApartamento=itemUnidade=>{
     const {andar,unidade}=itemUnidade;
     const chaveUnidadeCartao=`${torreSelecionada}|${unidade}`;
@@ -3370,31 +3369,40 @@ function renderizarApartamentosDoPavimento(){
   const acabamentos=acabamentosUnidades[chaveUnidade];
   const slidesProjetos=[];
   const projetoEstaOculto=imagem=>projetosOcultos.some(projeto=>projeto.torre===torreSelecionada&&Number(projeto.andar)===pavimentoSelecionado&&projeto.unidade===unidadeSelecionada&&projeto.imagem===imagem);
-  if(planta?.plantaMiniatura&&!projetoEstaOculto(planta.plantaMiniatura)) slidesProjetos.push({titulo:`Planta da opção · ${opcaoPlantaUnidade(planta)}`,imagem:planta.plantaMiniatura});
-  (personalizacao?.projetos||[]).forEach(projeto=>{
-    if(projeto.imagem&&!projetoEstaOculto(projeto.imagem)&&!slidesProjetos.some(slide=>slide.imagem===projeto.imagem)) slidesProjetos.push({titulo:projeto.titulo||projeto.arquivo||"Projeto",imagem:projeto.imagem});
+  const consultaPdfPlantaBase={torre:torreSelecionada,unidade:unidadeSelecionada};
+  if(planta?.plantaMiniatura&&!projetoEstaOculto(planta.plantaMiniatura)) slidesProjetos.push({titulo:`Planta da opção · ${opcaoPlantaUnidade(planta)}`,imagem:planta.plantaMiniatura,pdf:`/planta-unidade.pdf?${new URLSearchParams(consultaPdfPlantaBase)}`});
+  (personalizacao?.projetos||[]).forEach((projeto,indice)=>{
+    if(projeto.imagem&&!projetoEstaOculto(projeto.imagem)&&!slidesProjetos.some(slide=>slide.imagem===projeto.imagem)) slidesProjetos.push({titulo:projeto.titulo||projeto.arquivo||"Projeto",imagem:projeto.imagem,pdf:`/planta-unidade.pdf?${new URLSearchParams({...consultaPdfPlantaBase,tipo:"personalizacao",indice:String(indice)})}`});
   });
   projetosAdicionados.filter(projeto=>projeto.torre===torreSelecionada&&Number(projeto.andar)===pavimentoSelecionado&&projeto.unidade===unidadeSelecionada).forEach(projeto=>{
-    slidesProjetos.push({id:projeto.id,titulo:projeto.titulo||"Projeto adicionado",imagem:projeto.imagem});
+    slidesProjetos.push({id:projeto.id,titulo:projeto.titulo||"Projeto adicionado",imagem:projeto.imagem,pdf:`/planta-unidade.pdf?${new URLSearchParams({...consultaPdfPlantaBase,projeto:String(projeto.id)})}`});
   });
   const blocoPlanta=slidesProjetos.length
-    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}">${planta?.tipo?`<div class="tipo-planta"><small>Opção de planta · ${condicaoComercialUnidade(planta)}</small><strong>${escaparHtml(opcaoPlantaUnidade(planta))}</strong></div>`:""}<a class="planta-link ${slide.imagem.includes("/miniaturas_tipos_planta/")?"somente-planta-baixa":""}" href="${escaparHtml(slide.imagem)}" target="_blank" rel="noopener"><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
+    ?`<div class="personalizacao-secao"><div class="projetos-carrossel" data-indice="0"><div class="projeto-viewport">${slidesProjetos.map((slide,indice)=>`<div class="projeto-slide ${indice===0?"ativo":""}" data-titulo="${escaparHtml(slide.titulo)}" data-imagem="${escaparHtml(slide.imagem)}" data-id="${slide.id||""}">${planta?.tipo?`<div class="tipo-planta"><small>Opção de planta · ${condicaoComercialUnidade(planta)}</small><strong>${escaparHtml(opcaoPlantaUnidade(planta))}</strong></div>`:""}<a class="planta-link ${slide.imagem.includes("/miniaturas_tipos_planta/")?"somente-planta-baixa":""}" href="${escaparHtml(slide.pdf)}" download><img class="planta-miniatura" src="${escaparHtml(slide.imagem)}" alt="${escaparHtml(slide.titulo)} de ${escaparHtml(unidadeSelecionada)}"></a></div>`).join("")}</div>${slidesProjetos.length>1?`<div class="projeto-navegacao"><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,-1)" aria-label="Projeto anterior">‹</button><div class="projeto-pontos">${slidesProjetos.map((_,indice)=>`<button type="button" class="projeto-ponto ${indice===0?"ativo":""}" onclick="irParaSlideProjeto(this,${indice})" aria-label="Abrir projeto ${indice+1}"></button>`).join("")}</div><button class="projeto-seta" type="button" onclick="alterarSlideProjeto(this,1)" aria-label="Próximo projeto">›</button></div>`:""}</div></div>`
     :`<div class="personalizacao-secao"><div class="planta-indisponivel">Nenhum projeto identificado para esta unidade.</div></div>`;
-  const itensAcabamentos=(acabamentos?.itens||[]).filter(item=>!/^Opção\s*0*1(?:\s*\(padrão\))?$/i.test(item.opcao.trim()));
+  const itensAcabamentos=acabamentos?.itens||[];
+  const quantidadeAlteracoes=itensAcabamentos.filter(item=>!ehOpcaoUm(item?.opcao)).length;
+  document.querySelector(".painel-acabamentos")?.classList.toggle("com-alteracao",quantidadeAlteracoes>0);
+  const apartamentoInteiroPadrao=apartamentoEhPadrao(chaveUnidade);
   const gruposAcabamentos=itensAcabamentos.reduce((grupos,item)=>{
     (grupos[item.ambiente]??=[]).push(item);
     return grupos;
   },{});
+  const listaAcabamentos=Object.entries(gruposAcabamentos).map(([ambiente,itens],indice)=>`<details class="acabamento-ambiente" ${!apartamentoInteiroPadrao&&indice===0?"open":""}><summary><span>${escaparHtml(ambiente)}</span><small>${itens.length} item(ns)</small></summary><div class="acabamento-itens">${itens.map(item=>`<div class="acabamento-item"><div class="acabamento-item-cabecalho"><strong>${escaparHtml(item.item)}</strong><span class="acabamento-opcao">${escaparHtml(item.opcao)}</span></div>${item.descricao?`<p class="acabamento-descricao">${escaparHtml(item.descricao)}</p>`:""}</div>`).join("")}</div></details>`).join("");
   const blocoAcabamentos=Object.keys(gruposAcabamentos).length
-    ?`<div class="personalizacao-resumo"><span>${itensAcabamentos.length} alteração(ões) de acabamento</span></div><div class="acabamentos-lista">${Object.entries(gruposAcabamentos).map(([ambiente,itens],indice)=>`<details class="acabamento-ambiente" ${indice===0?"open":""}><summary><span>${escaparHtml(ambiente)}</span><small>${itens.length} item(ns)</small></summary><div class="acabamento-itens">${itens.map(item=>`<div class="acabamento-item"><div class="acabamento-item-cabecalho"><strong>${escaparHtml(item.item)}</strong><span class="acabamento-opcao">${escaparHtml(item.opcao)}</span></div>${item.descricao?`<p class="acabamento-descricao">${escaparHtml(item.descricao)}</p>`:""}</div>`).join("")}</div></details>`).join("")}</div>`
+    ?apartamentoInteiroPadrao
+      ?`<details class="acabamentos-geral"><summary><span>Acabamentos padrão</span><small>${itensAcabamentos.length} item(ns)</small></summary><div class="acabamentos-lista">${listaAcabamentos}</div></details>`
+      :`<div class="personalizacao-resumo"><span>${quantidadeAlteracoes} alteração(ões) de acabamento</span></div><div class="acabamentos-lista">${listaAcabamentos}</div>`
     :acabamentos?.itens?.length
       ?`<div class="acabamentos-padrao"><i>✓</i><div><strong>Opção padrão</strong>Sem alteração de acabamento.</div></div>`
       :`<div class="acabamentos-padrao"><i>✓</i><div><strong>Padrão (Opção 01)</strong>Sem alteração de acabamento.</div></div>`;
   const blocoContratos=personalizacao?.documentos?.length
     ?`<div class="personalizacao-resumo" style="margin-top:11px"><span>${personalizacao.documentos.length} documento(s) técnico(s)</span><span>${personalizacao.quantidadeProjetos||0} projeto(s) vinculado(s)</span></div><div class="personalizacao-documentos">${personalizacao.documentos.map(documento=>`<article class="personalizacao-documento"><h4>${escaparHtml(documento.titulo)}</h4><p>${escaparHtml(documento.descricao).replaceAll(" • ","<br>• ")}</p></article>`).join("")}</div>`
     :"";
+  const comentariosDaUnidade=comentariosUnidades.filter(item=>item.torre===torreSelecionada&&Number(item.andar)===pavimentoSelecionado&&item.unidade===unidadeSelecionada);
+  const blocoComentarios=`${comentariosDaUnidade.length?`<div class="comentarios-unidade">${comentariosDaUnidade.map(item=>`<div class="comentario-unidade">${escaparHtml(item.comentario)}<small>${escaparHtml(item.autor||"Usuário")} · ${new Date(`${item.criado_em}Z`).toLocaleString("pt-BR")}</small></div>`).join("")}</div>`:""}<button class="adicionar-comentario-unidade" type="button" id="adicionarComentarioUnidade" title="Adicionar comentário"><span aria-hidden="true">＋</span><span>Adicionar comentário</span></button>`;
   document.getElementById("plantaApartamento").innerHTML=blocoPlanta;
-  document.getElementById("acabamentosApartamento").innerHTML=blocoAcabamentos+blocoContratos;
+  document.getElementById("acabamentosApartamento").innerHTML=blocoAcabamentos+blocoContratos+blocoComentarios;
   document.getElementById("tabelaApartamento").innerHTML = itens.map(item=>{
     const registro=obterRegistro(item.andar,item.unidade,item.atividade);
     const data=registro.data?registro.data.split("-").reverse().join("/"):"—";
@@ -3554,14 +3562,18 @@ function atualizarEspecificacoesOcorrencia(){
 
 function atualizarTipoOcorrencia(){
   const seguranca=document.getElementById("ocTipo").value==="seguranca";
+  const campoUnidade=document.getElementById("ocCampoUnidade");
   const campoAtividade=document.getElementById("ocCampoAtividade");
   const campoSubatividade=document.getElementById("ocCampoSubatividade");
   const campoEspecificacao=document.getElementById("ocCampoEspecificacao");
   const atividade=document.getElementById("ocAtividade");
+  const unidade=document.getElementById("ocUnidade");
   const subatividade=document.getElementById("ocSubatividade");
   const especificacao=document.getElementById("ocEspecificacao");
+  campoUnidade.hidden=seguranca;
   campoAtividade.hidden=seguranca;
   campoEspecificacao.hidden=seguranca;
+  unidade.required=!seguranca;
   atividade.required=!seguranca;
   especificacao.required=!seguranca;
   if(seguranca){
@@ -5476,19 +5488,33 @@ document.getElementById("andarAbaApartamentos").addEventListener("change",event=
   if(!todosAndaresApartamentos)pavimentoSelecionado=Number(event.target.value);
   unidadeSelecionada=null;
   apartamentosRecolhidos=false;
-  document.getElementById("filtroPlantaApartamentos").value="todos";
-  document.getElementById("filtroAcabamentoApartamentos").value="todos";
   renderizarApartamentosDoPavimento();
 });
-document.getElementById("filtroPlantaApartamentos").addEventListener("change",()=>{
-  unidadeSelecionada=null;
-  apartamentosRecolhidos=false;
-  renderizarApartamentosDoPavimento();
+document.getElementById("baixarPdfApartamento").addEventListener("click",event=>{
+  if(!unidadeSelecionada){
+    event.preventDefault();
+    return;
+  }
+  const consulta=new URLSearchParams({torre:torreSelecionada,andar:String(pavimentoSelecionado),unidade:unidadeSelecionada});
+  event.currentTarget.href=`/relatorio.pdf?${consulta}`;
+  event.currentTarget.download=`relatorio-${unidadeSelecionada.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}.pdf`;
 });
-document.getElementById("filtroAcabamentoApartamentos").addEventListener("change",()=>{
-  unidadeSelecionada=null;
-  apartamentosRecolhidos=false;
-  renderizarApartamentosDoPavimento();
+document.getElementById("acabamentosApartamento").addEventListener("click",async event=>{
+  const botao=event.target.closest("#adicionarComentarioUnidade");
+  if(!botao||!unidadeSelecionada)return;
+  const comentario=window.prompt("Digite o comentário da unidade:","")?.trim();
+  if(!comentario)return;
+  botao.disabled=true;
+  try{
+    const resposta=await fetch("/api/comentarios-unidade",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({torre:torreSelecionada,andar:pavimentoSelecionado,unidade:unidadeSelecionada,comentario})});
+    const dados=await resposta.json();
+    if(!resposta.ok)throw new Error(dados.erro||"Não foi possível adicionar o comentário.");
+    comentariosUnidades.push(dados);
+    renderizarApartamentosDoPavimento();
+  }catch(erro){
+    alert(erro.message);
+    botao.disabled=false;
+  }
 });
 document.getElementById("filtroTorrePersonalizacao").addEventListener("change",event=>{
   selecionarTorre(event.target.value);
@@ -5750,7 +5776,7 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
     const dados={
       torre:document.getElementById("ocTorre").value,
       andar:Number(document.getElementById("ocAndar").value),
-      unidade:document.getElementById("ocUnidade").value,
+      unidade:document.getElementById("ocTipo").value==="seguranca"?"Área comum":document.getElementById("ocUnidade").value,
       atividade:document.getElementById("ocAtividade").value,
       subatividade:document.getElementById("ocCampoSubatividade").hidden?"":document.getElementById("ocSubatividade").value,
       especificacao:document.getElementById("ocEspecificacao").value,
@@ -5890,8 +5916,6 @@ document.querySelectorAll(".menu-principal a").forEach(link => {
       todosAndaresApartamentos=true;
       apartamentosRecolhidos=false;
       unidadeSelecionada=null;
-      document.getElementById("filtroPlantaApartamentos").value="todos";
-      document.getElementById("filtroAcabamentoApartamentos").value="todos";
     }
     ativarAba(destino);
   });
