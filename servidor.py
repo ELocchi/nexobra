@@ -4078,8 +4078,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.enviar_json({"erro": "Foto acima do limite permitido"}, 413)
                 return
             dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
-            campos = ("torre", "andar", "unidade", "atividade", "especificacao", "descricao", "dataOcorrencia")
-            if any(not dados.get(campo) for campo in campos):
+            campos_texto = ("torre", "unidade", "atividade", "especificacao", "descricao", "dataOcorrencia")
+            if any(not dados.get(campo) for campo in campos_texto) or dados.get("andar") is None:
                 self.enviar_json({"erro": "Preencha torre, andar, unidade e descrição"}, 400)
                 return
             ocorrencia_seguranca = str(dados.get("atividade", "")).strip().casefold() == "segurança".casefold()
