@@ -43,6 +43,7 @@ LOCK_CACHE_REGISTROS = threading.Lock()
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORTA = int(os.environ.get("PORT", "8000"))
 TORRES_NOMES = {"aurora": "Torre Home", "horizonte": "Torre Smart"}
+MARCADOR_SEM_SETORES = "__SEM_SETORES__"
 _OPCOES_PLANTAS_PDF = {}
 
 
@@ -2610,7 +2611,7 @@ def listar_atividades_config():
         ).fetchall()
     agrupadas = {}
     for linha in linhas:
-        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": [], "especificacoes": [], "setoresSubservicos": []})
+        item = agrupadas.setdefault(linha["nome"], {"nome": linha["nome"], "escopos": [], "especificacoes": [], "setoresSubservicos": [], "subservicosSemSetores": []})
         item["escopos"].append(
             {"id": linha["id"], "torre": linha["torre"], "andar": linha["andar"], "unidade": linha["unidade"]}
         )
@@ -2619,7 +2620,12 @@ def listar_atividades_config():
             agrupadas[linha["atividade"]]["especificacoes"].append(linha["especificacao"])
     for linha in linhas_setores_subservicos:
         if linha["atividade"] in agrupadas:
-            agrupadas[linha["atividade"]]["setoresSubservicos"].append(dict(linha))
+            if linha["unidade"] == MARCADOR_SEM_SETORES:
+                agrupadas[linha["atividade"]]["subservicosSemSetores"].append({
+                    "subservico": linha["subservico"], "torre": linha["torre"], "andar": linha["andar"]
+                })
+            else:
+                agrupadas[linha["atividade"]]["setoresSubservicos"].append(dict(linha))
     return list(agrupadas.values())
 
 
@@ -2629,7 +2635,8 @@ def setores_efetivos_subservico(conexao, atividade, subservico, torre, andar):
         (atividade, subservico, torre, andar),
     ).fetchall()
     if personalizados:
-        return [linha["unidade"] for linha in personalizados]
+        unidades = [linha["unidade"] for linha in personalizados]
+        return [] if MARCADOR_SEM_SETORES in unidades else unidades
     escopos = conexao.execute(
         "SELECT unidade FROM atividades_config WHERE nome=? AND torre=? AND andar=? ORDER BY unidade",
         (atividade, torre, andar),
@@ -2648,9 +2655,10 @@ def salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unid
         "DELETE FROM subservicos_setores WHERE atividade=? AND subservico=? AND torre=? AND andar=?",
         (atividade, subservico, torre, andar),
     )
+    unidades_unicas = list(dict.fromkeys(unidades)) or [MARCADOR_SEM_SETORES]
     conexao.executemany(
         "INSERT INTO subservicos_setores (atividade,subservico,torre,andar,unidade) VALUES (?,?,?,?,?)",
-        [(atividade, subservico, torre, andar, unidade) for unidade in dict.fromkeys(unidades)],
+        [(atividade, subservico, torre, andar, unidade) for unidade in unidades_unicas],
     )
 
 

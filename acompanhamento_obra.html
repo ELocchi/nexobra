@@ -688,9 +688,12 @@
     margin-top:12px;padding:18px;border-radius:10px;background:rgba(255,255,255,.07);
     border:1px solid rgba(255,255,255,.1);
   }
-  .mapa-topo{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:14px;}
+  .mapa-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:14px;}
   .mapa-topo h3{margin:0;font-size:.82rem;}
+  .mapa-topo-controles{display:flex;flex-direction:column;align-items:flex-end;gap:9px;}
+  .mapa-topo-controles .dashboard-filtro{width:min(280px,100%);}
   .legenda-torres{display:flex;gap:12px;flex-wrap:wrap;font-size:.65rem;color:rgba(255,255,255,.68);}
+  .legenda-torres[hidden]{display:none;}
   .legenda-torres span{display:flex;align-items:center;gap:5px;}
   .legenda-torres i{width:8px;height:8px;border-radius:2px;display:block;}
   .torres-progresso{
@@ -700,7 +703,7 @@
   }
   .torre-progresso-wrap{text-align:center;}
   .fundacao-progresso{
-    position:relative;width:clamp(220px,27vw,320px);height:250px;padding:20px 18px 36px;
+    position:relative;width:clamp(220px,27vw,320px);height:150px;padding:20px 18px 36px;
     border:0;background:transparent;color:#fff;cursor:pointer;
   }
   .fundacao-progresso::before{
@@ -708,7 +711,7 @@
     background:linear-gradient(#866b50,#594432);box-shadow:0 8px 18px rgba(0,0,0,.34);
   }
   .fundacao-elementos{
-    position:absolute;left:8%;right:8%;bottom:43px;display:grid;grid-template-columns:repeat(6,1fr);gap:25px 8px;
+    position:absolute;left:8%;right:8%;bottom:43px;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;
   }
   .fundacao-elemento{position:relative;display:block;height:55px;color:#637582;}
   .fundacao-elemento.em-andamento{color:#e0a800;}
@@ -740,31 +743,52 @@
     z-index:1;border:0;background:transparent;filter:none;
   }
   .predio-progresso.modo-estrutura .andar-progresso::after{opacity:0;}
-  .predio-progresso.modo-estrutura .andar-progresso.estrutura-concluida{
-    background:
-      linear-gradient(90deg,#71838b,#d4dcdd 14%,#a5b5b9 86%,#61747d) top/100% 2px no-repeat,
-      linear-gradient(90deg,#60737c,#becacc 14%,#91a3a8 86%,#536871) bottom/100% 2px no-repeat;
+  .estrutura-pilares,.estrutura-laje{position:absolute;display:block;pointer-events:none;opacity:0;}
+  .estrutura-pilares{
+    inset:0 4%;transform:scaleY(0);transform-origin:center bottom;
+    background:linear-gradient(90deg,#d7dfe0 0 3px,transparent 3px calc(25% - 2px),#9baaad calc(25% - 2px) calc(25% + 2px),transparent calc(25% + 2px) calc(50% - 2px),#9baaad calc(50% - 2px) calc(50% + 2px),transparent calc(50% + 2px) calc(75% - 2px),#9baaad calc(75% - 2px) calc(75% + 2px),transparent calc(75% + 2px) calc(100% - 3px),#d7dfe0 calc(100% - 3px));
+    transition:transform .45s ease,opacity .25s ease;
   }
-  .predio-progresso.modo-estrutura .andar-progresso.estrutura-concluida::after{
-    left:7%;right:7%;top:2px;bottom:2px;height:auto;
-    background:repeating-linear-gradient(90deg,#9baaad 0 4px,transparent 4px 24px);
-    opacity:1;
-  }
+  .andar-progresso.pilares-concluidos .estrutura-pilares{opacity:1;transform:scaleY(1);}
+  .estrutura-laje{left:1%;right:1%;top:-1px;height:3px;background:linear-gradient(90deg,#60737c,#e1e7e8 14%,#a5b5b9 86%,#536871);box-shadow:0 1px 0 rgba(255,255,255,.5);transition:opacity .3s ease;}
+  .andar-progresso.laje-concluida .estrutura-laje{opacity:1;}
   .predio-progresso.modo-alvenaria{
     padding:5px 7px 8px;border:0;background:transparent;box-shadow:none;
     filter:drop-shadow(12px 16px 10px rgba(0,0,0,.32));
   }
   .predio-progresso.modo-alvenaria .andar-progresso{
-    z-index:1;border:0;
-    background:
-      linear-gradient(90deg,#b97851 0 var(--percentual-alvenaria),transparent var(--percentual-alvenaria) 100%) center/86% 52% no-repeat,
-      linear-gradient(90deg,#71838b,#d4dcdd 14%,#a5b5b9 86%,#61747d) top/100% 2px no-repeat,
-      linear-gradient(90deg,#60737c,#becacc 14%,#91a3a8 86%,#536871) bottom/100% 2px no-repeat;
+    z-index:1;border:0;background:transparent;filter:none;
+  }
+  .predio-progresso.modo-acabamento{
+    padding:5px 7px 8px;border:0;background:transparent;box-shadow:none;
+    filter:drop-shadow(12px 16px 10px rgba(0,0,0,.32));
+  }
+  .predio-progresso.modo-acabamento .andar-progresso{z-index:1;border:0;background:transparent;filter:none;}
+  .predio-progresso.modo-acabamento .andar-progresso::after{opacity:0;pointer-events:none;}
+  .alvenaria-blocos{
+    position:absolute;left:4%;right:4%;top:2px;bottom:2px;z-index:2;display:block;overflow:hidden;
+  }
+  .alvenaria-blocos::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:var(--percentual-alvenaria);
+    background-color:#8b989c;
+    background-image:
+      repeating-linear-gradient(0deg,transparent 0 4px,rgba(218,225,226,.78) 4px 5px),
+      repeating-linear-gradient(90deg,transparent 0 12px,rgba(55,68,73,.7) 12px 13px);
+    box-shadow:inset 0 0 0 1px rgba(225,232,233,.35);
+    transition:width .45s ease;
   }
   .predio-progresso.modo-alvenaria .andar-progresso::after{
-    left:7%;right:7%;top:2px;bottom:2px;height:auto;
-    background:repeating-linear-gradient(90deg,#9baaad 0 4px,transparent 4px 24px);
-    opacity:1;
+    opacity:0;pointer-events:none;
+  }
+  .acabamento-pintura{position:absolute;left:4%;right:4%;top:2px;bottom:2px;z-index:3;display:block;overflow:hidden;pointer-events:none;}
+  .acabamento-pintura::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:var(--percentual-alvenaria);
+    background:linear-gradient(90deg,
+      #2e9e5b 0 var(--fim-acabamento-concluido),
+      #e0a800 var(--fim-acabamento-concluido) var(--fim-acabamento-andamento),
+      #d9483d var(--fim-acabamento-andamento) var(--fim-acabamento-pendente),
+      #637582 var(--fim-acabamento-pendente) 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.72);transition:width .45s ease;
   }
   .predio-progresso.modo-fachada .andar-progresso{
     display:grid;grid-template-columns:repeat(var(--quantidade-setores),minmax(0,1fr));
@@ -788,12 +812,12 @@
   .fachada-3d-palco.horizonte{height:390px;}
   .fachada-3d-palco:active{cursor:grabbing;}
   .fachada-3d-cena{
-    --rotacao-y:-28deg;--altura-torre:430px;--largura-torre:230px;--profundidade-torre:145px;--meia-largura:115px;--meia-profundidade:72.5px;
+    --rotacao-y:-28deg;--altura-torre:430px;--largura-torre:230px;--profundidade-torre:145px;--meia-largura:115px;--meia-profundidade:72.5px;--recuo-lateral:42.5px;
     position:absolute;left:50%;top:50%;width:var(--largura-torre);height:var(--altura-torre);
     transform-style:preserve-3d;transform:translate(-50%,-50%) rotateX(-7deg) rotateY(var(--rotacao-y));
-    transition:transform .12s ease-out;filter:drop-shadow(24px 28px 18px rgba(0,0,0,.42));
+    transition:transform .12s ease-out;
   }
-  .fachada-3d-palco.horizonte .fachada-3d-cena{--altura-torre:320px;--largura-torre:245px;--profundidade-torre:125px;--meia-largura:122.5px;--meia-profundidade:62.5px;}
+  .fachada-3d-palco.horizonte .fachada-3d-cena{--altura-torre:320px;--largura-torre:245px;--profundidade-torre:125px;--meia-largura:122.5px;--meia-profundidade:62.5px;--recuo-lateral:60px;}
   .fachada-3d-palco.arrastando .fachada-3d-cena{transition:none;}
   .fachada-3d-andares{
     position:absolute;left:8px;top:50%;z-index:4;display:flex;flex-direction:column-reverse;
@@ -805,23 +829,31 @@
     color:#fff;font-size:.5rem;line-height:1;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.95);
   }
   .fachada-3d-face{
-    position:absolute;left:50%;top:50%;display:flex;flex-direction:column-reverse;
+    position:absolute;left:0;top:0;display:flex;flex-direction:column-reverse;
     height:var(--altura-torre);overflow:hidden;border:1px solid rgba(224,238,242,.82);
     background:#526875;backface-visibility:visible;box-shadow:inset 0 0 20px rgba(255,255,255,.12);
   }
   .fachada-3d-face.frente,.fachada-3d-face.fundo{width:var(--largura-torre);}
-  .fachada-3d-face.direita,.fachada-3d-face.esquerda{width:var(--profundidade-torre);}
-  .fachada-3d-face.frente{transform:translate(-50%,-50%) translateZ(var(--meia-profundidade));}
-  .fachada-3d-face.fundo{transform:translate(-50%,-50%) rotateY(180deg) translateZ(var(--meia-profundidade));}
-  .fachada-3d-face.direita{transform:translate(-50%,-50%) rotateY(90deg) translateZ(var(--meia-largura));}
-  .fachada-3d-face.esquerda{transform:translate(-50%,-50%) rotateY(-90deg) translateZ(var(--meia-largura));}
+  .fachada-3d-face.direita,.fachada-3d-face.esquerda{left:var(--recuo-lateral);width:var(--profundidade-torre);}
+  .fachada-3d-face.frente{transform:translateZ(var(--meia-profundidade));}
+  .fachada-3d-face.fundo{transform:rotateY(180deg) translateZ(var(--meia-profundidade));}
+  .fachada-3d-face.direita{transform:rotateY(90deg) translateZ(var(--meia-largura));}
+  .fachada-3d-face.esquerda{transform:rotateY(-90deg) translateZ(var(--meia-largura));}
+  .fachada-3d-face.frente{filter:brightness(1.08);}.fachada-3d-face.direita{filter:brightness(.82);}
+  .fachada-3d-face.fundo{filter:brightness(.7);}.fachada-3d-face.esquerda{filter:brightness(.9);}
   .fachada-3d-andar{display:grid;grid-template-columns:repeat(var(--setores-face),minmax(0,1fr));flex:1;min-height:4px;border-top:1px solid rgba(14,39,51,.72);}
   .fachada-3d-celula{position:relative;min-width:0;border-right:1px solid rgba(218,232,236,.35);background:#637582;cursor:pointer;}
   .fachada-3d-celula::after{content:"";position:absolute;inset:22% 18%;background:rgba(18,51,64,.58);box-shadow:inset 0 0 0 1px rgba(224,238,242,.15);}
   .fachada-3d-celula.em-andamento{background:#e0a800;}.fachada-3d-celula.pendente{background:#d9483d;}.fachada-3d-celula.concluido{background:#2e9e5b;}
   .fachada-3d-celula:hover,.fachada-3d-celula:focus-visible{z-index:3;filter:brightness(1.45);outline:2px solid #fff;outline-offset:-1px;}
   .fachada-3d-laje{position:absolute;left:50%;bottom:-8px;width:calc(var(--largura-torre) + 18px);height:calc(var(--profundidade-torre) + 18px);background:#83949c;transform:translateX(-50%) rotateX(90deg);box-shadow:0 15px 22px rgba(0,0,0,.35);}
+  .fachada-3d-teto{position:absolute;left:50%;top:-1px;width:var(--largura-torre);height:var(--profundidade-torre);background:linear-gradient(135deg,#dbe4e5,#71848d);transform:translate(-50%,-50%) rotateX(90deg);border:1px solid rgba(255,255,255,.75);}
   .fachada-3d-instrucao{margin:-2px 0 8px;color:rgba(255,255,255,.72);font-size:.64rem;}
+  .fachada-3d-controles{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;margin:7px 0 2px;}
+  .fachada-3d-controles button{min-width:34px;height:28px;padding:0 9px;border:1px solid rgba(255,255,255,.38);border-radius:6px;background:rgba(255,255,255,.1);color:#fff;font:700 .7rem Arial;cursor:pointer;}
+  .fachada-3d-controles button:hover,.fachada-3d-controles button:focus-visible{background:#fff;color:#173f70;outline:none;}
+  .fachada-3d-controles input[type="range"]{width:min(170px,38vw);accent-color:#fff;cursor:ew-resize;}
+  .torre-fachada-3d-wrap>strong,.torre-fachada-3d-wrap>small{color:#fff;}
   .predio-progresso.aurora{height:455px;}
   .predio-progresso.horizonte{height:325px;}
   .andar-progresso{
@@ -844,8 +876,8 @@
     color:#fff;font-size:.52rem;line-height:1;white-space:nowrap;font-weight:700;
     text-shadow:0 1px 3px rgba(0,0,0,.9);z-index:5;
   }
-  .torre-progresso-wrap strong{display:block;margin-top:12px;font-size:.82rem;}
-  .torre-progresso-wrap small{color:rgba(255,255,255,.58);font-size:.66rem;}
+  .torre-progresso-wrap strong{display:block;margin-top:12px;color:#fff;font-size:.82rem;}
+  .torre-progresso-wrap small{color:#fff;font-size:.66rem;}
   .controle-obra{
     background:#fff;border:1px solid var(--cinza-borda);border-radius:14px;
     box-shadow:0 8px 28px rgba(15,42,74,.07);overflow:hidden;
@@ -1566,7 +1598,10 @@
     <div class="mapa-progresso">
       <div class="mapa-topo">
         <h3>Evolução visual dos andares</h3>
-        <div class="legenda-torres"><span><i style="background:#637582"></i>Não iniciado</span><span><i style="background:#e0a800"></i>Em andamento</span><span><i style="background:#d9483d"></i>Pendente</span><span><i style="background:#2e9e5b"></i>Concluído</span></div>
+        <div class="mapa-topo-controles">
+          <div class="dashboard-filtro" id="campoFiltroAcabamentoDashboard" hidden><label for="filtroAcabamentoDashboard">Serviço de acabamento</label><select id="filtroAcabamentoDashboard"></select></div>
+          <div class="legenda-torres"><span><i style="background:#637582"></i>Não iniciado</span><span><i style="background:#e0a800"></i>Em andamento</span><span><i style="background:#d9483d"></i>Pendente</span><span><i style="background:#2e9e5b"></i>Concluído</span></div>
+        </div>
       </div>
       <div class="torres-progresso" id="torresProgresso"></div>
     </div>
@@ -2530,16 +2565,27 @@ function aplicarRecolhimentoEmTodas(recolher){
   });
   salvarMatrizesRecolhidas();
 }
-function divisoesDoServico(atividade,andar){
+function subservicoPertinenteAoPavimento(atividade,subservico,torre,andar){
+  const cadastro=atividadesCadastro.find(item=>item.nome===atividade);
+  const explicitamenteVazio=(cadastro?.subservicosSemSetores||[]).some(item=>
+    item.subservico===subservico&&item.torre===torre&&Number(item.andar)===Number(andar)
+  );
+  if(explicitamenteVazio)return false;
+  if(atividade==="Alvenaria"&&subservico==="Muros Externos"){
+    return (torre==="aurora"&&Number(andar)===-1)||(torre==="horizonte"&&Number(andar)===0);
+  }
+  return true;
+}
+function divisoesDoServico(atividade,andar,torre=torreSelecionada){
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   const subservicosFvs=catalogoFvs?Object.keys(catalogoFvs).filter(Boolean):[];
   if(subservicosFvs.length){
-    const aplicaveis=subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico));
+    const aplicaveis=subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico)&&subservicoPertinenteAoPavimento(atividade,subservico,torre,andar));
     if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar).filter(subservico=>aplicaveis.includes(subservico));
     return aplicaveis;
   }
   if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar);
-  if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA);
+  if(atividade==="Alvenaria"&&Number(andar)!==-2)return Object.keys(DIVISOES_ALVENARIA).filter(subservico=>subservicoPertinenteAoPavimento(atividade,subservico,torre,andar));
   if(atividade==="Revestimento")return Object.keys(DIVISOES_REVESTIMENTO);
   if(atividade==="Contrapiso")return Object.keys(DIVISOES_CONTRAPISO);
   if(atividade==="Esquadrias")return Object.keys(DIVISOES_ESQUADRIAS);
@@ -2558,7 +2604,12 @@ function divisoesDoServico(atividade,andar){
 function mapaDivisoesDoServico(atividade){
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   const subservicosFvs=catalogoFvs?Object.fromEntries(Object.entries(catalogoFvs).filter(([subservico])=>subservico)):null;
-  if(subservicosFvs&&Object.keys(subservicosFvs).length)return subservicosFvs;
+  if(subservicosFvs&&Object.keys(subservicosFvs).length){
+    if(atividade==="Revestimento"&&subservicosFvs["Externo em Argamassa"]){
+      subservicosFvs["Externo em Argamassa"]=[...DIVISOES_REVESTIMENTO["Externo em Argamassa"]];
+    }
+    return subservicosFvs;
+  }
   return atividade==="Estrutura"?DIVISOES_ESTRUTURA
     :atividade==="Alvenaria"?DIVISOES_ALVENARIA
     :atividade==="Revestimento"?DIVISOES_REVESTIMENTO
@@ -2622,13 +2673,20 @@ function simboloEstadoEspecificacao(estado){
 function chaveSelecaoEspecificacao(chave,especificacao){
   return JSON.stringify([chave,especificacao]);
 }
-function especificacoesDoServicoNoAndar(atividade,andar){
+function especificacoesDoServicoNoAndar(atividade,andar,torre=torreSelecionada){
   const mapa=mapaDivisoesDoServico(atividade);
   if(!mapa)return especificacoesDoServico(atividade);
-  return divisoesDoServico(atividade,andar).flatMap(divisao=>mapa[divisao].map(item=>`${divisao} :: ${item}`));
+  return divisoesDoServico(atividade,andar,torre).flatMap(divisao=>mapa[divisao].map(item=>`${divisao} :: ${item}`));
+}
+function especificacaoContaNoProgresso(atividade,especificacao){
+  if(atividade!=="Revestimento")return true;
+  return !new Set([
+    "externo em argamassa :: ensaio de aderencia",
+    "externo em argamassa :: relatorio de execucao"
+  ]).has(normalizarBuscaServico(especificacao));
 }
 function recalcularStatusPelasEspecificacoes(registro,atividade,andar){
-  const estados=especificacoesDoServicoNoAndar(atividade,andar).map(especificacao=>
+  const estados=especificacoesDoServicoNoAndar(atividade,andar).filter(especificacao=>especificacaoContaNoProgresso(atividade,especificacao)).map(especificacao=>
     normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro)
   );
   const aplicaveis=estados.filter(estado=>estado!=="nao-aplicavel");
@@ -2812,15 +2870,16 @@ const ETAPAS_DASHBOARD=[
 ];
 function itemPertenceEtapaDashboard(item,etapa){
   if(etapa==="todos")return true;
-  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar);
+  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar,item.torre||torreSelecionada);
+  if(mapaDivisoesDoServico(item.atividade)&&!especificacoes.length)return false;
   return especificacoes.length
     ?especificacoes.some(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa)
     :categoriaResumoAbertura(item.atividade)===etapa;
 }
 function estadosItemEtapaDashboard(item,etapa,torre){
   const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
-  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar)
-    .filter(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa);
+  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar,torre)
+    .filter(especificacao=>especificacaoContaNoProgresso(item.atividade,especificacao)&&categoriaResumoAbertura(item.atividade,especificacao)===etapa);
   return especificacoes.length
     ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
     :[registro.status||"nao-iniciado"];
@@ -2840,7 +2899,7 @@ function atualizarGraficoAbertura(){
     if(!["aurora","horizonte"].includes(partes[0])) return;
     const andar=Number(partes[1]);
     const atividade=partes.slice(3).join("|");
-    especificacoesDoServicoNoAndar(atividade,andar).forEach(especificacao=>{
+    especificacoesDoServicoNoAndar(atividade,andar,partes[0]).filter(especificacao=>especificacaoContaNoProgresso(atividade,especificacao)).forEach(especificacao=>{
       const categoria=categoriaResumoAbertura(atividade,especificacao);
       const estado=normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro);
       if(estado==="nao-aplicavel")return;
@@ -3206,13 +3265,13 @@ function listaRegistros(torre = torreSelecionada){
         ? unidadesDoAndar(torre,Number(escopo.andar),atividade.nome)
         : [escopo.unidade];
       unidades.forEach((unidade,indice)=>itens.push({
-        andar:Number(escopo.andar),unidade,
+        torre,andar:Number(escopo.andar),unidade,
         numeroApto:unidade.startsWith("Apto ")?indice+1:null,
         atividade:atividade.nome
       }));
     });
     (atividade.setoresSubservicos||[]).filter(escopo=>escopo.torre===torre).forEach(escopo=>itens.push({
-      andar:Number(escopo.andar),unidade:escopo.unidade,
+      torre,andar:Number(escopo.andar),unidade:escopo.unidade,
       numeroApto:escopo.unidade.startsWith("Apto ")?Number(escopo.unidade.replace(/\D/g,""))||null:null,
       atividade:atividade.nome
     }));
@@ -3226,7 +3285,7 @@ function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadra
   const personalizadas=(atividade?.setoresSubservicos||[])
     .filter(item=>item.subservico===subservico&&item.torre===torre&&Number(item.andar)===Number(andar))
     .map(item=>item.unidade);
-  return personalizadas.length?[...new Set(personalizadas)]:unidadesPadrao;
+  return personalizadas.length?[...new Set(personalizadas)]:unidadesDoAndar(torre,Number(andar),atividadeNome);
 }
 
 function renderizarApartamentosDoPavimento(){
@@ -4148,7 +4207,40 @@ function prepararDashboardGeral(){
   filtro.innerHTML=`<option value="todos">Todos os serviços</option>`+
     ETAPAS_DASHBOARD.map(([valor,rotulo])=>`<option value="${valor}">${rotulo}</option>`).join("");
   filtro.value=valorAtual==="todos"||ETAPAS_DASHBOARD.some(([valor])=>valor===valorAtual)?valorAtual:"todos";
+  prepararFiltroAcabamentoDashboard();
   atualizarDashboardGeral();
+}
+
+function atividadesAcabamentoDashboard(){
+  const ordem=[
+    "Acabamentos",
+    "Contrapiso",
+    "Esquadrias",
+    "Gesso",
+    "Impermeabilização",
+    "Instalações Elétricas",
+    "Instalações Hidráulicas",
+    "Pedra Natural",
+    "Revestimento"
+  ];
+  const cadastradas=new Set(atividadesCadastro.filter(atividade=>atividade.escopos.length).map(atividade=>atividade.nome));
+  return ordem.filter(atividade=>cadastradas.has(atividade));
+}
+function prepararFiltroAcabamentoDashboard(){
+  const campo=document.getElementById("campoFiltroAcabamentoDashboard");
+  const filtro=document.getElementById("filtroAcabamentoDashboard");
+  const servico=document.getElementById("filtroServicoDashboard").value;
+  campo.hidden=servico!=="acabamento";
+  if(campo.hidden)return;
+  const atual=filtro.value||"todos";
+  const atividades=atividadesAcabamentoDashboard();
+  filtro.innerHTML=`<option value="todos">Todos os serviços de acabamentos</option>`+atividades.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("");
+  filtro.value=atividades.includes(atual)?atual:"todos";
+}
+function itemAtendeFiltrosDashboard(item,servico){
+  if(!itemPertenceEtapaDashboard(item,servico))return false;
+  const acabamento=document.getElementById("filtroAcabamentoDashboard")?.value||"todos";
+  return servico!=="acabamento"||acabamento==="todos"||item.atividade===acabamento;
 }
 
 function prepararAbaServicos(){
@@ -4204,23 +4296,45 @@ function renderizarTorresProgresso(servico){
         .filter(estado=>estado!=="nao-aplicavel")
         .sort((a,b)=>(ordemEstado[a]??4)-(ordemEstado[b]??4));
       const percentual=estados.length?Math.round(estados.filter(estado=>estado==="concluido").length/estados.length*100):0;
-      const quantidadeVisual=12;
+      const quantidadeVisual=6;
       const elementos=Array.from({length:quantidadeVisual},(_,indice)=>{
         const estado=estados.length?estados[Math.min(estados.length-1,Math.floor(indice*estados.length/quantidadeVisual))]:"nao-iniciado";
         return `<span class="fundacao-elemento ${estado}"><i class="fundacao-bloco"></i><i class="fundacao-estaca"></i></span>`;
       }).join("");
-      return `<div class="torre-progresso-wrap"><button class="fundacao-progresso" type="button" data-torre="${torre}" data-andar="-2" title="${dados.nome} · Fundação · ${percentual}% concluído" aria-label="Abrir fundação da ${dados.nome}"><span class="fundacao-percentual">${percentual}%<small>Blocos e estacas</small></span><span class="fundacao-elementos">${elementos}</span></button><strong>${dados.nome}</strong><small>Fundação</small></div>`;
+      return `<div class="torre-progresso-wrap"><button class="fundacao-progresso" type="button" data-torre="${torre}" data-andar="-2" title="${dados.nome} · Fundação" aria-label="Abrir fundação da ${dados.nome}"><span class="fundacao-elementos">${elementos}</span></button><strong>${dados.nome}</strong><small>Fundação</small></div>`;
     }
     const modoEstrutura=servico==="estrutura";
     const modoAlvenaria=servico==="alvenaria";
+    const modoAcabamento=servico==="acabamento";
     const modoFachada=servico==="fachada";
     if(modoFachada){
       const itensFachada=listaRegistros(torre).filter(item=>itemPertenceEtapaDashboard(item,"fachada"));
       const setoresIdentificados=itensFachada.map(item=>item.unidade).filter(unidade=>/^B\d+$/i.test(String(unidade).trim()));
       const setores=[...new Set(setoresIdentificados.length?setoresIdentificados:itensFachada.map(item=>item.unidade).filter(Boolean))]
         .sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true,sensitivity:"base"}));
-      const faces=[[],[],[],[]];
-      setores.forEach((setor,indice)=>faces[Math.min(3,Math.floor(indice*4/Math.max(1,setores.length)))].push(setor));
+      const setoresCroqui={
+        aurora:[
+          ["B14","B13","B12","B11","B10","B09","B08"],
+          ["B04","B05","B06","B07"],
+          ["B18","B19","B01","B02","B03"],
+          ["B15","B16","B17"]
+        ],
+        horizonte:[
+          ["B10","B09","B08","B07","B06"],
+          ["B03","B04","B05"],
+          ["B12","B13","B14","B15","B01","B02"],
+          ["B11"]
+        ]
+      };
+      const proporcoesCroqui={
+        aurora:{B01:3,B02:2,B03:2.5,B04:1.5,B05:3,B06:3,B07:1.5,B08:1.5,B09:2,B10:3,B11:3,B12:3,B13:2,B14:1,B15:3,B16:3,B17:1.5,B18:2.5,B19:3},
+        horizonte:{B01:3,B02:2.2,B03:1.2,B04:3,B05:1.5,B06:3,B07:2.8,B08:2.5,B09:2,B10:1.5,B11:1,B12:2,B13:2.2,B14:2.2,B15:1.2}
+      };
+      const faces=(setoresCroqui[torre]||[[],[],[],[]]).map(face=>face.filter(setor=>setores.includes(setor)));
+      const setoresMapeados=new Set(faces.flat());
+      setores.filter(setor=>!setoresMapeados.has(setor)).forEach(setor=>{
+        faces.reduce((menor,face)=>face.length<menor.length?face:menor,faces[0]).push(setor);
+      });
       const nomesFaces=["frente","direita","fundo","esquerda"];
       const htmlFaces=faces.map((setoresFace,indiceFace)=>{
         const linhas=pavimentos.map(andar=>{
@@ -4232,7 +4346,8 @@ function renderizarTorresProgresso(servico){
             const titulo=`${dados.nome} · ${rotulo} · ${setor} · ${estado.replaceAll("-"," ")}`;
             return `<span class="fachada-3d-celula ${estado}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" data-setor="${escaparHtml(setor)}" title="${escaparHtml(titulo)}" aria-label="${escaparHtml(titulo)}"></span>`;
           }).join("");
-          return `<span class="fachada-3d-andar" style="--setores-face:${Math.max(1,setoresFace.length)}">${celulas}</span>`;
+          const grade=setoresFace.length?setoresFace.map(setor=>`${proporcoesCroqui[torre]?.[setor]||1}fr`).join(" "):"1fr";
+          return `<span class="fachada-3d-andar" style="grid-template-columns:${grade}">${celulas}</span>`;
         }).join("");
         return `<div class="fachada-3d-face ${nomesFaces[indiceFace]}">${linhas}</div>`;
       }).join("");
@@ -4240,12 +4355,12 @@ function renderizarTorresProgresso(servico){
         const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
         return `<span class="fachada-3d-andar-rotulo">${marco}</span>`;
       }).join("");
-      return `<div class="torre-progresso-wrap torre-fachada-3d-wrap"><div class="fachada-3d-instrucao">Arraste para girar · clique em um setor para abrir o andar</div><div class="fachada-3d-palco ${torre}" data-fachada-3d><div class="fachada-3d-andares" aria-hidden="true">${rotulosAndares}</div><div class="fachada-3d-cena" style="--rotacao-y:-28deg">${htmlFaces}<span class="fachada-3d-laje"></span></div></div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
+      return `<div class="torre-progresso-wrap torre-fachada-3d-wrap"><div class="fachada-3d-instrucao">Arraste ou use a barra para girar · clique em um setor para abrir o andar</div><div class="fachada-3d-palco ${torre}" data-fachada-3d data-rotacao="-32"><div class="fachada-3d-andares" aria-hidden="true">${rotulosAndares}</div><div class="fachada-3d-cena" style="--rotacao-y:-32deg">${htmlFaces}<span class="fachada-3d-teto"></span><span class="fachada-3d-laje"></span></div></div><div class="fachada-3d-controles"><input type="range" min="-180" max="180" value="-32" step="1" data-navegacao-fachada aria-label="Navegação horizontal da fachada"><button type="button" data-resetar-fachada aria-label="Voltar à perspectiva inicial">Frente</button></div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
     }
     const andares = pavimentos.map(andar=>{
-      const itens = listaRegistros(torre).filter(item => item.andar === andar && itemPertenceEtapaDashboard(item,servico));
+      const itens = listaRegistros(torre).filter(item => item.andar === andar && itemAtendeFiltrosDashboard(item,servico));
       const total=itens.length||1;
-      const quantidade=status=>itens.filter(item=>(obterRegistro(item.andar,item.unidade,item.atividade,torre).status||"nao-iniciado")===status).length;
+      const quantidade=status=>itens.filter(item=>estadoConsolidadoEtapaDashboard(estadosItemEtapaDashboard(item,servico,torre))===status).length;
       const concluidos=quantidade("concluido");
       const andamento=quantidade("em-andamento");
       const pendentes=quantidade("pendente");
@@ -4256,10 +4371,29 @@ function renderizarTorresProgresso(servico){
       const marco={"-2":"F","-1":"SS","0":"T","101":"B","102":"R","103":"C"}[andar]||`${andar}º`;
       const rotulo=rotuloAndar(andar);
       const estadosEstrutura=modoEstrutura?itens.flatMap(item=>estadosItemEtapaDashboard(item,"estrutura",torre)):[];
-      const estadosAlvenaria=modoAlvenaria?itens.flatMap(item=>estadosItemEtapaDashboard(item,"alvenaria",torre)).filter(estado=>estado!=="nao-aplicavel"):[];
-      const estruturaConcluida=estadosEstrutura.length>0&&estadosEstrutura.every(estado=>estado==="concluido");
-      const classeEstrutura=estruturaConcluida?" estrutura-concluida":"";
+      const itensAlvenariaAndar=modoAlvenaria?itens:modoAcabamento?listaRegistros(torre).filter(item=>item.andar===andar&&itemPertenceEtapaDashboard(item,"alvenaria")):[];
+      const estadosAlvenaria=itensAlvenariaAndar.flatMap(item=>estadosItemEtapaDashboard(item,"alvenaria",torre)).filter(estado=>estado!=="nao-aplicavel");
+      const estadosAcabamento=modoAcabamento?itens.flatMap(item=>estadosItemEtapaDashboard(item,"acabamento",torre)).filter(estado=>estado!=="nao-aplicavel"):[];
+      const itensEstruturaAndar=modoEstrutura?itens:modoAlvenaria||modoAcabamento?listaRegistros(torre).filter(item=>item.andar===andar&&itemPertenceEtapaDashboard(item,"estrutura")):[];
+      const estadosDivisaoEstrutura=divisao=>itensEstruturaAndar.flatMap(item=>{
+        const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
+        return especificacoesDoServicoNoAndar(item.atividade,item.andar,torre)
+          .filter(especificacao=>especificacao.startsWith(`${divisao} :: `))
+          .map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro));
+      }).filter(estado=>estado!=="nao-aplicavel");
+      const mostrarEstrutura=modoEstrutura||modoAlvenaria||modoAcabamento;
+      const pilaresEstrutura=mostrarEstrutura?estadosDivisaoEstrutura("Pilares"):[];
+      const vigasEstrutura=mostrarEstrutura?estadosDivisaoEstrutura("Vigas"):[];
+      const lajesEstrutura=mostrarEstrutura?estadosDivisaoEstrutura("Lajes"):[];
+      const pilaresConcluidos=pilaresEstrutura.length>0&&pilaresEstrutura.every(estado=>estado==="concluido");
+      const lajeConcluida=vigasEstrutura.length>0&&lajesEstrutura.length>0&&vigasEstrutura.every(estado=>estado==="concluido")&&lajesEstrutura.every(estado=>estado==="concluido");
+      const alvenariaConcluida=estadosAlvenaria.length>0&&estadosAlvenaria.every(estado=>estado==="concluido");
+      const classeEstrutura=`${pilaresConcluidos?" pilares-concluidos":""}${lajeConcluida?" laje-concluida":""}${alvenariaConcluida?" alvenaria-concluida":""}`;
       const percentualAlvenaria=estadosAlvenaria.length?Math.round(estadosAlvenaria.filter(estado=>estado==="concluido").length/estadosAlvenaria.length*100):0;
+      const totalAcabamento=estadosAcabamento.length||1;
+      const fimAcabamentoConcluido=estadosAcabamento.filter(estado=>estado==="concluido").length/totalAcabamento*100;
+      const fimAcabamentoAndamento=fimAcabamentoConcluido+estadosAcabamento.filter(estado=>estado==="em-andamento").length/totalAcabamento*100;
+      const fimAcabamentoPendente=fimAcabamentoAndamento+estadosAcabamento.filter(estado=>estado==="pendente").length/totalAcabamento*100;
       const percentualExibido=modoEstrutura&&estadosEstrutura.length
         ?Math.round(estadosEstrutura.filter(estado=>estado==="concluido").length/estadosEstrutura.length*100)
         :modoAlvenaria?percentualAlvenaria:percentual;
@@ -4273,19 +4407,23 @@ function renderizarTorresProgresso(servico){
         return `<span class="fachada-setor ${estado}" title="${escaparHtml(item.unidade)} · ${estado.replaceAll("-"," ")}"></span>`;
       }).join(""):"";
       const quantidadeSetores=modoFachada?Math.max(1,itens.length):1;
-      return `<span class="andar-progresso${classeEstrutura}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%;--percentual-alvenaria:${percentualAlvenaria}%;--quantidade-setores:${quantidadeSetores}" data-marco="${marco}" title="${titulo}" aria-label="Ver ${rotulo} da ${dados.nome}">${setoresFachada}</span>`;
+      const elementosEstrutura=mostrarEstrutura?`<i class="estrutura-pilares"></i><i class="estrutura-laje"></i>`:"";
+      const elementosAlvenaria=modoAlvenaria||modoAcabamento?`<i class="alvenaria-blocos"></i>`:"";
+      const elementosAcabamento=modoAcabamento?`<i class="acabamento-pintura"></i>`:"";
+      return `<span class="andar-progresso${classeEstrutura}" role="button" tabindex="0" data-torre="${torre}" data-andar="${andar}" style="--fim-concluido:${fimConcluido}%;--fim-andamento:${fimAndamento}%;--fim-pendente:${fimPendente}%;--percentual-alvenaria:${percentualAlvenaria}%;--fim-acabamento-concluido:${fimAcabamentoConcluido}%;--fim-acabamento-andamento:${fimAcabamentoAndamento}%;--fim-acabamento-pendente:${fimAcabamentoPendente}%;--quantidade-setores:${quantidadeSetores}" data-marco="${marco}" title="${titulo}" aria-label="Ver ${rotulo} da ${dados.nome}">${setoresFachada}${elementosEstrutura}${elementosAlvenaria}${elementosAcabamento}</span>`;
     }).join("");
-    const classeModo=modoEstrutura?"modo-estrutura":modoAlvenaria?"modo-alvenaria":modoFachada?"modo-fachada":"";
+    const classeModo=modoEstrutura?"modo-estrutura":modoAlvenaria?"modo-alvenaria":modoAcabamento?"modo-acabamento":modoFachada?"modo-fachada":"";
     return `<div class="torre-progresso-wrap"><div class="predio-progresso ${torre} ${classeModo}">${andares}</div><strong>${dados.nome}</strong><small>${dados.andares} andares</small></div>`;
   }).join("");
 }
 
 function atualizarDashboardGeral(){
   const servico = document.getElementById("filtroServicoDashboard").value || "todos";
+  document.querySelector("#dashboardGeral .legenda-torres").hidden=["estrutura","alvenaria"].includes(servico);
   const torresDashboard = modoVisaoGeral ? Object.keys(TORRES) : [torreSelecionada];
   const dadosTorres = torresDashboard.map(torre => {
-    const itens = listaRegistros(torre).filter(item=>itemPertenceEtapaDashboard(item,servico));
-    const realizados = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade,torre).concluido).length;
+    const itens = listaRegistros(torre).filter(item=>itemAtendeFiltrosDashboard(item,servico));
+    const realizados = itens.filter(item=>estadoConsolidadoEtapaDashboard(estadosItemEtapaDashboard(item,servico,torre))==="concluido").length;
     return {torre,itens,realizados,pendentes:itens.length-realizados,percentual:itens.length?Math.round(realizados/itens.length*100):0};
   });
   const total = dadosTorres.reduce((s,t)=>s+t.itens.length,0);
@@ -4293,7 +4431,7 @@ function atualizarDashboardGeral(){
   const contagemStatus = {"nao-iniciado":0,"em-andamento":0,"pendente":0,"concluido":0};
   dadosTorres.forEach(grupo => {
     grupo.itens.forEach(item => {
-      const status = obterRegistro(item.andar,item.unidade,item.atividade,grupo.torre).status || "nao-iniciado";
+      const status = estadoConsolidadoEtapaDashboard(estadosItemEtapaDashboard(item,servico,grupo.torre));
       contagemStatus[status] = (contagemStatus[status] || 0) + 1;
     });
   });
@@ -4470,6 +4608,15 @@ function restaurarPosicaoVisualPlanilha(estado){
   });
   window.scrollTo(estado.x||0,estado.y||0);
 }
+function atualizarPercentualFiltroPeloDom(){
+  const controles=[...document.querySelectorAll("#corpoPlanilha .controle-especificacao")].filter(controle=>{
+    if(controle.dataset.estado==="nao-aplicavel")return false;
+    const partes=controle.dataset.chave.split("|");
+    return especificacaoContaNoProgresso(partes.slice(3).join("|"),controle.dataset.especificacao);
+  });
+  const concluidos=controles.filter(controle=>controle.dataset.estado==="concluido").length;
+  document.getElementById("percentualFiltro").textContent=`${controles.length?Math.round(concluidos/controles.length*100):0}%`;
+}
 function renderizarPlanilha(){
   const posicaoVisual=capturarPosicaoVisualPlanilha();
   const valorAndar = document.getElementById("filtroAndar").value;
@@ -4484,7 +4631,8 @@ function renderizarPlanilha(){
     const atividadeOk = atividadeFiltro === "todas" || item.atividade === atividadeFiltro;
     const status = obterRegistro(item.andar,item.unidade,item.atividade).status||"nao-iniciado";
     const situacaoOk = situacaoFiltro === "todas" || status === situacaoFiltro;
-    return (andar === null || item.andar === andar) && unidadeOk && atividadeOk && situacaoOk;
+    const possuiServicoNoAndar=especificacoesDoServicoNoAndar(item.atividade,item.andar,torreSelecionada).length>0;
+    return possuiServicoNoAndar&&(andar === null || item.andar === andar) && unidadeOk && atividadeOk && situacaoOk;
   }).sort((a,b)=>
     a.andar-b.andar ||
     comparadorPlanilha.compare(a.unidade,b.unidade) ||
@@ -4531,8 +4679,7 @@ function renderizarPlanilha(){
       return `<section class="matriz-servico ${recolhida?"recolhida":""}" data-chave-recolhimento="${escaparHtml(chaveRecolhimento)}"><div class="matriz-servico-titulo"><div class="matriz-servico-identidade"><h3>${escaparHtml(grupo.atividade)}</h3>${filtroDivisao}</div><div class="matriz-servico-acoes"><span>${rotuloAndar(grupo.andar)}</span><button class="recolher-especificacoes" type="button" aria-expanded="${!recolhida}" aria-label="${recolhida?"Mostrar":"Ocultar"} especificações de ${escaparHtml(grupo.atividade)}" title="${recolhida?"Mostrar":"Ocultar"} especificações"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button></div></div><div class="tabela-scroll" data-chave-matriz="${escaparHtml(`${grupo.andar}|${grupo.atividade}`)}"><table><thead><tr><th class="selecionar-matriz" title="Selecionar ou desmarcar toda a tabela">Especificação do serviço</th>${cabecalho}</tr></thead><tbody>${linhas}</tbody></table></div></section>`;
     }).join("");
   }
-  const concluidos = itens.filter(i => obterRegistro(i.andar,i.unidade,i.atividade).concluido).length;
-  document.getElementById("percentualFiltro").textContent = `${itens.length ? Math.round(concluidos/itens.length*100) : 0}%`;
+  atualizarPercentualFiltroPeloDom();
   atualizarControlesSelecao();
   requestAnimationFrame(()=>restaurarPosicaoVisualPlanilha(posicaoVisual));
 }
@@ -4957,7 +5104,7 @@ function atualizarGraficosOperacionais(){
       const grupo=todos.filter(item=>item.andar===andar&&item.atividade===coluna.atividade);
       const estados=grupo.flatMap(item=>{
         const registro=obterRegistro(item.andar,item.unidade,item.atividade);
-        const todasEspecificacoes=especificacoesDoServicoNoAndar(coluna.atividade,andar);
+        const todasEspecificacoes=especificacoesDoServicoNoAndar(coluna.atividade,andar).filter(especificacao=>especificacaoContaNoProgresso(coluna.atividade,especificacao));
         const especificacoes=coluna.termos.length?todasEspecificacoes.filter(especificacao=>coluna.termos.some(termo=>normalizarBuscaServico(especificacao).includes(normalizarBuscaServico(termo)))):todasEspecificacoes;
         return especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro)).filter(estado=>estado!=="nao-aplicavel");
       });
@@ -5663,7 +5810,8 @@ document.getElementById("filtroAndar").addEventListener("change", () => {
     atualizarGraficosOperacionais();
   });
 });
-document.getElementById("filtroServicoDashboard").addEventListener("change", atualizarDashboardGeral);
+document.getElementById("filtroServicoDashboard").addEventListener("change",()=>{prepararFiltroAcabamentoDashboard();atualizarDashboardGeral();});
+document.getElementById("filtroAcabamentoDashboard").addEventListener("change",atualizarDashboardGeral);
 function renderizarConteudoAba(id){
   if(!dadosPrincipaisCarregados)return;
   if((id==="apartamentos"||id==="personalizacao"||id==="cadastroPersonalizacao")&&!dadosPersonalizacaoCarregados){
@@ -5703,12 +5851,7 @@ function atualizarCelulasEspecificacoesNoDom(chavesSelecao){
     controle.classList.remove("selecionado");
     controle.setAttribute("aria-pressed","false");
   });
-  const chavesVisiveis=[...new Set([...controles.values()].map(controle=>controle.dataset.chave))];
-  const concluidos=chavesVisiveis.filter(chave=>{
-    const partes=chave.split("|");
-    return obterRegistro(Number(partes[1]),partes[2],partes.slice(3).join("|"),partes[0]).concluido;
-  }).length;
-  document.getElementById("percentualFiltro").textContent=`${chavesVisiveis.length?Math.round(concluidos/chavesVisiveis.length*100):0}%`;
+  atualizarPercentualFiltroPeloDom();
   atualizarControlesSelecao();
   agendarAtualizacaoGraficoAbertura();
   return true;
@@ -5763,6 +5906,18 @@ document.getElementById("historicoNotificacoesLista").addEventListener("click",e
 document.getElementById("fecharHistoricoNotificacoes").addEventListener("click",()=>document.getElementById("historicoNotificacoesOverlay").classList.add("oculto"));
 document.getElementById("historicoNotificacoesOverlay").addEventListener("click",event=>{if(event.target.id==="historicoNotificacoesOverlay")event.currentTarget.classList.add("oculto");});
 document.getElementById("torresProgresso").addEventListener("click", event => {
+  const controleGiro=event.target.closest("[data-girar-fachada],[data-resetar-fachada]");
+  if(controleGiro){
+    const palco=controleGiro.closest(".torre-fachada-3d-wrap")?.querySelector("[data-fachada-3d]");
+    const cena=palco?.querySelector(".fachada-3d-cena");
+    if(!palco||!cena)return;
+    const rotacao=controleGiro.hasAttribute("data-resetar-fachada")?-32:Number(palco.dataset.rotacao||-32)+Number(controleGiro.dataset.girarFachada||0);
+    palco.dataset.rotacao=String(rotacao);
+    cena.style.setProperty("--rotacao-y",`${rotacao}deg`);
+    const navegacao=controleGiro.closest(".fachada-3d-controles")?.querySelector("[data-navegacao-fachada]");
+    if(navegacao)navegacao.value=String(Math.max(-180,Math.min(180,rotacao)));
+    return;
+  }
   const palco=event.target.closest("[data-fachada-3d]");
   if(palco?.dataset.ignorarClique==="1"){delete palco.dataset.ignorarClique;return;}
   const pavimento = event.target.closest(".andar-progresso,.fundacao-progresso,.fachada-3d-celula");
@@ -5776,6 +5931,15 @@ document.getElementById("torresProgresso").addEventListener("keydown", event => 
   abrirPlanilhaDoPavimento(pavimento.dataset.torre, Number(pavimento.dataset.andar));
 });
 let arrasteFachada3d=null;
+document.getElementById("torresProgresso").addEventListener("input",event=>{
+  const navegacao=event.target.closest("[data-navegacao-fachada]");
+  if(!navegacao)return;
+  const palco=navegacao.closest(".torre-fachada-3d-wrap")?.querySelector("[data-fachada-3d]");
+  const cena=palco?.querySelector(".fachada-3d-cena");
+  if(!palco||!cena)return;
+  palco.dataset.rotacao=navegacao.value;
+  cena.style.setProperty("--rotacao-y",`${navegacao.value}deg`);
+});
 document.getElementById("torresProgresso").addEventListener("pointerdown",event=>{
   const palco=event.target.closest("[data-fachada-3d]");
   if(!palco||event.button!==0)return;
@@ -5792,6 +5956,8 @@ document.getElementById("torresProgresso").addEventListener("pointermove",event=
   const rotacao=arrasteFachada3d.rotacao+deslocamento*.65;
   arrasteFachada3d.palco.dataset.rotacao=String(rotacao);
   arrasteFachada3d.cena.style.setProperty("--rotacao-y",`${rotacao}deg`);
+  const navegacao=arrasteFachada3d.palco.closest(".torre-fachada-3d-wrap")?.querySelector("[data-navegacao-fachada]");
+  if(navegacao)navegacao.value=String(Math.max(-180,Math.min(180,rotacao)));
 });
 document.getElementById("torresProgresso").addEventListener("pointerup",event=>{
   if(!arrasteFachada3d)return;
