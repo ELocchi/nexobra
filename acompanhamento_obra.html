@@ -419,12 +419,15 @@
   .painel-aba.ativo{display:block;}
   @keyframes entradaAba{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
   .apartamentos-cabecalho{
-    display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:16px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:16px;
   }
+  .apartamentos-cabecalho-esquerda{display:grid;gap:12px;}
+  .apartamento-controles-andar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
+  .apartamento-controles-andar .campo-filtro{width:230px;}
   .apartamentos-cabecalho h2{margin-bottom:5px;}
   .apartamentos-cabecalho p{margin:0;color:var(--cinza-texto);font-size:.82rem;}
-  .apartamento-acoes-relatorio{display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:7px 10px;min-width:min(620px,60vw);}
-  .apartamento-acoes-relatorio .acao-relatorio{grid-column:1/-1;justify-self:end;}
+  .apartamento-acoes-relatorio{display:grid;grid-template-columns:auto auto;gap:10px;align-items:end;padding-top:21px;}
+  .apartamento-acoes-relatorio .acao-relatorio{min-width:105px;}
   .acao-relatorio{display:flex;align-items:center;justify-content:center;height:35px;border:1px solid var(--azul);border-radius:7px;background:#fff;color:var(--azul);font:700 .72rem Arial;text-decoration:none;cursor:pointer;}
   .acao-relatorio:hover{background:var(--azul);color:#fff;}
   .acao-relatorio:disabled,.acao-relatorio.desabilitado{opacity:.45;pointer-events:none;}
@@ -1296,7 +1299,8 @@
     #controleDetalhado{width:calc(100vw - 24px);margin-left:calc(50% - 50vw + 12px);}
     .dashboard-topo{align-items:stretch;flex-direction:column;}
     .apartamentos-cabecalho{align-items:stretch;flex-direction:column;}
-    .apartamento-acoes-relatorio{grid-template-columns:1fr;min-width:0;}
+    .apartamento-controles-andar .campo-filtro{width:100%;}
+    .apartamento-acoes-relatorio{grid-template-columns:1fr 1fr;min-width:0;padding-top:0;}
     .apartamento-acoes-relatorio .acao-relatorio{grid-column:auto;justify-self:stretch;}
     .torres-progresso{gap:38px;padding-inline:5px;min-height:445px;}
     .predio-progresso{width:92px;}
@@ -1621,13 +1625,19 @@
 
   <section id="apartamentos" class="painel-aba">
     <div class="apartamentos-cabecalho">
-      <div>
+      <div class="apartamentos-cabecalho-esquerda">
+        <div class="apartamento-controles-andar">
+          <div class="campo-filtro"><label for="andarAbaApartamentos">Andar</label><select id="andarAbaApartamentos"></select></div>
+          <button class="expandir-apartamentos" id="expandirApartamentos" type="button" hidden>Ver todos os andares</button>
+        </div>
+        <div>
         <h2 id="tituloApartamentos">Apartamentos · Torre Home</h2>
         <p id="subtituloApartamentos"></p>
+        </div>
       </div>
       <div class="apartamento-acoes-relatorio">
-        <div class="campo-filtro"><label for="andarAbaApartamentos">Andar</label><select id="andarAbaApartamentos"></select></div>
         <a class="acao-relatorio desabilitado" id="baixarPdfApartamento" href="#" download>Gerar PDF</a>
+        <a class="acao-relatorio desabilitado" id="baixarPlacaApartamento" href="#" download>Placa</a>
       </div>
     </div>
     <div class="apartamentos-seletor" id="apartamentosGrid"></div>
@@ -1889,6 +1899,7 @@
         <div class="campo-filtro"><label for="relatorioOcorrencias">Ocorrências</label><select id="relatorioOcorrencias"><option value="todas">Todas</option><option value="com">Com ocorrências</option><option value="sem">Sem ocorrências</option><option value="pendente">Pendentes</option><option value="concluido">Concluídas</option></select></div>
       </div>
       <button class="acao-relatorio" type="button" onclick="gerarPdfRelatorio()">Gerar PDF</button>
+      <button class="acao-relatorio" type="button" onclick="baixarPlacasRelatorio()">Baixar placas</button>
     </div>
   </section>
 
@@ -3304,6 +3315,7 @@ function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadra
 
 function renderizarApartamentosDoPavimento(){
   const seletorAndar=document.getElementById("andarAbaApartamentos");
+  document.getElementById("expandirApartamentos").hidden=!apartamentosRecolhidos;
   document.querySelector(".painel-acabamentos")?.classList.remove("com-alteracao");
   const pavimentosComApartamentos=pavimentosDaTorre(torreSelecionada).filter(andar=>
     unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade))
@@ -3338,7 +3350,7 @@ function renderizarApartamentosDoPavimento(){
   apartamentosGrid.classList.toggle("por-andar",todosAndaresApartamentos||apartamentosRecolhidos);
   apartamentosGrid.innerHTML = unidadesExibidas.length
     ? apartamentosRecolhidos
-      ? `<section class="apartamentos-grupo-andar"><div class="apartamentos-recolhidos-topo"><h3>Apartamentos · ${rotuloAndar(pavimentoSelecionado)}</h3><button class="expandir-apartamentos" id="expandirApartamentos" type="button">Ver todos os andares</button></div><div class="apartamentos-linha-andar">${unidadesExibidas.map(renderizarCartaoApartamento).join("")}</div></section>`
+      ? `<section class="apartamentos-grupo-andar"><div class="apartamentos-recolhidos-topo"><h3>Apartamentos · ${rotuloAndar(pavimentoSelecionado)}</h3></div><div class="apartamentos-linha-andar">${unidadesExibidas.map(renderizarCartaoApartamento).join("")}</div></section>`
       : todosAndaresApartamentos
       ? [...new Set(unidades.map(item=>item.andar))].sort((a,b)=>a-b).map(andar=>`<section class="apartamentos-grupo-andar"><h3>${rotuloAndar(andar)}</h3><div class="apartamentos-linha-andar">${unidades.filter(item=>item.andar===andar).map(renderizarCartaoApartamento).join("")}</div></section>`).join("")
       : unidades.map(renderizarCartaoApartamento).join("")
@@ -3347,6 +3359,8 @@ function renderizarApartamentosDoPavimento(){
     unidadeSelecionada = null;
     document.getElementById("baixarPdfApartamento").classList.add("desabilitado");
     document.getElementById("baixarPdfApartamento").href="#";
+    document.getElementById("baixarPlacaApartamento").classList.add("desabilitado");
+    document.getElementById("baixarPlacaApartamento").href="#";
     document.getElementById("tituloApartamentos").textContent = `Apartamentos · ${TORRES[torreSelecionada].nome}`;
     document.getElementById("subtituloApartamentos").textContent = "";
     document.getElementById("dashboardApartamento").classList.remove("visivel");
@@ -3361,6 +3375,9 @@ function renderizarApartamentosDoPavimento(){
   const baixarPdf=document.getElementById("baixarPdfApartamento");
   baixarPdf.href=urlPdf;
   baixarPdf.classList.remove("desabilitado");
+  const baixarPlaca=document.getElementById("baixarPlacaApartamento");
+  baixarPlaca.href=`/placas-unidades.pdf?${consultaRelatorio}`;
+  baixarPlaca.classList.remove("desabilitado");
   document.getElementById("tituloApartamentos").textContent = `${nome} · ${pavimentoSelecionado}º andar`;
   document.getElementById("subtituloApartamentos").textContent = TORRES[torreSelecionada].nome;
   document.getElementById("dashboardApartamento").classList.add("visivel");
@@ -3663,6 +3680,20 @@ function gerarPdfRelatorio(){
     ocorrencias:document.getElementById("relatorioOcorrencias").value
   });
   window.open(`/relatorio-visitante.pdf?${consulta}`,"_blank","noopener");
+}
+
+function baixarPlacasRelatorio(){
+  const consulta=new URLSearchParams({
+    torre:document.getElementById("relatorioTorre").value,
+    andar:document.getElementById("relatorioAndar").value,
+    unidade:document.getElementById("relatorioUnidade").value
+  });
+  const link=document.createElement("a");
+  link.href=`/placas-unidades.pdf?${consulta}`;
+  link.download="placas-unidades.pdf";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 function abrirOcorrenciaDoServico(torre, andar, unidade, atividade){
@@ -5495,6 +5526,10 @@ document.getElementById("andarAbaApartamentos").addEventListener("change",event=
   apartamentosRecolhidos=false;
   renderizarApartamentosDoPavimento();
 });
+document.getElementById("expandirApartamentos").addEventListener("click",()=>{
+  apartamentosRecolhidos=false;
+  renderizarApartamentosDoPavimento();
+});
 document.getElementById("baixarPdfApartamento").addEventListener("click",event=>{
   if(!unidadeSelecionada){
     event.preventDefault();
@@ -5503,6 +5538,15 @@ document.getElementById("baixarPdfApartamento").addEventListener("click",event=>
   const consulta=new URLSearchParams({torre:torreSelecionada,andar:String(pavimentoSelecionado),unidade:unidadeSelecionada});
   event.currentTarget.href=`/relatorio.pdf?${consulta}`;
   event.currentTarget.download=`relatorio-${unidadeSelecionada.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}.pdf`;
+});
+document.getElementById("baixarPlacaApartamento").addEventListener("click",event=>{
+  if(!unidadeSelecionada){
+    event.preventDefault();
+    return;
+  }
+  const consulta=new URLSearchParams({torre:torreSelecionada,andar:String(pavimentoSelecionado),unidade:unidadeSelecionada});
+  event.currentTarget.href=`/placas-unidades.pdf?${consulta}`;
+  event.currentTarget.download=`placa-${unidadeSelecionada.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}.pdf`;
 });
 document.getElementById("acabamentosApartamento").addEventListener("click",async event=>{
   const botao=event.target.closest("#adicionarComentarioUnidade");
@@ -6002,11 +6046,6 @@ document.getElementById("torresProgresso").addEventListener("pointercancel",even
   arrasteFachada3d=null;
 });
 document.getElementById("apartamentosGrid").addEventListener("click", event => {
-  if(event.target.closest("#expandirApartamentos")){
-    apartamentosRecolhidos=false;
-    renderizarApartamentosDoPavimento();
-    return;
-  }
   const unidade = event.target.closest(".apartamento-seletor");
   if(unidade){
     pavimentoSelecionado=Number(unidade.dataset.andar);

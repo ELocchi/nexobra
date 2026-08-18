@@ -1,5 +1,5 @@
 {
   "usuario_engenheiro": "SEU_USUARIO",
-  "senha_engenheiro": "SUA_SENHA_FORTE"
+  "senha_engenheiro": "SUA_SENHA_FORTE",
+  "segredo_visitante": "UMA_CHAVE_LONGA_QUE_NAO_DEVE_SER_ALTERADA"
 }
-

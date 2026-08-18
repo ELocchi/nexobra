@@ -5,7 +5,7 @@ Painel local de acompanhamento do empreendimento BoulevarDiálogo Butantã, com:
 - controle por torre, pavimento, apartamento e serviço;
 - ocorrências com fotos e histórico em PDF;
 - dashboards e evolução visual dos pavimentos;
-- relatórios e QR Codes para visitantes;
+- placas individuais ou em lote, com QR Code de visitante por unidade;
 - persistência em SQLite;
 - acesso administrativo protegido por login.
 
@@ -18,7 +18,9 @@ python3 -m pip install -r requirements.txt
 cp configuracao.exemplo.json configuracao.local.json
 ```
 
-Edite `configuracao.local.json` e defina o usuário e a senha do engenheiro. Esse arquivo e o banco SQLite são ignorados pelo Git.
+Edite `configuracao.local.json` e defina o usuário, a senha do engenheiro e um
+`segredo_visitante` longo. Mantenha esse segredo: trocá-lo invalida os QR Codes já
+impressos. Esse arquivo e o banco SQLite são ignorados pelo Git.
 
 ## Executar
 

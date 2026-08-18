@@ -14,6 +14,8 @@ services:
         sync: false
       - key: OBRA_SENHA
         sync: false
+      - key: OBRA_SEGREDO_VISITANTE
+        generateValue: true
       - key: PYTHON_VERSION
         value: 3.13.5
     disk:

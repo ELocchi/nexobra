@@ -22,7 +22,7 @@ from xml.etree import ElementTree as ET
 from xml.sax.saxutils import escape
 from zipfile import ZipFile
 
-from reportlab.graphics import renderSVG
+from reportlab.graphics import renderPDF, renderSVG
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 from reportlab.lib import colors
@@ -186,6 +186,21 @@ if CONFIGURACAO_LOCAL.exists():
         configuracao_local = {}
 USUARIO_ENGENHEIRO = os.environ.get("OBRA_USUARIO", configuracao_local.get("usuario_engenheiro", ""))
 SENHA_ENGENHEIRO = os.environ.get("OBRA_SENHA", configuracao_local.get("senha_engenheiro", ""))
+SEGREDO_VISITANTE = os.environ.get(
+    "OBRA_SEGREDO_VISITANTE",
+    configuracao_local.get("segredo_visitante", SENHA_ENGENHEIRO or "boulevard-dialogo-visitante-v1"),
+).encode("utf-8")
+
+
+def assinatura_visitante(torre, andar, unidade):
+    mensagem = f"{torre}|{int(andar)}|{unidade}".encode("utf-8")
+    return hmac.new(SEGREDO_VISITANTE, mensagem, hashlib.sha256).hexdigest()[:32]
+
+
+def acesso_visitante_valido(torre, andar, unidade, assinatura):
+    return bool(assinatura) and hmac.compare_digest(
+        assinatura_visitante(torre, andar, unidade), str(assinatura)
+    )
 
 
 def nome_exibicao_usuario(usuario):
@@ -329,7 +344,7 @@ def conectar():
     return conexao
 
 
-def gerar_relatorio_pdf(torre, andar, unidade):
+def gerar_relatorio_pdf(torre, andar, unidade, incluir_ocorrencias_pendentes=True):
     with conectar() as conexao:
         registros = conexao.execute(
             "SELECT andar, atividade, status, data_conclusao, observacao FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
@@ -340,6 +355,8 @@ def gerar_relatorio_pdf(torre, andar, unidade):
             "SELECT atividade, status, data_ocorrencia, descricao FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
         ).fetchall()
+        if not incluir_ocorrencias_pendentes:
+            ocorrencias = [item for item in ocorrencias if item["status"] != "pendente"]
     memoria = BytesIO()
     documento = SimpleDocTemplate(memoria, pagesize=A4, rightMargin=16*mm, leftMargin=16*mm, topMargin=14*mm, bottomMargin=14*mm)
     estilos = getSampleStyleSheet()
@@ -513,7 +530,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
     return memoria.getvalue()
 
 
-def gerar_pagina_visitante(torre, andar, unidade):
+def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
     with conectar() as conexao:
         registros = conexao.execute(
             "SELECT atividade, status, data_conclusao, observacao, foto, foto_nome FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
@@ -521,13 +538,13 @@ def gerar_pagina_visitante(torre, andar, unidade):
         ).fetchall()
         registros = somente_registros_planejados(registros, torre)
         ocorrencias = conexao.execute(
-            "SELECT atividade, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
+            "SELECT atividade, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? AND status != 'pendente' ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
         ).fetchall()
     total = len(registros)
     concluidos = sum(1 for item in registros if item["status"] == "concluido")
     percentual = round(concluidos / total * 100) if total else 0
-    consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade})
+    consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "acesso": assinatura})
     linhas = []
     for item in registros:
         data = "/".join(reversed(item["data_conclusao"].split("-"))) if item["data_conclusao"] else "—"
@@ -740,6 +757,84 @@ def gerar_qr_svg(url):
     desenho = Drawing(tamanho, tamanho, transform=[tamanho/largura, 0, 0, tamanho/altura, 0, 0])
     desenho.add(codigo)
     return renderSVG.drawToString(desenho)
+
+
+def desenho_qr(url, tamanho):
+    codigo = qr.QrCodeWidget(url)
+    x1, y1, x2, y2 = codigo.getBounds()
+    largura, altura = x2 - x1, y2 - y1
+    desenho = Drawing(tamanho, tamanho, transform=[tamanho/largura, 0, 0, tamanho/altura, -x1, -y1])
+    desenho.add(codigo)
+    return desenho
+
+
+def desenhar_imagem_contida(pdf, arquivo, x, y, largura, altura):
+    if not arquivo.exists():
+        return
+    leitor = ImageReader(str(arquivo))
+    largura_original, altura_original = leitor.getSize()
+    escala = min(largura / largura_original, altura / altura_original)
+    final_largura, final_altura = largura_original * escala, altura_original * escala
+    pdf.drawImage(
+        leitor, x + (largura - final_largura) / 2, y + (altura - final_altura) / 2,
+        final_largura, final_altura, preserveAspectRatio=True, mask="auto",
+    )
+
+
+def unidades_para_placas(torre, andar="todos", unidade="todos"):
+    if unidade != "todos":
+        numero = re.search(r"(\d+)", unidade)
+        andar_unidade = int(andar) if andar != "todos" else int(numero.group(1)[:-2]) if numero and len(numero.group(1)) > 2 else 0
+        return [(andar_unidade, unidade)]
+    ultimo_andar = 36 if torre == "aurora" else 23
+    andares = [int(andar)] if andar != "todos" else range(1, ultimo_andar + 1)
+    return [
+        (numero, nome) for numero in andares for nome in apartamentos_do_andar(torre, numero)
+        if re.match(r"^(Apto|Apartamento)\s", nome, re.I)
+    ]
+
+
+def gerar_placas_pdf(torre, unidades, base_publica):
+    memoria = BytesIO()
+    tamanho_placa = (105*mm, 145*mm)
+    pdf = canvas.Canvas(memoria, pagesize=tamanho_placa, pageCompression=1)
+    largura, altura = tamanho_placa
+    azul = colors.HexColor("#294d82")
+    vermelho = colors.HexColor("#c82512")
+    margem = 5 * mm
+    for andar, unidade in unidades:
+        pdf.setFillColor(colors.white)
+        pdf.rect(0, 0, largura, altura, fill=1, stroke=0)
+        pdf.setStrokeColor(azul)
+        pdf.setLineWidth(1.1 * mm)
+        pdf.rect(margem, margem, largura - 2*margem, altura - 2*margem, fill=0, stroke=1)
+        pdf.setFillColor(azul)
+        pdf.rect(margem, altura - 33*mm, largura - 2*margem, 28*mm, fill=1, stroke=0)
+        pdf.rect(margem, margem, largura - 2*margem, 11*mm, fill=1, stroke=0)
+
+        # A marca da obra fica em uma faixa branca para preservar as cores originais.
+        pdf.setFillColor(colors.white)
+        pdf.roundRect(10*mm, altura - 30*mm, largura - 20*mm, 22*mm, 1.5*mm, fill=1, stroke=0)
+        desenhar_imagem_contida(pdf, PASTA / "boulevardialogo.png", 12*mm, altura - 28*mm, largura - 24*mm, 18*mm)
+
+        pdf.setFillColor(vermelho)
+        pdf.setFont("Helvetica-Bold", 17)
+        pdf.drawCentredString(largura/2, altura - 43*mm, TORRES_NOMES.get(torre, torre).upper())
+        nome_unidade = unidade.replace("Apto ", "").replace("Apartamento ", "")
+        pdf.setFillColor(colors.black)
+        tamanho_fonte = 48 if len(nome_unidade) <= 5 else 38
+        pdf.setFont("Helvetica-Bold", tamanho_fonte)
+        pdf.drawCentredString(largura/2, altura - 70*mm, nome_unidade)
+
+        assinatura = assinatura_visitante(torre, andar, unidade)
+        consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "acesso": assinatura})
+        url = f"{base_publica}/visitante?{consulta}"
+        tamanho_qr = 34*mm
+        renderPDF.draw(desenho_qr(url, tamanho_qr), pdf, (largura-tamanho_qr)/2, 29*mm)
+        desenhar_imagem_contida(pdf, PASTA / "logo dialogo.png", 7*mm, 17*mm, 29*mm, 11*mm)
+        pdf.showPage()
+    pdf.save()
+    return memoria.getvalue()
 
 
 def endereco_rede():
@@ -3029,6 +3124,30 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(corpo)
             return
+        if caminho == "/placas-unidades.pdf":
+            if not self.exigir_permissao("gerar_pdf"):
+                return
+            torre = parametros.get("torre", [""])[0]
+            andar = parametros.get("andar", ["todos"])[0]
+            unidade = parametros.get("unidade", ["todos"])[0]
+            if torre not in TORRES_NOMES or (andar != "todos" and not andar.isdigit()):
+                self.enviar_json({"erro": "Filtros inválidos para as placas"}, 400)
+                return
+            unidades = unidades_para_placas(torre, andar, unidade)
+            if not unidades:
+                self.enviar_json({"erro": "Nenhuma unidade encontrada para as placas"}, 404)
+                return
+            corpo = gerar_placas_pdf(torre, unidades, self.url_publica("").rstrip("/"))
+            escopo = unidade if unidade != "todos" else f"andar-{andar}" if andar != "todos" else TORRES_NOMES[torre]
+            nome = re.sub(r"[^a-z0-9]+", "-", unicodedata.normalize("NFD", escopo).encode("ascii", "ignore").decode().lower()).strip("-")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/pdf")
+            self.send_header("Content-Disposition", f'attachment; filename="placas-{nome}.pdf"')
+            self.send_header("Content-Length", str(len(corpo)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(corpo)
+            return
         if caminho in {"/relatorio.pdf", "/api/qrcode", "/visitante"}:
             torre = parametros.get("torre", [""])[0]
             unidade = parametros.get("unidade", [""])[0]
@@ -3040,7 +3159,16 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.enviar_json({"erro": "Unidade inválida"}, 400)
                 return
             if caminho == "/visitante":
-                corpo = gerar_pagina_visitante(torre, andar, unidade)
+                assinatura = parametros.get("acesso", [""])[0]
+                if not acesso_visitante_valido(torre, andar, unidade, assinatura):
+                    corpo = b"<!doctype html><html lang='pt-BR'><meta charset='utf-8'><title>Acesso inv\xc3\xa1lido</title><body style='font-family:Arial;padding:40px'><h1>Acesso inv\xc3\xa1lido</h1><p>Use o QR Code impresso na placa desta unidade.</p></body></html>"
+                    self.send_response(403)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(corpo)))
+                    self.end_headers()
+                    self.wfile.write(corpo)
+                    return
+                corpo = gerar_pagina_visitante(torre, andar, unidade, assinatura)
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(corpo)))
@@ -3049,7 +3177,16 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.wfile.write(corpo)
                 return
             if caminho == "/relatorio.pdf":
-                corpo = gerar_relatorio_pdf(torre, andar, unidade)
+                assinatura = parametros.get("acesso", [""])[0]
+                usuario = self.sessao_usuario()
+                pode_gerar = bool(usuario and "gerar_pdf" in usuario.get("permissoes", []))
+                if not pode_gerar and not acesso_visitante_valido(torre, andar, unidade, assinatura):
+                    self.enviar_json({"erro": "Acesso restrito a esta unidade"}, 403)
+                    return
+                corpo = gerar_relatorio_pdf(
+                    torre, andar, unidade,
+                    incluir_ocorrencias_pendentes=pode_gerar,
+                )
                 nome = unidade.replace("Apto ", "apartamento-").replace(" ", "-").lower()
                 self.send_response(200)
                 self.send_header("Content-Type", "application/pdf")
@@ -3059,7 +3196,9 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(corpo)
                 return
-            consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade})
+            if not self.exigir_permissao("gerar_pdf"):
+                return
+            consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "acesso": assinatura_visitante(torre, andar, unidade)})
             corpo = gerar_qr_svg(self.url_publica("/visitante", consulta))
             if isinstance(corpo, str):
                 corpo = corpo.encode("utf-8")
