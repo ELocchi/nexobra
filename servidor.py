@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import base64
 import binascii
+import csv
 import gzip
 import hashlib
 import hmac
@@ -41,6 +42,7 @@ ARQUIVO_ACABAMENTOS = PASTA / "acabamentos_unidades.json"
 ARQUIVO_PLANTAS = PASTA / "plantas_unidades.json"
 ARQUIVO_PERSONALIZACOES = PASTA / "personalizacoes_unidades.json"
 ARQUIVO_LISTA_MESTRA_FVS = PASTA / "Lista_Mestra_FVS_completa.xlsx"
+ARQUIVO_SETORES_LAJES = PASTA / "modelo_importacao_setores-lajes.csv"
 BANCO = Path(os.environ.get("OBRA_BANCO", str(PASTA / "acompanhamento.db")))
 CACHE_REGISTROS_COMPACTOS = {"assinatura": None, "corpo": b"", "gzip": b"", "etag": ""}
 LOCK_CACHE_REGISTROS = threading.Lock()
@@ -3443,6 +3445,53 @@ def preparar_atividades_config(conexao):
         conexao.execute(
             "INSERT INTO configuracoes (chave, valor) VALUES ('ocultar_forro_gesso_obra_v1', '1')"
         )
+    if ARQUIVO_SETORES_LAJES.exists():
+        conteudo_setores_lajes = ARQUIVO_SETORES_LAJES.read_bytes()
+        versao_setores_lajes = hashlib.sha256(conteudo_setores_lajes).hexdigest()
+        chave_versao_setores_lajes = "setores_estrutura_lajes_csv_sha256"
+        versao_atual_setores_lajes = conexao.execute(
+            "SELECT valor FROM configuracoes WHERE chave=?", (chave_versao_setores_lajes,)
+        ).fetchone()
+        if not versao_atual_setores_lajes or versao_atual_setores_lajes["valor"] != versao_setores_lajes:
+            mapa_pavimentos_lajes = {
+                "barrilete": 101, "reservatorio": 102, "reservatório": 102, "cobertura": 103,
+            }
+            setores_lajes = []
+            leitor_lajes = csv.DictReader(
+                conteudo_setores_lajes.decode("utf-8-sig").splitlines(), delimiter=";"
+            )
+            for numero_linha, linha in enumerate(leitor_lajes, start=2):
+                torre_texto = normalizar_texto_fvs(linha.get("Torre", ""))
+                atividade = str(linha.get("Atividade", "")).strip()
+                subservico_texto = normalizar_texto_fvs(linha.get("Subserviço", ""))
+                pavimento_texto = str(linha.get("Pavimento", "")).strip()
+                setor = str(linha.get("Setor", "")).strip()
+                pavimento_normalizado = normalizar_texto_fvs(pavimento_texto)
+                andar = mapa_pavimentos_lajes.get(pavimento_normalizado)
+                if andar is None:
+                    numero_andar = re.search(r"-?\d+", pavimento_normalizado)
+                    andar = int(numero_andar.group()) if numero_andar else None
+                if torre_texto != "torre smart" or atividade != "Estrutura" or subservico_texto not in {"laje", "lajes"}:
+                    raise ValueError(f"Linha {numero_linha}: torre, atividade ou subserviço inválido")
+                if andar is None or not setor:
+                    raise ValueError(f"Linha {numero_linha}: pavimento ou setor inválido")
+                setores_lajes.append(("Estrutura", "Lajes", "horizonte", andar, setor))
+            if not setores_lajes:
+                raise ValueError("A planilha de setores de lajes está vazia")
+            conexao.execute(
+                "DELETE FROM subservicos_setores WHERE atividade='Estrutura' AND subservico IN ('Laje','Lajes') AND torre='horizonte'"
+            )
+            conexao.executemany(
+                "INSERT INTO subservicos_setores (atividade,subservico,torre,andar,unidade) VALUES (?,?,?,?,?)",
+                list(dict.fromkeys(setores_lajes)),
+            )
+            garantir_registros_atividade(
+                conexao, "Estrutura", [(torre, andar, setor) for _, _, torre, andar, setor in setores_lajes]
+            )
+            conexao.execute(
+                "INSERT INTO configuracoes (chave,valor) VALUES (?,?) ON CONFLICT(chave) DO UPDATE SET valor=excluded.valor",
+                (chave_versao_setores_lajes, versao_setores_lajes),
+            )
 
 
 def listar_atividades_config():
