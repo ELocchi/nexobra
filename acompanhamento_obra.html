@@ -2044,7 +2044,7 @@
   <button type="button" data-status-check="nao-iniciado">Não iniciado</button>
   <button type="button" data-status-check="em-andamento">Em andamento</button>
   <button type="button" data-status-check="pendente">Pendente</button>
-  <button type="button" data-status-check="concluido">Concluído</button>
+  <button type="button" data-status-check="concluido" id="statusConcluidoContexto">Concluído</button>
   <button type="button" data-status-check="aprovado-reinspecao" id="statusReinspecaoContexto">Aprovado após reinspeção</button>
   <button type="button" data-status-check="nao-aplicavel">Não aplicável</button>
   <button type="button" id="verPendencia">Ver pendência</button>
@@ -5308,9 +5308,11 @@ function abrirMenuSituacaoEspecificacao(controle,posicaoX,posicaoY){
   const ocorrenciasVinculadas=ocorrenciasBanco.filter(oc=>oc.torre===partes[0]&&Number(oc.andar)===Number(partes[1])&&oc.unidade===partes[2]&&oc.atividade===atividade&&normalizarChaveOcorrencia(oc.especificacao)===normalizarChaveOcorrencia(pendenciaContexto.especificacao));
   const temOcorrencia=ocorrenciasVinculadas.length>0;
   const temOcorrenciaConcluida=ocorrenciasVinculadas.some(oc=>oc.status==="concluido");
+  const temOcorrenciaPendente=ocorrenciasVinculadas.some(oc=>oc.status==="pendente");
   document.getElementById("verPendencia").hidden=!temOcorrencia;
   document.getElementById("verPendencia").textContent=temOcorrenciaConcluida?"Ver ocorrência concluída":"Ver pendência";
-  document.getElementById("statusReinspecaoContexto").hidden=!temOcorrenciaConcluida;
+  document.getElementById("statusConcluidoContexto").hidden=temOcorrencia;
+  document.getElementById("statusReinspecaoContexto").hidden=!temOcorrenciaConcluida||temOcorrenciaPendente;
   menuContextoPendencia.querySelectorAll("[data-status-check]").forEach(botao=>{
     botao.style.fontWeight=botao.dataset.statusCheck===controle.dataset.estado?"800":"400";
   });
@@ -5352,6 +5354,15 @@ menuContextoPendencia.addEventListener("click",async event=>{
   const partes=pendenciaContexto.chave.split("|");
   const atividade=partes.slice(3).join("|");
   const andar=Number(partes[1]);
+  const ocorrenciasVinculadas=ocorrenciasBanco.filter(oc=>oc.torre===partes[0]&&Number(oc.andar)===andar&&oc.unidade===partes[2]&&oc.atividade===atividade&&normalizarChaveOcorrencia(oc.especificacao)===normalizarChaveOcorrencia(pendenciaContexto.especificacao));
+  if(botao.dataset.statusCheck==="concluido"&&ocorrenciasVinculadas.length){
+    alert(ocorrenciasVinculadas.some(oc=>oc.status==="pendente")?"Conclua a ocorrência e realize a reinspeção antes de aprovar este item.":"Use Aprovado após reinspeção para este item.");
+    return;
+  }
+  if(botao.dataset.statusCheck==="aprovado-reinspecao"&&ocorrenciasVinculadas.some(oc=>oc.status==="pendente")){
+    alert("Conclua a ocorrência antes de aprovar o item após a reinspeção.");
+    return;
+  }
   const registro=obterRegistro(andar,partes[2],atividade,partes[0]);
   const valores={};
   especificacoesDoServicoNoAndar(atividade,andar).forEach(item=>{

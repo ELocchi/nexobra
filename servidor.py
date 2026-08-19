@@ -4482,12 +4482,29 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     status_registro = registro.get(
                         "status", "concluido" if registro.get("concluido") else "nao-iniciado"
                     )
+                    especificacoes_registro = registro.get("especificacoes", {})
+                    if not isinstance(especificacoes_registro, dict):
+                        especificacoes_registro = {}
+                    ocorrencias_registro = conexao.execute(
+                        "SELECT status, especificacao FROM ocorrencias WHERE torre=? AND andar=? AND unidade=? AND atividade=?",
+                        (torre, int(andar), unidade, atividade),
+                    ).fetchall()
+                    for especificacao, estado in list(especificacoes_registro.items()):
+                        if estado not in STATUS_FINALIZADOS:
+                            continue
+                        status_vinculados = {
+                            item["status"] for item in ocorrencias_registro
+                            if normalizar_chave_especificacao(item["especificacao"] or "")
+                            == normalizar_chave_especificacao(especificacao)
+                        }
+                        if "pendente" in status_vinculados:
+                            especificacoes_registro[especificacao] = "pendente"
+                        elif "concluido" in status_vinculados:
+                            especificacoes_registro[especificacao] = "aprovado-reinspecao"
                     if status_registro in STATUS_FINALIZADOS:
                         status_ocorrencias = {
-                            item["status"] for item in conexao.execute(
-                            "SELECT status FROM ocorrencias WHERE torre=? AND andar=? AND unidade=? AND atividade=?",
-                            (torre, int(andar), unidade, atividade),
-                        ).fetchall()}
+                            item["status"] for item in ocorrencias_registro
+                        }
                         if "pendente" in status_ocorrencias:
                             status_registro = "pendente"
                         elif "concluido" in status_ocorrencias:
@@ -4521,7 +4538,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                             registro.get("fotoNome", ""),
                             status_registro,
                             json.dumps(
-                                registro.get("especificacoes", {}),
+                                especificacoes_registro,
                                 ensure_ascii=False,
                             ),
                         ),
