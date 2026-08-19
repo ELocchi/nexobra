@@ -2995,7 +2995,7 @@ const ETAPAS_DASHBOARD=[
 ];
 function itemPertenceEtapaDashboard(item,etapa){
   if(etapa==="todos")return true;
-  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar,item.torre||torreSelecionada);
+  const especificacoes=especificacoesAplicaveisAoItem(item,item.torre||torreSelecionada);
   if(mapaDivisoesDoServico(item.atividade)&&!especificacoes.length)return false;
   return especificacoes.length
     ?especificacoes.some(especificacao=>categoriaResumoAbertura(item.atividade,especificacao)===etapa)
@@ -3003,7 +3003,7 @@ function itemPertenceEtapaDashboard(item,etapa){
 }
 function estadosItemEtapaDashboard(item,etapa,torre){
   const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
-  const especificacoes=especificacoesDoServicoNoAndar(item.atividade,item.andar,torre)
+  const especificacoes=especificacoesAplicaveisAoItem(item,torre)
     .filter(especificacao=>especificacaoContaNoProgresso(item.atividade,especificacao)&&categoriaResumoAbertura(item.atividade,especificacao)===etapa);
   return especificacoes.length
     ?especificacoes.map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro))
@@ -3411,6 +3411,14 @@ function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadra
     .filter(item=>item.subservico===subservico&&item.torre===torre&&Number(item.andar)===Number(andar))
     .map(item=>item.unidade);
   return personalizadas.length?[...new Set(personalizadas)]:unidadesDoAndar(torre,Number(andar),atividadeNome);
+}
+function especificacoesAplicaveisAoItem(item,torre=item.torre||torreSelecionada){
+  return especificacoesDoServicoNoAndar(item.atividade,item.andar,torre).filter(especificacao=>{
+    if(!especificacao.includes(" :: "))return true;
+    const subservico=especificacao.split(" :: ",1)[0].trim();
+    const unidades=unidadesDoSubservico(item.atividade,subservico,torre,item.andar,unidadesDoAndar(torre,item.andar,item.atividade));
+    return unidades.includes(item.unidade);
+  });
 }
 
 function renderizarApartamentosDoPavimento(){
@@ -4718,7 +4726,7 @@ function renderizarTorresProgresso(servico){
       const itensEstruturaAndar=modoEstrutura?itens:modoAlvenaria||modoAcabamento?listaRegistros(torre).filter(item=>item.andar===andar&&itemPertenceEtapaDashboard(item,"estrutura")):[];
       const estadosDivisaoEstrutura=divisao=>itensEstruturaAndar.flatMap(item=>{
         const registro=obterRegistro(item.andar,item.unidade,item.atividade,torre);
-        return especificacoesDoServicoNoAndar(item.atividade,item.andar,torre)
+        return especificacoesAplicaveisAoItem(item,torre)
           .filter(especificacao=>especificacao.startsWith(`${divisao} :: `))
           .map(especificacao=>normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro));
       }).filter(estado=>estado!=="nao-aplicavel");
