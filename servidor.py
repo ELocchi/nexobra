@@ -24,12 +24,13 @@ from zipfile import ZipFile
 
 from reportlab.graphics import renderPDF, renderSVG
 from reportlab.graphics.barcode import qr
-from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.shapes import Drawing, Rect, String
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import mm
-from reportlab.platypus import Image, KeepInFrame, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.platypus import Image, KeepInFrame, KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from pypdf import PdfReader
@@ -176,6 +177,24 @@ STATUS_NOMES = {
     "em-andamento": "Em andamento",
     "pendente": "Pendente",
     "concluido": "Concluído",
+    "aprovado-reinspecao": "Aprovado após reinspeção",
+}
+STATUS_FINALIZADOS = {"concluido", "aprovado-reinspecao"}
+TIPOS_REVESTIMENTO = {
+    "pp-prime-branco": ("PP Prime Branco 61x61 — Incepa", "pp prime branco"),
+    "idea-bianco-line": ("Idea Bianco Line Mate 30x60 — Portobello", "idea bianco line"),
+    "aeterna-bianco": ("Aeterna Bianco Nat 90x90 — Portobello", "aeterna bianco"),
+    "oasi-duna": ("Oasi Duna Nat 90x90 — Portobello", "oasi duna nat"),
+    "oasi-duna-stream": ("Oasi Duna Stream Nat 60x120 — Portobello", "oasi duna stream"),
+    "santorini-bianco": ("Santorini Bianco Satin 90x90 — Biancogres", "santorini bianco"),
+    "york-sgr": ("York SGR Nat 90x90 — Portinari", "york sgr"),
+    "via-durini": ("Via Durini Off White Nat 90x90 — Portobello", "via durini"),
+    "teca-natural": ("Teca Natural 20x120 — Biancogres", "teca natural"),
+    "aquamarine-zigzag": ("Aquamarine Zigzag Mate 30x90 — Portobello", "aquamarine zigzag"),
+    "color-mind-light": ("Color Mind Light 7x25 — Decortiles", "color mind light"),
+    "color-mind-inox": ("Color Mind Inox 7x25 — Decortiles", "color mind inox"),
+    "contrapiso": ("Contrapiso preparado para acabamento", "contrapiso preparado"),
+    "pintura-latex": ("Pintura látex branca", "pintura latex"),
 }
 CONFIGURACAO_LOCAL = PASTA / "configuracao.local.json"
 configuracao_local = {}
@@ -368,71 +387,328 @@ def conectar():
 def gerar_relatorio_pdf(torre, andar, unidade, incluir_ocorrencias_pendentes=True):
     with conectar() as conexao:
         registros = conexao.execute(
-            "SELECT andar, atividade, status, data_conclusao, observacao FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
+            "SELECT andar, atividade, status, data_conclusao, observacao, especificacoes, foto, foto_nome FROM registros WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY atividade",
             (torre, andar, unidade),
         ).fetchall()
-        registros = somente_registros_planejados(registros, torre)
         ocorrencias = conexao.execute(
-            "SELECT atividade, status, data_ocorrencia, descricao FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
+            "SELECT id, atividade, subatividade, especificacao, status, data_ocorrencia, descricao, foto, foto_nome FROM ocorrencias WHERE torre = ? AND andar = ? AND unidade = ? ORDER BY data_ocorrencia DESC, id DESC",
             (torre, andar, unidade),
         ).fetchall()
         if not incluir_ocorrencias_pendentes:
             ocorrencias = [item for item in ocorrencias if item["status"] != "pendente"]
+        projetos_banco = conexao.execute(
+            "SELECT titulo, imagem FROM projetos_unidade WHERE torre=? AND andar=? AND unidade=? ORDER BY id",
+            (torre, andar, unidade),
+        ).fetchall()
+        projetos_ocultos = {
+            item["imagem"] for item in conexao.execute(
+                "SELECT imagem FROM projetos_ocultos WHERE torre=? AND andar=? AND unidade=?",
+                (torre, andar, unidade),
+            ).fetchall()
+        }
+        comentarios = conexao.execute(
+            "SELECT comentario, autor, criado_em FROM comentarios_unidade WHERE torre=? AND andar=? AND unidade=? ORDER BY criado_em",
+            (torre, andar, unidade),
+        ).fetchall()
+    configuracoes_atividades = listar_atividades_config()
+    registros_por_atividade = {item["atividade"]: dict(item) for item in registros}
+    for configuracao in configuracoes_atividades:
+        aplicavel = any(
+            escopo["torre"] == torre and int(escopo["andar"]) == int(andar)
+            and escopo["unidade"] in {"*", unidade}
+            for escopo in configuracao.get("escopos", [])
+        ) or any(
+            escopo["torre"] == torre and int(escopo["andar"]) == int(andar)
+            and escopo["unidade"] == unidade
+            for escopo in configuracao.get("setoresSubservicos", [])
+        )
+        if not aplicavel:
+            continue
+        atividade = configuracao["nome"]
+        registro = registros_por_atividade.setdefault(atividade, {
+            "andar": int(andar), "atividade": atividade, "status": "nao-iniciado",
+            "data_conclusao": "", "observacao": "", "especificacoes": "{}", "foto": "", "foto_nome": "",
+        })
+        try:
+            estados_existentes = json.loads(registro.get("especificacoes") or "{}")
+        except (json.JSONDecodeError, TypeError):
+            estados_existentes = {}
+        estados_completos = {
+            especificacao: estados_existentes.get(especificacao, "nao-iniciado")
+            for especificacao in configuracao.get("especificacoes", [])
+        }
+        estados_completos.update(estados_existentes)
+        registro["especificacoes"] = json.dumps(estados_completos, ensure_ascii=False)
+    registros = sorted(registros_por_atividade.values(), key=lambda item: item["atividade"].casefold())
+    chave_unidade = f"{torre}|{unidade}"
+    plantas = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+    personalizacoes = json.loads(ARQUIVO_PERSONALIZACOES.read_text(encoding="utf-8")) if ARQUIVO_PERSONALIZACOES.exists() else {}
+    acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+    planta = plantas.get(chave_unidade, {})
+    personalizacao = personalizacoes.get(chave_unidade, {})
+    acabamento = acabamentos.get(chave_unidade, {})
+
     memoria = BytesIO()
     documento = SimpleDocTemplate(memoria, pagesize=A4, rightMargin=16*mm, leftMargin=16*mm, topMargin=14*mm, bottomMargin=14*mm)
     estilos = getSampleStyleSheet()
+    estilos["Title"].textColor = colors.HexColor("#173a5e")
+    estilos["Heading2"].textColor = colors.HexColor("#173a5e")
+    estilos["Heading2"].spaceBefore = 10
+    estilos["Heading2"].spaceAfter = 7
+    texto = estilos["BodyText"].clone("UnidadeTexto")
+    texto.fontSize = 8
+    texto.leading = 10
     elementos = []
-    logo = PASTA / "logo dialogo.png"
-    if logo.exists():
-        elementos.extend([Image(str(logo), width=48*mm, height=16*mm), Spacer(1, 4*mm)])
     nome_unidade = unidade.replace("Apto ", "Apartamento ")
-    elementos.append(Paragraph(f"<b>Relatório da unidade</b>", estilos["Title"]))
-    elementos.append(Paragraph(f"{escape(TORRES_NOMES.get(torre, torre))} · {andar}º andar · {escape(nome_unidade)}", estilos["Heading2"]))
-    elementos.append(Spacer(1, 4*mm))
-    total = len(registros)
-    concluidos = sum(1 for item in registros if item["status"] == "concluido")
-    percentual = round(concluidos / total * 100) if total else 0
-    elementos.append(Paragraph(f"<b>Andamento geral:</b> {percentual}% concluído ({concluidos} de {total} serviços)", estilos["BodyText"]))
-    elementos.append(Spacer(1, 4*mm))
-    tabela = [["Atividade", "Status", "Data", "Observação"]]
-    for item in registros:
-        data = item["data_conclusao"]
-        data = "/".join(reversed(data.split("-"))) if data else "—"
-        tabela.append([
-            Paragraph(escape(item["atividade"]), estilos["BodyText"]),
-            STATUS_NOMES.get(item["status"], item["status"]),
-            data,
-            Paragraph(escape(item["observacao"] or "—"), estilos["BodyText"]),
-        ])
-    if len(tabela) == 1:
-        tabela.append(["Nenhum serviço registrado", "—", "—", "—"])
-    quadro = Table(tabela, colWidths=[55*mm, 34*mm, 25*mm, 58*mm], repeatRows=1)
-    quadro.setStyle(TableStyle([
-        ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")),
-        ("TEXTCOLOR", (0,0), (-1,0), colors.white),
-        ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")),
-        ("VALIGN", (0,0), (-1,-1), "TOP"),
-        ("FONTSIZE", (0,0), (-1,-1), 8),
-        ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
-        ("LEFTPADDING", (0,0), (-1,-1), 5),
-        ("RIGHTPADDING", (0,0), (-1,-1), 5),
+    logo = PASTA / "logo dialogo.png"
+    estilo_cabecalho_titulo = estilos["Title"].clone("CabecalhoUnidadeTitulo")
+    estilo_cabecalho_titulo.alignment = 1
+    estilo_cabecalho_titulo.fontSize = 17
+    estilo_cabecalho_titulo.leading = 20
+    estilo_cabecalho_titulo.spaceAfter = 3
+    estilo_cabecalho_unidade = estilos["Heading2"].clone("CabecalhoUnidadeNome")
+    estilo_cabecalho_unidade.alignment = 1
+    estilo_cabecalho_unidade.fontSize = 12
+    estilo_cabecalho_unidade.leading = 14
+    estilo_cabecalho_unidade.spaceBefore = 0
+    estilo_cabecalho_unidade.spaceAfter = 1
+    estilo_cabecalho_andar = texto.clone("CabecalhoUnidadeAndar")
+    estilo_cabecalho_andar.alignment = 1
+    estilo_cabecalho_andar.fontSize = 9
+    estilo_cabecalho_andar.textColor = colors.HexColor("#637582")
+    estilo_torre = texto.clone("CabecalhoUnidadeTorre")
+    estilo_torre.alignment = 1
+    estilo_torre.fontName = "Helvetica-Bold"
+    estilo_torre.fontSize = 8
+    estilo_torre.textColor = colors.white
+    logo_cabecalho = Image(str(logo), width=42*mm, height=14*mm) if logo.exists() else ""
+    centro_cabecalho = [
+        Paragraph("<b>Relatório da unidade</b>", estilo_cabecalho_titulo),
+        Paragraph(f"<b>{escape(nome_unidade)}</b>", estilo_cabecalho_unidade),
+        Paragraph(f"{escape(rotulo_pavimento(andar))}", estilo_cabecalho_andar),
+    ]
+    selo_torre = Table(
+        [[Paragraph(escape(TORRES_NOMES.get(torre, torre).upper()), estilo_torre)]],
+        colWidths=[37*mm],
+    )
+    selo_torre.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,-1), colors.HexColor("#173a5e")),
+        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+        ("LEFTPADDING", (0,0), (-1,-1), 5), ("RIGHTPADDING", (0,0), (-1,-1), 5),
+        ("TOPPADDING", (0,0), (-1,-1), 5), ("BOTTOMPADDING", (0,0), (-1,-1), 5),
     ]))
-    elementos.extend([quadro, Spacer(1, 6*mm), Paragraph("<b>Ocorrências vinculadas</b>", estilos["Heading2"])])
+    cabecalho = Table([[logo_cabecalho, centro_cabecalho, selo_torre]], colWidths=[48*mm, 76*mm, 48*mm])
+    cabecalho.setStyle(TableStyle([
+        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+        ("ALIGN", (0,0), (0,0), "LEFT"), ("ALIGN", (1,0), (1,0), "CENTER"), ("ALIGN", (2,0), (2,0), "RIGHT"),
+        ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+        ("TOPPADDING", (0,0), (-1,-1), 0), ("BOTTOMPADDING", (0,0), (-1,-1), 0),
+    ]))
+    elementos.extend([cabecalho, Spacer(1, 7*mm)])
+    total = len(registros)
+    concluidos = sum(1 for item in registros if item["status"] in STATUS_FINALIZADOS)
+    percentual = round(concluidos / total * 100) if total else 0
+    contagem_status = {}
+    for item in registros:
+        contagem_status[item["status"]] = contagem_status.get(item["status"], 0) + 1
+    elementos.extend([Spacer(1, 4*mm), Paragraph("<b>Progressão dos serviços</b>", estilos["Heading2"])])
+    cores_status = {
+        "nao-iniciado": "#637582", "em-andamento": "#e0a800", "pendente": "#d9483d",
+        "concluido": "#2e9e5b", "aprovado-reinspecao": "#4a90d9",
+    }
+    ordem_status = ["nao-iniciado", "em-andamento", "pendente", "concluido", "aprovado-reinspecao"]
+    grafico = Drawing(172*mm, 76*mm)
+    rosca = Pie()
+    rosca.x, rosca.y, rosca.width, rosca.height = 15*mm, 12*mm, 58*mm, 58*mm
+    rosca.data = [contagem_status.get(status, 0) for status in ordem_status] if total else [1, 0, 0, 0, 0]
+    rosca.innerRadiusFraction = .58
+    rosca.strokeColor = colors.white
+    rosca.strokeWidth = .5
+    for indice, status in enumerate(ordem_status):
+        rosca.slices[indice].fillColor = colors.HexColor(cores_status[status])
+        rosca.slices[indice].strokeColor = colors.white
+    grafico.add(rosca)
+    centro_x, centro_y = 44*mm, 41*mm
+    grafico.add(String(centro_x, centro_y + 1.5*mm, f"{percentual}%", textAnchor="middle", fillColor=colors.HexColor("#173a5e"), fontName="Helvetica-Bold", fontSize=16))
+    grafico.add(String(centro_x, centro_y - 3.5*mm, "EXECUTADO", textAnchor="middle", fillColor=colors.HexColor("#637582"), fontName="Helvetica-Bold", fontSize=6))
+    posicoes_legenda = [(88*mm, 60*mm), (88*mm, 49*mm), (88*mm, 38*mm), (88*mm, 27*mm), (88*mm, 16*mm)]
+    for indice, status in enumerate(ordem_status):
+        x_legenda, y_legenda = posicoes_legenda[indice]
+        grafico.add(Rect(x_legenda, y_legenda, 4*mm, 4*mm, fillColor=colors.HexColor(cores_status[status]), strokeColor=None))
+        rotulo = f"{STATUS_NOMES.get(status, status)} ({contagem_status.get(status, 0)})"
+        grafico.add(String(x_legenda + 5.5*mm, y_legenda + .7*mm, rotulo, fillColor=colors.HexColor("#344657"), fontName="Helvetica", fontSize=7))
+    elementos.append(grafico)
+
+    detalhes_por_atividade = {}
+    for item in registros:
+        try:
+            estados = json.loads(item["especificacoes"] or "{}")
+        except (json.JSONDecodeError, TypeError):
+            estados = {}
+        subservicos = {}
+        for especificacao, status in estados.items():
+            if " :: " not in str(especificacao):
+                continue
+            subservico = str(especificacao).split(" :: ", 1)[0].strip()
+            subservicos.setdefault(subservico, []).append(status)
+        if not subservicos:
+            subservicos = {"Serviço geral": [item["status"]]}
+        prioridade = {"pendente": 5, "em-andamento": 4, "nao-iniciado": 3, "aprovado-reinspecao": 2, "concluido": 1, "nao-aplicavel": 0}
+        for subservico, estados_subservico in subservicos.items():
+            status = max(estados_subservico, key=lambda valor: prioridade.get(valor, 0))
+            detalhes_por_atividade.setdefault(item["atividade"], []).append((subservico, status))
+    bloco_detalhes = []
+    if detalhes_por_atividade:
+        bloco_detalhes = [PageBreak(), Paragraph("<b>Atividades da unidade</b>", estilos["Heading2"])]
+        tabelas_atividades = []
+        for atividade, linhas_atividade in detalhes_por_atividade.items():
+            dados_atividade = [
+                [Paragraph(f'<font color="#ffffff"><b>{escape(atividade)}</b></font>', texto), ""],
+                ["Subserviço", "Situação"],
+            ]
+            dados_atividade.extend([
+                [Paragraph(escape(subservico), texto), Paragraph(escape(STATUS_NOMES.get(status, status)), texto)]
+                for subservico, status in linhas_atividade
+            ])
+            tabela_atividade = Table(dados_atividade, colWidths=[57*mm, 25*mm], repeatRows=2)
+            tabela_atividade.setStyle(TableStyle([
+                ("SPAN", (0,0), (-1,0)),
+                ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")),
+                ("TEXTCOLOR", (0,0), (-1,1), colors.white),
+                ("BACKGROUND", (0,1), (-1,1), colors.HexColor("#274d73")),
+                ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")),
+                ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("FONTSIZE", (0,0), (-1,-1), 6.3),
+                ("ROWBACKGROUNDS", (0,2), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
+                ("LEFTPADDING", (0,0), (-1,-1), 4), ("RIGHTPADDING", (0,0), (-1,-1), 4),
+                ("TOPPADDING", (0,0), (-1,-1), 4), ("BOTTOMPADDING", (0,0), (-1,-1), 4),
+            ]))
+            tabelas_atividades.append(tabela_atividade)
+        linhas_grade = []
+        for indice in range(0, len(tabelas_atividades), 2):
+            esquerda = tabelas_atividades[indice]
+            direita = tabelas_atividades[indice + 1] if indice + 1 < len(tabelas_atividades) else ""
+            linhas_grade.append([esquerda, "", direita])
+        grade_atividades = Table(linhas_grade, colWidths=[82*mm, 8*mm, 82*mm], hAlign="CENTER")
+        grade_atividades.setStyle(TableStyle([
+            ("VALIGN", (0,0), (-1,-1), "TOP"),
+            ("LEFTPADDING", (0,0), (-1,-1), 0), ("RIGHTPADDING", (0,0), (-1,-1), 0),
+            ("TOPPADDING", (0,0), (-1,-1), 2*mm), ("BOTTOMPADDING", (0,0), (-1,-1), 2*mm),
+        ]))
+        bloco_detalhes.append(grade_atividades)
+
+    def imagem_relatorio(origem, largura_maxima=170*mm, altura_maxima=72*mm):
+        try:
+            if not origem:
+                return None
+            if str(origem).startswith("data:image/"):
+                fluxo = Image(BytesIO(base64.b64decode(str(origem).split(",", 1)[1])))
+            else:
+                arquivo = (PASTA / unquote(urlparse(str(origem)).path).lstrip("/")).resolve()
+                if PASTA.resolve() not in arquivo.parents or not arquivo.is_file():
+                    return None
+                fluxo = Image(str(arquivo))
+            fluxo._restrictSize(largura_maxima, altura_maxima)
+            return fluxo
+        except Exception:
+            return None
+
+    elementos.extend([Spacer(1, 5*mm), Paragraph("<b>Plantas e projetos da unidade</b>", estilos["Heading2"])])
+    tipo_planta = str(planta.get("tipo") or "").strip()
+    candidatos = []
+    if planta.get("plantaMiniatura"):
+        candidatos.append({"titulo": planta.get("tipo") or "Planta da unidade", "imagem": planta["plantaMiniatura"]})
+    candidatos.extend(personalizacao.get("projetos", []))
+    candidatos.extend(dict(item) for item in projetos_banco)
+    imagens_usadas = set()
+    projetos = []
+    for projeto in candidatos:
+        imagem = projeto.get("imagem", "")
+        if imagem and imagem not in imagens_usadas and imagem not in projetos_ocultos:
+            imagens_usadas.add(imagem)
+            projetos.append(projeto)
+    if projetos:
+        for indice, projeto in enumerate(projetos):
+            titulo_projeto = str(projeto.get("titulo") or projeto.get("arquivo") or "Projeto").strip()
+            imagem = imagem_relatorio(projeto.get("imagem"))
+            bloco_projeto = [Spacer(1, 2*mm)]
+            if indice == 0 and tipo_planta:
+                bloco_projeto.append(Paragraph(f"<b>Opção de planta:</b> {escape(tipo_planta)}", texto))
+            if not tipo_planta or normalizar_texto_fvs(titulo_projeto) != normalizar_texto_fvs(tipo_planta):
+                bloco_projeto.append(Paragraph(f"<b>{escape(titulo_projeto)}</b>", texto))
+            bloco_projeto.append(imagem if imagem else Paragraph("Imagem do projeto indisponível.", texto))
+            elementos.append(KeepTogether(bloco_projeto))
+    else:
+        if tipo_planta:
+            elementos.append(Paragraph(f"<b>Opção de planta:</b> {escape(tipo_planta)}", texto))
+        elementos.append(Paragraph("Nenhuma planta ou projeto vinculado.", texto))
+
+    documentos = personalizacao.get("documentos", [])
+    if documentos or comentarios:
+        elementos.extend([Spacer(1, 3*mm), Paragraph("<b>Comentários da unidade</b>", estilos["Heading3"])])
+        for item in documentos:
+            descricao_documento = str(item.get("descricao") or "").strip()
+            if descricao_documento:
+                elementos.extend([Paragraph(escape(descricao_documento), texto), Spacer(1, 1.5*mm)])
+        for item in comentarios:
+            elementos.extend([Paragraph(escape(item["comentario"]), texto), Spacer(1, 1.5*mm)])
+
+    elementos.extend([PageBreak(), Paragraph("<b>Acabamentos por ambiente</b>", estilos["Heading2"])])
+    if acabamento.get("planta"):
+        elementos.append(Paragraph(f"<b>Opção de acabamento:</b> {escape(str(acabamento['planta']))}", texto))
+    acabamentos_por_ambiente = {}
+    for item in acabamento.get("itens", []):
+        acabamentos_por_ambiente.setdefault(str(item.get("ambiente") or "Geral"), []).append(item)
+    if acabamentos_por_ambiente:
+        for ambiente, itens_ambiente in acabamentos_por_ambiente.items():
+            tabela_ambiente = [["Item", "Opção", "Descrição / revestimento"]]
+            for item in itens_ambiente:
+                tabela_ambiente.append([
+                    Paragraph(escape(str(item.get("item") or "Item")), texto),
+                    Paragraph(escape(str(item.get("opcao") or "Padrão")), texto),
+                    Paragraph(escape(str(item.get("descricao") or "—")), texto),
+                ])
+            quadro_ambiente = Table(tabela_ambiente, colWidths=[44*mm, 34*mm, 94*mm], repeatRows=1)
+            quadro_ambiente.setStyle(TableStyle([
+                ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")), ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+                ("GRID", (0,0), (-1,-1), .35, colors.HexColor("#cbd3da")), ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("FONTSIZE", (0,0), (-1,-1), 7), ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
+            ]))
+            elementos.append(KeepTogether([
+                Spacer(1, 2*mm),
+                Paragraph(f"<b>{escape(ambiente)}</b>", estilos["Heading3"]),
+                quadro_ambiente,
+            ]))
+    else:
+        elementos.append(Paragraph("Padrão (Opção 01), sem alteração de acabamento cadastrada.", texto))
+
+    elementos.extend(bloco_detalhes)
+    elementos.extend([PageBreak(), Paragraph("<b>Ocorrências vinculadas</b>", estilos["Heading2"])])
     if ocorrencias:
         for ocorrencia in ocorrencias:
             data = "/".join(reversed((ocorrencia["data_ocorrencia"] or "").split("-")))
-            elementos.append(Paragraph(
-                f"<b>{escape(ocorrencia['atividade'])}</b> · {escape(STATUS_NOMES.get(ocorrencia['status'], ocorrencia['status']))} · {data}<br/>{escape(ocorrencia['descricao'])}",
-                estilos["BodyText"],
-            ))
-            elementos.append(Spacer(1, 2*mm))
+            descricao = (
+                f"<b>Serviço:</b> {escape(ocorrencia['atividade'] or '—')}<br/>"
+                f"<b>Subserviço:</b> {escape(ocorrencia['subatividade'] or '—')}<br/>"
+                f"<b>Especificação:</b> {escape(ocorrencia['especificacao'] or '—')}<br/>"
+                f"<b>Status:</b> {escape(STATUS_NOMES.get(ocorrencia['status'], ocorrencia['status']))} · {data}<br/>"
+                f"<b>Descrição:</b> {escape(ocorrencia['descricao'])}"
+            )
+            imagem = imagem_relatorio(ocorrencia["foto"], 58*mm, 48*mm)
+            conteudo = [[imagem or Paragraph("Sem foto", texto), Paragraph(descricao, texto)]]
+            cartao = Table(conteudo, colWidths=[62*mm, 110*mm])
+            cartao.setStyle(TableStyle([
+                ("BOX", (0,0), (-1,-1), .5, colors.HexColor("#cbd3da")), ("VALIGN", (0,0), (-1,-1), "TOP"),
+                ("BACKGROUND", (0,0), (-1,-1), colors.HexColor("#f8fafb")), ("PADDING", (0,0), (-1,-1), 6),
+            ]))
+            elementos.extend([cartao, Spacer(1, 3*mm)])
     else:
-        elementos.append(Paragraph("Nenhuma ocorrência vinculada.", estilos["BodyText"]))
+        elementos.append(Paragraph("Nenhuma ocorrência vinculada.", texto))
     documento.build(elementos)
     return memoria.getvalue()
 
 
-def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", status="todos", tipo="todos"):
+def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", status="todos", tipo="todos", atividade="todos", final="todos"):
     with conectar() as conexao:
         consulta = "SELECT id, torre, andar, unidade, atividade, subatividade, especificacao, status, data_ocorrencia, descricao, foto, foto_nome, criado_em FROM ocorrencias"
         parametros = ()
@@ -445,10 +721,14 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
         ocorrencias = [item for item in ocorrencias if item["andar"] == andar_numero]
     if unidade != "todos":
         ocorrencias = [item for item in ocorrencias if item["unidade"] == unidade]
+    if final != "todos":
+        ocorrencias = [item for item in ocorrencias if final_da_unidade(item["unidade"]) == int(final)]
     if status != "todos":
         ocorrencias = [item for item in ocorrencias if item["status"] == status]
     if tipo != "todos":
         ocorrencias = [item for item in ocorrencias if ("seguranca" if item["atividade"] == "Segurança" else "atividade") == tipo]
+    if atividade != "todos":
+        ocorrencias = [item for item in ocorrencias if item["atividade"] == atividade]
     memoria = BytesIO()
     documento = SimpleDocTemplate(
         memoria, pagesize=A4, rightMargin=18*mm, leftMargin=18*mm,
@@ -477,6 +757,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
             ("Filtros:", " · ".join([
                 rotulo_pavimento(andar_numero) if andar_numero is not None else "Todos os pavimentos",
                 unidade if unidade != "todos" else "Todas as unidades",
+                f"Final {final}" if final != "todos" else "Todos os finais",
                 STATUS_NOMES.get(status, status) if status != "todos" else "Todos os status",
             ])),
             ("Nº de itens:", str(len(ocorrencias))),
@@ -511,15 +792,14 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
             conteudo.append(Paragraph("<br/><br/><br/>Sem foto", estilo_centro))
         conteudo.append(Paragraph(escape(item["foto_nome"] or f"ocorrencia-{item['id']}.jpg"), estilo_centro))
         data = "/".join(reversed(item["data_ocorrencia"].split("-"))) if item["data_ocorrencia"] else "—"
-        servico = " · ".join(filter(None, [
-            item["atividade"], item["subatividade"], item["especificacao"],
-        ]))
         detalhes = (
             f"<b>Criada:</b>&nbsp;&nbsp; {data}<br/>"
             f"<b>({numero})</b>&nbsp;&nbsp; {escape(TORRES_NOMES.get(item['torre'], item['torre']))} · {escape(item['unidade'])} · {escape(rotulo_pavimento(item['andar']))}<br/>"
-            f"<b>Serviço:</b>&nbsp;&nbsp; {escape(servico)}<br/>"
+            f"<b>Serviço:</b>&nbsp;&nbsp; {escape(item['atividade'] or '—')}<br/>"
+            f"<b>Subserviço:</b>&nbsp;&nbsp; {escape(item['subatividade'] or '—')}<br/>"
+            f"<b>Especificação:</b>&nbsp;&nbsp; {escape(item['especificacao'] or '—')}<br/>"
             f"<b>Status:</b>&nbsp;&nbsp; {escape(STATUS_NOMES.get(item['status'], item['status']))}<br/>"
-            f"{escape(item['descricao'])}"
+            f"<b>Descrição:</b>&nbsp;&nbsp; {escape(item['descricao'])}"
         )
         conteudo.extend([Spacer(1, 2*mm), Paragraph(detalhes, estilo_texto)])
         return KeepInFrame(78*mm, 105*mm, conteudo, mode="shrink")
@@ -588,7 +868,7 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
             imagens_incluidas.add(imagem)
             projetos.append({"titulo": projeto.get("titulo") or "Projeto", "imagem": imagem})
     total = len(registros)
-    concluidos = sum(1 for item in registros if item["status"] == "concluido")
+    concluidos = sum(1 for item in registros if item["status"] in STATUS_FINALIZADOS)
     percentual = round(concluidos / total * 100) if total else 0
     consulta = urlencode({"torre": torre, "andar": andar, "unidade": unidade, "acesso": assinatura})
     linhas = []
@@ -627,7 +907,7 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
     nome_unidade = unidade.replace("Apto ", "Apartamento ")
     return f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{escape(nome_unidade)} — acompanhamento</title><style>
-*{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1050px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.35rem;margin:15px 0 4px}}header p{{margin:0;color:#d9e3eb}}main{{padding:18px}}.avanco,.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}.avanco strong{{font-size:1.8rem;color:#173a5e}}.barra{{height:10px;background:#e5e9ec;border-radius:8px;overflow:hidden;margin-top:8px}}.barra i{{display:block;height:100%;width:{percentual}%;background:#2e9e5b}}h2{{font-size:1rem;color:#173a5e;margin:0 0 14px}}.projetos{{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}}.projeto{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden;background:#f8fafb}}.projeto a{{display:block;background:#fff}}.projeto img{{display:block;width:100%;height:260px;object-fit:contain}}.projeto strong{{display:block;padding:10px;font-size:.78rem;color:#173a5e}}.planta-info{{margin:-5px 0 14px;color:#687887;font-size:.76rem}}.ambientes{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}}.ambiente{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden}}.ambiente h3{{margin:0;padding:10px 12px;background:#eef3f6;color:#173a5e;font-size:.8rem}}.acabamento{{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-top:1px solid #edf0f2;font-size:.75rem}}.acabamento:first-child{{border-top:0}}.acabamento strong{{display:block}}.acabamento p{{margin:4px 0 0;color:#687887;font-size:.7rem}}.acabamento span{{flex:none;align-self:flex-start;border-radius:12px;background:#e9f1f7;color:#17608f;padding:4px 7px;font-size:.66rem;font-weight:bold}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left;vertical-align:top}}th{{background:#eef3f6}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.status.nao-iniciado{{background:#e8ecef;color:#637582}}.status.em-andamento{{background:#fff1bd;color:#8a6a00}}.status.pendente{{background:#fbe0dd;color:#d9483d}}.status.concluido{{background:#def2e5;color:#2e9e5b}}.ocorrencias{{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}}.ocorrencia{{background:#f8fafb;border-left:4px solid #2e9e5b;border-radius:8px;padding:12px}}.ocorrencia strong{{display:block;margin:0 0 7px}}.ocorrencia p{{font-size:.8rem;line-height:1.45}}.ocorrencia img{{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:7px;margin-top:9px}}.botao,.foto{{display:inline-block;color:#fff;background:#17608f;border-radius:7px;padding:9px 12px;text-decoration:none;font-size:.76rem;font-weight:bold}}.foto{{padding:5px 7px}}.aviso{{font-size:.72rem;color:#687887;margin-top:10px}}@media(max-width:700px){{main{{padding:10px}}.tabela{{overflow:auto}}table{{min-width:720px}}.projeto img{{height:220px}}}}
+*{{box-sizing:border-box}}body{{margin:0;background:#f2f5f7;color:#243445;font-family:Arial,sans-serif}}header{{background:#173a5e;color:#fff;padding:18px}}header div,main{{max-width:1050px;margin:auto}}header img{{width:170px;background:#fff;border-radius:7px;padding:6px}}h1{{font-size:1.35rem;margin:15px 0 4px}}header p{{margin:0;color:#d9e3eb}}main{{padding:18px}}.avanco,.painel{{background:#fff;border:1px solid #d8dfe5;border-radius:11px;padding:16px;margin-bottom:15px}}.avanco strong{{font-size:1.8rem;color:#173a5e}}.barra{{height:10px;background:#e5e9ec;border-radius:8px;overflow:hidden;margin-top:8px}}.barra i{{display:block;height:100%;width:{percentual}%;background:#2e9e5b}}h2{{font-size:1rem;color:#173a5e;margin:0 0 14px}}.projetos{{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}}.projeto{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden;background:#f8fafb}}.projeto a{{display:block;background:#fff}}.projeto img{{display:block;width:100%;height:260px;object-fit:contain}}.projeto strong{{display:block;padding:10px;font-size:.78rem;color:#173a5e}}.planta-info{{margin:-5px 0 14px;color:#687887;font-size:.76rem}}.ambientes{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}}.ambiente{{border:1px solid #dce3e8;border-radius:9px;overflow:hidden}}.ambiente h3{{margin:0;padding:10px 12px;background:#eef3f6;color:#173a5e;font-size:.8rem}}.acabamento{{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-top:1px solid #edf0f2;font-size:.75rem}}.acabamento:first-child{{border-top:0}}.acabamento strong{{display:block}}.acabamento p{{margin:4px 0 0;color:#687887;font-size:.7rem}}.acabamento span{{flex:none;align-self:flex-start;border-radius:12px;background:#e9f1f7;color:#17608f;padding:4px 7px;font-size:.66rem;font-weight:bold}}table{{width:100%;border-collapse:collapse;font-size:.8rem}}th,td{{padding:9px;border-bottom:1px solid #e1e6ea;text-align:left;vertical-align:top}}th{{background:#eef3f6}}.status{{display:inline-block;border-radius:12px;padding:4px 7px;font-size:.68rem;font-weight:bold}}.status.nao-iniciado{{background:#e8ecef;color:#637582}}.status.em-andamento{{background:#fff1bd;color:#8a6a00}}.status.pendente{{background:#fbe0dd;color:#d9483d}}.status.concluido{{background:#def2e5;color:#2e9e5b}}.status.aprovado-reinspecao{{background:#e7f1fb;color:#17608f}}.ocorrencias{{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}}.ocorrencia{{background:#f8fafb;border-left:4px solid #2e9e5b;border-radius:8px;padding:12px}}.ocorrencia strong{{display:block;margin:0 0 7px}}.ocorrencia p{{font-size:.8rem;line-height:1.45}}.ocorrencia img{{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:7px;margin-top:9px}}.botao,.foto{{display:inline-block;color:#fff;background:#17608f;border-radius:7px;padding:9px 12px;text-decoration:none;font-size:.76rem;font-weight:bold}}.foto{{padding:5px 7px}}.aviso{{font-size:.72rem;color:#687887;margin-top:10px}}@media(max-width:700px){{main{{padding:10px}}.tabela{{overflow:auto}}table{{min-width:720px}}.projeto img{{height:220px}}}}
 </style></head><body><header><div><img src="/logo%20dialogo.png" alt="Diálogo Engenharia"><h1>{escape(nome_unidade)} · {andar}º andar</h1><p>{escape(TORRES_NOMES.get(torre, torre))} · visualização para visitantes</p></div></header>
 <main><section class="avanco"><strong>{percentual}% concluído</strong><div class="barra"><i></i></div><p>{concluidos} de {total} serviços concluídos</p><a class="botao" href="/relatorio.pdf?{consulta}">Abrir relatório em PDF</a><div class="aviso">Página somente para consulta. Nenhuma informação pode ser alterada neste acesso.</div></section>
 <section class="painel"><h2>Projetos da unidade</h2>{f'<p class="planta-info">Opção de planta: <b>{escape(str(planta.get("tipo")))}</b></p>' if planta.get("tipo") else ''}<div class="projetos">{projetos_html if projetos_html else '<p>Nenhuma imagem de projeto disponível.</p>'}</div></section>
@@ -635,7 +915,12 @@ def gerar_pagina_visitante(torre, andar, unidade, assinatura=""):
 <section class="painel"><h2>Atividades da unidade</h2><div class="tabela"><table><thead><tr><th>Atividade</th><th>Status</th><th>Data</th><th>Observação</th><th>Foto</th></tr></thead><tbody>{''.join(linhas) if linhas else '<tr><td colspan="5">Nenhuma atividade registrada.</td></tr>'}</tbody></table></div></section></main></body></html>""".encode("utf-8")
 
 
-def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos", status="todos"):
+def final_da_unidade(unidade):
+    numero = re.search(r"(\d+)", str(unidade or ""))
+    return int(numero.group(1)) % 100 if numero else 0
+
+
+def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos", status="todos", final="todos"):
     with conectar() as conexao:
         itens = conexao.execute(
             "SELECT andar, unidade, atividade, status, data_conclusao FROM registros WHERE torre = ? ORDER BY andar, unidade, atividade",
@@ -646,6 +931,8 @@ def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos"
         itens = [item for item in itens if item["andar"] == int(andar)]
     if unidade != "todos":
         itens = [item for item in itens if item["unidade"] == unidade]
+    if final != "todos":
+        itens = [item for item in itens if final_da_unidade(item["unidade"]) == int(final)]
     if atividade != "todos":
         itens = [item for item in itens if item["atividade"] == atividade]
     if status != "todos":
@@ -653,23 +940,19 @@ def registros_filtrados(torre, andar="todos", unidade="todos", atividade="todos"
     return itens
 
 
-def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade="todos", status="todos", acabamento="todos", ocorrencias="todas"):
-    itens = registros_filtrados(torre, andar, unidade, atividade, status)
-    if acabamento != "todos" and ARQUIVO_ACABAMENTOS.exists():
+def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade="todos", status="todos", revestimento="todos", ocorrencias="todas", final="todos"):
+    if revestimento != "todos":
+        return gerar_pdf_ambientes_revestimento(torre, andar, unidade, revestimento, final)
+    if ocorrencias in {"com", "pendente", "concluido"}:
+        status_ocorrencia = ocorrencias if ocorrencias in {"pendente", "concluido"} else "todos"
+        return gerar_historico_ocorrencias_pdf(torre, andar, unidade, status_ocorrencia, "todos", atividade, final)
+    itens = registros_filtrados(torre, andar, unidade, atividade, status, final)
+    if revestimento != "todos" and ARQUIVO_ACABAMENTOS.exists():
         dados_acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8"))
         def corresponde(item):
-            escolhas = [str(escolha.get("opcao", "")) for escolha in item.get("itens", [])]
-            alteradas = [escolha for escolha in escolhas if escolha.lower() != "opção 1"]
-            if acabamento == "padrao":
-                return bool(escolhas) and not alteradas
-            if acabamento == "alterado":
-                return bool(alteradas)
-            if acabamento == "personalizada":
-                return any("personalizada" in escolha.lower() for escolha in escolhas)
-            if acabamento == "nao-instalar":
-                return any("não instalar" in escolha.lower() or "nao instalar" in escolha.lower() for escolha in escolhas)
-            numero = acabamento.replace("opcao-", "")
-            return any(escolha.lower() == f"opção {numero}" for escolha in escolhas)
+            termo = TIPOS_REVESTIMENTO[revestimento][1]
+            descricoes = " ".join(str(escolha.get("descricao", "")) for escolha in item.get("itens", []))
+            return termo in normalizar_texto_fvs(descricoes)
         unidades_acabamento = {
             chave.split("|", 1)[1] for chave, dados in dados_acabamentos.items()
             if chave.startswith(f"{torre}|") and corresponde(dados)
@@ -704,9 +987,10 @@ def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade
         TORRES_NOMES.get(torre, torre),
         f"Andar: {andar if andar != 'todos' else 'Todos'}",
         f"Unidade: {unidade.replace('Apto ', 'Apartamento ') if unidade != 'todos' else 'Todas'}",
+        f"Final: {final if final != 'todos' else 'Todos'}",
         f"Serviço: {atividade if atividade != 'todos' else 'Todos'}",
         f"Situação: {STATUS_NOMES.get(status, 'Todas') if status != 'todos' else 'Todas'}",
-        f"Acabamento: {acabamento.replace('-', ' ').title() if acabamento != 'todos' else 'Todos'}",
+        f"Revestimento: {TIPOS_REVESTIMENTO[revestimento][0] if revestimento != 'todos' else 'Todos'}",
         f"Ocorrências: {ocorrencias.title()}",
     ]
     elementos.extend([Paragraph(" · ".join(escape(item) for item in filtros), estilos["BodyText"]), Spacer(1, 4*mm)])
@@ -737,6 +1021,200 @@ def gerar_pdf_visitante_filtros(torre, andar="todos", unidade="todos", atividade
     return memoria.getvalue()
 
 
+def gerar_pdf_ambientes_revestimento(torre, andar="todos", unidade="todos", revestimento="todos", final="todos"):
+    dados_acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+    termo = TIPOS_REVESTIMENTO[revestimento][1]
+    aplicacoes = []
+    for chave, acabamento in dados_acabamentos.items():
+        if not chave.startswith(f"{torre}|"):
+            continue
+        nome_unidade = chave.split("|", 1)[1]
+        numero = re.search(r"(\d+)", nome_unidade)
+        numero_andar = int(numero.group(1)[:-2]) if numero and len(numero.group(1)) > 2 else 0
+        if andar != "todos" and numero_andar != int(andar):
+            continue
+        if unidade != "todos" and nome_unidade != unidade:
+            continue
+        if final != "todos" and final_da_unidade(nome_unidade) != int(final):
+            continue
+        for item in acabamento.get("itens", []):
+            if termo not in normalizar_texto_fvs(item.get("descricao", "")):
+                continue
+            aplicacoes.append({
+                "andar": numero_andar,
+                "unidade": nome_unidade.replace("Apto ", "Apartamento "),
+                "ambiente": item.get("ambiente") or "Não informado",
+                "item": item.get("item") or "Revestimento",
+                "opcao": item.get("opcao") or "—",
+            })
+    aplicacoes.sort(key=lambda item: (item["andar"], item["unidade"], item["ambiente"], item["item"]))
+    memoria = BytesIO()
+    documento = SimpleDocTemplate(memoria, pagesize=landscape(A4), rightMargin=12*mm, leftMargin=12*mm, topMargin=12*mm, bottomMargin=12*mm)
+    estilos = getSampleStyleSheet()
+    elementos = []
+    logo = PASTA / "logo dialogo.png"
+    if logo.exists():
+        elementos.extend([Image(str(logo), width=42*mm, height=14*mm), Spacer(1, 3*mm)])
+    nome_revestimento = TIPOS_REVESTIMENTO[revestimento][0]
+    apartamentos_agrupados = {}
+    for item in aplicacoes:
+        apartamentos_agrupados.setdefault((item["andar"], item["unidade"]), []).append(item)
+    elementos.extend([
+        Paragraph("<b>Relatório de ambientes por revestimento</b>", estilos["Title"]),
+        Paragraph(escape(f"{TORRES_NOMES.get(torre, torre)} · Andar: {andar if andar != 'todos' else 'Todos'} · Apartamento: {unidade.replace('Apto ', 'Apartamento ') if unidade != 'todos' else 'Todos'} · Final: {final if final != 'todos' else 'Todos'} · Revestimento: {nome_revestimento}"), estilos["BodyText"]),
+        Spacer(1, 5*mm),
+        Paragraph(f"<b>Total de apartamentos:</b> {len(apartamentos_agrupados)} · <b>Total de aplicações:</b> {len(aplicacoes)}", estilos["BodyText"]),
+        Spacer(1, 3*mm),
+    ])
+    dados, estilos_tabela = [], []
+    for (numero_andar, nome_unidade), itens_apartamento in sorted(apartamentos_agrupados.items()):
+        linha_titulo = len(dados)
+        dados.append([f"{numero_andar}º andar · {nome_unidade}", "", ""])
+        estilos_tabela.extend([
+            ("SPAN", (0,linha_titulo), (-1,linha_titulo)),
+            ("BACKGROUND", (0,linha_titulo), (-1,linha_titulo), colors.HexColor("#173a5e")),
+            ("TEXTCOLOR", (0,linha_titulo), (-1,linha_titulo), colors.white),
+            ("FONTNAME", (0,linha_titulo), (-1,linha_titulo), "Helvetica-Bold"),
+        ])
+        linha_cabecalho = len(dados)
+        dados.append(["Ambiente", "Aplicação / item", "Opção"])
+        estilos_tabela.extend([
+            ("BACKGROUND", (0,linha_cabecalho), (-1,linha_cabecalho), colors.HexColor("#dfe8ef")),
+            ("FONTNAME", (0,linha_cabecalho), (-1,linha_cabecalho), "Helvetica-Bold"),
+        ])
+        dados.extend([[item["ambiente"], item["item"], item["opcao"]] for item in itens_apartamento])
+    if not dados:
+        dados = [["Nenhum ambiente encontrado", "—", "—"]]
+    quadro = Table(dados, colWidths=[85*mm, 135*mm, 48*mm])
+    quadro.setStyle(TableStyle(estilos_tabela + [
+        ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")), ("VALIGN", (0,0), (-1,-1), "TOP"),
+        ("FONTSIZE", (0,0), (-1,-1), 8),
+    ]))
+    elementos.append(quadro)
+    documento.build(elementos)
+    return memoria.getvalue()
+
+
+def separar_opcao_condicao_planta(planta):
+    tipo = str((planta or {}).get("tipo") or "").strip()
+    if re.match(r"^DISTRATO$", tipo, re.I):
+        return "Opção 01", "Distrato"
+    condicao = "Livre" if re.match(r"^\s*LIVRE(?:\s*-|$)", tipo, re.I) else "Distrato" if re.match(r"^\s*DISTRATO(?:\s*-|$)", tipo, re.I) else "Vendido"
+    opcao = re.sub(r"^\s*(?:LIVRE|DISTRATO)\s*-\s*", "", tipo, flags=re.I).strip()
+    return opcao, condicao
+
+
+def tipologia_planta_unidade(unidade):
+    numero = re.search(r"(\d+)", str(unidade or ""))
+    final = int(numero.group(1)) % 100 if numero else 0
+    if final in {1, 2}:
+        return "Finais 1 e 2"
+    if final in {6, 7}:
+        return "Finais 6 e 7"
+    return "Finais 3 a 5 e 8 a 10"
+
+
+def gerar_pdf_cadastro_unidades(torre, andar="todos", unidade="todos", tipo_relatorio="apartamentos", planta_filtro="todos", condicao_venda="todas", final="todos"):
+    with conectar() as conexao:
+        linhas_banco = conexao.execute(
+            "SELECT DISTINCT andar, unidade FROM registros WHERE torre=? ORDER BY andar, unidade",
+            (torre,),
+        ).fetchall()
+    unidades = [item for item in linhas_banco if re.match(r"^(Apto|Apartamento)\s", item["unidade"], re.I)]
+    if andar != "todos":
+        unidades = [item for item in unidades if item["andar"] == int(andar)]
+    if unidade != "todos":
+        unidades = [item for item in unidades if item["unidade"] == unidade]
+    if final != "todos":
+        unidades = [item for item in unidades if final_da_unidade(item["unidade"]) == int(final)]
+    plantas = json.loads(ARQUIVO_PLANTAS.read_text(encoding="utf-8")) if ARQUIVO_PLANTAS.exists() else {}
+    acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+    if planta_filtro != "todos":
+        tipologia_filtro, separador, opcao_filtro = planta_filtro.partition("|")
+        if not separador:
+            opcao_filtro, tipologia_filtro = planta_filtro, ""
+        unidades = [item for item in unidades
+            if separar_opcao_condicao_planta(plantas.get(f"{torre}|{item['unidade']}", {}))[0] == opcao_filtro
+            and (not tipologia_filtro or tipologia_planta_unidade(item["unidade"]) == tipologia_filtro)]
+    if condicao_venda != "todas":
+        unidades = [item for item in unidades if separar_opcao_condicao_planta(plantas.get(f"{torre}|{item['unidade']}", {}))[1].lower() == condicao_venda]
+    memoria = BytesIO()
+    documento = SimpleDocTemplate(memoria, pagesize=landscape(A4), rightMargin=14*mm, leftMargin=14*mm, topMargin=12*mm, bottomMargin=12*mm)
+    estilos = getSampleStyleSheet()
+    elementos = []
+    logo = PASTA / "logo dialogo.png"
+    if logo.exists():
+        elementos.extend([Image(str(logo), width=42*mm, height=14*mm), Spacer(1, 3*mm)])
+    titulo = "Relatório de opções de planta" if tipo_relatorio == "plantas" else "Relatório de apartamentos"
+    elementos.extend([
+        Paragraph(f"<b>{titulo}</b>", estilos["Title"]),
+        Paragraph(escape(f"{TORRES_NOMES.get(torre, torre)} · Andar: {andar if andar != 'todos' else 'Todos'} · Apartamento: {unidade.replace('Apto ', 'Apartamento ') if unidade != 'todos' else 'Todos'} · Final: {final if final != 'todos' else 'Todos'}"), estilos["BodyText"]),
+        Spacer(1, 5*mm),
+    ])
+    if tipo_relatorio == "plantas":
+        grupos = {}
+        for item in unidades:
+            planta = plantas.get(f"{torre}|{item['unidade']}", {})
+            opcao_planta, condicao = separar_opcao_condicao_planta(planta)
+            tipologia = tipologia_planta_unidade(item["unidade"])
+            chave_grupo = (tipologia, opcao_planta or "Não cadastrada")
+            grupo = grupos.setdefault(chave_grupo, {"unidades": [], "imagem": "", "origem": ""})
+            grupo["unidades"].append((item["andar"], item["unidade"].replace("Apto ", "Apartamento ")))
+            if not grupo["imagem"] and planta.get("plantaMiniatura"):
+                grupo["imagem"] = planta["plantaMiniatura"]
+                grupo["origem"] = planta.get("origem") or ""
+        elementos.append(Paragraph(f"<b>Total de apartamentos:</b> {len(unidades)}", estilos["BodyText"]))
+        if not grupos:
+            elementos.extend([Spacer(1, 5*mm), Paragraph("Nenhuma opção de planta encontrada.", estilos["BodyText"])])
+        for indice, ((tipologia, opcao), grupo) in enumerate(sorted(grupos.items(), key=lambda item: item[0])):
+            if indice:
+                elementos.append(PageBreak())
+            elementos.extend([Spacer(1, 5*mm), Paragraph(f"<b>{escape(tipologia)}</b><br/>{escape(opcao)}", estilos["Heading2"]), Spacer(1, 3*mm)])
+            caminho_imagem = PASTA / str(grupo["imagem"]).lstrip("/") if grupo["imagem"] else None
+            if caminho_imagem and caminho_imagem.exists():
+                leitor = ImageReader(str(caminho_imagem))
+                largura_original, altura_original = leitor.getSize()
+                largura_imagem, altura_imagem = 150*mm, 105*mm
+                escala = min(largura_imagem/largura_original, altura_imagem/altura_original)
+                imagem = Image(str(caminho_imagem), width=largura_original*escala, height=altura_original*escala)
+                imagem.hAlign = "CENTER"
+                elementos.extend([imagem, Spacer(1, 4*mm)])
+            else:
+                elementos.extend([Paragraph("Imagem da planta não disponível.", estilos["BodyText"]), Spacer(1, 4*mm)])
+            dados_unidades = [["Andar", "Apartamento"]] + [
+                [f"{andar_unidade}º", nome_unidade]
+                for andar_unidade, nome_unidade in sorted(grupo["unidades"], key=lambda item: (item[0], item[1]))
+            ]
+            quadro_unidades = Table(dados_unidades, colWidths=[35*mm, 100*mm], repeatRows=1, hAlign="CENTER")
+            quadro_unidades.setStyle(TableStyle([
+                ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")), ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+                ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")), ("FONTSIZE", (0,0), (-1,-1), 9),
+                ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
+            ]))
+            elementos.append(quadro_unidades)
+        documento.build(elementos)
+        return memoria.getvalue()
+    else:
+        dados = [["Andar", "Apartamento", "Opção de planta", "Opção de acabamento"]]
+        for item in unidades:
+            chave = f"{torre}|{item['unidade']}"
+            planta = plantas.get(chave, {})
+            acabamento_unidade = acabamentos.get(chave, {})
+            dados.append([f"{item['andar']}º", item["unidade"].replace("Apto ", "Apartamento "), planta.get("tipo") or "Não cadastrada", acabamento_unidade.get("planta") or "Padrão"])
+        larguras = [28*mm, 58*mm, 100*mm, 80*mm]
+    if len(dados) == 1:
+        dados.append(["—", "Nenhum apartamento encontrado", "—", "—"])
+    quadro = Table(dados, colWidths=larguras, repeatRows=1)
+    quadro.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), colors.HexColor("#173a5e")), ("TEXTCOLOR", (0,0), (-1,0), colors.white),
+        ("GRID", (0,0), (-1,-1), .4, colors.HexColor("#cbd3da")), ("VALIGN", (0,0), (-1,-1), "TOP"),
+        ("FONTSIZE", (0,0), (-1,-1), 8), ("ROWBACKGROUNDS", (0,1), (-1,-1), [colors.white, colors.HexColor("#f4f6f8")]),
+    ]))
+    elementos.extend([Paragraph(f"<b>Total de apartamentos:</b> {len(unidades)}", estilos["BodyText"]), Spacer(1, 3*mm), quadro])
+    documento.build(elementos)
+    return memoria.getvalue()
+
+
 def gerar_portal_relatorios(torre, andar="todos", unidade="todos", atividade="todos"):
     itens = registros_filtrados(torre, andar, unidade, atividade)
     with conectar() as conexao:
@@ -760,13 +1238,13 @@ def gerar_portal_relatorios(torre, andar="todos", unidade="todos", atividade="to
     )
     contagens = {status: sum(1 for item in itens if item["status"] == status) for status in STATUS_NOMES}
     total = len(itens)
-    realizados = contagens["concluido"]
+    realizados = sum(contagens[status] for status in STATUS_FINALIZADOS)
     servicos_pendentes = total - realizados
     avanco = round(realizados / total * 100) if total else 0
     andares_no_escopo = sorted({item["andar"] for item in itens})
     pavimentos_concluidos = sum(
         1 for numero in andares_no_escopo
-        if all(item["status"] == "concluido" for item in itens if item["andar"] == numero)
+        if all(item["status"] in STATUS_FINALIZADOS for item in itens if item["andar"] == numero)
     )
     percentuais = {
         status: (contagens[status] / total * 100 if total else 0)
@@ -910,6 +1388,73 @@ def gerar_pasta_placas_zip(torre, unidades, base_publica, escopo):
     return memoria.getvalue(), f"{pasta_raiz}.zip"
 
 
+def gerar_placa_andar_pdf(torre, andar):
+    memoria = BytesIO()
+    largura, altura = 105*mm, 145*mm
+    pdf = canvas.Canvas(memoria, pagesize=(largura, altura), pageCompression=1)
+    azul, vermelho = colors.HexColor("#294d82"), colors.HexColor("#c82512")
+    margem = 5*mm
+    pdf.setFillColor(colors.white); pdf.rect(0, 0, largura, altura, fill=1, stroke=0)
+    pdf.setStrokeColor(azul); pdf.setLineWidth(1.1*mm); pdf.rect(margem, margem, largura-2*margem, altura-2*margem, fill=0, stroke=1)
+    pdf.setFillColor(azul); pdf.rect(margem, altura-33*mm, largura-2*margem, 28*mm, fill=1, stroke=0); pdf.rect(margem, margem, largura-2*margem, 11*mm, fill=1, stroke=0)
+    pdf.setFillColor(colors.white); pdf.roundRect(10*mm, altura-30*mm, largura-20*mm, 22*mm, 1.5*mm, fill=1, stroke=0)
+    desenhar_imagem_contida(pdf, PASTA / "boulevardialogo.png", 12*mm, altura-28*mm, largura-24*mm, 18*mm)
+    pdf.setFillColor(vermelho); pdf.setFont("Helvetica-Bold", 17); pdf.drawCentredString(largura/2, altura-43*mm, TORRES_NOMES.get(torre, torre).upper())
+    personalizacoes = json.loads(ARQUIVO_PERSONALIZACOES.read_text(encoding="utf-8")) if ARQUIVO_PERSONALIZACOES.exists() else {}
+    acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
+    def opcao_um(valor):
+        texto = unicodedata.normalize("NFD", str(valor or "")).encode("ascii", "ignore").decode("ascii").strip().lower()
+        return bool(re.match(r"^opcao\s*0*1(?:\b|\s*-)", texto))
+    unidades_acabamento_personalizado = set()
+    for chave, dados_acabamento in acabamentos.items():
+        if not chave.startswith(f"{torre}|"):
+            continue
+        nome_unidade = chave.split("|", 1)[1]
+        numero = re.search(r"(\d+)", nome_unidade)
+        andar_unidade = int(numero.group(1)[:-2]) if numero and len(numero.group(1)) > 2 else 0
+        itens = dados_acabamento.get("itens", []) if isinstance(dados_acabamento, dict) else []
+        acabamento_personalizado = (
+            bool(dados_acabamento.get("planta")) and not opcao_um(dados_acabamento.get("planta"))
+        ) or any(item.get("opcao") and not opcao_um(item.get("opcao")) for item in itens)
+        if andar_unidade == int(andar) and acabamento_personalizado:
+            unidades_acabamento_personalizado.add(nome_unidade.replace("Apto ", ""))
+    unidades_personalizadas = sorted(
+        ({
+            str(dados.get("unidade") or chave.split("|", 1)[1]).replace("Apto ", "")
+            for chave, dados in personalizacoes.items()
+            if chave.startswith(f"{torre}|") and int(dados.get("andar") or 0) == int(andar)
+        } | unidades_acabamento_personalizado),
+        key=lambda valor: int(re.search(r"\d+", valor).group()) if re.search(r"\d+", valor) else valor,
+    )
+    if unidades_personalizadas:
+        posicao_numero, posicao_andar = 68, 84
+    else:
+        posicao_numero, posicao_andar = 78, 94
+    pdf.setFillColor(colors.black); pdf.setFont("Helvetica-Bold", 52)
+    pdf.drawCentredString(largura/2, altura-posicao_numero*mm, f"{andar}º")
+    pdf.setFont("Helvetica-Bold", 23)
+    pdf.drawCentredString(largura/2, altura-posicao_andar*mm, "ANDAR")
+    if unidades_personalizadas:
+        pdf.setFillColor(azul); pdf.setFont("Helvetica-Bold", 12)
+        pdf.drawCentredString(largura/2, altura-100*mm, "PERSONALIZADOS")
+        linhas_unidades = [unidades_personalizadas[indice:indice+3] for indice in range(0, len(unidades_personalizadas), 3)]
+        pdf.setFillColor(colors.black); pdf.setFont("Helvetica-Bold", 15)
+        for indice, unidades_linha in enumerate(linhas_unidades):
+            pdf.drawCentredString(largura/2, altura-(109+indice*7)*mm, "   ".join(unidades_linha))
+    desenhar_imagem_contida(pdf, PASTA / "logo dialogo.png", 7*mm, 17*mm, 29*mm, 11*mm)
+    pdf.showPage(); pdf.save()
+    return memoria.getvalue()
+
+
+def gerar_pasta_placas_andares_zip(torre, andares):
+    memoria = BytesIO()
+    pasta_raiz = f"placas-andares-{torre}"
+    with ZipFile(memoria, "w") as arquivo_zip:
+        for andar in andares:
+            arquivo_zip.writestr(f"{pasta_raiz}/placa-{andar}-andar.pdf", gerar_placa_andar_pdf(torre, andar))
+    return memoria.getvalue(), f"{pasta_raiz}.zip"
+
+
 def endereco_rede():
     try:
         return subprocess.check_output(["ipconfig", "getifaddr", "en0"], text=True).strip()
@@ -1020,6 +1565,45 @@ def preparar_banco():
         conexao.execute(
             "CREATE INDEX IF NOT EXISTS idx_ocorrencias_local ON ocorrencias(torre, andar, unidade)"
         )
+        conexao.execute(
+            """UPDATE registros SET status='aprovado-reinspecao', concluido=1
+               WHERE status='concluido' AND EXISTS (
+                   SELECT 1 FROM ocorrencias o
+                   WHERE o.torre=registros.torre AND o.andar=registros.andar
+                     AND o.unidade=registros.unidade AND o.atividade=registros.atividade
+                     AND o.status='concluido'
+               )"""
+        )
+        # Sincroniza ocorrências antigas cujos textos tiveram pequenos ajustes
+        # (por exemplo, "Condição" / "Condições") com a chave atual da planilha.
+        for ocorrencia in conexao.execute(
+            """SELECT torre, andar, unidade, atividade, especificacao, status
+               FROM ocorrencias WHERE atividade != 'Segurança'
+               ORDER BY status='pendente'"""
+        ).fetchall():
+            registro = conexao.execute(
+                """SELECT chave, especificacoes FROM registros
+                   WHERE torre=? AND andar=? AND unidade=? AND atividade=?""",
+                (ocorrencia["torre"], ocorrencia["andar"], ocorrencia["unidade"], ocorrencia["atividade"]),
+            ).fetchone()
+            if not registro or not ocorrencia["especificacao"]:
+                continue
+            try:
+                estados = json.loads(registro["especificacoes"] or "{}")
+            except (json.JSONDecodeError, TypeError):
+                estados = {}
+            comparacao = normalizar_chave_especificacao(ocorrencia["especificacao"])
+            chave_atual = next(
+                (chave for chave in estados if normalizar_chave_especificacao(chave) == comparacao),
+                ocorrencia["especificacao"],
+            )
+            estados[chave_atual] = "pendente" if ocorrencia["status"] == "pendente" else "aprovado-reinspecao"
+            if chave_atual != ocorrencia["especificacao"]:
+                estados.pop(ocorrencia["especificacao"], None)
+            conexao.execute(
+                "UPDATE registros SET especificacoes=?, atualizado_em=CURRENT_TIMESTAMP WHERE chave=?",
+                (json.dumps(estados, ensure_ascii=False), registro["chave"]),
+            )
         conexao.execute(
             """
             CREATE TABLE IF NOT EXISTS projetos_unidade (
@@ -1220,6 +1804,13 @@ def importar_planejamento_inicial(conexao):
 def normalizar_texto_fvs(valor):
     texto = unicodedata.normalize("NFD", str(valor or "")).encode("ascii", "ignore").decode("ascii")
     return re.sub(r"\s+", " ", texto).strip().lower()
+
+
+def normalizar_chave_especificacao(valor):
+    texto = normalizar_texto_fvs(valor)
+    texto = re.sub(r"\bcondicoes\b", "condicao", texto)
+    texto = re.sub(r"\bservicos\b", "servico", texto)
+    return texto
 
 
 def ler_shared_strings_fvs(z):
@@ -3076,6 +3667,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 "usuario": usuario.get("nome", "") if usuario else "",
                 "perfil": usuario.get("perfil", "") if usuario else "",
                 "perfilNome": PERFIS_ACESSO.get(usuario.get("perfil"), "") if usuario else "",
+                "cargo": usuario.get("cargo", "") if usuario else "",
                 "permissoes": usuario.get("permissoes", []) if usuario else [],
                 "podeAdministrar": bool(usuario and usuario.get("perfil") in PERFIS_ADMINISTRACAO and "administrar_acessos" in usuario.get("permissoes", [])),
             })
@@ -3156,23 +3748,35 @@ class ServidorObra(SimpleHTTPRequestHandler):
             unidade = parametros.get("unidade", ["todos"])[0]
             atividade = parametros.get("atividade", ["todos"])[0]
             status = parametros.get("status", ["todos"])[0]
-            acabamento = parametros.get("acabamento", ["todos"])[0]
+            revestimento = parametros.get("revestimento", ["todos"])[0]
             ocorrencias = parametros.get("ocorrencias", ["todas"])[0]
+            tipo_relatorio = parametros.get("tipoRelatorio", ["acompanhamento"])[0]
+            planta_filtro = parametros.get("planta", ["todos"])[0]
+            condicao_venda = parametros.get("condicaoVenda", ["todas"])[0]
+            final = parametros.get("final", ["todos"])[0]
             if torre not in TORRES_NOMES or (andar != "todos" and not andar.isdigit()):
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
+                return
+            if final != "todos" and not final.isdigit():
+                self.enviar_json({"erro": "Final inválido"}, 400)
                 return
             if status not in {*STATUS_NOMES, "todos"}:
                 self.enviar_json({"erro": "Situação inválida"}, 400)
                 return
-            acabamentos_validos = {"todos", "padrao", "alterado", "personalizada", "nao-instalar", *(f"opcao-{numero}" for numero in range(2, 8))}
-            if acabamento not in acabamentos_validos or ocorrencias not in {"todas", "com", "sem", "pendente", "concluido"}:
-                self.enviar_json({"erro": "Filtro de acabamento ou ocorrência inválido"}, 400)
+            if revestimento not in {*TIPOS_REVESTIMENTO, "todos"} or ocorrencias not in {"todas", "com", "sem", "pendente", "concluido"}:
+                self.enviar_json({"erro": "Filtro de revestimento ou ocorrência inválido"}, 400)
+                return
+            if tipo_relatorio not in {"acompanhamento", "plantas", "apartamentos"}:
+                self.enviar_json({"erro": "Tipo de relatório inválido"}, 400)
+                return
+            if condicao_venda not in {"todas", "vendido", "livre", "distrato"}:
+                self.enviar_json({"erro": "Condição de venda inválida"}, 400)
                 return
             if caminho == "/visitante-relatorios":
                 corpo = gerar_portal_relatorios(torre, andar, unidade, atividade)
                 tipo = "text/html; charset=utf-8"
             elif caminho == "/relatorio-visitante.pdf":
-                corpo = gerar_pdf_visitante_filtros(torre, andar, unidade, atividade, status, acabamento, ocorrencias)
+                corpo = gerar_pdf_visitante_filtros(torre, andar, unidade, atividade, status, revestimento, ocorrencias, final) if tipo_relatorio == "acompanhamento" else gerar_pdf_cadastro_unidades(torre, andar, unidade, tipo_relatorio, planta_filtro, condicao_venda, final)
                 tipo = "application/pdf"
             else:
                 corpo = gerar_qr_svg(self.url_publica(
@@ -3211,22 +3815,67 @@ class ServidorObra(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(corpo)
             return
+        if caminho == "/placas-andares.pdf":
+            if not self.exigir_permissao("gerar_pdf"):
+                return
+            torre = parametros.get("torre", [""])[0]
+            valores_andares = parametros.get("andar", [])
+            visualizar = parametros.get("visualizar", ["0"])[0] == "1"
+            if torre not in TORRES_NOMES or not valores_andares or any(not valor.isdigit() for valor in valores_andares):
+                self.enviar_json({"erro": "Filtros inválidos para as placas dos andares"}, 400)
+                return
+            limite = 36 if torre == "aurora" else 23
+            andares = sorted({int(valor) for valor in valores_andares if 1 <= int(valor) <= limite})
+            if not andares:
+                self.enviar_json({"erro": "Nenhum andar encontrado"}, 404)
+                return
+            if visualizar and len(andares) == 1:
+                corpo = gerar_placa_andar_pdf(torre, andares[0])
+                nome_arquivo = f"placa-{andares[0]}-andar.pdf"
+                tipo_resposta = "application/pdf"
+                disposicao = "inline"
+            else:
+                corpo, nome_arquivo = gerar_pasta_placas_andares_zip(torre, andares)
+                tipo_resposta = "application/zip"
+                disposicao = "attachment"
+            self.send_response(200)
+            self.send_header("Content-Type", tipo_resposta)
+            self.send_header("Content-Disposition", f'{disposicao}; filename="{nome_arquivo}"')
+            self.send_header("Content-Length", str(len(corpo)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(corpo)
+            return
         if caminho == "/placas-unidades.pdf":
             if not self.exigir_permissao("gerar_pdf"):
                 return
             torre = parametros.get("torre", [""])[0]
             andar = parametros.get("andar", ["todos"])[0]
             unidade = parametros.get("unidade", ["todos"])[0]
+            selecionadas = parametros.get("selecionada", [])
+            visualizar = parametros.get("visualizar", ["0"])[0] == "1"
             if torre not in TORRES_NOMES or (andar != "todos" and not andar.isdigit()):
                 self.enviar_json({"erro": "Filtros inválidos para as placas"}, 400)
                 return
-            unidades = unidades_para_placas(torre, andar, unidade)
+            if selecionadas:
+                disponiveis = set(unidades_para_placas(torre))
+                unidades = []
+                for selecionada in selecionadas:
+                    numero_andar, separador, nome_unidade = selecionada.partition("|")
+                    if not separador or not numero_andar.lstrip("-").isdigit():
+                        continue
+                    candidata = (int(numero_andar), nome_unidade)
+                    if candidata in disponiveis and candidata not in unidades:
+                        unidades.append(candidata)
+                unidades.sort(key=lambda item: (item[0], item[1]))
+            else:
+                unidades = unidades_para_placas(torre, andar, unidade)
             if not unidades:
                 self.enviar_json({"erro": "Nenhuma unidade encontrada para as placas"}, 404)
                 return
-            escopo = unidade if unidade != "todos" else f"andar-{andar}" if andar != "todos" else TORRES_NOMES[torre]
+            escopo = "selecionadas" if selecionadas else unidade if unidade != "todos" else f"andar-{andar}" if andar != "todos" else TORRES_NOMES[torre]
             base_publica = self.url_publica("").rstrip("/")
-            if unidade == "todos":
+            if selecionadas or unidade == "todos":
                 corpo, nome_arquivo = gerar_pasta_placas_zip(torre, unidades, base_publica, escopo)
                 tipo_resposta = "application/zip"
             else:
@@ -3236,7 +3885,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 tipo_resposta = "application/pdf"
             self.send_response(200)
             self.send_header("Content-Type", tipo_resposta)
-            self.send_header("Content-Disposition", f'attachment; filename="{nome_arquivo}"')
+            disposicao = "inline" if visualizar and unidade != "todos" else "attachment"
+            self.send_header("Content-Disposition", f'{disposicao}; filename="{nome_arquivo}"')
             self.send_header("Content-Length", str(len(corpo)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
@@ -3562,6 +4212,34 @@ class ServidorObra(SimpleHTTPRequestHandler):
         }.get(caminho)
         if permissao_rota and not self.exigir_permissao(permissao_rota):
             return
+        if len(partes) == 5 and partes[:3] == ["api", "admin", "usuarios"] and partes[4] == "aprovar":
+            administrador = self.exigir_administracao()
+            if not administrador:
+                return
+            try:
+                usuario_id = int(partes[3])
+                with conectar() as conexao:
+                    usuario = conexao.execute(
+                        "SELECT id,nome,email,ativo FROM usuarios_acesso WHERE id=?", (usuario_id,)
+                    ).fetchone()
+                    if not usuario:
+                        raise ValueError("Usuário não encontrado")
+                    if not usuario["ativo"]:
+                        conexao.execute(
+                            "UPDATE usuarios_acesso SET ativo=1,atualizado_em=CURRENT_TIMESTAMP WHERE id=?",
+                            (usuario_id,),
+                        )
+                        registrar_auditoria(
+                            conexao,
+                            administrador["id"],
+                            administrador["nome"],
+                            "Cadastro aprovado",
+                            f"{usuario['nome']} · {usuario['email']}",
+                        )
+                self.enviar_json({"ok": True, "id": usuario_id})
+            except ValueError as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            return
         if len(partes) == 4 and partes[:3] == ["api", "admin", "perfis"]:
             administrador = self.exigir_administracao()
             if not administrador:
@@ -3781,6 +4459,19 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     if len(partes) != 4:
                         continue
                     torre, andar, unidade, atividade = partes
+                    status_registro = registro.get(
+                        "status", "concluido" if registro.get("concluido") else "nao-iniciado"
+                    )
+                    if status_registro in STATUS_FINALIZADOS:
+                        status_ocorrencias = {
+                            item["status"] for item in conexao.execute(
+                            "SELECT status FROM ocorrencias WHERE torre=? AND andar=? AND unidade=? AND atividade=?",
+                            (torre, int(andar), unidade, atividade),
+                        ).fetchall()}
+                        if "pendente" in status_ocorrencias:
+                            status_registro = "pendente"
+                        elif "concluido" in status_ocorrencias:
+                            status_registro = "aprovado-reinspecao"
                     conexao.execute(
                         """
                         INSERT INTO registros
@@ -3803,15 +4494,12 @@ class ServidorObra(SimpleHTTPRequestHandler):
                             int(andar),
                             unidade,
                             atividade,
-                            1 if registro.get("concluido") else 0,
+                            1 if status_registro in STATUS_FINALIZADOS else 0,
                             registro.get("data", ""),
                             registro.get("observacao", ""),
                             registro.get("foto", ""),
                             registro.get("fotoNome", ""),
-                            registro.get(
-                                "status",
-                                "concluido" if registro.get("concluido") else "nao-iniciado",
-                            ),
+                            status_registro,
                             json.dumps(
                                 registro.get("especificacoes", {}),
                                 ensure_ascii=False,
@@ -3900,6 +4588,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 unidade = str(dados.get("unidade", "")).strip()
                 opcao = str(dados.get("opcao", "padrao"))
                 escolhas = {str(ambiente).strip(): str(escolha).strip() for ambiente, escolha in dados.get("escolhas", {}).items() if str(ambiente).strip() and str(escolha).strip()}
+                descricoes = {str(chave).strip(): str(descricao).strip() for chave, descricao in dados.get("descricoes", {}).items() if str(chave).strip() and str(descricao).strip()}
                 if torre not in TORRES_NOMES or not unidade or opcao not in {"padrao", "personalizado"}:
                     raise ValueError("Personalização de acabamento inválida")
                 acabamentos = json.loads(ARQUIVO_ACABAMENTOS.read_text(encoding="utf-8")) if ARQUIVO_ACABAMENTOS.exists() else {}
@@ -3912,14 +4601,32 @@ class ServidorObra(SimpleHTTPRequestHandler):
                         chave_catalogo = (item_catalogo.get("ambiente"), item_catalogo.get("item"), item_catalogo.get("opcao"))
                         if item_catalogo.get("descricao"):
                             catalogo[chave_catalogo] = item_catalogo["descricao"]
+                itens_atualizados = []
                 for item in acabamento.get("itens", []):
+                    if opcao == "personalizado" and item.get("item") == "Piso e Parede":
+                        for parte in ("Piso", "Parede"):
+                            chave_parte = f'{item.get("ambiente", "")}|||{parte}'
+                            escolha_parte = escolhas.get(chave_parte) or "Opção 1"
+                            novo_item = dict(item)
+                            novo_item["item"] = parte
+                            novo_item["opcao"] = escolha_parte
+                            descricao_parte = descricoes.get(chave_parte)
+                            if descricao_parte is None:
+                                descricao_completa = catalogo.get((item.get("ambiente"), "Piso e Parede", escolha_parte), "")
+                                partes_descricao = re.split(r"\s+e\s+Paredes? do Box\s*:\s*", descricao_completa, maxsplit=1, flags=re.I)
+                                descricao_parte = partes_descricao[-1] if parte == "Parede" and len(partes_descricao) > 1 else partes_descricao[0]
+                            novo_item["descricao"] = descricao_parte
+                            itens_atualizados.append(novo_item)
+                        continue
                     chave_item = f'{item.get("ambiente", "")}|||{item.get("item", "")}'
                     escolha = (escolhas.get(chave_item) or escolhas.get(item.get("ambiente"))) if opcao == "personalizado" else "Opção 1"
                     if escolha:
                         item["opcao"] = escolha
-                        descricao = catalogo.get((item.get("ambiente"), item.get("item"), escolha))
+                        descricao = descricoes.get(chave_item) if "personalizada" in escolha.lower() else catalogo.get((item.get("ambiente"), item.get("item"), escolha))
                         if descricao is not None:
                             item["descricao"] = descricao
+                    itens_atualizados.append(item)
+                acabamento["itens"] = itens_atualizados
                 acabamentos[chave] = acabamento
                 temporario = ARQUIVO_ACABAMENTOS.with_suffix(".json.tmp")
                 temporario.write_text(json.dumps(acabamentos, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -4079,8 +4786,8 @@ class ServidorObra(SimpleHTTPRequestHandler):
                     self.enviar_json({"erro": "Usuário ou senha inválidos"}, 401)
                     return
                 token = secrets.token_urlsafe(32)
-                SESSOES_ENGENHEIRO[token] = {"id": usuario["id"], "nome": usuario["nome"], "email": usuario["email"], "perfil": usuario["perfil"], "permissoes": permissoes}
-                corpo = json.dumps({"ok": True, "usuario": usuario["nome"], "perfil": usuario["perfil"], "permissoes": permissoes, "podeAdministrar": usuario["perfil"] in PERFIS_ADMINISTRACAO and "administrar_acessos" in permissoes}, ensure_ascii=False).encode("utf-8")
+                SESSOES_ENGENHEIRO[token] = {"id": usuario["id"], "nome": usuario["nome"], "email": usuario["email"], "cargo": usuario["cargo"], "perfil": usuario["perfil"], "permissoes": permissoes}
+                corpo = json.dumps({"ok": True, "usuario": usuario["nome"], "cargo": usuario["cargo"], "perfil": usuario["perfil"], "permissoes": permissoes, "podeAdministrar": usuario["perfil"] in PERFIS_ADMINISTRACAO and "administrar_acessos" in permissoes}, ensure_ascii=False).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 seguro = "; Secure" if self.headers.get("X-Forwarded-Proto", "").split(",", 1)[0].strip() == "https" else ""
@@ -4384,16 +5091,100 @@ class ServidorObra(SimpleHTTPRequestHandler):
             identificador = int(partes[2])
             tamanho = int(self.headers.get("Content-Length", "0"))
             dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+            if "descricao" in dados:
+                campos_texto = ("torre", "unidade", "atividade", "especificacao", "descricao", "dataOcorrencia")
+                if any(not str(dados.get(campo, "")).strip() for campo in campos_texto) or dados.get("andar") is None:
+                    raise ValueError("Preencha setor, serviço, especificação e descrição")
+                ocorrencia_seguranca = str(dados.get("atividade", "")).strip().casefold() == "segurança".casefold()
+                if ocorrencia_seguranca:
+                    dados["atividade"] = "Segurança"
+                    dados["subatividade"] = ""
+                    dados["especificacao"] = "Ocorrência de segurança"
+                    dados["unidade"] = "Área comum"
+                with conectar() as conexao:
+                    existente = conexao.execute("SELECT id FROM ocorrencias WHERE id=?", (identificador,)).fetchone()
+                    if not existente:
+                        self.enviar_json({"erro": "Ocorrência não encontrada"}, 404)
+                        return
+                    if not ocorrencia_seguranca:
+                        registro = conexao.execute(
+                            "SELECT 1 FROM registros WHERE torre=? AND andar=? AND unidade=? AND atividade=? LIMIT 1",
+                            (dados["torre"], int(dados["andar"]), dados["unidade"], dados["atividade"]),
+                        ).fetchone()
+                        if not registro:
+                            raise ValueError("O serviço selecionado não existe para este apartamento ou setor")
+                    campos = [
+                        dados["torre"], int(dados["andar"]), dados["unidade"], dados["atividade"],
+                        dados.get("subatividade", ""), dados["especificacao"], dados["descricao"],
+                        dados["dataOcorrencia"],
+                    ]
+                    consulta = """UPDATE ocorrencias SET torre=?,andar=?,unidade=?,atividade=?,subatividade=?,
+                                  especificacao=?,descricao=?,data_ocorrencia=?"""
+                    if dados.get("foto"):
+                        consulta += ",foto=?,foto_nome=?"
+                        campos.extend([dados["foto"], dados.get("fotoNome", "")])
+                    consulta += " WHERE id=?"
+                    campos.append(identificador)
+                    conexao.execute(consulta, campos)
+                self.enviar_json({"ok": True, "id": identificador})
+                return
             status = dados.get("status", "")
             permitidos = {"pendente", "concluido"}
             if status not in permitidos:
                 self.enviar_json({"erro": "Status inválido"}, 400)
                 return
             with conectar() as conexao:
+                ocorrencia = conexao.execute(
+                    "SELECT torre, andar, unidade, atividade, especificacao FROM ocorrencias WHERE id=?",
+                    (identificador,),
+                ).fetchone()
                 cursor = conexao.execute(
                     "UPDATE ocorrencias SET status = ? WHERE id = ?",
                     (status, identificador),
                 )
+                pendencias_restantes = conexao.execute(
+                    """SELECT 1 FROM ocorrencias WHERE torre=? AND andar=? AND unidade=?
+                       AND atividade=? AND status='pendente' LIMIT 1""",
+                    (ocorrencia["torre"], ocorrencia["andar"], ocorrencia["unidade"], ocorrencia["atividade"]),
+                ).fetchone() if ocorrencia else None
+                if ocorrencia and ocorrencia["atividade"] != "Segurança":
+                    registro = conexao.execute(
+                        """SELECT chave, especificacoes FROM registros
+                           WHERE torre=? AND andar=? AND unidade=? AND atividade=?""",
+                        (ocorrencia["torre"], ocorrencia["andar"], ocorrencia["unidade"], ocorrencia["atividade"]),
+                    ).fetchone()
+                    if registro:
+                        try:
+                            estados_especificacoes = json.loads(registro["especificacoes"] or "{}")
+                        except (json.JSONDecodeError, TypeError):
+                            estados_especificacoes = {}
+                        especificacao = ocorrencia["especificacao"] or ""
+                        if especificacao:
+                            comparacao = normalizar_chave_especificacao(especificacao)
+                            chave_especificacao = next(
+                                (chave for chave in estados_especificacoes
+                                 if normalizar_chave_especificacao(chave) == comparacao),
+                                especificacao,
+                            )
+                            pendencia_mesma_especificacao = conexao.execute(
+                                """SELECT 1 FROM ocorrencias WHERE torre=? AND andar=? AND unidade=?
+                                   AND atividade=? AND especificacao=? AND status='pendente' LIMIT 1""",
+                                (ocorrencia["torre"], ocorrencia["andar"], ocorrencia["unidade"],
+                                 ocorrencia["atividade"], especificacao),
+                            ).fetchone()
+                            estados_especificacoes[chave_especificacao] = (
+                                "pendente" if pendencia_mesma_especificacao else "aprovado-reinspecao"
+                            )
+                            if chave_especificacao != especificacao:
+                                estados_especificacoes.pop(especificacao, None)
+                        status_registro = "pendente" if status == "pendente" or pendencias_restantes else "aprovado-reinspecao"
+                        conexao.execute(
+                            """UPDATE registros SET especificacoes=?, status=?, concluido=?,
+                               data_conclusao=date('now','localtime'), atualizado_em=CURRENT_TIMESTAMP
+                               WHERE chave=?""",
+                            (json.dumps(estados_especificacoes, ensure_ascii=False), status_registro,
+                             int(status_registro == "aprovado-reinspecao"), registro["chave"]),
+                        )
             if not cursor.rowcount:
                 self.enviar_json({"erro": "Ocorrência não encontrada"}, 404)
                 return
