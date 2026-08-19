@@ -1082,7 +1082,10 @@
   .atividades-tabela td,.atividades-tabela th{padding:9px 7px;vertical-align:top;}
   .atividade-escopos-resumo{color:var(--cinza-texto);line-height:1.45;}
   .atividade-subservicos{min-width:150px;color:var(--cinza-texto);font-size:.69rem;line-height:1.45;}
-  .atividade-subservicos span{display:block;}
+  .atividade-subservicos>span{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid #edf1f3;}
+  .atividade-subservicos>span:last-child{border-bottom:0;}
+  .atividade-subservicos button{flex:none;border:1px solid #c8d5df;border-radius:6px;background:#eef4f8;padding:4px 7px;color:var(--azul-escuro);font-size:.61rem;font-weight:800;cursor:pointer;}
+  .atividade-subservicos button:hover{background:var(--azul);color:#fff;}
   .atividade-acoes{white-space:nowrap;}
   .atividade-acoes button{border:0;background:#e8f1f6;color:var(--azul-escuro);border-radius:6px;padding:6px 8px;cursor:pointer;margin-right:4px;}
   .atividade-acoes button.excluir{background:#fdebea;color:var(--vermelho);}
@@ -1834,6 +1837,7 @@
       <form class="atividade-editor oculto" id="formAtividade">
         <h3 id="tituloFormAtividade">Nova atividade</h3>
         <input id="atividadeNomeOriginal" type="hidden">
+        <input id="atividadeSubservicoOriginal" type="hidden">
         <div class="atividade-campos">
           <div class="campo-filtro largo"><label for="atividadeNome">Nome da atividade</label><input id="atividadeNome" required placeholder="Ex.: Instalação de bancada"></div>
           <div class="campo-filtro largo"><label for="atividadeEspecificacaoNova">Especificações do serviço</label><div class="especificacao-nova"><input id="atividadeEspecificacaoNova" placeholder="Ex.: Conferência e teste final"><button id="adicionarEspecificacaoAtividade" type="button">＋ Adicionar</button></div></div>
@@ -2689,8 +2693,8 @@ function subservicoPertinenteAoPavimento(atividade,subservico,torre,andar){
   return true;
 }
 function divisoesDoServico(atividade,andar,torre=torreSelecionada){
-  const catalogoFvs=window.CATALOGO_FVS?.[atividade];
-  const subservicosFvs=catalogoFvs?Object.keys(catalogoFvs).filter(Boolean):[];
+  const mapaSubservicos=mapaDivisoesDoServico(atividade);
+  const subservicosFvs=mapaSubservicos?Object.keys(mapaSubservicos).filter(Boolean):[];
   if(subservicosFvs.length){
     const aplicaveis=subservicosFvs.filter(subservico=>subservicoAplicavelNestaObra(atividade,subservico)&&subservicoPertinenteAoPavimento(atividade,subservico,torre,andar));
     if(atividade==="Estrutura")return divisoesEstruturaDoAndar(andar).filter(subservico=>aplicaveis.includes(subservico));
@@ -2714,6 +2718,17 @@ function divisoesDoServico(atividade,andar,torre=torreSelecionada){
   return [];
 }
 function mapaDivisoesDoServico(atividade){
+  const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
+  const especificacoesCadastradas=Array.isArray(cadastrada?.especificacoes)?cadastrada.especificacoes:[];
+  if(especificacoesCadastradas.some(item=>item.includes(" :: "))){
+    return especificacoesCadastradas.reduce((mapa,especificacao)=>{
+      if(!especificacao.includes(" :: "))return mapa;
+      const [subservico,...partes]=especificacao.split(" :: ");
+      const item=partes.join(" :: ").trim();
+      if(subservico.trim()&&item)(mapa[subservico.trim()]??=[]).push(item);
+      return mapa;
+    },{});
+  }
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   const subservicosFvs=catalogoFvs?Object.fromEntries(Object.entries(catalogoFvs).filter(([subservico])=>subservico)):null;
   if(subservicosFvs&&Object.keys(subservicosFvs).length){
@@ -2750,6 +2765,8 @@ function divisoesEstruturaDoAndar(andar){
   return disponiveis;
 }
 function especificacoesDoServico(atividade){
+  const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
+  if(cadastrada?.especificacoes?.length)return [...cadastrada.especificacoes];
   const catalogoFvs=window.CATALOGO_FVS?.[atividade];
   if(catalogoFvs)return Object.entries(catalogoFvs).flatMap(([subservico,itens])=>itens.map(item=>subservico?`${subservico} :: ${item}`:item));
   if(atividade==="Estrutura") return Object.entries(DIVISOES_ESTRUTURA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
@@ -2760,8 +2777,6 @@ function especificacoesDoServico(atividade){
   if(atividade==="Gesso") return Object.entries(DIVISOES_GESSO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   if(atividade==="Impermeabilização") return Object.entries(DIVISOES_IMPERMEABILIZACAO).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
   if(atividade==="Produção de Argamassa") return Object.entries(DIVISOES_PRODUCAO_ARGAMASSA).flatMap(([divisao,itens])=>itens.map(item=>`${divisao} :: ${item}`));
-  const cadastrada=atividadesCadastro.find(item=>item.nome===atividade);
-  if(cadastrada?.especificacoes?.length) return cadastrada.especificacoes;
   return ESPECIFICACOES_SERVICOS[atividade]||["Execução do serviço"];
 }
 function especificacoesExibidasServico(atividade,andar){
@@ -4133,6 +4148,8 @@ function renderizarEspecificacoesAtividade(){
 function limparFormularioAtividade(){
   document.getElementById("formAtividade").reset();
   document.getElementById("atividadeNomeOriginal").value="";
+  document.getElementById("atividadeSubservicoOriginal").value="";
+  document.getElementById("atividadeNome").disabled=false;
   document.getElementById("tituloFormAtividade").textContent="Nova atividade";
   escoposAtividadeTemporarios=[];
   especificacoesAtividadeTemporarias=[];
@@ -4312,8 +4329,9 @@ function renderizarAtividadesAdmin(){
     const resumo=`${torres}<br>${pavimentos} andar(es)${especificos?` · ${especificos} destino(s) específico(s)`:" · todos os apartamentos/setores"}<br>${quantidadeEspecificacoes} especificação(ões)`;
     const mapaSubservicos=mapaDivisoesDoServico(item.nome);
     const subservicos=mapaSubservicos?Object.keys(mapaSubservicos):[...new Set(especificacoesDoServico(item.nome).filter(valor=>valor.includes(" :: ")).map(valor=>valor.split(" :: ")[0]))];
-    const listaSubservicos=subservicos.length?subservicos.map(nome=>`<span>${escaparHtml(nome)}</span>`).join(""):"—";
-    return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-subservicos">${listaSubservicos}</td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes"><button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button><button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
+    const listaSubservicos=subservicos.length?subservicos.map(nome=>`<span><span>${escaparHtml(nome)}</span><button type="button" data-editar-subservico="${escaparHtml(nome)}" data-atividade-subservico="${escaparHtml(item.nome)}">Editar</button></span>`).join(""):"—";
+    const editarAtividade=subservicos.length?"":`<button type="button" data-editar-atividade="${escaparHtml(item.nome)}">Editar</button>`;
+    return `<tr><td><strong>${escaparHtml(item.nome)}</strong></td><td class="atividade-subservicos">${listaSubservicos}</td><td class="atividade-escopos-resumo">${resumo}</td><td class="atividade-acoes">${editarAtividade}<button class="excluir" type="button" data-excluir-atividade="${escaparHtml(item.nome)}">Excluir</button></td></tr>`;
   }).join("")||`<tr><td colspan="4">Nenhuma atividade encontrada.</td></tr>`;
 }
 async function recarregarCadastroAtividades(){
@@ -4512,7 +4530,31 @@ document.getElementById("salvarCadastroMassivo").addEventListener("click",async(
 });
 document.getElementById("listaAtividadesAdmin").addEventListener("click",async evento=>{
   const editar=evento.target.closest("[data-editar-atividade]");
+  const editarSubservico=evento.target.closest("[data-editar-subservico]");
   const excluir=evento.target.closest("[data-excluir-atividade]");
+  if(editarSubservico){
+    const nomeAtividade=editarSubservico.dataset.atividadeSubservico;
+    const nomeSubservico=editarSubservico.dataset.editarSubservico;
+    const item=atividadesCadastro.find(atividade=>atividade.nome===nomeAtividade);
+    if(!item)return;
+    document.getElementById("atividadeNome").value=nomeAtividade;
+    document.getElementById("atividadeNome").disabled=true;
+    document.getElementById("atividadeNomeOriginal").value=nomeAtividade;
+    document.getElementById("atividadeSubservicoOriginal").value=nomeSubservico;
+    document.getElementById("tituloFormAtividade").textContent=`Editar subserviço · ${nomeSubservico}`;
+    escoposAtividadeTemporarios=(item.setoresSubservicos||[])
+      .filter(escopo=>escopo.subservico===nomeSubservico)
+      .map(({torre,andar,unidade})=>({torre,andar,unidade}));
+    especificacoesAtividadeTemporarias=especificacoesDoServico(nomeAtividade)
+      .filter(especificacao=>especificacao.startsWith(`${nomeSubservico} :: `))
+      .map(especificacao=>especificacao.slice(nomeSubservico.length+4));
+    renderizarEscoposAtividade();
+    renderizarEspecificacoesAtividade();
+    const status=document.getElementById("statusAtividadeAdmin");
+    status.textContent=escoposAtividadeTemporarios.length?"Edite somente os destinos e especificações deste subserviço.":"Este subserviço usa os destinos gerais da atividade. Adicione destinos apenas se quiser personalizá-los.";
+    status.style.color="var(--cinza-texto)";
+    alternarFormularioAtividade(true);
+  }
   if(editar){
     const item=atividadesCadastro.find(atividade=>atividade.nome===editar.dataset.editarAtividade);
     if(!item)return;
@@ -4539,15 +4581,21 @@ document.getElementById("formAtividade").addEventListener("submit",async evento=
   const status=document.getElementById("statusAtividadeAdmin");
   const nome=document.getElementById("atividadeNome").value.trim();
   const nomeOriginal=document.getElementById("atividadeNomeOriginal").value;
-  if(!escoposAtividadeTemporarios.length){status.textContent="Adicione ao menos um destino.";status.style.color="var(--vermelho)";return;}
+  const subservicoOriginal=document.getElementById("atividadeSubservicoOriginal").value;
+  if(!subservicoOriginal&&!escoposAtividadeTemporarios.length){status.textContent="Adicione ao menos um destino.";status.style.color="var(--vermelho)";return;}
   if(!especificacoesAtividadeTemporarias.length){status.textContent="Adicione ao menos uma especificação do serviço.";status.style.color="var(--vermelho)";return;}
-  status.textContent="Salvando atividade…";status.style.color="";
-  const resposta=await fetch("/api/atividades",{method:nomeOriginal?"PUT":"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome,nomeOriginal,escopos:escoposAtividadeTemporarios,especificacoes:especificacoesAtividadeTemporarias})});
+  status.textContent=subservicoOriginal?"Salvando subserviço…":"Salvando atividade…";status.style.color="";
+  const rota=subservicoOriginal?"/api/subservicos":"/api/atividades";
+  const metodo=subservicoOriginal?"PUT":nomeOriginal?"PUT":"POST";
+  const corpo=subservicoOriginal
+    ?{atividade:nomeOriginal,subservico:subservicoOriginal,escopos:escoposAtividadeTemporarios,especificacoes:especificacoesAtividadeTemporarias}
+    :{nome,nomeOriginal,escopos:escoposAtividadeTemporarios,especificacoes:especificacoesAtividadeTemporarias};
+  const resposta=await fetch(rota,{method:metodo,headers:{"Content-Type":"application/json"},body:JSON.stringify(corpo)});
   const dados=await resposta.json();
   if(!resposta.ok){status.textContent=dados.erro||"Não foi possível salvar";status.style.color="var(--vermelho)";return;}
   limparFormularioAtividade();
   await recarregarCadastroAtividades();
-  document.getElementById("statusAtividadeAdmin").textContent="Atividade salva com sucesso.";
+  document.getElementById("statusAtividadeAdmin").textContent=subservicoOriginal?"Subserviço salvo com sucesso.":"Atividade salva com sucesso.";
 });
 
 function prepararDashboardGeral(){

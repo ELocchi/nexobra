@@ -4277,6 +4277,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
         permissao_rota = {
             "/api/setores": "gerenciar_setores",
             "/api/atividades": "gerenciar_atividades",
+            "/api/subservicos": "gerenciar_atividades",
             "/api/registros": "atualizar_acompanhamento",
         }.get(caminho)
         if permissao_rota and not self.exigir_permissao(permissao_rota):
@@ -4480,6 +4481,78 @@ class ServidorObra(SimpleHTTPRequestHandler):
                 self.enviar_json({"ok": True, "unidade": nova_unidade})
             except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
                 self.enviar_json({"erro": str(erro)}, 400)
+            return
+        if caminho == "/api/subservicos":
+            try:
+                tamanho = int(self.headers.get("Content-Length", "0"))
+                dados = json.loads(self.rfile.read(tamanho).decode("utf-8"))
+                atividade = str(dados.get("atividade", "")).strip()
+                subservico = str(dados.get("subservico", "")).strip()
+                especificacoes = validar_especificacoes(dados.get("especificacoes", []))
+                escopos = validar_escopos(dados.get("escopos", [])) if dados.get("escopos") else []
+                if not atividade or not subservico:
+                    raise ValueError("Informe a atividade e o subserviço")
+                prefixo = f"{subservico} :: "
+                especificacoes_subservico = [
+                    item[len(prefixo):].strip() if item.startswith(prefixo) else item
+                    for item in especificacoes
+                ]
+                if any(not item for item in especificacoes_subservico):
+                    raise ValueError("Informe as especificações do subserviço")
+                with conectar() as conexao:
+                    if not conexao.execute(
+                        "SELECT 1 FROM atividades_config WHERE nome=? LIMIT 1", (atividade,)
+                    ).fetchone():
+                        raise ValueError("Atividade não encontrada")
+                    atuais = [
+                        linha["especificacao"] for linha in conexao.execute(
+                            "SELECT especificacao FROM atividades_especificacoes WHERE atividade=? ORDER BY ordem,id",
+                            (atividade,),
+                        ).fetchall()
+                    ]
+                    preservadas = [item for item in atuais if not item.startswith(prefixo)]
+                    novas = preservadas + [f"{prefixo}{item}" for item in especificacoes_subservico]
+                    salvar_especificacoes_atividade(conexao, atividade, novas)
+                    conexao.execute(
+                        "DELETE FROM subservicos_setores WHERE atividade=? AND subservico=?",
+                        (atividade, subservico),
+                    )
+                    setores_por_local = {}
+                    for torre, andar, unidade in escopos:
+                        destinos = apartamentos_do_andar(torre, andar) + ["Área comum"] if unidade == "*" else [unidade]
+                        setores_por_local.setdefault((torre, andar), []).extend(destinos)
+                    destinos_registros = []
+                    for (torre, andar), unidades in setores_por_local.items():
+                        salvar_setores_subservico(conexao, atividade, subservico, torre, andar, unidades)
+                        destinos_registros.extend((torre, andar, unidade) for unidade in unidades)
+                    if destinos_registros:
+                        garantir_registros_atividade(conexao, atividade, destinos_registros)
+                    sufixos_validos = set(especificacoes_subservico)
+                    for registro in conexao.execute(
+                        "SELECT chave,especificacoes FROM registros WHERE atividade=?", (atividade,)
+                    ).fetchall():
+                        try:
+                            estados = json.loads(registro["especificacoes"] or "{}")
+                        except (json.JSONDecodeError, TypeError):
+                            estados = {}
+                        alterado = False
+                        for chave_estado in list(estados):
+                            if not chave_estado.startswith(prefixo):
+                                continue
+                            sufixo = chave_estado[len(prefixo):].strip()
+                            if sufixo not in sufixos_validos:
+                                estados.pop(chave_estado, None)
+                                alterado = True
+                        if alterado:
+                            conexao.execute(
+                                "UPDATE registros SET especificacoes=?,atualizado_em=CURRENT_TIMESTAMP WHERE chave=?",
+                                (json.dumps(estados, ensure_ascii=False), registro["chave"]),
+                            )
+                self.enviar_json({"ok": True, "atividade": atividade, "subservico": subservico})
+            except (ValueError, json.JSONDecodeError, sqlite3.IntegrityError) as erro:
+                self.enviar_json({"erro": str(erro)}, 400)
+            except Exception as erro:
+                self.enviar_json({"erro": f"Falha ao atualizar subserviço: {erro}"}, 500)
             return
         if caminho == "/api/atividades":
             if not self.exigir_engenheiro():
