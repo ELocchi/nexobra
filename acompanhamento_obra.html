@@ -562,6 +562,9 @@
   .remover-projeto{border-color:#dfaaa5;color:#c33d34;}
   .remover-projeto:hover{background:#c33d34;color:#fff;border-color:#c33d34;}
   .painel-acabamentos{min-height:120px;}
+  .painel-acabamentos>h3{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .editar-acabamentos{display:inline-flex;align-items:center;gap:6px;border:1px solid #9bb4c8;border-radius:7px;background:#fff;padding:6px 9px;color:var(--azul);font-size:.66rem;font-weight:800;cursor:pointer;}
+  .editar-acabamentos:hover{background:var(--azul);color:#fff;}
   .painel-acabamentos.com-alteracao{border-top:3px solid #f5a035;}
   .painel-acabamentos .personalizacao-secao{margin-bottom:0;}
   .foto-tabela{width:38px;height:38px;object-fit:cover;border-radius:5px;border:1px solid var(--cinza-borda);}
@@ -1687,7 +1690,7 @@
       <div class="apartamento-analises">
         <div class="apartamento-coluna-esquerda">
           <div class="apartamento-painel painel-andamento"><h3>Andamento da unidade</h3><div class="apartamento-chart"><canvas id="graficoApartamento"></canvas></div></div>
-          <div class="apartamento-painel painel-acabamentos"><h3>Acabamentos</h3><div id="acabamentosApartamento"></div></div>
+          <div class="apartamento-painel painel-acabamentos"><h3><span>Acabamentos</span><button class="editar-acabamentos" id="editarAcabamentosUnidade" type="button" hidden><span aria-hidden="true">✎</span> Editar acabamentos</button></h3><div id="acabamentosApartamento"></div></div>
         </div>
         <div class="apartamento-painel painel-planta"><h3><span>Projetos</span><span class="projetos-acoes"><button class="adicionar-projeto remover-projeto" type="button" onclick="removerProjetoAtual()" title="Remover projeto atual" aria-label="Remover projeto atual">×</button><button class="adicionar-projeto" type="button" onclick="adicionarProjetoUnidade()" title="Adicionar novo projeto" aria-label="Adicionar novo projeto">+</button></span></h3><div id="plantaApartamento"></div></div>
       </div>
@@ -6021,6 +6024,20 @@ document.getElementById("adicionarPersonalizacao").addEventListener("click",()=>
   document.getElementById("statusNovaPersonalizacao").textContent="";
   ativarAba("cadastroPersonalizacao");
 });
+document.getElementById("editarAcabamentosUnidade").addEventListener("click",async()=>{
+  if(!unidadeSelecionada||!permissoesUsuarioAtual.includes("gerenciar_projetos"))return;
+  const andares=pavimentosDaTorre(torreSelecionada).filter(andar=>unidadesDoAndar(torreSelecionada,andar).some(unidade=>/^(apartamento|apto)\s/i.test(unidade)));
+  const seletorAndar=document.getElementById("andarNovaPersonalizacao");
+  seletorAndar.innerHTML=andares.map(andar=>`<option value="${andar}">${rotuloAndar(andar)}</option>`).join("");
+  seletorAndar.value=String(pavimentoSelecionado);
+  atualizarUnidadesNovaPersonalizacao();
+  const seletorUnidade=document.getElementById("unidadeNovaPersonalizacao");
+  if([...seletorUnidade.options].some(opcao=>opcao.value===unidadeSelecionada))seletorUnidade.value=unidadeSelecionada;
+  carregarPersonalizacaoExistente();
+  await atualizarOpcoesPlantaNovaPersonalizacao();
+  document.getElementById("statusNovaPersonalizacao").textContent="";
+  ativarAba("cadastroPersonalizacao");
+});
 function arquivoComoDataUrl(arquivo){return new Promise((resolve,reject)=>{const leitor=new FileReader();leitor.onload=()=>resolve(leitor.result);leitor.onerror=()=>reject(new Error(`Não foi possível ler ${arquivo.name}`));leitor.readAsDataURL(arquivo);});}
 document.getElementById("importarPlanilhasPersonalizacao").addEventListener("click",async event=>{
   const plantas=document.getElementById("planilhaPlantasPersonalizacao").files[0];
@@ -6617,11 +6634,14 @@ let cargosAdministracao=[];
 let perfisAdministracao={};
 let acoesAdministracao={};
 let permissoesAdministracao={};
+let permissoesUsuarioAtual=[];
 function configurarAcessoAdministracao(dados){
+  permissoesUsuarioAtual=Array.isArray(dados?.permissoes)?dados.permissoes:[];
   const permitido=Boolean(dados?.perfil==="administrador"&&dados?.podeAdministrar);
   const cargoNormalizado=String(dados?.cargo||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
   podeEditarCriterios=Boolean(dados?.perfil==="administrador"||dados?.perfil==="qualidade"||cargoNormalizado.includes("qualidade"));
   document.getElementById("editarCriterio").hidden=!podeEditarCriterios;
+  document.getElementById("editarAcabamentosUnidade").hidden=!permissoesUsuarioAtual.includes("gerenciar_projetos");
   if(!podeEditarCriterios&&!document.getElementById("criterioOverlay").classList.contains("oculto"))alternarEdicaoCriterio(false);
   document.getElementById("linkAdministracao").hidden=!permitido;
   document.getElementById("linkAdministracao").dataset.permitido=String(permitido);
