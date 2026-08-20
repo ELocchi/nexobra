@@ -1,6 +1,6 @@
-# Acompanhamento de obra
+# Nexobra — Diálogo Engenharia
 
-Painel local de acompanhamento do empreendimento BoulevarDiálogo Butantã, com:
+Plataforma Nexobra configurada para a Diálogo Engenharia e atualmente aplicada à obra BoulevarDiálogo Butantã, com:
 
 - controle por torre, pavimento, apartamento e serviço;
 - ocorrências com fotos e histórico em PDF;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acompanhamento de Obra</title>
+<title>Nexobra — Diálogo Engenharia</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -655,24 +655,38 @@
   .documentos-acoes button:hover{background:var(--azul);color:#fff;}
   .documentos-acoes .remover{color:var(--vermelho);border-color:#e2aaa5;}
   .documentos-acoes .remover:hover{background:var(--vermelho);border-color:var(--vermelho);}
-  .login-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:linear-gradient(145deg,#0f2d48,#17608f);}
+  .login-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:28px;background:radial-gradient(circle at 82% 12%,rgba(214,164,51,.22),transparent 28%),radial-gradient(circle at 12% 88%,rgba(38,106,164,.42),transparent 34%),#071b35;overflow:auto;}
   .login-overlay.oculto{display:none;}
-  .login-caixa{width:min(100%,430px);background:#fff;border-radius:16px;padding:28px;box-shadow:0 22px 65px rgba(0,0,0,.38);}
-  .login-caixa img{display:block;width:190px;margin:0 auto 20px;}
-  .login-caixa h1{text-align:center;color:var(--azul-escuro);font-size:1.35rem;margin-bottom:5px;}
-  .login-caixa>p{text-align:center;color:var(--cinza-texto);font-size:.78rem;margin:0 0 20px;}
-  .login-autoria{text-align:center;color:var(--azul-escuro);font-size:.67rem;font-weight:700;letter-spacing:.06em;margin:11px 0 0;}
-  .login-caixa label{display:block;margin:11px 0 5px;color:var(--cinza-texto);font-size:.68rem;font-weight:700;text-transform:uppercase;}
-  .login-caixa input,.login-caixa select{width:100%;height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;background:#fff;font:inherit;}
-  .login-caixa button{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin-top:13px;border:0;border-radius:8px;background:var(--azul);color:#fff;font:700 .8rem Arial;text-decoration:none;cursor:pointer;}
+  .login-caixa{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(390px,1.1fr);grid-template-rows:minmax(570px,auto);align-items:stretch;width:min(100%,900px);background:#fff;border:1px solid rgba(255,255,255,.2);border-radius:24px;overflow:hidden;box-shadow:0 32px 90px rgba(0,0,0,.46);}
+  .login-apresentacao{position:relative;display:flex;align-self:stretch;flex-direction:column;min-height:100%;padding:48px 44px;color:#fff;background:linear-gradient(155deg,#09264b 0%,#0e3d70 68%,#15538c 100%);overflow:hidden;}
+  .login-apresentacao::before{content:"";position:absolute;width:310px;height:310px;right:-175px;top:-140px;border:1px solid rgba(214,164,51,.42);border-radius:50%;box-shadow:0 0 0 55px rgba(214,164,51,.06),0 0 0 110px rgba(214,164,51,.035);}
+  .login-logo-nexobra{position:relative;z-index:1;display:block;width:174px;height:auto;margin:0 0 50px;background:#fff;border-radius:15px;padding:8px;box-shadow:0 12px 30px rgba(0,0,0,.16);}
+  .login-selo{position:relative;z-index:1;margin:0 0 12px;color:#e1b84f;font-size:.67rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;}
+  .login-apresentacao h1{position:relative;z-index:1;margin:0;color:#fff;font-size:clamp(2rem,3vw,2.8rem);line-height:1.05;letter-spacing:-.04em;}
+  .login-apresentacao>p{position:relative;z-index:1;margin:18px 0 0;max-width:310px;color:rgba(255,255,255,.73);font-size:.88rem;line-height:1.65;}
+  .login-cliente{display:flex;align-items:center;justify-content:flex-start;gap:11px;margin:0 0 24px;padding:0 0 20px;border-bottom:1px solid #e5e9ee;color:#718097;font-size:.61rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;}
+  .login-logo-dialogo{display:block;width:112px;height:auto;margin:0;}
+  .login-formulario{display:flex;align-self:stretch;flex-direction:column;justify-content:center;min-height:100%;padding:46px 52px;background:#fff;}
+  .login-formulario-topo{margin-bottom:25px;}
+  .login-formulario-topo span{display:block;margin-bottom:8px;color:#bd8a19;font-size:.64rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;}
+  .login-formulario-topo h2{margin:0 0 8px;color:#0d315b;font-size:1.65rem;letter-spacing:-.025em;}
+  .login-formulario-topo p{margin:0;color:#6a7787;font-size:.78rem;line-height:1.5;}
+  .login-autoria{text-align:center;color:#778393;font-size:.62rem;font-weight:700;letter-spacing:.06em;margin:14px 0 0;text-transform:uppercase;}
+  .login-caixa label{display:block;margin:14px 0 6px;color:#42536a;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;}
+  .login-caixa input,.login-caixa select{width:100%;height:48px;border:1px solid #c7d0da;border-radius:10px;padding:0 13px;background:#fbfcfd;color:#14283f;font:inherit;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;}
+  .login-caixa input:focus,.login-caixa select:focus{border-color:#1c5d99;background:#fff;box-shadow:0 0 0 4px rgba(28,93,153,.11);}
+  .login-caixa button{display:flex;align-items:center;justify-content:center;width:100%;height:48px;margin-top:17px;border:0;border-radius:10px;background:linear-gradient(135deg,#123f72,#1e659f);color:#fff;font:700 .82rem Arial;text-decoration:none;cursor:pointer;box-shadow:0 9px 20px rgba(18,63,114,.18);transition:transform .2s,box-shadow .2s;}
+  .login-caixa button:hover{transform:translateY(-1px);box-shadow:0 12px 25px rgba(18,63,114,.25);}
   .login-erro{min-height:18px;margin-top:8px;color:var(--vermelho);font-size:.72rem;text-align:center;}
-  .login-modos{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 0 15px;padding:4px;border-radius:9px;background:#edf2f5;}
-  .login-modos button{height:34px;margin:0;background:transparent;color:var(--azul-escuro);}
-  .login-modos button.ativo{background:#fff;color:var(--azul-escuro);box-shadow:0 1px 5px rgba(15,45,72,.14);}
+  .login-modos{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:0 0 8px;padding:4px;border:1px solid #e1e6eb;border-radius:11px;background:#f1f4f7;}
+  .login-modos button{height:38px;margin:0;background:transparent;color:#52647a;box-shadow:none;}
+  .login-modos button:hover{transform:none;box-shadow:none;color:#123f72;}
+  .login-modos button.ativo{background:#fff;color:#123f72;box-shadow:0 2px 8px rgba(15,45,72,.1);}
   .cadastro-acesso[hidden],.login-acesso[hidden]{display:none;}
   .cadastro-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 9px;}.cadastro-grid .largo{grid-column:1/-1;}
   .cadastro-perfil{height:42px;border:1px solid #bcc8d1;border-radius:8px;padding:0 11px;background:#edf2f5;color:var(--azul-escuro);font-weight:700;display:flex;align-items:center;}
-  .cadastro-aviso{margin:9px 0 0;color:#687887;font-size:.68rem;line-height:1.4;text-align:center;}
+  .cadastro-aviso{margin:11px 0 0;color:#687887;font-size:.68rem;line-height:1.4;text-align:center;}
+  @media(max-width:760px){.login-overlay{display:block;padding:18px}.login-caixa{display:block;width:min(100%,480px);min-height:0;margin:auto}.login-apresentacao{min-height:0;padding:26px 26px 24px}.login-logo-nexobra{width:132px;margin:0 0 22px}.login-apresentacao h1{font-size:1.7rem}.login-apresentacao>p{margin-top:10px;font-size:.78rem}.login-cliente{margin:0 0 20px;padding:0 0 18px}.login-formulario{min-height:0;padding:28px 26px 30px}.login-formulario-topo{margin-bottom:18px}}
   .seletor-obras{position:fixed;inset:0;z-index:1500;display:grid;place-items:center;padding:25px;background:linear-gradient(145deg,#176da8,#4aa6d5);color:#fff;transition:opacity .45s,visibility .45s;}
   .seletor-obras.fechado{opacity:0;visibility:hidden;pointer-events:none;}
   .sair-seletor-obras{position:absolute;top:22px;right:26px;z-index:2;padding:8px 17px;border:1px solid #cbd3dc;border-radius:999px;background:#fff;color:var(--azul-escuro);font:700 .76rem Arial;cursor:pointer;box-shadow:0 5px 16px rgba(17,48,82,.1);}
@@ -1522,7 +1536,15 @@
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-caixa">
-    <img src="logo dialogo.png" alt="Diálogo Engenharia">
+    <section class="login-apresentacao">
+      <img class="login-logo-nexobra" src="logo.nexobra.png" alt="Nexobra">
+      <div class="login-selo">Inteligência para construir</div>
+      <h1>A obra inteira,<br>em um só lugar.</h1>
+      <p>Planejamento, qualidade e acompanhamento conectados para decisões mais rápidas e obras mais eficientes.</p>
+    </section>
+    <section class="login-formulario">
+    <div class="login-cliente"><span>Plataforma para</span><img class="login-logo-dialogo" src="logo dialogo.png" alt="Diálogo Engenharia"></div>
+    <div class="login-formulario-topo"><span>Acesso seguro</span><h2>Bem-vindo</h2><p>Entre com suas credenciais corporativas para acessar a plataforma.</p></div>
     <div class="login-modos"><button type="button" class="ativo" data-login-modo="entrar">Entrar</button><button type="button" data-login-modo="cadastrar">Cadastre-se</button></div>
     <div class="login-acesso" id="painelLoginAcesso"><form id="formLoginEngenheiro">
       <label for="loginUsuario">Usuário</label>
@@ -1545,6 +1567,7 @@
       <p class="cadastro-aviso">O acesso será liberado após aprovação do Administrador ou Engenheiro responsável.</p>
       <div class="login-erro" id="cadastroErro"></div>
     </form>
+    </section>
   </div>
 </div>
 
@@ -5601,7 +5624,7 @@ function preencherCabecalho(){
   document.getElementById('dataInicio').textContent = DADOS.obra.dataInicio;
   document.getElementById('dataFim').textContent = DADOS.obra.dataFim;
   document.getElementById('diasCorridos').textContent = DADOS.obra.diasCorridos;
-  document.title = "Acompanhamento de Obra — " + DADOS.obra.nome;
+  document.title = "Nexobra — Diálogo Engenharia";
 }
 
 function selecionarTorre(chave){
