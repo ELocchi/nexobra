@@ -771,6 +771,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
             ("Filtros:", " · ".join([
                 rotulo_pavimento(andar_numero) if andar_numero is not None else "Todos os pavimentos",
                 unidade if unidade != "todos" else "Todas as unidades",
+                atividade if atividade != "todos" else "Todas as atividades",
                 f"Final {final}" if final != "todos" else "Todos os finais",
                 STATUS_NOMES.get(status, status) if status != "todos" else "Todos os status",
             ])),
@@ -3900,6 +3901,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
             unidade = parametros.get("unidade", ["todos"])[0]
             status = parametros.get("status", ["todos"])[0]
             tipo = parametros.get("tipo", ["todos"])[0]
+            atividade = parametros.get("atividade", ["todos"])[0]
             try:
                 converter_filtro_andar(andar)
             except ValueError:
@@ -3908,7 +3910,7 @@ class ServidorObra(SimpleHTTPRequestHandler):
             if torre not in {*TORRES_NOMES, "todos"} or status not in {*STATUS_NOMES.keys(), "todos"} or tipo not in {"todos", "atividade", "seguranca"}:
                 self.enviar_json({"erro": "Filtros inválidos"}, 400)
                 return
-            corpo = gerar_historico_ocorrencias_pdf(torre, andar, unidade, status, tipo)
+            corpo = gerar_historico_ocorrencias_pdf(torre, andar, unidade, status, tipo, atividade)
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
             self.send_header("Content-Disposition", 'attachment; filename="historico-ocorrencias.pdf"')

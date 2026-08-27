@@ -1954,6 +1954,7 @@
       <div class="campo-filtro"><label for="filtroTorreOcorrencias">Torre</label><select id="filtroTorreOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroAndarOcorrencias">Andar</label><select id="filtroAndarOcorrencias"></select></div>
       <div class="campo-filtro"><label for="filtroApartamentoOcorrencias">Apartamento</label><select id="filtroApartamentoOcorrencias"><option value="todos">Todos os apartamentos</option></select></div>
+      <div class="campo-filtro"><label for="filtroAtividadeOcorrencias">Atividade</label><select id="filtroAtividadeOcorrencias"><option value="todos">Todas as atividades</option></select></div>
       <div class="campo-filtro"><label for="filtroStatusOcorrencias">Status</label><select id="filtroStatusOcorrencias"><option value="todos">Todos os status</option><option value="pendente">Pendente</option><option value="concluido">Concluída</option></select></div>
       <a class="acao-relatorio" id="baixarHistoricoOcorrencias" href="#" download>Gerar PDF</a>
     </div>
@@ -5767,13 +5768,21 @@ function opcoesStatusOcorrencia(atual){
 
 function preencherOcorrencias(){
   const lista = document.getElementById('listaOcorrencias');
+  const filtroAtividade=document.getElementById("filtroAtividadeOcorrencias");
+  const atividadeAtual=filtroAtividade?.value||"todos";
+  const atividadesOcorrencias=[...new Set(ocorrenciasBanco.map(oc=>oc.atividade).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,"pt-BR",{numeric:true,sensitivity:"base"}));
+  filtroAtividade.innerHTML=`<option value="todos">Todas as atividades</option>`+
+    atividadesOcorrencias.map(atividade=>`<option value="${escaparHtml(atividade)}">${escaparHtml(atividade)}</option>`).join("");
+  filtroAtividade.value=atividadesOcorrencias.includes(atividadeAtual)?atividadeAtual:"todos";
   const tipoFiltro=document.getElementById("filtroTipoOcorrencias")?.value||"todos";
   const torreFiltro=document.getElementById("filtroTorreOcorrencias")?.value||torreSelecionada;
   const apartamentoFiltro=document.getElementById("filtroApartamentoOcorrencias")?.value||"todos";
   const statusFiltro=document.getElementById("filtroStatusOcorrencias")?.value||"todos";
   const andarFiltro=document.getElementById("filtroAndarOcorrencias")?.value||"todos";
+  const atividadeFiltro=filtroAtividade.value;
   document.getElementById("baixarHistoricoOcorrencias").href="/relatorio-ocorrencias.pdf?"+
-    new URLSearchParams({tipo:tipoFiltro,torre:torreFiltro,andar:andarFiltro,unidade:apartamentoFiltro,status:statusFiltro}).toString();
+    new URLSearchParams({tipo:tipoFiltro,torre:torreFiltro,andar:andarFiltro,unidade:apartamentoFiltro,atividade:atividadeFiltro,status:statusFiltro}).toString();
   const ocorrenciasFiltradas=ocorrenciasBanco.filter(oc=>{
     const tipoOcorrencia=oc.atividade===ATIVIDADE_SEGURANCA_OCORRENCIAS?"seguranca":"atividade";
     if(tipoFiltro!=="todos"&&tipoOcorrencia!==tipoFiltro) return false;
@@ -5781,6 +5790,7 @@ function preencherOcorrencias(){
     if(statusFiltro!=="todos"&&(oc.status||"pendente")!==statusFiltro) return false;
     if(andarFiltro!=="todos"&&Number(oc.andar)!==Number(andarFiltro)) return false;
     if(apartamentoFiltro!=="todos"&&oc.unidade!==apartamentoFiltro) return false;
+    if(atividadeFiltro!=="todos"&&oc.atividade!==atividadeFiltro) return false;
     return true;
   });
   if(!ocorrenciasFiltradas.length){
@@ -5949,6 +5959,7 @@ document.getElementById("filtroTorreOcorrencias").addEventListener("change",even
   preencherOcorrencias();
 });
 document.getElementById("filtroApartamentoOcorrencias").addEventListener("change",preencherOcorrencias);
+document.getElementById("filtroAtividadeOcorrencias").addEventListener("change",preencherOcorrencias);
 document.getElementById("filtroTipoOcorrencias").addEventListener("change",preencherOcorrencias);
 document.getElementById("filtroAndarOcorrencias").addEventListener("change",()=>{
   atualizarApartamentosFiltroOcorrencias();
@@ -6463,7 +6474,7 @@ document.querySelectorAll(".menu-principal a").forEach(link => {
 });
 document.getElementById("abrirAtividadesAdmin").addEventListener("click",()=>ativarAba("atividadesAdmin"));
 document.getElementById("abrirNotificacoes").addEventListener("click",()=>{const painel=document.getElementById("painelNotificacoes");painel.hidden=!painel.hidden;});
-function abrirItemNotificacao(botao){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}const item=historico.find(registro=>registro.chave===botao.dataset.notificacaoChave)||{aba:botao.dataset.notificacaoAba};if(item.aba==="personalizacao"){if(item.alvo?.torre&&item.alvo.torre!==torreSelecionada)selecionarTorre(item.alvo.torre);document.getElementById("filtroTorrePersonalizacao").value=torreSelecionada;document.getElementById("filtroAndarPersonalizacao").value="todos";document.getElementById("filtroPlantaPersonalizacao").value="todos";document.getElementById("filtroAcabamentoPersonalizacao").value="todos";renderizarPersonalizacoes();}else{document.getElementById("filtroTipoOcorrencias").value="todos";document.getElementById("filtroTorreOcorrencias").value="todos";document.getElementById("filtroAndarOcorrencias").value="todos";document.getElementById("filtroApartamentoOcorrencias").value="todos";document.getElementById("filtroStatusOcorrencias").value="todos";preencherOcorrencias();}ativarAba(item.aba);marcarNotificacaoVista(item.aba);requestAnimationFrame(()=>setTimeout(()=>{const alvo=item.aba==="personalizacao"&&item.alvo?.unidade?document.querySelector(`[data-personalizacao-unidade="${CSS.escape(item.alvo.unidade)}"]`):item.alvo?.id?document.querySelector(`[data-ocorrencia-card-id="${item.alvo.id}"]`):null;if(alvo){alvo.scrollIntoView({behavior:"smooth",block:"center"});alvo.classList.add("destaque-notificacao");setTimeout(()=>alvo.classList.remove("destaque-notificacao"),4500);}},100));}
+function abrirItemNotificacao(botao){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}const item=historico.find(registro=>registro.chave===botao.dataset.notificacaoChave)||{aba:botao.dataset.notificacaoAba};if(item.aba==="personalizacao"){if(item.alvo?.torre&&item.alvo.torre!==torreSelecionada)selecionarTorre(item.alvo.torre);document.getElementById("filtroTorrePersonalizacao").value=torreSelecionada;document.getElementById("filtroAndarPersonalizacao").value="todos";document.getElementById("filtroPlantaPersonalizacao").value="todos";document.getElementById("filtroAcabamentoPersonalizacao").value="todos";renderizarPersonalizacoes();}else{document.getElementById("filtroTipoOcorrencias").value="todos";document.getElementById("filtroTorreOcorrencias").value="todos";document.getElementById("filtroAndarOcorrencias").value="todos";document.getElementById("filtroApartamentoOcorrencias").value="todos";document.getElementById("filtroAtividadeOcorrencias").value="todos";document.getElementById("filtroStatusOcorrencias").value="todos";preencherOcorrencias();}ativarAba(item.aba);marcarNotificacaoVista(item.aba);requestAnimationFrame(()=>setTimeout(()=>{const alvo=item.aba==="personalizacao"&&item.alvo?.unidade?document.querySelector(`[data-personalizacao-unidade="${CSS.escape(item.alvo.unidade)}"]`):item.alvo?.id?document.querySelector(`[data-ocorrencia-card-id="${item.alvo.id}"]`):null;if(alvo){alvo.scrollIntoView({behavior:"smooth",block:"center"});alvo.classList.add("destaque-notificacao");setTimeout(()=>alvo.classList.remove("destaque-notificacao"),4500);}},100));}
 document.getElementById("painelNotificacoes").addEventListener("click",event=>{const botao=event.target.closest("[data-notificacao-aba]");if(!botao)return;document.getElementById("painelNotificacoes").hidden=true;abrirItemNotificacao(botao);});
 function renderizarHistoricoNotificacoes(){let historico=[];try{historico=JSON.parse(localStorage.getItem("historicoNotificacoesObraV1")||"[]")}catch(e){}const limite=Date.now()-7*24*60*60*1000;const recentes=historico.filter(item=>new Date(item.data).getTime()>=limite);document.getElementById("historicoNotificacoesLista").innerHTML=recentes.length?recentes.map(item=>`<div class="historico-notificacao-item"><button class="abrir-historico-notificacao" type="button" data-notificacao-chave="${escaparHtml(item.chave)}" data-notificacao-aba="${item.aba}">${escaparHtml(item.texto)}<small>${new Date(item.data).toLocaleString("pt-BR")}${item.lida?" · Lida":" · Não lida"}</small></button><button class="excluir-notificacao" type="button" data-excluir-notificacao="${escaparHtml(item.chave)}" aria-label="Excluir notificação" title="Excluir notificação">×</button></div>`).join(""):`<div class="notificacao-vazia">Nenhuma alteração registrada nos últimos 7 dias.</div>`;}
 document.getElementById("verTodasNotificacoes").addEventListener("click",()=>{renderizarHistoricoNotificacoes();document.getElementById("painelNotificacoes").hidden=true;document.getElementById("historicoNotificacoesOverlay").classList.remove("oculto");});
