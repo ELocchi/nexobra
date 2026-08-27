@@ -2844,8 +2844,11 @@ function especificacaoContaNoProgresso(atividade,especificacao){
     "externo em argamassa :: relatorio de execucao"
   ]).has(normalizarBuscaServico(especificacao));
 }
-function recalcularStatusPelasEspecificacoes(registro,atividade,andar){
-  const estados=especificacoesDoServicoNoAndar(atividade,andar).filter(especificacao=>especificacaoContaNoProgresso(atividade,especificacao)).map(especificacao=>
+function recalcularStatusPelasEspecificacoes(registro,atividade,andar,unidade=null,torre=torreSelecionada){
+  const especificacoes=unidade
+    ?especificacoesAplicaveisAoItem({atividade,andar,unidade,torre},torre)
+    :especificacoesDoServicoNoAndar(atividade,andar,torre);
+  const estados=especificacoes.filter(especificacao=>especificacaoContaNoProgresso(atividade,especificacao)).map(especificacao=>
     normalizarEstadoEspecificacao(registro.especificacoes?.[especificacao],registro)
   );
   const aplicaveis=estados.filter(estado=>estado!=="nao-aplicavel");
@@ -3445,10 +3448,15 @@ function listaRegistros(torre = torreSelecionada){
 function unidadesDoSubservico(atividadeNome,subservico,torre,andar,unidadesPadrao){
   if(!subservico)return unidadesPadrao;
   const atividade=atividadesCadastro.find(item=>item.nome===atividadeNome);
-  const personalizadas=(atividade?.setoresSubservicos||[])
-    .filter(item=>item.subservico===subservico&&item.torre===torre&&Number(item.andar)===Number(andar))
+  const setoresDoAndar=(atividade?.setoresSubservicos||[])
+    .filter(item=>item.torre===torre&&Number(item.andar)===Number(andar));
+  const personalizadas=setoresDoAndar
+    .filter(item=>item.subservico===subservico)
     .map(item=>item.unidade);
-  return personalizadas.length?[...new Set(personalizadas)]:unidadesDoAndar(torre,Number(andar),atividadeNome);
+  if(personalizadas.length)return [...new Set(personalizadas)];
+  const setoresDeOutrosSubservicos=new Set(setoresDoAndar.map(item=>item.unidade));
+  return unidadesDoAndar(torre,Number(andar),atividadeNome)
+    .filter(unidade=>!setoresDeOutrosSubservicos.has(unidade));
 }
 function especificacoesAplicaveisAoItem(item,torre=item.torre||torreSelecionada){
   return especificacoesDoServicoNoAndar(item.atividade,item.andar,torre).filter(especificacao=>{
@@ -5449,7 +5457,7 @@ menuContextoPendencia.addEventListener("click",async event=>{
   });
   valores[pendenciaContexto.especificacao]=botao.dataset.statusCheck;
   registro.especificacoes=valores;
-  recalcularStatusPelasEspecificacoes(registro,atividade,andar);
+  recalcularStatusPelasEspecificacoes(registro,atividade,andar,partes[2],partes[0]);
   registrosObra[pendenciaContexto.chave]=registro;
   fecharMenuPendencia();
   pendenciaContexto=null;
@@ -6325,7 +6333,7 @@ document.getElementById("formOcorrencia").addEventListener("submit",async event=
       const chaveVinculada=chaveRegistro(dados.torre,dados.andar,dados.unidade,dados.atividade);
       const registro=obterRegistro(dados.andar,dados.unidade,dados.atividade,dados.torre);
       registro.especificacoes={...(registro.especificacoes||{}),[dados.especificacao]:"pendente"};
-      recalcularStatusPelasEspecificacoes(registro,dados.atividade,dados.andar);
+      recalcularStatusPelasEspecificacoes(registro,dados.atividade,dados.andar,dados.unidade,dados.torre);
       registro.data=dados.dataOcorrencia;
       registrosObra[chaveVinculada]=registro;
     }
@@ -6662,7 +6670,7 @@ document.getElementById("aplicarStatusEmLote").addEventListener("click", async (
       });
       valores[especificacao]=novoStatus;
       atual.especificacoes=valores;
-      recalcularStatusPelasEspecificacoes(atual,atividade,Number(partes[1]));
+      recalcularStatusPelasEspecificacoes(atual,atividade,Number(partes[1]),partes[2],partes[0]);
       registrosObra[chave]=atual;
     });
     await salvarRegistros();
