@@ -731,6 +731,19 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
         ocorrencias = [item for item in ocorrencias if ("seguranca" if item["atividade"] == "Segurança" else "atividade") == tipo]
     if atividade != "todos":
         ocorrencias = [item for item in ocorrencias if item["atividade"] == atividade]
+
+    def chave_natural(valor):
+        return tuple(int(parte) if parte.isdigit() else parte.casefold() for parte in re.split(r"(\d+)", str(valor or "")))
+
+    ocorrencias = sorted(ocorrencias, key=lambda item: (
+        chave_natural(TORRES_NOMES.get(item["torre"], item["torre"])),
+        int(item["andar"]),
+        chave_natural(item["unidade"]),
+        chave_natural(item["atividade"]),
+        chave_natural(item["subatividade"]),
+        item["data_ocorrencia"] or "",
+        int(item["id"]),
+    ))
     memoria = BytesIO()
     documento = SimpleDocTemplate(
         memoria, pagesize=A4, rightMargin=18*mm, leftMargin=18*mm,
@@ -743,7 +756,6 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
     estilo_texto.leading = 10.5
     estilo_centro = estilo_texto.clone("OcorrenciaCentro")
     estilo_centro.alignment = 1
-    total_paginas = max(1, (len(ocorrencias) + 3) // 4)
     gerado_em = datetime.now()
     identificador = gerado_em.strftime("%Y%m%d%H%M")
 
@@ -779,7 +791,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
         canvas.drawString(48*mm, 11*mm, "Desenvolvido por Locchi Engenharia")
         canvas.drawString(48*mm, 7.5*mm, "BoulevarDiálogo Butantã")
         canvas.drawRightString(largura-20*mm, 11*mm, f"Doc. Id.: {identificador}")
-        canvas.drawRightString(largura-20*mm, 7.5*mm, f"página {doc.page} de {total_paginas}")
+        canvas.drawRightString(largura-20*mm, 7.5*mm, f"página {doc.page}")
         canvas.restoreState()
 
     def cartao(item, numero):
@@ -796,7 +808,7 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
         data = "/".join(reversed(item["data_ocorrencia"].split("-"))) if item["data_ocorrencia"] else "—"
         detalhes = (
             f"<b>Criada:</b>&nbsp;&nbsp; {data}<br/>"
-            f"<b>({numero})</b>&nbsp;&nbsp; {escape(TORRES_NOMES.get(item['torre'], item['torre']))} · {escape(item['unidade'])} · {escape(rotulo_pavimento(item['andar']))}<br/>"
+            f"<b>({numero})</b>&nbsp;&nbsp; {escape(TORRES_NOMES.get(item['torre'], item['torre']))} · {escape(rotulo_pavimento(item['andar']))} · {escape(item['unidade'])}<br/>"
             f"<b>Serviço:</b>&nbsp;&nbsp; {escape(item['atividade'] or '—')}<br/>"
             f"<b>Subserviço:</b>&nbsp;&nbsp; {escape(item['subatividade'] or '—')}<br/>"
             f"<b>Especificação:</b>&nbsp;&nbsp; {escape(item['especificacao'] or '—')}<br/>"
@@ -809,26 +821,47 @@ def gerar_historico_ocorrencias_pdf(torre, andar="todos", unidade="todos", statu
     elementos = []
     if not ocorrencias:
         elementos.append(Paragraph("Nenhuma ocorrência encontrada para os filtros selecionados.", estilo_texto))
-    for inicio in range(0, len(ocorrencias), 4):
-        lote = ocorrencias[inicio:inicio+4]
-        celulas = [cartao(item, inicio+indice+1) for indice, item in enumerate(lote)]
-        while len(celulas) < 4:
-            celulas.append("")
-        grade = Table(
-            [[celulas[0], celulas[1]], [celulas[2], celulas[3]]],
-            colWidths=[84*mm, 84*mm], rowHeights=[107*mm, 107*mm],
-            hAlign="CENTER",
+    grupos = {}
+    for numero, item in enumerate(ocorrencias, 1):
+        chave_grupo = (item["torre"], item["andar"], item["unidade"], item["atividade"], item["subatividade"] or "")
+        grupos.setdefault(chave_grupo, []).append((numero, item))
+    for (torre_item, andar_item, unidade_item, atividade_item, subatividade_item), itens_grupo in grupos.items():
+        atividade_subservico = atividade_item or "Sem atividade"
+        if subatividade_item:
+            atividade_subservico += f" / {subatividade_item}"
+        caminho = (
+            f"<b>{escape(TORRES_NOMES.get(torre_item, torre_item))}</b> &nbsp;›&nbsp; "
+            f"<b>{escape(rotulo_pavimento(andar_item))}</b> &nbsp;›&nbsp; "
+            f"<b>{escape(unidade_item)}</b> &nbsp;›&nbsp; "
+            f"<b>{escape(atividade_subservico)}</b>"
         )
-        grade.setStyle(TableStyle([
-            ("VALIGN", (0,0), (-1,-1), "TOP"),
-            ("LEFTPADDING", (0,0), (-1,-1), 4*mm),
-            ("RIGHTPADDING", (0,0), (-1,-1), 4*mm),
-            ("TOPPADDING", (0,0), (-1,-1), 1*mm),
-            ("BOTTOMPADDING", (0,0), (-1,-1), 1*mm),
+        titulo_grupo = Table([[Paragraph(caminho, estilo_texto)]], colWidths=[168*mm], hAlign="CENTER")
+        titulo_grupo.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#e9eef3")),
+            ("BOX", (0, 0), (-1, -1), .5, colors.HexColor("#9baab7")),
+            ("LEFTPADDING", (0, 0), (-1, -1), 4*mm),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 4*mm),
+            ("TOPPADDING", (0, 0), (-1, -1), 2.2*mm),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 2.2*mm),
         ]))
-        elementos.append(grade)
-        if inicio + 4 < len(ocorrencias):
-            elementos.append(PageBreak())
+        linhas_grupo = []
+        for inicio in range(0, len(itens_grupo), 2):
+            lote = itens_grupo[inicio:inicio + 2]
+            celulas = [cartao(item, numero) for numero, item in lote]
+            if len(celulas) == 1:
+                celulas.append("")
+            linha = Table([celulas], colWidths=[84*mm, 84*mm], rowHeights=[107*mm], hAlign="CENTER")
+            linha.setStyle(TableStyle([
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 4*mm),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 4*mm),
+                ("TOPPADDING", (0, 0), (-1, -1), 1*mm),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 1*mm),
+            ]))
+            linhas_grupo.append(linha)
+        elementos.append(KeepTogether([titulo_grupo, linhas_grupo[0]]))
+        elementos.extend(linhas_grupo[1:])
+        elementos.append(Spacer(1, 3*mm))
     documento.build(elementos, onFirstPage=cabecalho_rodape, onLaterPages=cabecalho_rodape)
     return memoria.getvalue()
 
